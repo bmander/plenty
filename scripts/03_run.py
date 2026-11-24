@@ -4,7 +4,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
-from plenty import model as M, analysis as A
+from plenty import model as M, analysis as A, occupations as O
 
 OUT = M.ROOT / "results"
 OUT.mkdir(exist_ok=True)
@@ -81,8 +81,35 @@ def main():
     arch["capital_multiplier"] = arch.output_per_basket_dollar / arch.without_capital
     arch.sort_values("output_per_basket_dollar", ascending=False).round(5).to_csv(OUT / "archetypes.csv")
 
+    # Occupation-based usage: wage-bill share of occupations whose O*NET software list maps to k.
+    matches = O.software_matches()
+    titles = pd.read_csv(O.OCC / "onet_occupations.csv").set_index("O*NET-SOC Code").Title
+    u = O.uses(matches, titles.index.to_series())
+    cov = O.coverage(matches, titles)
+    cov.to_csv(OUT / "software_coverage.csv")
+    shares = O.shares(m.t.commodities, u)
+    shares.round(5).to_csv(OUT / "occupation_capability_shares.csv")
+    S = A.capability_scores(m.t)
+    occ = A.run(m, usage=O.usage_matrix(shares, S, cov)).capabilities.weight_equal_need
+    measured = shares.source == "oews"
+    elicited_w = S.loc[measured].replace(A.SCORE_WEIGHT)
+    agree = pd.DataFrame({
+        "spearman_across_sectors": [np.nan if cov.at[k, "thin"] else spearmanr(elicited_w[k], shares.loc[measured, k])[0]
+                                    for k in S.columns],
+        "n_sectors": int(measured.sum()),
+        "thin": cov.thin,
+        "elicited_weight": c.weight_equal_need,
+        "occupational_weight": occ,
+    }, index=S.columns)
+    agree["elicited_rank"] = agree.elicited_weight.rank(ascending=False).astype(int)
+    agree["occupational_rank"] = agree.occupational_weight.rank(ascending=False).astype(int)
+    agree["rank_change"] = agree.elicited_rank - agree.occupational_rank
+    agree.index.name = "capability"
+    agree.round(4).to_csv(OUT / "score_agreement.csv")
+
     # Sensitivity of the capability ranking.
     variants = {
+        "occupation-based usage (O*NET x OEWS)": occ,
         "linear score weights (1/3, 2/3, 1)": A.run(m, score_weight=A.SCORE_WEIGHT_LINEAR).capabilities.weight_equal_need,
         "no capital endogenization": r0.capabilities.weight_equal_need,
         "capital spread by operating surplus only (no user rules)": A.run(M.build(capital_rules=False)).capabilities.weight_equal_need,
@@ -103,8 +130,9 @@ def main():
     })
     ranks["worst_rank"] = ranks.max(axis=1)
     desc = pd.read_csv(M.CONFIG / "capabilities.csv").set_index("capability")
+    ranks["occupational_rank"] = agree.occupational_rank
     cap_table = pd.DataFrame({
-        "volume weight": base, "exposure": c.exposure_mean,
+        "volume weight": base, "occupational weight": occ, "exposure": c.exposure_mean,
         "reach 0.1c": c["reach_0.001"], "reach 1c": c["reach_0.01"], "reach 5c": c["reach_0.05"],
         "need breadth": c.need_breadth, "most exposed need": c.most_exposed_need,
         "least exposed need": c.least_exposed_need,
@@ -140,6 +168,13 @@ def main():
     L.append(md(arch.sort_values("capital_multiplier", ascending=False).head(12), "{:.4f}"))
     L.append("\n## Sensitivity of the capability ranking\n")
     L.append(md(sens))
+    L.append("\n## Elicited scores against occupations\n")
+    L.append(f"Occupation-based usage (O*NET 31.0 software lists x OEWS May 2021 wage bills) measured for "
+             f"{int(measured.sum())} of {len(shares)} commodities; the rest, and capabilities with thin "
+             f"coverage ({', '.join(cov.index[cov.thin]) or 'none'}), use elicited scores on the occupational "
+             f"scale. Rank correlation of the capability ranking: {spearmanr(base, occ)[0]:.2f}.\n")
+    L.append(md(agree.sort_values("rank_change")[["elicited_rank", "occupational_rank", "rank_change",
+                                                   "spearman_across_sectors", "thin"]], "{:.2f}"))
     L.append("\n## Top physical upstream sectors by need\n")
     for n in needs:
         u = upstream[upstream.need == n].head(5)

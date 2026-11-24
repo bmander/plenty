@@ -135,12 +135,42 @@ Sensitivity of the capability ranking (Spearman correlation with the headline ra
 | Capital spread by operating surplus only, no user rules | 1.00 | 5 of 5 |
 | No capital endogenization | 0.90 | 3 of 5 |
 | Exposure instead of volume | 0.78 | 4 of 5 |
+| Occupation-based usage instead of elicited scores (below) | 0.36 | 4 of 5 |
+
+**Checked against occupations.** To test the *usage* half of the scores, each sector's
+score is replaced by the share of its wage bill paid to occupations that use the capability's
+software: O\*NET 31.0 software lists, mapped to capabilities by
+`config/software_capabilities.csv`, times OEWS May 2021 employment and wages by industry
+(`plenty/occupations.py`, data in `data/occupations/`). An occupation counts as using a
+capability when it lists at least three of its products. With one, generalists dominate:
+software developers list 430 products and would put CAD and molecular modeling into every bank.
+376 of 402 sectors are measured. Farms, government, housing and special accounts keep their
+elicited scores, rescaled to the occupational level, and so do manufacturing process simulation
+and multibody dynamics, which too few occupations use to measure.
+
+The two rankings correlate at only 0.36 (`results/score_agreement.csv`). CAD, CAM and FEA agree
+well across sectors (0.79 to 0.82). The large disagreements:
+
+| capability | elicited rank | occupational rank | more believable |
+|---|---|---|---|
+| Process flowsheeting | 6 | 18 | occupational for volume, elicited for dependence: few chemical engineers use it, but no plant is designed without it |
+| Logistics optimization | 1 | 4 | occupational: stores and wholesalers employ almost no logisticians or dispatchers; "trade = 3" overstates it |
+| IC design | 18 | 7 | occupational: HDL and FPGA engineers work across aerospace, defense and electronics, not only in chip makers |
+| Geospatial | 3 | 3 | neither: same rank, but sector agreement is near zero (elicited weight sits in farming and extraction, occupational in engineering services) |
+
+Manufacturing process simulation and multibody dynamics also move up (to 8 and 9), but only
+because their elicited scores are rescaled with the pooled average of the other capabilities;
+those two ranks are not findings.
+
+The headline above stays on the elicited scores, because exposure (which sectors cannot run
+without a capability) has no occupational counterpart.
 
 Limits, most important first:
 
 - **The capability scores are one model's opinion.** The ranking is arithmetic on those
   scores. It is a way to make the judgments explicit and see their consequences, and it
-  confirms nothing independently.
+  confirms nothing independently. The occupational check above disagrees with it on logistics,
+  process flowsheeting and IC design.
 - **No substitutability.** Volume understates a small input with no substitute; reach and
   breadth cannot tell a relay from a sign. Elasticities would have to be elicited sector by
   sector.
@@ -173,15 +203,18 @@ must be set to deploy from GitHub Actions (Settings > Pages > Source).
     python -m plenty.site           # writes site/
     python -m pytest tests
 
-`scripts/00_extract_bea.py` re-extracts the BEA tables from a checkout of USEPA/useeior.
+`scripts/00_extract_bea.py` re-extracts the BEA tables from a checkout of USEPA/useeior, and
+`scripts/00_extract_occupations.py` the O\*NET, OEWS and concordance files (see
+`data/occupations/README.md`).
 `scripts/01_*` and `scripts/02_*` regenerate `config/basket.csv` and
 `config/sector_archetypes.csv` from prefix rules and overwrite hand edits.
 
 ## Layout
 
-    config/        the judgment calls: needs, basket, capital allocation, archetypes, scores, proposed work
+    config/        the judgment calls: needs, basket, capital allocation, archetypes, scores, software map, proposed work
     data/bea/      BEA 2017 detail tables (public domain, via USEPA/useeior)
-    plenty/        model.py (Leontief + capital), analysis.py (measures), site.py and web/ (website)
+    data/occupations/  O*NET 31.0 software lists, OEWS May 2021 wages by industry, BEA-NAICS concordance
+    plenty/        model.py (Leontief + capital), analysis.py (measures), occupations.py (O*NET x OEWS usage), site.py and web/ (website)
     scripts/       extraction, config seeding, run, figures
     results/       CSV outputs and summary.md
     tests/         accounting identities and config consistency

@@ -130,11 +130,37 @@ Physical sectors with observed need breadth of at least 9 of 11 that reach at le
 
 | variant | spearman_vs_headline | top5_overlap | top5 |
 |---|---|---|---|
+| occupation-based usage (O*NET x OEWS) | 0.358 | 4 | cad, controls, gis, logistics, cam |
 | linear score weights (1/3, 2/3, 1) | 0.944 | 5 | logistics, controls, gis, cad, civil |
 | no capital endogenization | 0.901 | 3 | logistics, controls, gis, process, emag |
 | capital spread by operating surplus only (no user rules) | 1.000 | 5 | logistics, controls, gis, cad, civil |
 | needs weighted by US spending | 0.938 | 5 | logistics, controls, civil, cad, gis |
 | exposure through critical sectors (instead of volume) | 0.777 | 4 | controls, logistics, cad, civil, process |
+
+## Elicited scores against occupations
+
+Occupation-based usage (O*NET 31.0 software lists x OEWS May 2021 wage bills) measured for 376 of 402 commodities; the rest, and capabilities with thin coverage (mfgsim, mbd), use elicited scores on the occupational scale. Rank correlation of the capability ranking: 0.36.
+
+| capability | elicited_rank | occupational_rank | rank_change | spearman_across_sectors | thin |
+|---|---|---|---|---|---|
+| process | 6 | 18 | -12 | 0.17 | False |
+| emag | 8 | 15 | -7 | 0.67 | False |
+| cfd | 11 | 16 | -5 | 0.65 | False |
+| fea | 7 | 12 | -5 | 0.82 | False |
+| civil | 5 | 10 | -5 | 0.39 | False |
+| logistics | 1 | 4 | -3 | -0.04 | False |
+| power | 10 | 13 | -3 | 0.36 | False |
+| hydraulics | 9 | 11 | -2 | 0.38 | False |
+| molecular | 16 | 17 | -1 | 0.33 | False |
+| controls | 2 | 2 | 0 | 0.63 | False |
+| gis | 3 | 3 | 0 | -0.05 | False |
+| pcb | 15 | 14 | 1 | 0.66 | False |
+| cad | 4 | 1 | 3 | 0.81 | False |
+| mfgsim | 14 | 8 | 6 | nan | True |
+| firmware | 12 | 6 | 6 | 0.58 | False |
+| cam | 13 | 5 | 8 | 0.79 | False |
+| mbd | 17 | 9 | 8 | nan | True |
+| ic | 18 | 7 | 11 | 0.46 | False |
 
 ## Top physical upstream sectors by need
 
