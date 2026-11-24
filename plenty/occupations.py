@@ -28,11 +28,12 @@ MIN_PRODUCTS = 3
 THIN_MIN_OCCUPATIONS = 3
 # OEWS prints '#' for annual wages at or above its top code ($208,000 in May 2021).
 OEWS_TOP_CODE = 208_000.0
-FARM_PREFIXES = ("111", "112")      # crop and animal production: OEWS does not survey them
-# No NAICS industry: general government (OEWS reports it under 999xxx with no BEA match),
-# government enterprises, scrap, used goods, imports and rest of world (S00...), and housing
-# services, which are imputed rents rather than an industry with employees.
-SPECIAL_PREFIXES = ("GSLG", "S00", "531HS")
+# Labels for sectors the join finds no OEWS industry for: crop and animal production (not
+# surveyed); general government (OEWS reports it under 999xxx, with no BEA counterpart), government
+# enterprises, scrap, used goods, imports and rest of world; and housing services, which the
+# crosswalk maps to real-estate lessors but are imputed rents with no employees.
+FARM_PREFIXES = ("111", "112")
+SPECIAL_PREFIXES = ("GSLG", "S00") + tuple(M.HOUSING)
 
 
 def soc6(code: pd.Series) -> pd.Series:
@@ -48,27 +49,27 @@ def software_map() -> pd.DataFrame:
     return pd.read_csv(M.CONFIG / "software_capabilities.csv", dtype=str).fillna("")
 
 
-def _noncapturing(pattern: str) -> str:
-    """Make groups non-capturing so pandas does not warn that they go unused."""
-    return re.sub(r"(?<!\\)\((?!\?)", "(?:", pattern)
+def _search(pattern: str, values) -> set[str]:
+    rx = re.compile(pattern, re.IGNORECASE)
+    return {v for v in values if rx.search(v)}
 
 
-def software_matches(sw: pd.DataFrame | None = None, smap: pd.DataFrame | None = None) -> pd.DataFrame:
-    """One row per (O*NET occupation, product, capability) the software map matches."""
-    sw = pd.read_csv(OCC / "onet_software_skills.csv") if sw is None else sw
-    smap = software_map() if smap is None else smap
-    example = sw["Workplace Example"].fillna("")
-    category = sw["Element Name"].fillna("")
+def software_matches() -> pd.DataFrame:
+    """One row per (O*NET occupation, product, capability, map rule) the software map matches.
+
+    Patterns are matched once per distinct product or category name, not once per listing."""
+    sw = pd.read_csv(OCC / "onet_software_skills.csv").fillna("")
+    example, category = sw["Workplace Example"], sw["Element Name"]
+    names = {"example": example.unique(), "category": category.unique()}
     hits = []
-    for r in smap.itertuples():
+    for rule, r in software_map().iterrows():
         target = example if r.field == "example" else category
-        m = target.str.contains(_noncapturing(r.pattern), case=False, regex=True)
+        m = target.isin(_search(r.pattern, names[r.field]))
         if r.exclude:
-            m &= ~example.str.contains(_noncapturing(r.exclude), case=False, regex=True)
-        if m.any():
-            hits.append(pd.DataFrame({"onet_soc": sw.loc[m, "O*NET-SOC Code"].values,
-                                      "example": example[m].values, "capability": r.capability}))
-    return pd.concat(hits).drop_duplicates(ignore_index=True)
+            m &= ~example.isin(_search(r.exclude, names["example"]))
+        hits.append(pd.DataFrame({"onet_soc": sw.loc[m, "O*NET-SOC Code"].values,
+                                  "example": example[m].values, "capability": r.capability, "rule": rule}))
+    return pd.concat(hits, ignore_index=True)
 
 
 def product_counts(matches: pd.DataFrame) -> pd.DataFrame:
@@ -84,25 +85,27 @@ def uses(matches: pd.DataFrame, occupations: pd.Series, min_products: int = MIN_
     return (product_counts(matches) >= min_products).astype(int).reindex(idx, fill_value=0)
 
 
-def coverage(matches: pd.DataFrame, titles: pd.Series | None = None) -> pd.DataFrame:
+def coverage(matches: pd.DataFrame, titles: pd.Series | None = None,
+             min_products: int = MIN_PRODUCTS) -> pd.DataFrame:
     """Per capability: products and occupations matched, and whether coverage is too thin.
 
     titles (O*NET-SOC code -> title), if given, adds the counted occupations by name."""
     caps = capabilities()
     g = matches.assign(soc=soc6(matches.onet_soc)).groupby("capability")
+    counted = product_counts(matches) >= min_products
     cov = pd.DataFrame({
         "products": g.example.nunique(),
         "onet_occupations": g.onet_soc.nunique(),
         "soc_occupations_any": g.soc.nunique(),
-        "soc_occupations_counted": (product_counts(matches) >= MIN_PRODUCTS).sum(),
+        "soc_occupations_counted": counted.sum(),
     }).reindex(caps).fillna(0).astype(int)
     cov["thin"] = cov.soc_occupations_counted < THIN_MIN_OCCUPATIONS
-    top = matches.groupby(["capability", "example"]).size().rename("n").reset_index()
+    top = (matches.drop_duplicates(["onet_soc", "example", "capability"])
+           .groupby(["capability", "example"]).size().rename("n").reset_index())
     cov["top_products"] = (top.sort_values("n", ascending=False).groupby("capability").example
                            .apply(lambda s: "; ".join(s.head(4))).reindex(caps).fillna(""))
     if titles is not None:
         t = titles.groupby(soc6(titles.index.to_series())).first()
-        counted = product_counts(matches) >= MIN_PRODUCTS
         cov["occupations_counted"] = [
             "; ".join(t.reindex(counted.index[counted[k]]).fillna("?")) for k in caps]
     cov.index.name = "capability"
@@ -151,21 +154,22 @@ def bea_industries(commodities: list[str], industries: dict[str, list[str]]) -> 
     """
     x = pd.read_csv(OCC / "bea_naics_2017.csv", dtype=str)
     x = x[x.naics.str.fullmatch(r"\d+")]
+    crosswalk = x.naics.str.slice(0, 4).groupby(x.bea_detail).apply(set)
     out = {}
     for c in commodities:
-        codes = set(x.naics[x.bea_detail == c].str.slice(0, 4))
+        codes = crosswalk.get(c, set())
         mine = {p for p in codes if not any(q != p and q.startswith(p) for q in codes)}
         out[c] = sorted(i for i, cov in industries.items()
                         if any(p.startswith(q) or q.startswith(p) for p in mine for q in cov))
     return out
 
 
-def _fallback_reason(c: str) -> str | None:
+def _fallback_reason(c: str) -> str:
     if c.startswith(FARM_PREFIXES):
         return "farm"
     if c.startswith(SPECIAL_PREFIXES):
         return "government_or_special"
-    return None
+    return "no_oews_match"
 
 
 def _occupation_uses(occ_codes: pd.Index, u: pd.DataFrame) -> pd.DataFrame:
@@ -175,20 +179,18 @@ def _occupation_uses(occ_codes: pd.Index, u: pd.DataFrame) -> pd.DataFrame:
     for code in occ_codes:
         if code in u.index:
             rows[code] = u.loc[code]
-            continue
-        stem = code.rstrip("0")
-        under = u[u.index.str.startswith(stem)] if stem != code else u.iloc[0:0]
-        rows[code] = under.max() if len(under) else pd.Series(np.nan, index=u.columns)
+        else:  # an all-NaN row when nothing in O*NET sits under the code
+            rows[code] = u[u.index.str.startswith(code.rstrip("0"))].max()
     return pd.DataFrame(rows).T
 
 
-def shares(commodities: list[str], u: pd.DataFrame, o: pd.DataFrame | None = None) -> pd.DataFrame:
+def shares(commodities: list[str], u: pd.DataFrame) -> pd.DataFrame:
     """Commodity x capability wage-bill shares in [0, 1], with provenance columns.
 
     Occupations with suppressed employment or wages are dropped (the share renormalizes over the
     rest). Occupations missing from O*NET count as not using any capability.
     """
-    o = oews() if o is None else o
+    o = oews()
     det = o[o.O_GROUP.str.lower() == "detailed"]
     totals = o[o.OCC_CODE == "00-0000"]
     tot = totals.set_index("NAICS").wagebill
@@ -200,11 +202,8 @@ def shares(commodities: list[str], u: pd.DataFrame, o: pd.DataFrame | None = Non
     ind = bea_industries(commodities, covers)
     rows = []
     for c in commodities:
-        reason = _fallback_reason(c)
-        naics = ind[c] if reason is None else []
-        if reason is None and not naics:
-            reason = "no_oews_match"
-        rec = {"commodity": c, "source": "oews" if reason is None else f"fallback:{reason}",
+        naics = [] if c in M.HOUSING else ind[c]
+        rec = {"commodity": c, "source": "oews" if naics else f"fallback:{_fallback_reason(c)}",
                "oews_industries": ";".join(naics)}
         if naics:
             w = wb.loc[naics].sum()
@@ -235,10 +234,8 @@ def usage_matrix(sh: pd.DataFrame, scores: pd.DataFrame, cov: pd.DataFrame) -> p
     pooled = {s: X.values[S.values == s].mean() for s in range(4)}
     U = pd.DataFrame(index=scores.index, columns=caps, dtype=float)
     for k in caps:
-        level = dict(pooled)
+        U[k] = scores[k].map(pooled)
         if k in ok:
-            level.update({s: v for s, v in X[k].groupby(S[k]).mean().items()})
-        U[k] = scores[k].map(level)
-        if k in ok:
+            U[k] = scores[k].map({**pooled, **X[k].groupby(S[k]).mean()})
             U.loc[measured, k] = X[k]
     return U

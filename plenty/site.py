@@ -16,6 +16,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from . import occupations as O
+
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG, RESULTS, WEB, SITE = ROOT / "config", ROOT / "results", ROOT / "plenty" / "web", ROOT / "site"
 REPO = "https://github.com/bmander/plenty"
@@ -71,7 +73,6 @@ class Data:
         self.scores = pd.read_csv(CONFIG / "archetype_capabilities.csv").set_index("archetype")
         self.work = pd.read_csv(CONFIG / "work.csv").fillna("")
         self.agree = pd.read_csv(RESULTS / "score_agreement.csv", index_col=0)
-        self.coverage = pd.read_csv(RESULTS / "software_coverage.csv", index_col=0)
         self.occ_shares = pd.read_csv(RESULTS / "occupation_capability_shares.csv", index_col=0)
         self.has_board = self.caps.board.notna()
 
@@ -472,15 +473,17 @@ def occupations_section(d: Data) -> str:
     n_all, n_meas = len(sh), int((sh.source == "oews").sum())
     fallback = sh.source[sh.source != "oews"].str.replace("fallback:", "").value_counts()
     thin = [d.cap_name(k) for k in a.index[a.thin]]
-    rho = d.sens.loc[d.sens.index.str.startswith("occupation"), "spearman_vs_headline"].iloc[0]
+    rho = d.ct["volume weight"].corr(d.ct["occupational weight"], method="spearman")
+    min_products = {2: "two", 3: "three", 4: "four", 5: "five"}.get(O.MIN_PRODUCTS, str(O.MIN_PRODUCTS))
     order = a.sort_values("rank_change").index
     rows = [f'<tr><td>{e(d.cap_name(k))}</td><td class="num">{int(a.at[k, "elicited_rank"])}</td>'
             f'<td class="num">{int(a.at[k, "occupational_rank"])}</td>'
             f'<td class="num">{"&ndash;" if a.at[k, "thin"] else f"{a.at[k, "spearman_across_sectors"]:.2f}"}</td></tr>'
             for k in order]
 
-    def rk(k):
-        return f'{int(a.at[k, "elicited_rank"])} to {int(a.at[k, "occupational_rank"])}'
+    def moves(k):
+        r0, r1 = int(a.at[k, "elicited_rank"]), int(a.at[k, "occupational_rank"])
+        return f"ranks {r0} in both" if r0 == r1 else f"{'falls' if r1 > r0 else 'rises'} from {r0} to {r1}"
 
     return f"""
 <h2 id="occupations">Checking the scores against occupations</h2>
@@ -491,7 +494,7 @@ replaced by a measured proxy: the share of its wage bill paid to occupations tha
 <li><b>Who uses what.</b> O*NET 31.0 lists the software each occupation uses on the job.
 <a href="{REPO}/blob/main/config/software_capabilities.csv"><code>config/software_capabilities.csv</code></a> maps product
 names (Ansys, Abaqus, HEC-RAS, RSLogix, ArcGIS...) and a few specific O*NET categories (CAM, GIS, map creation) to capabilities.
-An occupation counts as using a capability when it lists at least three of its products. With one, generalists dominate:
+An occupation counts as using a capability when it lists at least {min_products} of its products. With one, generalists dominate:
 software developers list 430 products, Verilog and a genome assembler among them, and their wages would put most
 capabilities into every bank.</li>
 <li><b>Who works where.</b> OEWS May 2021 gives employment and mean wage by occupation in each 4-digit NAICS industry,
@@ -511,20 +514,20 @@ scored <i>s</i>.</li>
                "from its elicited scores, rescaled with the pooled average of the other capabilities, and says nothing new.")}
 <h3>Where they disagree</h3>
 <ul>
-<li><b>Process flowsheeting falls from {rk("process")}.</b> Only chemical, mechanical and biomedical engineers list
+<li><b>Process flowsheeting {moves("process")}.</b> Only chemical, mechanical and biomedical engineers list
 flowsheeting tools; the operators who run the plants do not. As a measure of how much work goes through the software,
 the occupational figure is right. As a measure of dependence it is wrong: a refinery or a chemical plant cannot be designed
 without it. Believe the elicited score about dependence and the occupational one about volume.</li>
-<li><b>Logistics falls from {rk("logistics")}, and agreement across sectors is near zero.</b> The scores call trade
+<li><b>Logistics {moves("logistics")}, and agreement across sectors is {a.at["logistics", "spearman_across_sectors"]:.2f}.</b> The scores call trade
 critically dependent on logistics optimization, but stores and wholesalers employ almost no logisticians, dispatchers or
 planners; warehousing has the highest share at {sh.loc["493000", "logistics"]:.0%}. Retail routing and inventory
 optimization is bought as software or service, not staffed. The occupational figure is the more believable account of
 where the work happens; the elicited "trade = 3" overstates it.</li>
-<li><b>IC design rises from {rk("ic")}.</b> The scores give IC design only to semiconductors, but electrical and
+<li><b>IC design {moves("ic")}.</b> The scores give IC design only to semiconductors, but electrical and
 computer hardware engineers who list HDL, FPGA and circuit-simulation tools work across aerospace, defense, computers and
 instruments. The occupational figure is more believable: FPGA and ASIC design happens well outside chip makers, though
 O*NET does not separate FPGA work from full custom chip design.</li>
-<li><b>Geospatial ({rk("gis")}) agrees on rank but not on where, and agreement across sectors is near zero.</b> The scores put its weight on farming, extraction
+<li><b>Geospatial {moves("gis")}, but agreement across sectors is {a.at["gis", "spearman_across_sectors"]:.2f}.</b> The scores put its weight on farming, extraction
 and utilities; occupations put it on engineering services, consulting and research, and farms are not in OEWS at all.
 Neither is complete: farm operators who run GPS guidance do not list GIS products.</li>
 </ul>
@@ -533,7 +536,7 @@ Neither is complete: farm operators who run GPS guidance do not list GIS product
 <li>It measures who uses the software, not whether the sector could run without it. Two engineers running FEA on every
 product are a small share of the wage bill and a hard dependency. That is why exposure still comes from the elicited scores.</li>
 <li>O*NET records that an occupation uses a product, not how many hours.</li>
-<li>The software map and the three-product rule are judgment calls, though much smaller and easier to check than the score
+<li>The software map and the {min_products}-product rule are judgment calls, though much smaller and easier to check than the score
 matrix.</li>
 <li>Work bought from engineering firms shows up in those firms, not in the buyer: a utility that contracts out its
 hydraulic modeling looks like it does none.</li>

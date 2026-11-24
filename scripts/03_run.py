@@ -19,6 +19,7 @@ SERVICES = {"trade", "finance_insurance", "real_estate_housing", "professional_a
 
 
 BREADTH_MIN = 9.0
+OCC_VARIANT = "occupation-based usage (O*NET x OEWS)"
 
 
 def md(df, floatfmt="{:.3f}"):
@@ -93,30 +94,29 @@ def main():
     occ = A.run(m, usage=O.usage_matrix(shares, S, cov)).capabilities.weight_equal_need
     measured = shares.source == "oews"
     elicited_w = S.loc[measured].replace(A.SCORE_WEIGHT)
+    base = c.weight_equal_need
     agree = pd.DataFrame({
         "spearman_across_sectors": [np.nan if cov.at[k, "thin"] else spearmanr(elicited_w[k], shares.loc[measured, k])[0]
                                     for k in S.columns],
-        "n_sectors": int(measured.sum()),
         "thin": cov.thin,
-        "elicited_weight": c.weight_equal_need,
+        "elicited_weight": base,
         "occupational_weight": occ,
+        "elicited_rank": base.rank(ascending=False).astype(int),
+        "occupational_rank": occ.rank(ascending=False).astype(int),
     }, index=S.columns)
-    agree["elicited_rank"] = agree.elicited_weight.rank(ascending=False).astype(int)
-    agree["occupational_rank"] = agree.occupational_weight.rank(ascending=False).astype(int)
     agree["rank_change"] = agree.elicited_rank - agree.occupational_rank
     agree.index.name = "capability"
     agree.round(4).to_csv(OUT / "score_agreement.csv")
 
     # Sensitivity of the capability ranking.
     variants = {
-        "occupation-based usage (O*NET x OEWS)": occ,
+        OCC_VARIANT: occ,
         "linear score weights (1/3, 2/3, 1)": A.run(m, score_weight=A.SCORE_WEIGHT_LINEAR).capabilities.weight_equal_need,
         "no capital endogenization": r0.capabilities.weight_equal_need,
         "capital spread by operating surplus only (no user rules)": A.run(M.build(capital_rules=False)).capabilities.weight_equal_need,
         "needs weighted by US spending": c.weight_spending,
         "exposure through critical sectors (instead of volume)": c.exposure_mean,
     }
-    base = c.weight_equal_need
     top5 = set(base.sort_values(ascending=False).index[:5])
     sens = pd.DataFrame([dict(variant=k, spearman_vs_headline=spearmanr(base, v)[0],
                               top5_overlap=len(top5 & set(v.sort_values(ascending=False).index[:5])),
@@ -125,7 +125,7 @@ def main():
     sens.round(3).to_csv(OUT / "sensitivity.csv")
 
     ranks = pd.DataFrame({
-        "volume_rank": base.rank(ascending=False).astype(int),
+        "volume_rank": agree.elicited_rank,
         "exposure_rank": c.exposure_mean.rank(ascending=False).astype(int),
     })
     ranks["worst_rank"] = ranks.max(axis=1)
@@ -172,13 +172,13 @@ def main():
     L.append(f"Occupation-based usage (O*NET 31.0 software lists x OEWS May 2021 wage bills) measured for "
              f"{int(measured.sum())} of {len(shares)} commodities; the rest, and capabilities with thin "
              f"coverage ({', '.join(cov.index[cov.thin]) or 'none'}), use elicited scores on the occupational "
-             f"scale. Rank correlation of the capability ranking: {spearmanr(base, occ)[0]:.2f}.\n")
+             f"scale. Rank correlation of the capability ranking: {sens.at[OCC_VARIANT, "spearman_vs_headline"]:.2f}.\n")
     L.append(md(agree.sort_values("rank_change")[["elicited_rank", "occupational_rank", "rank_change",
                                                    "spearman_across_sectors", "thin"]], "{:.2f}"))
     L.append("\n## Top physical upstream sectors by need\n")
     for n in needs:
-        u = upstream[upstream.need == n].head(5)
-        L.append(f"- **{n}**: " + "; ".join(f"{x['name']} ({x.output_per_need_dollar:.3f})" for _, x in u.iterrows()))
+        top = upstream[upstream.need == n].head(5)
+        L.append(f"- **{n}**: " + "; ".join(f"{x['name']} ({x.output_per_need_dollar:.3f})" for _, x in top.iterrows()))
     (OUT / "summary.md").write_text("\n".join(L) + "\n")
     print("\n".join(L))
 

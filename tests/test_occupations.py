@@ -43,7 +43,8 @@ def test_software_map_is_consistent(matches):
     for r in smap.itertuples():
         re.compile(r.pattern)
         re.compile(r.exclude)
-        assert len(O.software_matches(smap=smap.iloc[[r.Index]])) > 0, f"rule matches nothing: {r.pattern}"
+    dead = smap.pattern[~smap.index.isin(matches.rule)]
+    assert dead.empty, f"rules that match nothing: {list(dead)}"
     assert set(matches.capability) == set(O.capabilities())
 
 
