@@ -4,7 +4,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
-from flourishing import model as M, analysis as A
+from plenty import model as M, analysis as A
 
 OUT = M.ROOT / "results"
 OUT.mkdir(exist_ok=True)

@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from flourishing import model as M, analysis as A
+from plenty import model as M, analysis as A
 
 
 @pytest.fixture(scope="module")

@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from flourishing import model as M
+from plenty import model as M
 
 RES, FIG = M.ROOT / "results", M.ROOT / "figures"
 SURFACE, INK, INK2, GRID, BLUE = "#fcfcfb", "#0b0b0b", "#52514e", "#e4e3df", "#2a78d6"

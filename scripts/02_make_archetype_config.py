@@ -5,7 +5,7 @@ Run once to seed; the CSV is then the source of truth. First matching rule wins.
 import sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import pandas as pd
-from flourishing import model as M
+from plenty import model as M
 
 RULES = [
     ("accounting", ["S00401", "S00402", "S00300", "S00900", "4200ID"]),

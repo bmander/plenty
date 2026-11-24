@@ -1,7 +1,10 @@
-# flourishing-io
+# plenty
 
-A first quantitative pass at one question: **which engineering capabilities sit on the
-critical path to the things people need, and how heavily?**
+Planning in the open for the machines behind human needs: **collect needs, collect current
+capabilities, identify gaps, dispatch work.**
+
+What is here so far is the first step of "identify gaps": a quantitative pass at which
+engineering capabilities sit on the critical path to the things people need, and how heavily.
 
 The method is input-output analysis. Define a basket of needs (food, shelter, health, and so
 on), trace everything the economy must produce to deliver it, including the machines and
@@ -167,7 +170,7 @@ Limits, most important first:
 
     config/        the judgment calls: needs, basket, capital allocation, archetypes, scores
     data/bea/      BEA 2017 detail tables (public domain, via USEPA/useeior)
-    flourishing/   model.py (Leontief + capital), analysis.py (measures)
+    plenty/        model.py (Leontief + capital), analysis.py (measures)
     scripts/       extraction, config seeding, run, figures
     results/       CSV outputs and summary.md
     tests/         accounting identities and config consistency
