@@ -145,19 +145,16 @@ def bea_industries(commodities: list[str], industries: dict[str, list[str]]) -> 
     """BEA detail code -> the OEWS industries it draws its wage bill from.
 
     industries maps OEWS industry code -> NAICS prefixes it covers. A BEA code is matched through
-    its 4-digit crosswalk codes (or its coarsest-available ones: construction is mapped only to
-    '23'); an OEWS industry is used when one of its prefixes nests with one of the BEA code's.
+    the most specific of its crosswalk codes on each branch, cut to 4 digits (residential
+    construction maps to 2361, 2372 and the whole of 238); an OEWS industry is used when one of
+    its prefixes nests with one of those.
     """
     x = pd.read_csv(OCC / "bea_naics_2017.csv", dtype=str)
     x = x[x.naics.str.fullmatch(r"\d+")]
     out = {}
     for c in commodities:
-        codes = x.naics[x.bea_detail == c]
-        if codes.empty:
-            out[c] = []
-            continue
-        d = min(4, codes.str.len().max())
-        mine = set(codes[codes.str.len() == d])
+        codes = set(x.naics[x.bea_detail == c].str.slice(0, 4))
+        mine = {p for p in codes if not any(q != p and q.startswith(p) for q in codes)}
         out[c] = sorted(i for i, cov in industries.items()
                         if any(p.startswith(q) or q.startswith(p) for p in mine for q in cov))
     return out

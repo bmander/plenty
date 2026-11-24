@@ -128,3 +128,17 @@ def test_run_with_usage_matches_scores_when_given_the_scores():
     assert np.allclose(base.exposure_mean, same.exposure_mean)
     with pytest.raises(ValueError):
         A.run(m, usage=S.replace(A.SCORE_WEIGHT).astype(float).iloc[:-1])
+
+
+def test_bea_codes_reach_coarse_and_aggregate_oews_industries(sh):
+    ind = sh.oews_industries.fillna("").str.split(";")
+    # single-family housing: 2361, 2372 and the whole 3-digit 238 (specialty trades), not 2362
+    assert set(ind["233411"]) == {"236100", "237200", "238100", "238200", "238300", "238900"}
+    assert ind["333111"] == ["3330A1"]                            # farm machinery inside an OEWS aggregate
+    assert ind["541300"] == ["541300"]
+    assert ind["491000"] == ["491100"]                            # postal service is measured
+
+
+def test_thin_capabilities_are_flagged(cov):
+    assert (cov.thin == (cov.soc_occupations_counted < O.THIN_MIN_OCCUPATIONS)).all()
+    assert not cov.loc[["cad", "fea", "gis", "controls"], "thin"].any()
