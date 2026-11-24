@@ -77,7 +77,11 @@ class Result:
 
 
 def run(m: M.Model, reach_eps=(0.0003, 0.001, 0.003), cap_eps=(0.001, 0.01, 0.05),
-        critical_score: int = 3, score_weight: dict | None = None) -> Result:
+        critical_score: int = 3, score_weight: dict | None = None,
+        usage: pd.DataFrame | None = None) -> Result:
+    """usage: optional commodity x capability share in [0, 1] (e.g. occupations.usage_matrix)
+    used in place of score-weighted scores for the volume measures. Exposure and reach always
+    come from the elicited scores (they are about criticality, not usage)."""
     t = m.t
     com = t.commodities
     needs = included_needs()
@@ -113,7 +117,12 @@ def run(m: M.Model, reach_eps=(0.0003, 0.001, 0.003), cap_eps=(0.001, 0.01, 0.05
     # --- capability measures
     S = capability_scores(t)
     sw = score_weight or SCORE_WEIGHT
-    C = S.replace(sw).values.astype(float)
+    if usage is None:
+        C = S.replace(sw).values.astype(float)
+    else:
+        C = usage.reindex(index=com, columns=S.columns).values.astype(float)
+        if np.isnan(C).any():
+            raise ValueError("usage matrix is missing commodities or capabilities")
     va = X * v[:, None]                            # value added in j attributable to need n, $M
     cap_by_need = pd.DataFrame((C.T @ va) / va.sum(axis=0)[None, :], index=S.columns, columns=needs)
     caps = pd.DataFrame(index=S.columns)

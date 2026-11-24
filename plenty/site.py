@@ -16,6 +16,8 @@ from pathlib import Path
 
 import pandas as pd
 
+from . import occupations as O
+
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG, RESULTS, WEB, SITE = ROOT / "config", ROOT / "results", ROOT / "plenty" / "web", ROOT / "site"
 REPO = "https://github.com/bmander/plenty"
@@ -70,6 +72,8 @@ class Data:
         self.arch = pd.read_csv(RESULTS / "archetypes.csv", index_col=0)
         self.scores = pd.read_csv(CONFIG / "archetype_capabilities.csv").set_index("archetype")
         self.work = pd.read_csv(CONFIG / "work.csv").fillna("")
+        self.agree = pd.read_csv(RESULTS / "score_agreement.csv", index_col=0)
+        self.occ_shares = pd.read_csv(RESULTS / "occupation_capability_shares.csv", index_col=0)
         self.has_board = self.caps.board.notna()
 
     def cap_name(self, k):
@@ -262,14 +266,19 @@ are over a third of food. A basket in physical units (calories, square meters, k
 def capabilities_page(d: Data) -> str:
     order = d.ct.sort_values("volume weight", ascending=False).index
     vmax, emax = d.ct["volume weight"].max(), d.ct["exposure"].max()
+    omax = d.ct["occupational weight"].max()
     rows = []
     for k in order:
         r = d.ct.loc[k]
         critical = [words(a) for a in d.scores.index[d.scores[k] == 3]]
         crit = ", ".join(critical) if critical else "none scored as critical"
+        otip = f"Occupational rank {int(r.occupational_rank)} of {len(d.ct)}"
+        if d.agree.at[k, "thin"]:
+            otip += " (too few occupations to measure: elicited scores, rescaled)"
         rows.append(
             f'<tr id="{k}"><th scope="row" class="cap">{e(d.cap_name(k))}<div class="dim" style="font-weight:400">{e(d.caps.at[k, "description"].replace("; ", ", "))}</div></th>'
             f'<td data-v="{r["volume weight"]}">{bar(r["volume weight"], vmax, f3(r["volume weight"]), f"Volume rank {int(r.volume_rank)} of {len(d.ct)}")}</td>'
+            f'<td data-v="{r["occupational weight"]}">{bar(r["occupational weight"], omax, f3(r["occupational weight"]), otip)}</td>'
             f'<td data-v="{r["exposure"]}">{bar(r["exposure"], emax, f3(r["exposure"]), f"Exposure rank {int(r.exposure_rank)} of {len(d.ct)}")}</td>'
             f'<td class="num" data-v="{r["reach 1c"]}">{r["reach 1c"]:.0%}</td>'
             f'<td class="wrap dim">{e(crit)}</td>'
@@ -281,10 +290,12 @@ needs passes through sectors that depend on them.</p>
 <p class="caveat">This page shows demand for each capability. It does not yet show supply: how far today's open
 tools are from the state of the art. <a href="work.html#inventory">Collecting that</a> is the next step of the loop.</p>
 {table(
-    [th("Capability"), th("Weight", sort="num"), th("Exposure", sort="num"), th("Reach at 1&cent;", "num", "num"),
-     th("Sectors that cannot run without it"), th("Open leaderboard")],
+    [th("Capability"), th("Weight", sort="num"), th("Occupational weight", sort="num"), th("Exposure", sort="num"),
+     th("Reach at 1&cent;", "num", "num"), th("Sectors that cannot run without it"), th("Open leaderboard")],
     rows,
-    caption="Weight: score-weighted share of the basket's embodied value added. Exposure: dollars of output from sectors that "
+    caption="Weight: score-weighted share of the basket's embodied value added. Occupational weight: the same measure with each "
+            "sector's elicited score replaced by the share of its wage bill paid to occupations that use the capability's software "
+            "(<a href=\"method.html#occupations\">how</a>); compare ranks, not levels. Exposure: dollars of output from sectors that "
             "cannot run without the capability, per dollar of basket. Reach at 1&cent;: share of the basket with at least one cent "
             "per dollar passing through those sectors. Click a column heading to sort.")}
 <h2>Reading the two measures together</h2>
@@ -457,12 +468,89 @@ but bought by nearly every need. Breadth uses observed purchases only. Hover a p
     return page("Sectors", "sectors.html", body)
 
 
+def occupations_section(d: Data) -> str:
+    a, sh = d.agree, d.occ_shares
+    n_all, n_meas = len(sh), int((sh.source == "oews").sum())
+    fallback = sh.source[sh.source != "oews"].str.replace("fallback:", "").value_counts()
+    thin = [d.cap_name(k) for k in a.index[a.thin]]
+    rho = d.ct["volume weight"].corr(d.ct["occupational weight"], method="spearman")
+    min_products = {2: "two", 3: "three", 4: "four", 5: "five"}.get(O.MIN_PRODUCTS, str(O.MIN_PRODUCTS))
+    order = a.sort_values("rank_change").index
+    rows = [f'<tr><td>{e(d.cap_name(k))}</td><td class="num">{int(a.at[k, "elicited_rank"])}</td>'
+            f'<td class="num">{int(a.at[k, "occupational_rank"])}</td>'
+            f'<td class="num">{"&ndash;" if a.at[k, "thin"] else f"{a.at[k, "spearman_across_sectors"]:.2f}"}</td></tr>'
+            for k in order]
+
+    def moves(k):
+        r0, r1 = int(a.at[k, "elicited_rank"]), int(a.at[k, "occupational_rank"])
+        return f"ranks {r0} in both" if r0 == r1 else f"{'falls' if r1 > r0 else 'rises'} from {r0} to {r1}"
+
+    return f"""
+<h2 id="occupations">Checking the scores against occupations</h2>
+<p>The capability scores are judgment. As a check on the <em>usage</em> half of that judgment, each sector's score is
+replaced by a measured proxy: the share of its wage bill paid to occupations that use the capability's software.</p>
+<pre><code>share[j, k] = sum_o wagebill[j, o] uses[o, k] / sum_o wagebill[j, o]</code></pre>
+<ul>
+<li><b>Who uses what.</b> O*NET 31.0 lists the software each occupation uses on the job.
+<a href="{REPO}/blob/main/config/software_capabilities.csv"><code>config/software_capabilities.csv</code></a> maps product
+names (Ansys, Abaqus, HEC-RAS, RSLogix, ArcGIS...) and a few specific O*NET categories (CAM, GIS, map creation) to capabilities.
+An occupation counts as using a capability when it lists at least {min_products} of its products. With one, generalists dominate:
+software developers list 430 products, Verilog and a genome assembler among them, and their wages would put most
+capabilities into every bank.</li>
+<li><b>Who works where.</b> OEWS May 2021 gives employment and mean wage by occupation in each 4-digit NAICS industry,
+joined to BEA sectors through the BEA-NAICS concordance. May 2021 is the first year on the same occupation codes as O*NET
+and the last on 2017 industry codes; it is four years after the input-output tables.</li>
+<li><b>Holes.</b> {n_meas} of {n_all} sectors are measured. The rest keep their elicited scores: farms
+({fallback.get("farm", 0)}, which OEWS does not survey), government, housing and special accounts
+({fallback.get("government_or_special", 0)}), and {fallback.get("no_oews_match", 0)} with no OEWS industry.
+{"Too few occupations use " + " or ".join(thin) + " to measure them, so they also stay on elicited scores." if thin else ""}
+Elicited scores are put on the occupational scale: a score of <i>s</i> becomes the average share of measured sectors
+scored <i>s</i>.</li>
+</ul>
+{table([th("Capability"), th("Elicited rank", "num"), th("Occupational rank", "num"), th("Agreement across sectors", "num")], rows,
+       caption=f"Rank correlation between the two capability rankings: {rho:.2f}. Agreement across sectors: rank correlation, over the "
+               f"{n_meas} measured sectors, between the elicited weight and the occupational share. Sorted by how far the "
+               "occupational measure moves the capability up. A dash marks a capability too thin to measure: its occupational rank comes "
+               "from its elicited scores, rescaled with the pooled average of the other capabilities, and says nothing new.")}
+<h3>Where they disagree</h3>
+<ul>
+<li><b>Process flowsheeting {moves("process")}.</b> Only chemical, mechanical and biomedical engineers list
+flowsheeting tools; the operators who run the plants do not. As a measure of how much work goes through the software,
+the occupational figure is right. As a measure of dependence it is wrong: a refinery or a chemical plant cannot be designed
+without it. Believe the elicited score about dependence and the occupational one about volume.</li>
+<li><b>Logistics {moves("logistics")}, and agreement across sectors is {a.at["logistics", "spearman_across_sectors"]:.2f}.</b> The scores call trade
+critically dependent on logistics optimization, but stores and wholesalers employ almost no logisticians, dispatchers or
+planners; warehousing has the highest share at {sh.loc["493000", "logistics"]:.0%}. Retail routing and inventory
+optimization is bought as software or service, not staffed. The occupational figure is the more believable account of
+where the work happens; the elicited "trade = 3" overstates it.</li>
+<li><b>IC design {moves("ic")}.</b> The scores give IC design only to semiconductors, but electrical and
+computer hardware engineers who list HDL, FPGA and circuit-simulation tools work across aerospace, defense, computers and
+instruments. The occupational figure is more believable: FPGA and ASIC design happens well outside chip makers, though
+O*NET does not separate FPGA work from full custom chip design.</li>
+<li><b>Geospatial {moves("gis")}, but agreement across sectors is {a.at["gis", "spearman_across_sectors"]:.2f}.</b> The scores put its weight on farming, extraction
+and utilities; occupations put it on engineering services, consulting and research, and farms are not in OEWS at all.
+Neither is complete: farm operators who run GPS guidance do not list GIS products.</li>
+</ul>
+<h3>Limits of the occupational measure</h3>
+<ul>
+<li>It measures who uses the software, not whether the sector could run without it. Two engineers running FEA on every
+product are a small share of the wage bill and a hard dependency. That is why exposure still comes from the elicited scores.</li>
+<li>O*NET records that an occupation uses a product, not how many hours.</li>
+<li>The software map and the {min_products}-product rule are judgment calls, though much smaller and easier to check than the score
+matrix.</li>
+<li>Work bought from engineering firms shows up in those firms, not in the buyer: a utility that contracts out its
+hydraulic modeling looks like it does none.</li>
+</ul>
+"""
+
+
 def method_page(d: Data) -> str:
     srows = [f'<tr><td class="wrap">{e(k[0].upper() + k[1:])}</td><td class="num">{r.spearman_vs_headline:.2f}</td>'
              f'<td class="num">{int(r.top5_overlap)} of 5</td></tr>' for k, r in d.sens.iterrows()]
     arows = [f'<tr><td>{e(words(k))}</td><td class="num">{r.without_capital * 100:.2f}</td><td class="num">{r.output_per_basket_dollar * 100:.2f}</td>'
              f'<td class="num">{r.capital_multiplier:.1f}&times;</td></tr>'
              for k, r in d.arch.sort_values("capital_multiplier", ascending=False).head(8).iterrows()]
+    occ = occupations_section(d)
     body = f"""
 <h1>Method</h1>
 <p class="lede">Input-output analysis: define a basket of needs, trace everything the economy must
@@ -492,7 +580,7 @@ Mixed retail, wholesale and freight margins are split across needs in proportion
 3 means the sector cannot design, run or maintain its product or plant without it, 2 means important and routine,
 1 means incidental. Scores describe the sector's own activity; dependence on suppliers comes from <i>L</i>.
 Scores map to weights of 1.0, 0.3 and 0.1.</p>
-
+{occ}
 <h2>How far to trust it</h2>
 <p>Checked by tests: the Use table balances, the capital matrix conserves investment, and the model reproduces the
 observed output of every sizeable commodity to within 1%, with and without capital.</p>
@@ -501,7 +589,8 @@ observed output of every sizeable commodity to within 1%, with and without capit
 <h3>Limits, most important first</h3>
 <ul>
 <li>The capability scores are one model's opinion. The ranking is arithmetic on those scores. It makes the judgments
-explicit and shows their consequences, and it confirms nothing independently.</li>
+explicit and shows their consequences, and it confirms nothing independently. The
+<a href="#occupations">occupational check</a> tests the usage half of them against data.</li>
 <li>No substitutability. Weight understates a small input with no substitute, and breadth cannot tell a relay from a sign.</li>
 <li>US spending defines the basket. A basket in physical units would shift weight toward farming, water and energy.</li>
 <li>Capital buyers are allocated by rule, not observed. The rules move the per-need figures; the overall ranking does not depend on them.</li>
