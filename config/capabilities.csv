@@ -1,19 +1,19 @@
-capability,description,open_benchmark_status
-cad,3D solid (B-rep) modeling; geometric constraints; drawings,brep-bench; constraint board
-fea,Structural and thermal-stress finite element analysis,FEA board
-cfd,Fluid flow and heat transfer simulation,none listed
-cam,CNC toolpath planning and post-processing,cam-bench
-mfgsim,Manufacturing process simulation: casting; molding; forming; welding; rolling,none listed
-mbd,Multibody dynamics and mechanism kinematics,none listed
-emag,Electromagnetic field simulation: motors; transformers; antennas; signal integrity,none listed
-pcb,PCB design: schematic/HDL; layout; routing,pcbhdlbench; autorouting board
-ic,IC design: synthesis; place and route; circuit simulation; verification,none listed
-controls,Dynamic system simulation; control design; PLC/SCADA programming,none listed
-process,Chemical process flowsheeting; thermodynamics; reaction and separation design,none listed
-power,Power system analysis: load flow; protection; stability,none listed
-civil,Structural frame analysis; code checking; BIM; geotechnics,none listed
-hydraulics,Pipe-network and open-channel hydraulics: water; sewer; gas; pipelines,none listed
-molecular,Molecular and biological modeling: cheminformatics; genomics; bioprocess,none listed
-logistics,Optimization: routing; scheduling; MILP; inventory,none listed
-gis,Geospatial: surveying; mapping; remote sensing; subsurface models; precision agriculture,none listed
-firmware,Embedded software toolchains: compilers; RTOS; verification,none listed
+capability,name,description,board,board_url
+cad,CAD / B-rep,3D solid (B-rep) modeling; geometric constraints; drawings,brep-bench,https://brepbench.org/
+fea,FEA,Structural and thermal-stress finite element analysis,FEA leaderboard,
+cfd,CFD / heat transfer,Fluid flow and heat transfer simulation,,
+cam,CAM,CNC toolpath planning and post-processing,cam-bench,https://github.com/bmander/cam-bench
+mfgsim,Manufacturing process simulation,Casting; molding; forming; welding; rolling,,
+mbd,Multibody dynamics,Mechanism kinematics and multibody dynamics,,
+emag,EM field,Electromagnetic field simulation: motors; transformers; antennas; signal integrity,,
+pcb,PCB design,Schematic or HDL capture; layout; routing,pcbhdlbench,https://github.com/bmander/pcbhdlbench
+ic,IC design,Synthesis; place and route; circuit simulation; verification,,
+controls,Controls / PLC / dynamic simulation,Dynamic system simulation; control design; PLC and SCADA programming,,
+process,Process flowsheeting,Chemical process flowsheets; thermodynamics; reaction and separation design,,
+power,Power systems,Load flow; protection; stability,,
+civil,Civil / structural / BIM,Structural frame analysis; code checking; BIM; geotechnics,,
+hydraulics,Pipe-network hydraulics,Water; sewer; gas and pipeline networks; open channels,,
+molecular,Molecular / bio modeling,Cheminformatics; genomics; bioprocess,,
+logistics,Logistics optimization,Routing; scheduling; mixed-integer programming; inventory,,
+gis,Geospatial,Surveying; mapping; remote sensing; subsurface models; precision agriculture,,
+firmware,Embedded toolchains,Compilers; RTOS; verification for embedded software,,

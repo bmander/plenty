@@ -23,14 +23,14 @@ buildings used up along the way, and then ask which engineering-computation capa
 
 | capability | volume weight | exposure | volume rank | exposure rank | open board today |
 |---|---|---|---|---|---|
-| Logistics optimization | 0.250 | 0.343 | 1 | 2 | |
+| Logistics optimization | 0.249 | 0.343 | 1 | 2 | |
 | Controls / PLC / dynamic simulation | 0.174 | 0.382 | 2 | 1 | |
 | Geospatial | 0.132 | 0.112 | 3 | 10 | |
 | CAD / B-rep | 0.114 | 0.224 | 4 | 3 | yes |
 | Civil / structural / BIM | 0.112 | 0.179 | 5 | 4 | |
 | Process flowsheeting | 0.091 | 0.170 | 6 | 5 | |
 | FEA | 0.086 | 0.167 | 7 | 6 | yes |
-| EM field | 0.076 | 0.127 | 8 | 9 | |
+| EM field | 0.075 | 0.127 | 8 | 9 | |
 | Pipe-network hydraulics | 0.072 | 0.075 | 9 | 14 | |
 | Power systems | 0.070 | 0.085 | 10 | 13 | |
 | CFD / heat transfer | 0.067 | 0.016 | 11 | 16 | |
@@ -155,11 +155,22 @@ Limits, most important first:
 - **Design software only.** Tacit process knowledge, metrology, materials data and general
   mathematics software are not in the capability list.
 
+## Website
+
+`python -m plenty.site` renders a static site into `site/` from `config/` and `results/`: the
+balance of capabilities against open leaderboards, then a page for each step of the loop (needs,
+capabilities, gaps, work), a sortable table of every sector, and the method. Proposed work lives
+in `config/work.csv`.
+
+`.github/workflows/site.yml` rebuilds and publishes it on every push to `main`. GitHub Pages
+must be set to deploy from GitHub Actions (Settings > Pages > Source).
+
 ## Reproduce
 
     pip install -r requirements.txt
     python scripts/03_run.py        # writes results/
     python scripts/04_figures.py    # writes figures/
+    python -m plenty.site           # writes site/
     python -m pytest tests
 
 `scripts/00_extract_bea.py` re-extracts the BEA tables from a checkout of USEPA/useeior.
@@ -168,9 +179,9 @@ Limits, most important first:
 
 ## Layout
 
-    config/        the judgment calls: needs, basket, capital allocation, archetypes, scores
+    config/        the judgment calls: needs, basket, capital allocation, archetypes, scores, proposed work
     data/bea/      BEA 2017 detail tables (public domain, via USEPA/useeior)
-    plenty/        model.py (Leontief + capital), analysis.py (measures)
+    plenty/        model.py (Leontief + capital), analysis.py (measures), site.py and web/ (website)
     scripts/       extraction, config seeding, run, figures
     results/       CSV outputs and summary.md
     tests/         accounting identities and config consistency

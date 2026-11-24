@@ -13,13 +13,9 @@ plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 10, "text.color"
                      "axes.edgecolor": GRID, "axes.labelcolor": INK2, "xtick.color": INK2,
                      "ytick.color": INK, "figure.facecolor": SURFACE, "axes.facecolor": SURFACE,
                      "savefig.facecolor": SURFACE})
-HAS_BOARD = {"cad", "fea", "cam", "pcb"}
-LABEL = {"cad": "CAD / B-rep", "fea": "FEA", "cfd": "CFD / heat transfer", "cam": "CAM",
-         "mfgsim": "Mfg process simulation", "mbd": "Multibody dynamics", "emag": "EM field",
-         "pcb": "PCB design", "ic": "IC design", "controls": "Controls / PLC / dynamics",
-         "process": "Process flowsheeting", "power": "Power systems", "civil": "Civil / structural / BIM",
-         "hydraulics": "Pipe-network hydraulics", "molecular": "Molecular / bio modeling",
-         "logistics": "Logistics optimization", "gis": "Geospatial", "firmware": "Embedded toolchains"}
+_caps = pd.read_csv(M.CONFIG / "capabilities.csv").set_index("capability")
+HAS_BOARD = set(_caps.index[_caps.board.notna()])
+LABEL = _caps["name"].to_dict()
 
 
 def clean(ax):

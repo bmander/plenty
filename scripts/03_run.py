@@ -45,6 +45,8 @@ def main():
     s.insert(s.columns.get_loc("need_breadth") + 1, "need_breadth_observed", r0.sectors.need_breadth)
 
     s.round(6).to_csv(OUT / "sectors.csv")
+    T = r.need_totals
+    pd.DataFrame({"final_demand_musd": T.round(0), "share": (T / T.sum()).round(4)}).rename_axis("need").to_csv(OUT / "needs.csv")
     r.sector_by_need.round(6).to_csv(OUT / "sector_by_need.csv")
     c.round(4).to_csv(OUT / "capabilities.csv")
     r.capability_by_need.round(4).to_csv(OUT / "capability_by_need.csv")
@@ -112,7 +114,6 @@ def main():
 
     # ---- summary.md
     L = []
-    T = r.need_totals
     L.append("## Basket\n")
     nt = pd.DataFrame({"final demand ($B, 2017)": T / 1e3, "share": T / T.sum()}); nt.index.name = "need"
     L.append(md(nt, "{:.2f}"))
