@@ -1,0 +1,6 @@
+variant,spearman_vs_headline,top5_overlap,top5
+"linear score weights (1/3, 2/3, 1)",0.944,5,"logistics, controls, gis, cad, civil"
+no capital endogenization,0.901,3,"logistics, controls, gis, process, emag"
+capital spread by operating surplus only (no user rules),1.0,5,"logistics, controls, gis, cad, civil"
+needs weighted by US spending,0.938,5,"logistics, controls, civil, cad, gis"
+exposure through critical sectors (instead of volume),0.777,4,"controls, logistics, cad, civil, process"

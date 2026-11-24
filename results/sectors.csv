@@ -1,0 +1,403 @@
+commodity,name,archetype,consumed_as,output_per_basket_dollar,output_per_need_dollar_equal,value_added_per_basket_dollar,need_breadth,need_breadth_observed,top_need,reach_0.0003,reach_0.001,reach_0.003,product_breadth
+1111A0,Oilseed farming,crop_farming,none,0.001879,0.001541,0.000869,4.705505,4.228847,food,0.566383,0.139722,0.081463,47.869431
+1111B0,Grain farming,crop_farming,food,0.003539,0.002742,0.0006,5.148839,4.594267,food,0.992573,0.444926,0.130831,53.714941
+111200,Vegetable and melon farming,crop_farming,food,0.001962,0.001257,0.000851,1.286314,1.270733,food,0.065881,0.014885,0.006737,2.827612
+111300,Fruit and tree nut farming,crop_farming,food,0.003234,0.002108,0.001969,1.755888,1.710048,food,0.336407,0.098001,0.019689,7.596075
+111400,"Greenhouse, nursery, and floriculture production",crop_farming,discretionary,0.000515,0.000509,0.000267,8.569447,7.887455,safety,0.343439,0.150708,0.00905,36.421244
+111900,Other crop farming,crop_farming,food,0.001553,0.001297,0.000531,6.256797,5.455781,food,0.740909,0.15467,0.05056,41.033624
+112120,Dairy cattle and milk production,animal_farming,food,0.002839,0.001933,0.000708,2.61095,2.521634,food,0.344879,0.261333,0.057409,15.594126
+1121A0,"Beef cattle ranching and farming, including feedlots and dual-purpose ranching and farming",animal_farming,food,0.006507,0.005362,0.002018,4.11718,3.897996,food,0.531828,0.371648,0.295829,10.688883
+112300,Poultry and egg production,animal_farming,food,0.003106,0.002122,0.000405,2.260954,2.192357,food,0.256929,0.09677,0.048928,8.611855
+112A00,"Animal production, except cattle and poultry and eggs",animal_farming,food,0.002751,0.002208,0.001903,4.104446,3.726152,food,0.450483,0.337637,0.085899,16.523819
+113000,Forestry and logging,forestry_fishing,none,0.002046,0.002199,0.001107,9.960513,8.585546,clothing,1.0,0.75886,0.100431,49.174796
+114000,"Fishing, hunting and trapping",forestry_fishing,food,0.001598,0.001108,0.001224,3.104555,2.919334,food,0.339823,0.153455,0.038921,15.840811
+115000,Support activities for agriculture and forestry,forestry_fishing,food,0.002278,0.001936,0.001717,6.165238,5.245867,food,0.93173,0.278028,0.153048,45.885698
+211000,Oil and gas extraction,oil_gas_extraction,none,0.022896,0.027382,0.014204,7.350255,6.691682,mobility,1.0,1.0,1.0,22.266492
+212100,Coal mining,mining,energy,0.001608,0.002599,0.00059,5.579867,4.584529,energy,0.995897,0.583348,0.116406,17.212089
+212230,"Copper, nickel, lead, and zinc mining",mining,none,0.000607,0.000739,0.000299,9.110333,7.984561,meaning,0.759745,0.127592,0.026817,50.612816
+2122A0,"Iron, gold, silver, and other metal ore mining",mining,none,0.001066,0.00118,0.000407,10.457758,9.909266,energy,0.995897,0.455997,0.022362,68.257651
+212310,Stone mining and quarrying,mining,none,0.00108,0.001103,0.00052,8.53143,8.469006,safety,0.934703,0.325314,0.146102,27.579656
+2123A0,Other nonmetallic mineral mining and quarrying,mining,shelter,0.001212,0.001264,0.000579,8.624508,7.995361,safety,0.96573,0.389755,0.12313,30.921656
+213111,Drilling oil and gas wells,oil_gas_extraction,none,0.00295,0.003492,0.00149,7.357135,6.696162,mobility,1.0,0.687749,0.335605,22.164469
+21311A,Other support activities for mining,mining,none,0.008531,0.01012,0.004637,7.755899,6.830147,mobility,1.0,1.0,0.821358,24.780629
+221100,"Electric power generation, transmission, and distribution",electric_utility,energy,0.033219,0.084841,0.020753,2.65192,2.298054,energy,1.0,1.0,1.0,4.117636
+221200,Natural gas distribution,gas_utility,energy,0.005824,0.019652,0.003664,1.750439,1.62835,energy,1.0,0.894011,0.266178,2.16745
+221300,"Water, sewage and other systems",water_utility,water_sanitation,0.005758,0.018553,0.0028,2.057631,1.944006,water_sanitation,1.0,0.783908,0.269012,2.706335
+233210,Health care structures,construction,none,0.003404,0.001334,0.002255,1.183693,1.0,health,0.072264,0.072264,0.072264,7.867726
+233262,Educational and vocational structures,construction,none,0.007674,0.00726,0.004541,1.082835,1.0,education,0.123182,0.091692,0.091692,2.318936
+230301,Nonresidential maintenance and repair,construction,none,0.012984,0.019364,0.00668,7.934993,7.272817,water_sanitation,1.0,1.0,1.0,26.863671
+230302,Residential maintenance and repair,construction,none,0.00625,0.004088,0.003541,2.338267,2.285725,shelter,0.29105,0.136839,0.119237,3.486033
+2332A0,Office and commercial structures,construction,none,0.009803,0.011197,0.005152,10.307498,1.0,communication,1.0,1.0,1.0,51.583245
+233412,Multifamily residential structures,construction,none,0.00609,0.003231,0.003483,1.893744,1.0,shelter,0.324668,0.208237,0.017398,2.023943
+2334A0,Other residential structures,construction,none,0.01919,0.010011,0.008387,1.556756,2.112544,shelter,0.424365,0.2835,0.119237,2.751732
+233230,Manufacturing structures,construction,none,0.005933,0.006152,0.00361,10.141756,1.0,water_sanitation,1.0,1.0,0.601095,64.796774
+2332D0,Other nonresidential structures,construction,none,0.00802,0.010897,0.004826,6.98216,1.0,safety,1.0,1.0,0.872077,20.691016
+233240,Power and communication structures,construction,none,0.0085,0.017566,0.006241,4.755762,1.0,energy,1.0,1.0,0.839879,12.589541
+233411,Single-family residential structures,construction,none,0.020838,0.010077,0.011689,1.022028,1.0,shelter,0.075179,0.075179,0.075179,1.776826
+2332C0,Transportation structures and highways and streets,construction,none,0.010658,0.013803,0.005829,1.905373,1.0,safety,1.0,0.518102,0.165859,2.382082
+321100,Sawmills and wood preservation,wood_furniture,none,0.003277,0.003162,0.000918,9.955133,9.653649,shelter,1.0,0.968804,0.385018,51.01984
+321200,"Veneer, plywood, and engineered wood product manufacturing",wood_furniture,none,0.002441,0.002165,0.000853,9.280591,9.897848,shelter,1.0,0.755896,0.305387,36.197278
+321910,Millwork,wood_furniture,none,0.001714,0.001596,0.0006,10.356372,10.507525,shelter,1.0,0.822586,0.093751,49.509784
+3219A0,All other wood product manufacturing,wood_furniture,shelter,0.00223,0.001908,0.000717,9.351758,9.647001,shelter,1.0,0.611147,0.125093,46.244883
+327100,Clay product and refractory manufacturing,nonmetallic_minerals,shelter,0.001108,0.000976,0.00054,9.198179,7.603816,shelter,0.906516,0.398423,0.038762,35.011429
+327200,Glass and glass product manufacturing,nonmetallic_minerals,shelter,0.002309,0.00189,0.001031,10.09506,8.43949,shelter,1.0,0.729355,0.084653,52.443157
+327310,Cement manufacturing,nonmetallic_minerals,none,0.000682,0.000697,0.000367,8.862868,8.42506,safety,0.649948,0.224004,6e-06,28.384611
+327320,Ready-mix concrete manufacturing,nonmetallic_minerals,none,0.00219,0.002142,0.000774,7.578844,6.592765,shelter,0.995897,0.488887,0.203427,21.453216
+327330,"Concrete pipe, brick, and block manufacturing",nonmetallic_minerals,none,0.000427,0.000428,0.000208,8.722743,7.814638,shelter,0.370052,0.120304,0.0,29.760926
+327390,Other concrete product manufacturing,nonmetallic_minerals,shelter,0.00101,0.001175,0.000482,9.258953,8.123071,safety,0.966492,0.241536,0.065512,33.04624
+327400,Lime and gypsum product manufacturing,nonmetallic_minerals,shelter,0.000575,0.000572,0.000283,9.441149,9.07133,water_sanitation,0.625044,0.166779,0.00085,41.165812
+327910,Abrasive product manufacturing,nonmetallic_minerals,shelter,0.000473,0.000465,0.000303,10.62116,10.134199,safety,0.692151,0.024202,0.004244,59.670114
+327991,Cut stone and stone product manufacturing,nonmetallic_minerals,shelter,0.000617,0.000441,0.00027,4.357267,2.965433,education,0.212614,0.078137,0.000118,10.618674
+327992,Ground or treated mineral and earth manufacturing,nonmetallic_minerals,shelter,0.000394,0.000405,0.000178,10.107031,9.939624,mobility,0.529217,0.031173,0.001345,55.268303
+327993,Mineral wool manufacturing,nonmetallic_minerals,none,0.000506,0.000374,0.000254,6.905038,8.353795,shelter,0.27344,0.088069,0.001776,25.714796
+327999,Miscellaneous nonmetallic mineral products,nonmetallic_minerals,none,0.000404,0.000388,0.00018,8.297919,8.579036,safety,0.348693,0.115821,0.000442,27.389455
+331110,Iron and steel mills and ferroalloy manufacturing,primary_metals,none,0.010852,0.011489,0.002675,10.275,9.049826,mobility,1.0,1.0,1.0,62.079611
+331200,Steel product manufacturing from purchased steel,primary_metals,shelter,0.001124,0.001161,0.000365,10.298997,9.39479,mobility,0.995897,0.484493,0.030633,56.906355
+331313,Alumina refining and primary aluminum production,primary_metals,none,0.001764,0.001788,0.000295,10.365683,9.320997,mobility,1.0,0.782194,0.070724,70.450145
+33131B,Aluminum product manufacturing from purchased aluminum,primary_metals,none,0.002282,0.002268,0.000537,10.411092,9.307778,mobility,1.0,0.887796,0.111112,67.72844
+331410,Nonferrous metal (except aluminum) smelting and refining,primary_metals,none,0.003495,0.004144,0.001023,9.537365,8.134354,energy,1.0,1.0,0.439567,52.788551
+331420,"Copper rolling, drawing, extruding and alloying",primary_metals,none,0.002002,0.002112,0.000357,10.272127,9.384126,communication,1.0,0.870983,0.06892,60.90424
+331490,"Nonferrous metal (except copper and aluminum) rolling, drawing, extruding and alloying",primary_metals,shelter,0.000821,0.000941,0.00026,10.145726,9.4964,energy,0.992729,0.255185,0.022081,65.979979
+331510,Ferrous metal foundries,primary_metals,none,0.001518,0.001583,0.000613,10.142001,8.506961,mobility,1.0,0.698757,0.047455,64.333194
+331520,Nonferrous metal foundries,primary_metals,shelter,0.001263,0.001291,0.000508,9.725681,7.572531,mobility,1.0,0.482725,0.029132,64.609151
+332114,Custom roll forming,fabricated_metals,none,0.000611,0.000602,0.000167,10.059367,8.686878,mobility,0.819519,0.063931,0.012577,62.733284
+33211A,"All other forging, stamping, and sintering",fabricated_metals,none,0.001053,0.001151,0.000356,10.084692,8.966757,mobility,1.0,0.452287,0.030948,61.027013
+332119,"Metal crown, closure, and other metal stamping (except automotive)",fabricated_metals,shelter,0.000988,0.001027,0.000394,10.095769,9.154643,water_sanitation,0.981006,0.266096,0.036311,62.370015
+332200,Cutlery and handtool manufacturing,fabricated_metals,shelter,0.001096,0.000881,0.000487,8.437555,7.286761,shelter,0.814152,0.173052,0.006518,32.633025
+332310,Plate work and fabricated structural product manufacturing,fabricated_metals,shelter,0.003063,0.003847,0.000958,8.926151,7.404873,safety,1.0,0.968092,0.410097,31.318159
+332320,Ornamental and architectural metal products manufacturing,fabricated_metals,none,0.003058,0.003327,0.001203,9.748267,7.9862,water_sanitation,1.0,0.971948,0.378997,44.870061
+332410,Power boiler and heat exchanger manufacturing,fluid_machinery,none,0.00054,0.000655,0.000218,9.724873,3.835326,water_sanitation,0.932056,0.040056,0.020067,53.561736
+332420,Metal tank (heavy gauge) manufacturing,fabricated_metals,none,0.000513,0.000562,0.000213,10.39652,7.300098,water_sanitation,0.838466,0.02908,0.002892,56.513298
+332430,"Metal can, box, and other metal container (light gauge) manufacturing",fabricated_metals,shelter,0.000899,0.000827,0.000302,9.005663,7.568489,food,0.749257,0.120936,0.02017,56.778935
+332500,Hardware manufacturing,fabricated_metals,shelter,0.001135,0.001093,0.000388,9.875845,9.568782,shelter,0.96097,0.301557,0.046871,51.48658
+332600,Spring and wire product manufacturing,fabricated_metals,shelter,0.000464,0.000439,0.000184,9.818645,8.584159,mobility,0.440494,0.049884,0.013787,58.741834
+332710,Machine shops,fabricated_metals,none,0.002982,0.003312,0.001497,10.108254,9.210855,water_sanitation,1.0,0.992729,0.370125,65.958091
+332720,"Turned product and screw, nut, and bolt manufacturing",fabricated_metals,shelter,0.002733,0.003002,0.001099,10.378019,9.703499,mobility,1.0,0.977838,0.319628,66.132568
+332800,"Coating, engraving, heat treating and allied activities",fabricated_metals,none,0.002013,0.002294,0.000955,9.858151,8.846419,water_sanitation,1.0,0.820688,0.152557,60.319549
+332913,Plumbing fixture fitting and trim manufacturing,fabricated_metals,none,0.000392,0.000357,0.000134,9.2505,9.62352,shelter,0.405015,0.017957,0.0,33.603384
+33291A,Valve and fittings other than plumbing,fabricated_metals,none,0.002246,0.002783,0.000974,9.855833,8.25775,water_sanitation,1.0,0.896395,0.358555,48.686818
+332991,Ball and roller bearing manufacturing,fabricated_metals,none,0.000617,0.000746,0.000302,9.276512,7.602214,communication,0.816482,0.161735,0.034397,49.727387
+332996,Fabricated pipe and pipe fitting manufacturing,fabricated_metals,none,0.000446,0.000463,0.000214,9.895278,8.94835,shelter,0.552126,0.060985,0.000133,43.805217
+33299A,"Ammunition, arms, ordnance, and accessories manufacturing",fabricated_metals,discretionary,0.00014,0.000154,6.8e-05,5.215121,4.712791,safety,0.086163,0.001975,0.001975,11.962071
+332999,Other fabricated metal manufacturing,fabricated_metals,shelter,0.001433,0.001482,0.000559,10.639228,10.159678,water_sanitation,1.0,0.544349,0.069074,64.709865
+333111,Farm machinery and equipment manufacturing,machinery,none,0.002056,0.001708,0.000778,5.091982,5.553351,food,0.541501,0.358187,0.055774,42.21957
+333112,Lawn and garden equipment manufacturing,machinery,shelter,0.000492,0.000501,0.00017,10.547271,5.302079,communication,0.850604,0.007014,4.5e-05,63.693553
+333120,Construction machinery manufacturing,machinery,none,0.002817,0.003073,0.001043,8.618454,7.252019,safety,1.0,0.651908,0.396535,22.772984
+333130,Mining and oil and gas field machinery manufacturing,machinery,none,0.001567,0.001888,0.000527,7.85687,7.344441,mobility,0.992726,0.410776,0.118912,25.690127
+333242,Semiconductor machinery manufacturing,machinery,none,0.00055,0.000563,0.000275,9.702108,8.004197,communication,0.64754,0.146733,0.009936,67.121108
+33329A,Other industrial machinery manufacturing,machinery,shelter,0.002607,0.002739,0.000947,10.296157,9.433123,water_sanitation,1.0,0.900413,0.151943,67.654045
+333314,Optical instrument and lens manufacturing,machinery,shelter,0.000468,0.00047,0.000203,10.418469,5.909347,communication,0.743784,0.009845,0.003244,68.627075
+333316,Photographic and photocopying equipment manufacturing,machinery,shelter,0.000107,9.6e-05,5.5e-05,9.835192,3.800789,shelter,0.001692,1.8e-05,1.8e-05,40.647751
+333318,Other commercial and service industry machinery manufacturing,machinery,shelter,0.001519,0.001672,0.000583,10.725098,9.252764,communication,1.0,0.876764,0.044321,57.255539
+333414,Heating equipment (except warm air furnaces) manufacturing,fluid_machinery,shelter,0.000378,0.000325,0.000154,8.125246,6.881984,shelter,0.317955,0.032506,0.000149,29.669903
+333415,"Air conditioning, refrigeration, and warm air heating equipment manufacturing",fluid_machinery,shelter,0.002911,0.002796,0.001112,10.628251,9.689022,shelter,1.0,0.976052,0.27582,57.025893
+333413,Industrial and commercial fan and blower and air purification equipment manufacturing,fluid_machinery,none,0.000492,0.000554,0.000198,10.336931,8.138567,water_sanitation,0.878805,0.012278,0.011873,52.233347
+333511,Industrial mold manufacturing,machinery,none,0.00073,0.000795,0.000328,10.084343,8.324918,communication,0.944607,0.189332,0.030647,67.664704
+333514,"Special tool, die, jig, and fixture manufacturing",machinery,none,0.001036,0.001092,0.000498,10.002551,8.518716,communication,1.0,0.256593,0.03295,68.81091
+333517,Machine tool manufacturing,machinery,shelter,0.001104,0.001209,0.000475,10.339212,7.167784,communication,0.995897,0.351795,0.051519,63.600457
+33351B,"Cutting and machine tool accessory, rolling mill, and other metalworking machinery manufacturing",machinery,none,0.000891,0.000977,0.000349,10.157036,9.089535,mobility,0.981006,0.232315,0.048434,58.268834
+333611,Turbine and turbine generator set units manufacturing,fluid_machinery,none,0.000647,0.001605,0.000265,3.047322,3.569079,energy,0.715428,0.099854,0.064835,5.651938
+333612,"Speed changer, industrial high-speed drive, and gear manufacturing",machinery,none,0.00045,0.00051,0.00018,9.643121,7.875625,mobility,0.704806,0.034899,0.021834,53.285129
+333613,Mechanical power transmission equipment manufacturing,machinery,none,0.000613,0.000711,0.000265,9.364449,6.854958,water_sanitation,0.907423,0.087901,0.022812,48.861516
+333618,Other engine equipment manufacturing,fluid_machinery,shelter,0.002577,0.002636,0.000592,9.341089,4.775144,mobility,1.0,0.95581,0.177082,51.54781
+333912,Air and gas compressor manufacturing,fluid_machinery,none,0.000675,0.000721,0.000225,10.708448,8.259961,communication,1.0,0.130937,1e-05,60.673128
+333914,"Measuring, dispensing, and other pumping equipment manufacturing",fluid_machinery,none,0.001279,0.001315,0.000498,10.546994,8.092098,safety,1.0,0.665283,0.010763,48.826253
+333920,Material handling equipment manufacturing,machinery,none,0.002162,0.002365,0.000773,10.629226,8.838115,water_sanitation,1.0,0.996144,0.249771,62.798145
+333991,Power-driven handtool manufacturing,machinery,shelter,0.000523,0.000468,0.000212,9.690728,5.268373,shelter,0.568886,0.013435,9e-05,38.269468
+333993,Packaging machinery manufacturing,machinery,none,0.000652,0.00095,0.000252,4.00585,1.441417,water_sanitation,0.229559,0.063178,0.037856,11.586804
+333994,Industrial process furnace and oven manufacturing,machinery,none,0.000158,0.000164,6.1e-05,9.937081,9.107516,mobility,0.052292,0.012573,9e-06,58.684733
+33399A,Other general purpose machinery manufacturing,machinery,shelter,0.00183,0.001975,0.000723,10.634268,9.479681,communication,1.0,0.987074,0.102382,66.389098
+33399B,Fluid power process machinery,fluid_machinery,none,0.001099,0.001126,0.000358,9.574666,6.536085,mobility,1.0,0.440354,0.020657,61.04466
+334111,Electronic computer manufacturing,electronics,communication,0.004203,0.006523,0.003735,4.639728,1.157166,communication,1.0,1.0,0.43733,12.347704
+334112,Computer storage device manufacturing,electronics,communication,0.000596,0.000868,0.00041,4.076899,1.277039,communication,0.589328,0.013629,0.000617,9.949106
+334118,Computer terminals and other computer peripheral equipment manufacturing,electronics,communication,0.002978,0.004175,0.001757,6.116665,3.668042,communication,1.0,0.995897,0.161204,23.040022
+334210,Telephone apparatus manufacturing,electronics,communication,0.000933,0.001447,0.000561,4.325949,3.554875,communication,0.877329,0.082416,0.065396,17.492908
+334220,Broadcast and wireless communications equipment,electronics,communication,0.006517,0.010317,0.004512,4.260231,2.557452,communication,1.0,1.0,0.665966,19.159905
+334290,Other communications equipment manufacturing,electronics,communication,0.000386,0.000459,0.000259,7.979106,8.82315,safety,0.299991,0.157913,0.001146,29.002077
+334413,Semiconductor and related device manufacturing,semiconductors,none,0.004503,0.004221,0.0034,9.585258,8.693771,communication,1.0,1.0,0.405315,58.896062
+334418,Printed circuit assembly (electronic assembly) manufacturing,electronics,shelter,0.001576,0.00189,0.001084,9.61409,8.958308,communication,1.0,0.642829,0.138363,66.813652
+33441A,Other electronic component manufacturing,electronics,shelter,0.002426,0.002545,0.001672,9.635757,8.897928,communication,1.0,0.858914,0.179077,63.793964
+334510,Electromedical and electrotherapeutic apparatus manufacturing,instruments,health,0.002589,0.001003,0.001633,1.092663,1.043635,health,0.072646,0.069163,0.068292,8.298012
+334511,"Search, detection, and navigation instruments manufacturing",instruments,shelter,0.001309,0.001428,0.000949,10.351348,5.174449,mobility,1.0,0.705587,0.009562,62.249252
+334512,Automatic environmental control manufacturing,instruments,none,0.000297,0.000266,0.000218,7.901031,7.892823,education,0.218444,0.001298,0.001298,29.229659
+334513,Industrial process variable instruments manufacturing,instruments,none,0.000807,0.001039,0.000606,8.522836,8.733425,energy,0.945105,0.233977,0.101853,41.958102
+334514,Totalizing fluid meter and counting device manufacturing,instruments,none,0.000542,0.000766,0.000276,7.800419,5.409276,water_sanitation,0.700277,0.20743,0.054027,35.745016
+334515,Electricity and signal testing instruments manufacturing,instruments,none,0.000685,0.000795,0.000458,9.8782,7.269687,communication,1.0,0.236824,0.002156,61.716335
+334516,Analytical laboratory instrument manufacturing,instruments,none,0.00114,0.000982,0.00079,7.448251,7.902794,water_sanitation,0.701817,0.15403,0.047395,41.326591
+334517,Irradiation apparatus manufacturing,instruments,none,0.00069,0.000279,0.000459,1.457859,1.3031,health,0.069294,0.068423,0.015697,9.166676
+33451A,"Watch, clock, and other measuring and controlling device manufacturing",instruments,shelter,0.000988,0.000865,0.000649,9.547178,3.193092,shelter,0.99612,0.13219,0.001374,44.920845
+334300,Audio and video equipment manufacturing,electronics,meaning,0.002406,0.004017,0.001484,2.453162,1.18467,meaning,0.904553,0.208813,0.012987,3.395814
+334610,Manufacturing and reproducing magnetic and optical media,electronics,meaning,0.000129,0.000173,9.5e-05,7.765822,6.774165,meaning,0.061589,0.008167,0.00135,45.085147
+335110,Electric lamp bulb and part manufacturing,electrical_equipment,shelter,0.000217,0.000191,0.000122,9.207384,8.277866,shelter,0.157077,0.000336,0.000317,35.91264
+335120,Lighting fixture manufacturing,electrical_equipment,shelter,0.001719,0.001847,0.000774,9.338939,8.2537,water_sanitation,1.0,0.693749,0.14657,39.611799
+335210,Small electrical appliance manufacturing,electrical_equipment,shelter,0.001109,0.00065,0.000584,3.476889,2.004971,shelter,0.209402,0.026778,0.000394,6.78879
+335220,Major household appliance manufacturing,electrical_equipment,shelter,0.002657,0.001601,0.001237,3.087692,2.885562,shelter,0.363969,0.141545,0.08012,7.451106
+335311,"Power, distribution, and specialty transformer manufacturing",electrical_equipment,shelter,0.000575,0.00068,0.000306,9.68525,9.3822,energy,0.7125,0.158268,0.00599,47.805994
+335312,Motor and generator manufacturing,electrical_equipment,shelter,0.001472,0.001497,0.000528,10.489576,9.231682,water_sanitation,1.0,0.737103,0.007545,60.64212
+335313,Switchgear and switchboard apparatus manufacturing,electrical_equipment,shelter,0.000916,0.001074,0.000397,10.017866,8.704685,energy,0.989558,0.311149,0.030591,47.744036
+335314,Relay and industrial control manufacturing,electrical_equipment,none,0.001073,0.00113,0.000497,10.545716,9.569341,water_sanitation,1.0,0.444315,0.048819,72.393594
+335911,Storage battery manufacturing,electrical_equipment,energy,0.000929,0.002186,0.00032,3.261363,2.420528,energy,0.746462,0.11192,0.031178,5.99983
+335912,Primary battery manufacturing,electrical_equipment,energy,0.000174,0.000799,0.000122,1.086429,1.052199,energy,0.004828,0.004828,0.000784,1.111619
+335920,Communication and energy wire and cable manufacturing,electrical_equipment,none,0.001077,0.001257,0.000351,9.041295,7.138533,communication,1.0,0.474355,0.036809,38.946007
+335930,Wiring device manufacturing,electrical_equipment,none,0.001043,0.001002,0.000559,9.881171,9.480782,shelter,0.995873,0.335209,0.016116,47.464329
+335991,Carbon and graphite product manufacturing,electrical_equipment,none,0.000204,0.00026,0.000109,9.615266,8.720364,energy,0.207677,0.004006,0.00083,54.047692
+335999,All other miscellaneous electrical equipment and component manufacturing,electrical_equipment,shelter,0.001068,0.001223,0.000446,10.23063,7.550342,communication,1.0,0.551466,0.006485,62.373267
+336111,Automobile manufacturing,motor_vehicles,mobility,0.005398,0.005529,0.001444,8.733051,1.000115,mobility,1.0,1.0,0.722949,42.088505
+336112,Light truck and utility vehicle manufacturing,motor_vehicles,mobility,0.021854,0.021181,0.005655,6.542019,1.000082,mobility,1.0,1.0,1.0,22.362435
+336120,Heavy duty truck manufacturing,motor_vehicles,none,0.00262,0.002876,0.00055,9.171266,3.332941,safety,1.0,0.755535,0.289537,29.508338
+336211,Motor vehicle body manufacturing,motor_vehicles,mobility,0.000813,0.000812,0.000208,9.451229,1.144692,mobility,0.9262,0.096317,0.009936,47.804725
+336212,Truck trailer manufacturing,motor_vehicles,none,0.000771,0.000785,0.000189,10.53601,7.600819,water_sanitation,0.893305,0.235892,0.034768,50.662995
+336213,Motor home manufacturing,motor_vehicles,discretionary,1.6e-05,1.7e-05,4e-06,10.439911,10.112299,communication,0.0,0.0,0.0,65.152354
+336214,Travel trailer and camper manufacturing,motor_vehicles,discretionary,0.000176,0.000194,5.7e-05,10.660849,9.640925,water_sanitation,0.01776,0.015351,0.001048,55.419742
+336310,Motor vehicle gasoline engine and engine parts manufacturing,motor_vehicles,mobility,0.004259,0.004126,0.000955,7.194884,3.639597,mobility,1.0,1.0,0.251466,41.837191
+336320,Motor vehicle electrical and electronic equipment manufacturing,motor_vehicles,mobility,0.00287,0.002757,0.000763,8.555794,6.640059,mobility,1.0,0.892745,0.131548,52.30627
+336350,Motor vehicle transmission and power train parts manufacturing,motor_vehicles,mobility,0.004394,0.004396,0.001207,8.716082,6.093808,mobility,1.0,1.0,0.512561,46.724998
+336360,Motor vehicle seating and interior trim manufacturing,motor_vehicles,none,0.004143,0.004129,0.000992,7.926434,1.352749,mobility,1.0,1.0,0.485819,35.083727
+336370,Motor vehicle metal stamping,motor_vehicles,none,0.003649,0.003578,0.001009,7.250297,1.793241,mobility,1.0,0.996144,0.294379,32.385034
+336390,Other motor vehicle parts manufacturing,motor_vehicles,mobility,0.006147,0.006171,0.001628,9.462138,7.705682,mobility,1.0,1.0,0.803612,62.995224
+3363A0,"Motor vehicle steering, suspension component (except spring), and brake systems manufacturing",motor_vehicles,mobility,0.002911,0.002904,0.000577,8.506881,6.239502,mobility,1.0,0.977619,0.210915,50.590912
+336411,Aircraft manufacturing,aerospace,mobility,0.003811,0.003442,0.001831,4.608663,3.313853,mobility,1.0,0.778105,0.0176,12.056915
+336412,Aircraft engine and engine parts manufacturing,aerospace,none,0.000302,0.000282,0.00011,5.291694,5.621938,mobility,0.028074,0.008593,0.008379,15.522489
+336413,Other aircraft parts and auxiliary equipment manufacturing,aerospace,none,0.000736,0.000697,0.000334,5.940322,8.729638,mobility,0.641292,0.017575,0.009483,19.227849
+336414,Guided missile and space vehicle manufacturing,aerospace,none,0.000107,0.000122,5e-05,10.17204,9.421981,energy,0.001191,0.001191,0.0,60.695843
+33641A,Propulsion units and parts for space vehicles and guided missiles,aerospace,none,4.8e-05,5.5e-05,7e-06,9.978874,9.430921,communication,0.009584,0.001264,0.0,58.07469
+336500,Railroad rolling stock manufacturing,ships_rail_other,none,0.000915,0.000922,0.000222,8.685786,8.937937,mobility,0.936262,0.220638,0.004641,39.084691
+336611,Ship building and repairing,ships_rail_other,none,9.1e-05,9.4e-05,4.3e-05,10.230163,9.524784,food,0.0224,0.00143,0.0,64.607452
+336612,Boat building,ships_rail_other,discretionary,5.7e-05,6.3e-05,1.4e-05,10.502858,6.472132,communication,0.0,0.0,0.0,63.706787
+336991,"Motorcycle, bicycle, and parts manufacturing",ships_rail_other,mobility,0.000866,0.000728,0.000411,1.614752,1.223414,mobility,0.001342,0.001342,0.001342,1.830798
+336992,"Military armored vehicle, tank, and tank component manufacturing",ships_rail_other,none,0.000122,0.000135,4.6e-05,9.494429,7.987527,communication,0.068234,0.005826,0.0,55.651497
+336999,All other transportation equipment manufacturing,ships_rail_other,mobility,0.000512,0.00048,0.000155,4.999198,1.585092,mobility,0.21753,0.000464,0.000464,13.361672
+337110,Wood kitchen cabinet and countertop manufacturing,wood_furniture,none,0.001164,0.00091,0.000513,7.039502,7.029293,shelter,0.820432,0.162585,0.075857,21.774643
+337121,Upholstered household furniture manufacturing,wood_furniture,shelter,0.001328,0.000692,0.000438,1.918331,1.080439,shelter,0.003768,0.000712,0.000712,2.648505
+337122,Nonupholstered wood household furniture manufacturing,wood_furniture,shelter,0.001289,0.00068,0.000491,2.068403,1.127935,shelter,0.004902,0.001452,0.000858,3.115361
+337127,Institutional furniture manufacturing,wood_furniture,shelter,0.000812,0.0009,0.000309,10.646692,2.345173,communication,1.0,0.414877,0.000871,58.716231
+33712N,Other household nonupholstered furniture,wood_furniture,shelter,0.000579,0.000306,0.000151,2.230065,1.220253,shelter,0.005861,0.002381,0.000246,3.510604
+337215,"Showcase, partition, shelving, and locker manufacturing",wood_furniture,shelter,0.000976,0.000974,0.000385,10.328268,7.273292,shelter,1.0,0.235365,0.030115,57.641115
+33721A,Office furniture and custom architectural woodwork and millwork manufacturing,wood_furniture,shelter,0.001378,0.001309,0.0005,10.229169,5.926266,shelter,1.0,0.631505,0.017416,45.1892
+337900,Other furniture related product manufacturing,wood_furniture,shelter,0.000906,0.000479,0.000287,2.091804,1.011621,shelter,0.001585,0.000985,0.00039,3.110049
+339112,Surgical and medical instrument manufacturing,instruments,health,0.00315,0.001218,0.001947,1.063683,1.022416,health,0.071638,0.071638,0.06744,4.97297
+339113,Surgical appliance and supplies manufacturing,instruments,health,0.002978,0.001272,0.001642,1.910168,1.562571,health,0.301645,0.089143,0.069189,9.864949
+339114,Dental equipment and supplies manufacturing,instruments,none,0.000376,0.000147,0.000175,1.142053,1.000175,health,0.069039,0.015697,0.007749,5.29526
+339115,Ophthalmic goods manufacturing,instruments,health,0.000805,0.000313,0.000459,1.146295,1.102344,health,0.000718,0.000327,0.000327,1.209501
+339116,Dental laboratories,instruments,none,0.000372,0.000143,0.000192,1.001235,1.000364,health,0.003829,0.003829,0.003829,1.031036
+339910,Jewelry and silverware manufacturing,misc_manufacturing,discretionary,0.000121,0.000113,4.1e-05,7.119335,6.266361,mobility,0.052422,0.049202,7e-06,13.871946
+339920,Sporting and athletic goods manufacturing,misc_manufacturing,meaning,0.001283,0.002291,0.000583,1.977045,1.230217,meaning,0.433017,0.01216,0.01216,2.56595
+339930,"Doll, toy, and game manufacturing",misc_manufacturing,meaning,0.001605,0.003042,0.000952,1.069651,1.069026,meaning,0.010497,0.010497,0.003008,1.082947
+339940,Office supplies (except paper) manufacturing,misc_manufacturing,meaning,0.000366,0.000557,9.9e-05,3.248263,2.803212,meaning,0.120415,0.00969,0.00477,5.438727
+339950,Sign manufacturing,misc_manufacturing,none,0.000668,0.000746,0.00027,10.353223,3.513582,safety,0.935584,0.252793,0.0,55.695142
+339990,All other miscellaneous manufacturing,misc_manufacturing,shelter,0.002786,0.00234,0.001273,8.249001,6.123157,shelter,1.0,0.74018,0.08157,30.960541
+311111,Dog and cat food manufacturing,food_processing,discretionary,6.2e-05,4.8e-05,1.6e-05,3.202345,2.916258,safety,0.117557,0.001995,0.0,4.908176
+311119,Other animal food manufacturing,food_processing,discretionary,0.001947,0.001453,0.000265,3.720011,3.442261,food,0.3925,0.124031,0.067354,24.612373
+311210,Flour milling and malt manufacturing,food_processing,food,0.001016,0.000678,0.000219,2.042682,1.980267,food,0.133757,0.067251,0.015459,16.45468
+311221,Wet corn milling,food_processing,food,0.000894,0.000639,0.000203,3.836666,3.34148,food,0.21343,0.079715,0.022176,40.836298
+311225,Fats and oils refining and blending,food_processing,food,0.000695,0.000533,9.7e-05,5.009243,4.406557,food,0.192436,0.04385,0.014333,32.743912
+311224,Soybean and other oilseed processing,food_processing,food,0.002231,0.001821,0.000192,3.982355,3.638117,food,0.494931,0.123481,0.080303,38.307443
+311230,Breakfast cereal manufacturing,food_processing,food,0.000721,0.000457,0.000209,1.144403,1.143017,food,0.000446,0.000446,0.000446,1.168454
+311300,Sugar and confectionery product manufacturing,food_processing,food,0.00338,0.00218,0.000889,1.49638,1.465353,food,0.301194,0.080103,0.015646,4.15662
+311410,Frozen food manufacturing,food_processing,food,0.002626,0.001683,0.000742,1.577827,1.548486,food,0.139342,0.061772,0.007274,2.525013
+311420,"Fruit and vegetable canning, pickling, and drying",food_processing,food,0.003338,0.002273,0.000826,2.788102,2.717405,food,0.381794,0.275082,0.050327,6.062036
+311513,Cheese manufacturing,food_processing,food,0.003156,0.00209,0.000499,2.375867,2.268617,food,0.31038,0.226079,0.061115,8.356841
+311514,"Dry, condensed, and evaporated dairy product manufacturing",food_processing,food,0.001501,0.00106,0.000393,3.1643,3.048832,food,0.29641,0.146783,0.026717,11.056116
+31151A,Fluid milk and butter manufacturing,food_processing,food,0.003145,0.002168,0.000576,2.476557,2.420781,food,0.312821,0.236884,0.11235,6.21432
+311520,Ice cream and frozen dessert manufacturing,food_processing,food,0.000539,0.000393,0.000129,4.516467,4.351125,food,0.274124,0.047478,0.004705,13.845255
+311615,Poultry processing,food_processing,food,0.004797,0.0033,0.001247,2.325513,2.250041,food,0.250647,0.206187,0.065603,5.362856
+31161A,"Animal (except poultry) slaughtering, rendering, and processing",food_processing,food,0.010523,0.00763,0.001753,3.615534,3.469134,food,0.695284,0.366974,0.318518,8.338679
+311700,Seafood product preparation and packaging,food_processing,food,0.001352,0.00094,0.000293,3.958752,3.770591,food,0.291094,0.181065,0.042619,11.561679
+311810,Bread and bakery product manufacturing,food_processing,food,0.004207,0.002783,0.001591,1.943386,1.898565,food,0.297251,0.219925,0.062832,3.076586
+3118A0,"Cookie, cracker, pasta, and tortilla manufacturing",food_processing,food,0.001842,0.001174,0.000545,1.343377,1.325344,food,0.075772,0.034492,0.003294,1.86209
+311910,Snack food manufacturing,food_processing,food,0.002841,0.00184,0.000919,1.503437,1.430965,food,0.172985,0.055174,0.034461,3.159298
+311920,Coffee and tea manufacturing,food_processing,food,0.001085,0.000708,0.000254,3.506322,3.416685,food,0.234486,0.063242,0.009237,7.067685
+311930,Flavoring syrup and concentrate manufacturing,food_processing,food,0.001019,0.000702,0.000495,2.725227,2.272337,food,0.140109,0.040955,0.036806,13.880179
+311940,Seasoning and dressing manufacturing,food_processing,food,0.001758,0.001191,0.000518,2.705143,2.613444,food,0.310135,0.158581,0.037902,7.33871
+311990,All other food manufacturing,food_processing,food,0.002405,0.001733,0.000573,2.294117,2.211953,food,0.198306,0.081021,0.025348,5.052478
+312110,Soft drink and ice manufacturing,food_processing,food,0.003615,0.002331,0.001008,1.416948,1.378208,food,0.109726,0.036929,0.034895,1.990265
+312120,Breweries,food_processing,discretionary,0.000587,0.000518,0.000262,4.551453,4.21838,food,0.162034,0.076315,0.067603,14.28122
+312130,Wineries,food_processing,discretionary,0.000468,0.000362,0.00019,4.749645,4.129356,food,0.095476,0.061555,0.038627,19.651228
+312140,Distilleries,food_processing,discretionary,0.000703,0.000521,0.000349,3.934795,3.369351,food,0.135587,0.067713,0.038596,17.441509
+312200,Tobacco manufacturing,food_processing,discretionary,0.000212,0.000273,0.000157,1.600588,1.5507,safety,0.095322,0.084188,0.0,1.752003
+313100,"Fiber, yarn, and thread mills",textiles_apparel,clothing,0.00032,0.000433,7.4e-05,5.180328,4.165812,clothing,0.093556,0.040246,0.037175,16.974091
+313200,Fabric mills,textiles_apparel,clothing,0.002297,0.004568,0.000744,2.880375,2.404598,clothing,0.971481,0.178482,0.093244,6.461842
+313300,Textile and fabric finishing and fabric coating mills,textiles_apparel,clothing,0.001218,0.00162,0.000379,6.399528,5.151341,clothing,0.884778,0.159581,0.058092,26.894337
+314110,Carpet and rug mills,textiles_apparel,shelter,0.000902,0.000635,0.000326,6.601708,1.928478,shelter,0.446232,0.018535,0.010223,21.364161
+314120,Curtain and linen mills,textiles_apparel,shelter,0.001174,0.000649,0.00041,4.063805,3.926005,shelter,0.098896,0.053457,0.021816,7.089853
+314900,Other textile product mills,textiles_apparel,shelter,0.00119,0.001124,0.000509,8.87039,7.944644,clothing,0.809124,0.159775,0.057004,31.547067
+315000,Apparel manufacturing,textiles_apparel,clothing,0.008477,0.025199,0.0054,1.167694,1.157163,clothing,0.495983,0.195929,0.039622,1.214197
+316000,Leather and allied product manufacturing,textiles_apparel,clothing,0.004023,0.011805,0.00165,1.181532,1.100777,clothing,0.178031,0.051171,0.046575,1.422315
+322110,Pulp mills,paper_printing,none,0.000423,0.000524,0.000126,7.311006,6.634294,water_sanitation,0.350961,0.039544,0.004644,30.320418
+322120,Paper mills,paper_printing,shelter,0.002622,0.002304,0.000872,9.464245,9.045502,shelter,1.0,0.62826,0.127418,45.541788
+322130,Paperboard mills,paper_printing,none,0.002427,0.002652,0.000793,9.973065,9.257842,water_sanitation,1.0,0.988768,0.131764,74.739641
+322210,Paperboard container manufacturing,paper_printing,shelter,0.004669,0.005135,0.001127,9.087314,8.012094,water_sanitation,1.0,1.0,0.469505,64.807365
+322220,Paper bag and coated and treated paper manufacturing,paper_printing,shelter,0.001512,0.001372,0.000487,9.706349,9.252459,food,0.996829,0.441199,0.035223,70.867649
+322230,Stationery product manufacturing,paper_printing,meaning,0.000309,0.000377,6.5e-05,6.616682,6.135325,meaning,0.189483,0.061086,0.00011,14.595339
+322291,Sanitary paper product manufacturing,paper_printing,water_sanitation,0.000898,0.002908,0.000296,1.222586,1.220868,water_sanitation,0.054017,0.050833,0.015299,1.321063
+322299,All other converted paper product manufacturing,paper_printing,shelter,0.000402,0.000354,0.000136,6.800244,6.40214,food,0.238627,0.061295,0.017666,35.638424
+323110,Printing,paper_printing,meaning,0.00396,0.004206,0.001877,9.553077,9.033245,meaning,1.0,0.996829,0.4272,51.133007
+323120,Support activities for printing,paper_printing,none,0.000294,0.000379,0.00016,6.642363,5.800782,meaning,0.235082,0.016299,0.007497,30.913119
+324110,Petroleum refineries,petroleum_refining,mobility,0.031484,0.032179,0.006518,6.794665,6.055299,mobility,1.0,1.0,1.0,18.44108
+324121,Asphalt paving mixture and block manufacturing,petroleum_refining,none,0.000973,0.001041,0.000209,5.147147,4.159431,safety,0.425077,0.203425,0.128246,9.625615
+324122,Asphalt shingle and coating materials manufacturing,petroleum_refining,none,0.00075,0.000865,0.000264,6.611026,7.676163,safety,0.633471,0.219151,0.084188,15.401703
+324190,Other petroleum and coal products manufacturing,petroleum_refining,energy,0.002071,0.004158,0.000582,4.020042,3.215677,energy,0.995897,0.661573,0.047479,8.805699
+325110,Petrochemical manufacturing,bulk_chemicals,none,0.004795,0.00511,0.001572,10.14198,9.689814,mobility,1.0,1.0,0.516555,56.493478
+325120,Industrial gas manufacturing,bulk_chemicals,shelter,0.000788,0.000739,0.000278,8.905248,8.089984,energy,0.628883,0.183889,0.019366,39.34278
+325130,Synthetic dye and pigment manufacturing,bulk_chemicals,none,0.000506,0.000485,0.00018,10.445268,9.918504,health,0.495554,0.119513,0.01068,67.227428
+325180,Other basic inorganic chemical manufacturing,bulk_chemicals,shelter,0.002386,0.002444,0.001072,10.031155,9.437669,water_sanitation,1.0,0.842201,0.141941,62.754645
+325190,Other basic organic chemical manufacturing,bulk_chemicals,shelter,0.009027,0.009262,0.002369,9.879397,9.299967,water_sanitation,1.0,1.0,0.986758,61.455416
+325211,Plastics material and resin manufacturing,bulk_chemicals,none,0.006526,0.00669,0.001683,10.353672,9.669657,water_sanitation,1.0,1.0,0.89054,74.423413
+3252A0,Synthetic rubber and artificial and synthetic fibers and filaments manufacturing,bulk_chemicals,none,0.002182,0.002459,0.000672,7.473141,5.721226,clothing,1.0,0.490954,0.071153,34.545008
+325411,Medicinal and botanical manufacturing,pharma_bio,none,0.00099,0.000439,0.000411,2.376158,2.214321,health,0.097281,0.028746,0.020627,6.85527
+325412,Pharmaceutical preparation manufacturing,pharma_bio,health,0.016278,0.006274,0.009506,1.038105,1.029656,health,0.087613,0.058771,0.055643,1.417095
+325413,In-vitro diagnostic substance manufacturing,pharma_bio,none,0.001022,0.000394,0.000498,1.027746,1.023718,health,0.050534,0.047351,0.03077,1.330244
+325414,Biological product (except diagnostic) manufacturing,pharma_bio,none,0.006561,0.003097,0.00384,3.080983,2.299223,health,0.677957,0.195361,0.12171,13.249859
+325310,Fertilizer manufacturing,bulk_chemicals,shelter,0.001533,0.001483,0.000634,8.043605,7.002011,safety,0.975441,0.373296,0.121545,39.319414
+325320,Pesticide and other agricultural chemical manufacturing,bulk_chemicals,shelter,0.001013,0.00077,0.000388,5.598079,5.212603,food,0.406532,0.168011,0.022732,46.282581
+325510,Paint and coating manufacturing,formulated_chemicals,shelter,0.002113,0.002044,0.000763,10.106913,9.305374,shelter,1.0,0.828811,0.119502,56.689802
+325520,Adhesive manufacturing,formulated_chemicals,shelter,0.001201,0.001152,0.000476,10.13821,9.30961,shelter,1.0,0.301879,0.025112,59.557975
+325610,Soap and cleaning compound manufacturing,formulated_chemicals,water_sanitation,0.002517,0.008865,0.001209,1.807545,1.670579,water_sanitation,0.992726,0.2967,0.051706,2.652178
+325620,Toilet preparation manufacturing,formulated_chemicals,water_sanitation,0.002692,0.013349,0.00134,1.051725,1.041653,water_sanitation,0.11623,0.027061,0.023718,1.083814
+325910,Printing ink manufacturing,formulated_chemicals,none,0.000246,0.000269,7.4e-05,10.100223,9.599788,meaning,0.199355,0.01557,0.001954,72.798992
+3259A0,All other chemical product and preparation manufacturing,formulated_chemicals,shelter,0.002883,0.003104,0.000967,10.269402,9.88887,water_sanitation,1.0,0.984228,0.291312,56.740454
+326110,Plastics packaging materials and unlaminated film and sheet manufacturing,plastics_rubber,shelter,0.003244,0.002933,0.000896,10.444377,9.851988,food,1.0,0.977987,0.154072,83.922765
+326120,"Plastics pipe, pipe fitting, and unlaminated profile shape manufacturing",plastics_rubber,none,0.001249,0.001593,0.000423,8.988606,7.545588,water_sanitation,1.0,0.51356,0.099905,44.288644
+326130,"Laminated plastics plate, sheet (except packaging), and shape manufacturing",plastics_rubber,none,0.000359,0.000337,0.000144,10.612933,10.304047,water_sanitation,0.341914,0.022548,0.001645,71.994455
+326140,Polystyrene foam product manufacturing,plastics_rubber,shelter,0.000651,0.000539,0.000177,8.846244,7.57032,food,0.589723,0.056034,0.028024,44.467893
+326150,Urethane and other foam product (except polystyrene) manufacturing,plastics_rubber,shelter,0.000873,0.000636,0.000254,9.323891,7.934276,shelter,0.752632,0.068785,0.026243,51.724591
+326160,Plastics bottle manufacturing,plastics_rubber,none,0.000884,0.001047,0.000261,3.98226,3.697758,water_sanitation,0.310552,0.075961,0.033662,14.842122
+326190,Other plastics product manufacturing,plastics_rubber,shelter,0.00828,0.007479,0.002696,10.114688,9.60116,water_sanitation,1.0,1.0,0.950182,63.572754
+326210,Tire manufacturing,plastics_rubber,mobility,0.002275,0.002024,0.000743,5.179688,2.981483,mobility,0.985453,0.413093,0.025217,16.896655
+326220,Rubber and plastics hoses and belting manufacturing,plastics_rubber,shelter,0.000621,0.000677,0.000229,10.252313,9.071315,mobility,0.868266,0.122738,0.025666,52.629636
+326290,Other rubber product manufacturing,plastics_rubber,shelter,0.001387,0.001372,0.000446,9.677671,8.686932,safety,0.999976,0.310657,0.136942,44.721393
+423100,Motor vehicle and motor vehicle parts and supplies,trade,mobility,0.009361,0.009254,0.004606,8.131043,3.786761,mobility,1.0,1.0,0.99612,48.031251
+423400,Professional and commercial equipment and supplies,trade,margin,0.012214,0.012027,0.007227,10.363465,8.961267,health,1.0,1.0,1.0,40.871478
+423600,Household appliances and electrical and electronic goods,trade,margin,0.0126,0.013922,0.006041,10.462914,9.469992,communication,1.0,1.0,1.0,49.651813
+423800,"Machinery, equipment, and supplies",trade,margin,0.010052,0.011171,0.005601,10.557024,9.492691,water_sanitation,1.0,1.0,1.0,63.089882
+423A00,Other durable goods merchant wholesalers,trade,margin,0.019459,0.020685,0.010443,10.559538,9.576138,water_sanitation,1.0,1.0,1.0,37.583624
+424200,Drugs and druggists' sundries,trade,health,0.013972,0.008041,0.006401,5.765515,4.765991,health,1.0,1.0,0.510543,28.697974
+424400,Grocery and related product wholesalers,trade,food,0.012582,0.0089,0.007036,3.258413,2.9326,food,1.0,0.680428,0.38286,15.30164
+424700,Petroleum and petroleum products,trade,mobility,0.010852,0.010745,0.009016,6.189431,5.195988,mobility,1.0,1.0,0.824219,19.321358
+424A00,Other nondurable goods merchant wholesalers,trade,margin,0.024896,0.026318,0.014463,8.960501,8.474522,food,1.0,1.0,1.0,18.772143
+425000,Wholesale electronic markets and agents and brokers,trade,margin,0.003002,0.003366,0.001734,10.16698,9.378244,energy,1.0,0.958676,0.189391,49.731946
+4200ID,Customs duties,accounting,accounting,0.0,0.0,0.0,1.0,1.0,food,0.0,0.0,0.0,1.0
+441000,Motor vehicle and parts dealers,trade,mobility,0.022958,0.019621,0.014613,2.091948,1.306656,mobility,1.0,1.0,0.420652,3.286144
+445000,Food and beverage stores,trade,food,0.018232,0.011509,0.011727,1.065373,1.044204,food,0.0722,0.041602,0.011358,1.120562
+452000,General merchandise stores,trade,margin,0.015658,0.017532,0.010236,7.52245,7.399974,clothing,0.765459,0.124777,0.017303,1.289767
+444000,Building material and garden equipment and supplies dealers,trade,shelter,0.010679,0.007169,0.007767,4.968002,4.651892,shelter,1.0,0.971948,0.4168,17.765035
+446000,Health and personal care stores,trade,health,0.009206,0.003543,0.006103,1.023938,1.014429,health,0.003533,0.003533,0.003533,1.0301
+447000,Gasoline stations,trade,mobility,0.006793,0.006018,0.003532,2.117018,1.922353,mobility,0.95095,0.140176,0.086462,2.855702
+448000,Clothing and clothing accessories stores,trade,clothing,0.010697,0.033047,0.005335,1.000621,1.000369,clothing,0.033189,0.033045,0.033045,1.000793
+454000,Nonstore retailers,trade,margin,0.019308,0.021504,0.011698,7.858103,7.480852,clothing,1.0,0.910951,0.103952,1.951937
+4B0000,All other retail,trade,margin,0.015823,0.017383,0.010712,8.018329,7.440825,clothing,1.0,0.874794,0.135218,2.199957
+481000,Air transportation,air_transport,mobility,0.015768,0.014217,0.008545,4.546181,3.719684,mobility,1.0,1.0,0.991575,10.860064
+482000,Rail transportation,rail_transport,mobility,0.004667,0.004981,0.002577,9.758606,8.832814,mobility,1.0,0.995897,0.527116,53.483492
+483000,Water transportation,water_transport,discretionary,0.000656,0.000674,0.000151,10.224833,9.566517,food,0.913918,0.173297,0.011599,64.012772
+484000,Truck transportation,truck_transport,margin,0.02152,0.022556,0.010183,10.128158,9.208454,food,1.0,1.0,1.0,35.038783
+485000,Transit and ground passenger transportation,transit,mobility,0.006794,0.006257,0.002385,5.463536,4.864598,mobility,1.0,0.959938,0.303814,11.736686
+486000,Pipeline transportation,pipelines,energy,0.003187,0.005561,0.002739,5.0971,4.566161,energy,1.0,0.912059,0.324303,17.025712
+48A000,Scenic and sightseeing transportation and support activities,transit,discretionary,0.009127,0.010915,0.004398,9.526322,8.784765,energy,1.0,1.0,0.98047,47.034269
+492000,Couriers and messengers,truck_transport,communication,0.006289,0.007048,0.003564,9.553582,8.796538,communication,1.0,1.0,0.808475,52.773564
+493000,Warehousing and storage,warehousing_postal,margin,0.008925,0.009589,0.004562,9.639984,8.933181,clothing,1.0,1.0,0.91635,53.844703
+511110,Newspaper publishers,media_publishing,communication,0.001047,0.0023,0.00072,1.081639,1.06902,communication,0.019637,0.002272,0.002272,1.097704
+511120,Periodical Publishers,media_publishing,meaning,0.000945,0.001558,0.000582,2.111507,1.851865,meaning,0.133595,0.010423,0.010144,3.011463
+511130,Book publishers,media_publishing,meaning,0.002581,0.004049,0.001232,3.011697,1.826967,meaning,0.888827,0.172289,0.106352,6.198263
+5111A0,"Directory, mailing list, and other publishers",media_publishing,meaning,0.000844,0.001426,0.000504,2.010826,1.718274,meaning,0.160418,0.002972,0.001177,2.829708
+511200,Software publishers,software_data,communication,0.013062,0.019341,0.0079,5.34126,1.888396,communication,1.0,1.0,1.0,15.214309
+512100,Motion picture and video industries,media_publishing,meaning,0.008021,0.013274,0.005059,4.366581,3.300872,meaning,1.0,1.0,0.518796,13.320442
+512200,Sound recording industries,media_publishing,meaning,0.001084,0.001446,0.000807,6.096004,5.346532,meaning,0.878538,0.17882,0.096898,28.267776
+515100,Radio and television broadcasting,media_publishing,meaning,0.005071,0.006955,0.00259,6.907203,6.033944,meaning,1.0,1.0,0.550137,26.16929
+515200,Cable and other subscription programming,media_publishing,none,0.001418,0.002172,0.000794,5.574946,2.512103,communication,1.0,0.267991,0.073092,27.421306
+517110,Wired telecommunications carriers,telecom,communication,0.026187,0.047563,0.014005,2.233487,1.981421,communication,1.0,1.0,0.971972,3.532272
+517210,Wireless telecommunications carriers (except satellite),telecom,communication,0.015269,0.027629,0.008066,2.467752,2.227405,communication,1.0,1.0,0.863226,3.544787
+517A00,"Satellite, telecommunications resellers, and all other telecommunications",telecom,communication,0.002259,0.00375,0.001151,3.695877,3.226618,communication,1.0,0.699886,0.039337,8.177655
+518200,"Data processing, hosting, and related services",software_data,communication,0.015247,0.019763,0.009024,8.141554,6.952297,communication,1.0,1.0,1.0,28.853567
+519130,Internet publishing and broadcasting and Web search portals,software_data,communication,0.003265,0.004476,0.00195,6.407343,5.852423,communication,1.0,0.910015,0.252462,19.929106
+5191A0,"News syndicates, libraries, archives and all other information services",media_publishing,communication,0.000678,0.001221,0.000631,2.899813,2.641298,communication,0.291434,0.100092,0.004279,5.645556
+522A00,Nondepository credit intermediation and related activities,finance_insurance,finance_legal,0.016842,0.014759,0.008958,9.441872,9.022013,shelter,1.0,1.0,0.999217,40.118779
+52A000,Monetary authorities and depository credit intermediation,finance_insurance,finance_legal,0.021927,0.023605,0.014488,10.513155,10.38833,energy,1.0,1.0,1.0,56.58112
+523900,Other financial investment activities,finance_insurance,finance_legal,0.00319,0.003532,0.001655,10.005911,9.55591,water_sanitation,1.0,0.986724,0.396586,43.543159
+523A00,Securities and commodity contracts intermediation and brokerage,finance_insurance,finance_legal,0.004319,0.004271,0.00229,10.333334,9.700944,meaning,1.0,1.0,0.703956,61.116296
+524113,Direct life insurance carriers,finance_insurance,finance_legal,0.0,0.0,0.0,1.0,1.0,food,0.0,0.0,0.0,1.0
+5241XX,"Insurance carriers, except direct life",finance_insurance,finance_legal,0.018382,0.016715,0.009719,10.582993,10.109581,health,1.0,1.0,1.0,69.373457
+524200,"Insurance agencies, brokerages, and related activities",finance_insurance,none,0.014201,0.015757,0.007755,10.156238,9.633005,water_sanitation,1.0,1.0,1.0,63.879011
+525000,"Funds, trusts, and other financial vehicles",finance_insurance,finance_legal,0.000228,0.000264,2.3e-05,8.609677,7.912968,safety,0.170891,0.003011,0.0,34.482343
+531HSO,Owner-occupied housing,real_estate_housing,shelter,0.11968,0.057781,0.103301,1.0,1.0,shelter,0.057781,0.057781,0.057781,1.0
+531HST,Tenant-occupied housing,real_estate_housing,shelter,0.036037,0.017398,0.03373,1.0,1.0,shelter,0.017398,0.017398,0.017398,1.0
+531ORE,Other real estate,real_estate_housing,finance_legal,0.084445,0.079979,0.034606,10.451371,9.69362,clothing,1.0,1.0,1.0,54.915508
+532100,Automotive equipment rental and leasing,real_estate_housing,mobility,0.01054,0.011584,0.005728,5.025603,4.517098,mobility,1.0,1.0,0.671922,12.114822
+532400,Commercial and industrial machinery and equipment rental and leasing,real_estate_housing,shelter,0.006912,0.007391,0.004196,10.319309,9.80603,mobility,1.0,1.0,0.968636,51.166162
+532A00,General and consumer goods rental,real_estate_housing,meaning,0.002234,0.003504,0.001454,2.751812,2.44583,meaning,0.939048,0.22252,0.017102,4.411706
+533000,Lessors of nonfinancial intangible assets,real_estate_housing,none,0.005432,0.005642,0.003549,10.346986,9.749892,food,1.0,1.0,0.800884,68.796374
+541100,Legal services,professional_admin,finance_legal,0.014924,0.014774,0.011207,10.608898,10.221497,energy,1.0,1.0,1.0,54.205254
+541511,Custom computer programming services,software_data,none,0.016426,0.018466,0.01291,10.543065,7.821402,communication,1.0,1.0,1.0,64.129093
+541512,Computer systems design services,software_data,none,0.011324,0.012606,0.007408,10.318179,9.708921,safety,1.0,1.0,1.0,49.845202
+54151A,"Other computer related services, including facilities management",software_data,none,0.003272,0.003543,0.002138,10.610198,10.426214,communication,1.0,1.0,0.566746,58.454945
+541200,"Accounting, tax preparation, bookkeeping, and payroll services",professional_admin,finance_legal,0.009736,0.010181,0.00696,10.640662,10.380574,health,1.0,1.0,1.0,60.861178
+541300,"Architectural, engineering, and related services",engineering_rd,none,0.018891,0.021758,0.011982,10.066629,9.102678,water_sanitation,1.0,1.0,1.0,43.510071
+541610,Management consulting services,professional_admin,none,0.010584,0.010604,0.00721,10.415584,9.992284,health,1.0,1.0,1.0,64.035542
+5416A0,Environmental and other technical consulting services,professional_admin,none,0.003356,0.003466,0.001986,10.063856,9.536516,safety,1.0,0.996144,0.472864,50.611103
+541700,Scientific research and development services,engineering_rd,discretionary,0.038257,0.042704,0.023407,9.462409,6.544336,communication,1.0,1.0,1.0,55.473609
+541800,"Advertising, public relations, and related services",professional_admin,discretionary,0.024102,0.025855,0.014559,10.26048,9.816908,communication,1.0,1.0,1.0,62.349062
+541400,Specialized design services,professional_admin,shelter,0.002427,0.002424,0.001669,9.892618,9.590404,water_sanitation,1.0,0.839355,0.205674,44.608892
+541920,Photographic services,professional_admin,meaning,0.000864,0.001394,0.000515,2.735809,1.938736,meaning,0.567438,0.005741,0.001063,4.688201
+541940,Veterinary services,professional_admin,discretionary,0.000437,0.000309,0.000301,3.630114,3.252364,safety,0.134808,0.117872,0.0026,6.036623
+5419A0,"All other miscellaneous professional, scientific, and technical services",professional_admin,none,0.005466,0.00653,0.003453,10.116414,9.554514,energy,1.0,1.0,0.903036,54.12543
+550000,Management of companies and enterprises,professional_admin,none,0.037818,0.037445,0.02431,9.913113,8.920365,clothing,1.0,1.0,1.0,62.477297
+561300,Employment services,professional_admin,discretionary,0.024093,0.027402,0.01552,9.85536,9.380554,communication,1.0,1.0,1.0,51.56773
+561700,Services to buildings and dwellings,professional_admin,shelter,0.012759,0.012036,0.006677,10.554509,10.471496,safety,1.0,1.0,1.0,52.842693
+561100,Office administrative services,professional_admin,none,0.002418,0.002464,0.001516,10.083946,9.553629,communication,1.0,0.891955,0.232703,56.702008
+561200,Facilities support services,professional_admin,none,0.001354,0.00141,0.000645,9.538493,8.990315,safety,1.0,0.527695,0.098393,37.820682
+561400,Business support services,professional_admin,discretionary,0.005276,0.005471,0.002843,10.578141,10.192618,water_sanitation,1.0,1.0,0.841704,65.259577
+561500,Travel arrangement and reservation services,professional_admin,discretionary,0.001835,0.00203,0.000796,10.245087,9.666924,meaning,1.0,0.858141,0.115243,60.863363
+561600,Investigation and security services,professional_admin,safety,0.004561,0.005064,0.002983,8.395615,7.624805,safety,1.0,1.0,0.689988,36.88239
+561900,Other support services,professional_admin,discretionary,0.002253,0.002604,0.001269,10.361945,9.799143,clothing,1.0,0.926948,0.292024,52.92013
+562000,Waste management and remediation services,waste_management,water_sanitation,0.009167,0.019582,0.004358,3.81701,3.328198,water_sanitation,1.0,1.0,0.949827,7.219536
+611100,Elementary and secondary schools,education,education,0.004085,0.003856,0.003156,1.0,1.0,education,0.003856,0.003856,0.003856,1.0
+611A00,"Junior colleges, colleges, universities, and professional schools",education,education,0.019065,0.018017,0.014785,1.167169,1.141972,education,0.385735,0.21587,0.084732,1.266898
+611B00,Other educational services,education,education,0.006074,0.006007,0.003257,1.849543,1.787867,education,0.439388,0.261516,0.040215,2.510662
+621100,Offices of physicians,health_services,health,0.037898,0.014562,0.023597,1.000007,1.000007,health,0.047351,0.016581,0.014547,1.00911
+621200,Offices of dentists,health_services,health,0.009964,0.003829,0.007621,1.0,1.0,health,0.003829,0.003829,0.003829,1.0
+621300,Offices of other health practitioners,health_services,health,0.007548,0.002901,0.005657,1.00006,1.000055,health,0.039645,0.038774,0.004821,1.216635
+621400,Outpatient care centers,health_services,health,0.012727,0.00489,0.00782,1.000152,1.000147,health,0.041623,0.040752,0.006799,1.146911
+621500,Medical and diagnostic laboratories,health_services,health,0.004236,0.001628,0.003043,1.00638,1.0056,health,0.05412,0.052086,0.021316,2.520351
+621600,Home health care services,health_services,health,0.008285,0.003183,0.005741,1.0,1.0,health,0.003183,0.003183,0.003183,1.0
+621900,Other ambulatory health care services,health_services,health,0.002788,0.001089,0.001458,1.135764,1.121331,health,0.062348,0.041262,0.031641,2.013682
+622000,Hospitals,health_services,health,0.081328,0.031251,0.045227,1.0,1.0,health,0.033953,0.03077,0.03077,1.000462
+623A00,Nursing and community care facilities,health_services,health,0.014521,0.00558,0.008516,1.000177,1.000174,health,0.041541,0.007588,0.005554,1.033827
+623B00,"Residential mental health, substance abuse, and other residential care facilities",health_services,health,0.004167,0.001601,0.002751,1.000001,1.000001,health,0.0016,0.0016,0.0016,1.005168
+624100,Individual and family services,social_services,health,0.0087,0.003343,0.005589,1.0,1.0,health,0.003343,0.003343,0.003343,1.0
+624400,Child day care services,social_services,education,0.004501,0.00429,0.002519,1.168245,1.166006,education,0.088334,0.088334,0.004146,1.171636
+624A00,"Community food, housing, and other relief services, including vocational rehabilitation services",social_services,safety,0.004268,0.005577,0.001896,1.0,1.0,safety,0.005577,0.005577,0.005577,1.0
+711100,Performing arts companies,arts_recreation,meaning,0.003388,0.005833,0.001872,1.985333,1.524382,meaning,0.99272,0.15634,0.051168,3.021826
+711200,Spectator sports,arts_recreation,meaning,0.003225,0.005252,0.002076,2.878902,2.347762,meaning,1.0,0.583407,0.072592,6.146831
+711500,"Independent artists, writers, and performers",arts_recreation,meaning,0.002523,0.003659,0.001771,5.914998,5.142812,communication,1.0,0.866885,0.108225,20.729486
+711A00,Promoters of performing arts and sports and agents for public figures,arts_recreation,meaning,0.00228,0.003721,0.001223,3.119853,2.626714,meaning,0.99604,0.275899,0.07166,11.034784
+712000,"Museums, historical sites, zoos, and parks",arts_recreation,meaning,0.001635,0.003154,0.000951,1.0,1.0,meaning,0.003154,0.003154,0.003154,1.0
+713100,Amusement parks and arcades,arts_recreation,meaning,0.001381,0.002633,0.000859,1.080467,1.065192,meaning,0.009522,0.002604,0.002604,1.112616
+713200,Gambling industries (except casino hotels),arts_recreation,discretionary,5e-06,1.6e-05,3e-06,2.277344,2.112546,water_sanitation,0.028495,0.0,0.0,5.17511
+713900,Other amusement and recreation industries,arts_recreation,meaning,0.006554,0.012346,0.003291,1.182989,1.149592,meaning,0.320012,0.022098,0.012012,1.25563
+721000,Accommodation,hospitality,discretionary,0.004244,0.004489,0.002653,10.789188,10.555333,communication,1.0,1.0,0.854679,58.828611
+722110,Full-service restaurants,hospitality,food,0.027228,0.019032,0.016221,3.226047,2.727106,food,1.0,1.0,0.891177,5.71394
+722211,Limited-service restaurants,hospitality,food,0.028984,0.018972,0.014782,1.794847,1.598466,food,1.0,0.995104,0.140047,2.280794
+722A00,All other food and drinking places,hospitality,food,0.013212,0.009035,0.006779,4.402409,3.809054,food,1.0,0.992726,0.44884,10.389546
+811100,Automotive repair and maintenance,repair_maintenance,mobility,0.014665,0.012437,0.009273,2.051136,1.815426,mobility,1.0,0.903778,0.074778,2.968387
+811200,Electronic and precision equipment repair and maintenance,repair_maintenance,shelter,0.003307,0.003224,0.002334,10.655595,10.490606,safety,1.0,0.924158,0.4448,52.754448
+811300,Commercial and industrial machinery and equipment repair and maintenance,repair_maintenance,none,0.003738,0.003728,0.002528,10.494459,10.086344,water_sanitation,1.0,0.999217,0.62336,62.528311
+811400,Personal and household goods repair and maintenance,repair_maintenance,shelter,0.004168,0.003683,0.003244,9.303155,9.024461,shelter,1.0,0.992124,0.34121,32.563027
+812100,Personal care services,personal_civic,discretionary,2e-06,3e-06,1e-06,1.306117,1.258698,safety,0.0,0.0,0.0,1.402618
+812200,Death care services,personal_civic,meaning,0.001644,0.003171,0.000936,1.0,1.0,meaning,0.003171,0.003171,0.003171,1.0
+812300,Dry-cleaning and laundry services,personal_civic,clothing,0.002076,0.004166,0.001373,2.264759,2.071571,clothing,0.711541,0.216805,0.044775,3.034021
+812900,Other personal services,personal_civic,discretionary,0.000626,0.000738,0.00035,7.581381,6.591773,safety,0.593927,0.154724,0.102575,24.141937
+813100,Religious organizations,personal_civic,meaning,0.007721,0.014891,0.00532,1.0,1.0,meaning,0.014891,0.014891,0.014891,1.0
+813A00,"Grantmaking, giving, and social advocacy organizations",personal_civic,meaning,0.004503,0.008678,0.002966,1.004139,1.003541,meaning,0.017366,0.017366,0.008654,1.021797
+813B00,"Civic, social, professional, and similar organizations",personal_civic,meaning,0.006799,0.010234,0.004093,1.905228,1.757071,meaning,0.938658,0.236467,0.027798,2.376826
+814000,Private households,personal_civic,discretionary,0.0,0.0,0.0,1.0,1.0,food,0.0,0.0,0.0,1.0
+S00500,Federal general government (defense),government,defense,0.0,0.0,0.0,1.0,1.0,food,0.0,0.0,0.0,1.0
+S00600,Federal general government (nondefense),government,federal_civil,0.0,0.0,0.0,1.0,1.0,food,0.0,0.0,0.0,1.0
+491000,Postal service,warehousing_postal,communication,0.004351,0.004909,0.003558,8.765659,8.059956,communication,1.0,1.0,0.501492,40.238664
+S00102,Other federal government enterprises,government,none,2.7e-05,2.7e-05,-9e-06,10.108922,9.793345,mobility,0.004987,0.0,0.0,48.036802
+GSLGE,State and local government (educational services),education,education,0.064146,0.060559,0.051623,1.0,1.0,education,0.060559,0.060559,0.060559,1.0
+GSLGH,State and local government (hospitals and health services),health_services,health,0.005294,0.002034,0.002636,1.0,1.0,health,0.002034,0.002034,0.002034,1.0
+GSLGO,State and local government (other services),government,safety,0.064421,0.084188,0.03966,1.0,1.0,safety,0.084188,0.084188,0.084188,1.0
+S00203,Other state and local government enterprises,water_utility,water_sanitation,0.0078,0.030913,0.00362,1.460124,1.392389,water_sanitation,1.0,0.919748,0.200374,1.718451
+S00401,Scrap,accounting,accounting,0.002668,0.002826,0.001224,10.12537,9.370421,mobility,1.0,0.940965,0.294166,63.678103
+S00402,Used and secondhand goods,accounting,accounting,-0.006448,-0.006745,-0.0,1.0,5.879276,energy,0.016555,0.016555,0.016555,1.433563
+S00300,Noncomparable imports,accounting,accounting,0.007704,0.008767,0.0,9.95561,9.33001,communication,1.0,1.0,0.996144,54.806534
+S00900,Rest of the world adjustment,accounting,accounting,0.0,0.0,0.0,1.0,1.0,food,0.0,0.0,0.0,1.0

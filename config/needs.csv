@@ -1,0 +1,19 @@
+need,include,description
+food,1,Farm products; processed food; grocery retail; restaurants (alcohol and tobacco excluded)
+clothing,1,Apparel; footwear; household textiles care
+shelter,1,Housing services; furniture; appliances; household goods; building materials
+energy,1,Household electricity; gas; other fuels
+water_sanitation,1,Water and sewer; waste collection; soap; sanitary paper; personal hygiene products
+health,1,Medical care; hospitals; drugs; medical devices; social care
+education,1,Schools; colleges; child care (public and private)
+mobility,1,Vehicles; motor fuel; repair; transit; passenger rail and air
+communication,1,Telecom; internet; computers and phones; software; post; news
+safety,1,State and local general government (police; fire; courts; roads); security; relief services
+meaning,1,Religious and civic organizations; arts; recreation; sport; books and media
+defense,0,Federal defense (toggle)
+federal_civil,0,Federal nondefense government (toggle)
+finance_legal,0,Banking; insurance; investment; legal; accounting
+discretionary,0,Alcohol; tobacco; gambling; jewelry; travel lodging; pets; boats and campers; personal services
+accounting,0,Scrap; used goods; noncomparable imports; rest-of-world adjustment
+margin,0,Mixed retail; wholesale and freight margins - split pro rata over goods needs at run time
+none,0,No household or government consumption of this commodity (intermediate or capital good only)

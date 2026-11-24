@@ -1,0 +1,19 @@
+capability,description,open_benchmark_status
+cad,3D solid (B-rep) modeling; geometric constraints; drawings,brep-bench; constraint board
+fea,Structural and thermal-stress finite element analysis,FEA board
+cfd,Fluid flow and heat transfer simulation,none listed
+cam,CNC toolpath planning and post-processing,cam-bench
+mfgsim,Manufacturing process simulation: casting; molding; forming; welding; rolling,none listed
+mbd,Multibody dynamics and mechanism kinematics,none listed
+emag,Electromagnetic field simulation: motors; transformers; antennas; signal integrity,none listed
+pcb,PCB design: schematic/HDL; layout; routing,pcbhdlbench; autorouting board
+ic,IC design: synthesis; place and route; circuit simulation; verification,none listed
+controls,Dynamic system simulation; control design; PLC/SCADA programming,none listed
+process,Chemical process flowsheeting; thermodynamics; reaction and separation design,none listed
+power,Power system analysis: load flow; protection; stability,none listed
+civil,Structural frame analysis; code checking; BIM; geotechnics,none listed
+hydraulics,Pipe-network and open-channel hydraulics: water; sewer; gas; pipelines,none listed
+molecular,Molecular and biological modeling: cheminformatics; genomics; bioprocess,none listed
+logistics,Optimization: routing; scheduling; MILP; inventory,none listed
+gis,Geospatial: surveying; mapping; remote sensing; subsurface models; precision agriculture,none listed
+firmware,Embedded software toolchains: compilers; RTOS; verification,none listed

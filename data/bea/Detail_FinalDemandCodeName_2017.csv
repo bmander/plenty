@@ -1,0 +1,21 @@
+,BEA_2017_Detail_FinalDemand_Code,BEA_2017_Detail_FinalDemand_Name
+1,F01000,Personal consumption expenditures
+2,F02E00,Nonresidential private fixed investment in equipment
+3,F02N00,Nonresidential private fixed investment in intellectual property products
+4,F02R00,Residential private fixed investment
+5,F02S00,Nonresidential private fixed investment in structures
+6,F03000,Change in private inventories
+7,F04000,Exports of goods and services
+8,F05000,Imports of goods and services
+9,F06C00,Federal Government defense: Consumption expenditures
+10,F06E00,Federal national defense: Gross investment in equipment
+11,F06N00,Federal national defense: Gross investment in intellectual property products
+12,F06S00,Federal national defense: Gross investment in structures
+13,F07C00,Federal Government nondefense: Consumption expenditures
+14,F07E00,Federal nondefense: Gross investment in equipment
+15,F07N00,Federal nondefense: Gross investment in intellectual property products
+16,F07S00,Federal nondefense: Gross investment in structures
+17,F10C00,State and local government consumption expenditures
+18,F10E00,State and local: Gross investment in equipment
+19,F10N00,State and local: Gross investment in intellectual property products
+20,F10S00,State and local: Gross investment in structures

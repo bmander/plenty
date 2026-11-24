@@ -1,0 +1,403 @@
+commodity,name,need,pce_musd,gov_consumption_musd
+1111A0,Oilseed farming,none,0,0
+1111B0,Grain farming,food,2483,0
+111200,Vegetable and melon farming,food,19881,0
+111300,Fruit and tree nut farming,food,24499,0
+111400,"Greenhouse, nursery, and floriculture production",discretionary,13189,0
+111900,Other crop farming,food,3958,0
+112120,Dairy cattle and milk production,food,165,0
+1121A0,"Beef cattle ranching and farming, including feedlots and dual-purpose ranching and farming",food,97,0
+112300,Poultry and egg production,food,5227,0
+112A00,"Animal production, except cattle and poultry and eggs",food,6023,0
+113000,Forestry and logging,none,0,0
+114000,"Fishing, hunting and trapping",food,6448,0
+115000,Support activities for agriculture and forestry,food,124,0
+211000,Oil and gas extraction,none,0,0
+212100,Coal mining,energy,121,0
+212230,"Copper, nickel, lead, and zinc mining",none,0,0
+2122A0,"Iron, gold, silver, and other metal ore mining",none,0,0
+212310,Stone mining and quarrying,none,0,0
+2123A0,Other nonmetallic mineral mining and quarrying,shelter,52,0
+213111,Drilling oil and gas wells,none,0,0
+21311A,Other support activities for mining,none,0,0
+221100,"Electric power generation, transmission, and distribution",energy,177661,0
+221200,Natural gas distribution,energy,48152,0
+221300,"Water, sewage and other systems",water_sanitation,39603,0
+233210,Health care structures,none,0,0
+233262,Educational and vocational structures,none,0,0
+230301,Nonresidential maintenance and repair,none,0,0
+230302,Residential maintenance and repair,none,0,0
+2332A0,Office and commercial structures,none,0,0
+233412,Multifamily residential structures,none,0,0
+2334A0,Other residential structures,none,0,0
+233230,Manufacturing structures,none,0,0
+2332D0,Other nonresidential structures,none,0,0
+233240,Power and communication structures,none,0,0
+233411,Single-family residential structures,none,0,0
+2332C0,Transportation structures and highways and streets,none,0,0
+321100,Sawmills and wood preservation,none,0,0
+321200,"Veneer, plywood, and engineered wood product manufacturing",none,0,0
+321910,Millwork,none,0,0
+3219A0,All other wood product manufacturing,shelter,3143,0
+327100,Clay product and refractory manufacturing,shelter,2530,0
+327200,Glass and glass product manufacturing,shelter,5566,0
+327310,Cement manufacturing,none,0,0
+327320,Ready-mix concrete manufacturing,none,0,0
+327330,"Concrete pipe, brick, and block manufacturing",none,0,0
+327390,Other concrete product manufacturing,shelter,53,0
+327400,Lime and gypsum product manufacturing,shelter,26,0
+327910,Abrasive product manufacturing,shelter,188,0
+327991,Cut stone and stone product manufacturing,shelter,3169,0
+327992,Ground or treated mineral and earth manufacturing,shelter,41,0
+327993,Mineral wool manufacturing,none,0,0
+327999,Miscellaneous nonmetallic mineral products,none,0,0
+331110,Iron and steel mills and ferroalloy manufacturing,none,0,0
+331200,Steel product manufacturing from purchased steel,shelter,674,0
+331313,Alumina refining and primary aluminum production,none,0,0
+33131B,Aluminum product manufacturing from purchased aluminum,none,0,0
+331410,Nonferrous metal (except aluminum) smelting and refining,none,0,0
+331420,"Copper rolling, drawing, extruding and alloying",none,0,0
+331490,"Nonferrous metal (except copper and aluminum) rolling, drawing, extruding and alloying",shelter,53,0
+331510,Ferrous metal foundries,none,0,0
+331520,Nonferrous metal foundries,shelter,20,0
+332114,Custom roll forming,none,0,0
+33211A,"All other forging, stamping, and sintering",none,0,0
+332119,"Metal crown, closure, and other metal stamping (except automotive)",shelter,199,0
+332200,Cutlery and handtool manufacturing,shelter,5626,0
+332310,Plate work and fabricated structural product manufacturing,shelter,59,0
+332320,Ornamental and architectural metal products manufacturing,none,0,0
+332410,Power boiler and heat exchanger manufacturing,none,0,0
+332420,Metal tank (heavy gauge) manufacturing,none,0,0
+332430,"Metal can, box, and other metal container (light gauge) manufacturing",shelter,409,0
+332500,Hardware manufacturing,shelter,1023,0
+332600,Spring and wire product manufacturing,shelter,98,0
+332710,Machine shops,none,0,0
+332720,"Turned product and screw, nut, and bolt manufacturing",shelter,411,0
+332800,"Coating, engraving, heat treating and allied activities",none,0,0
+332913,Plumbing fixture fitting and trim manufacturing,none,0,0
+33291A,Valve and fittings other than plumbing,none,0,0
+332991,Ball and roller bearing manufacturing,none,0,0
+332996,Fabricated pipe and pipe fitting manufacturing,none,0,0
+33299A,"Ammunition, arms, ordnance, and accessories manufacturing",discretionary,6829,0
+332999,Other fabricated metal manufacturing,shelter,1975,0
+333111,Farm machinery and equipment manufacturing,none,0,0
+333112,Lawn and garden equipment manufacturing,shelter,760,0
+333120,Construction machinery manufacturing,none,0,0
+333130,Mining and oil and gas field machinery manufacturing,none,0,0
+333242,Semiconductor machinery manufacturing,none,0,0
+33329A,Other industrial machinery manufacturing,shelter,277,0
+333314,Optical instrument and lens manufacturing,shelter,24,0
+333316,Photographic and photocopying equipment manufacturing,shelter,492,0
+333318,Other commercial and service industry machinery manufacturing,shelter,263,0
+333414,Heating equipment (except warm air furnaces) manufacturing,shelter,1237,0
+333415,"Air conditioning, refrigeration, and warm air heating equipment manufacturing",shelter,2760,0
+333413,Industrial and commercial fan and blower and air purification equipment manufacturing,none,0,0
+333511,Industrial mold manufacturing,none,0,0
+333514,"Special tool, die, jig, and fixture manufacturing",none,0,0
+333517,Machine tool manufacturing,shelter,99,0
+33351B,"Cutting and machine tool accessory, rolling mill, and other metalworking machinery manufacturing",none,0,0
+333611,Turbine and turbine generator set units manufacturing,none,0,0
+333612,"Speed changer, industrial high-speed drive, and gear manufacturing",none,0,0
+333613,Mechanical power transmission equipment manufacturing,none,0,0
+333618,Other engine equipment manufacturing,shelter,225,0
+333912,Air and gas compressor manufacturing,none,0,0
+333914,"Measuring, dispensing, and other pumping equipment manufacturing",none,0,0
+333920,Material handling equipment manufacturing,none,0,0
+333991,Power-driven handtool manufacturing,shelter,2417,0
+333993,Packaging machinery manufacturing,none,0,0
+333994,Industrial process furnace and oven manufacturing,none,0,0
+33399A,Other general purpose machinery manufacturing,shelter,317,0
+33399B,Fluid power process machinery,none,0,0
+334111,Electronic computer manufacturing,communication,20604,0
+334112,Computer storage device manufacturing,communication,2867,0
+334118,Computer terminals and other computer peripheral equipment manufacturing,communication,8828,0
+334210,Telephone apparatus manufacturing,communication,442,0
+334220,Broadcast and wireless communications equipment,communication,10883,0
+334290,Other communications equipment manufacturing,communication,7,0
+334413,Semiconductor and related device manufacturing,none,0,0
+334418,Printed circuit assembly (electronic assembly) manufacturing,shelter,59,0
+33441A,Other electronic component manufacturing,shelter,108,0
+334510,Electromedical and electrotherapeutic apparatus manufacturing,health,4151,0
+334511,"Search, detection, and navigation instruments manufacturing",shelter,21,0
+334512,Automatic environmental control manufacturing,none,0,0
+334513,Industrial process variable instruments manufacturing,none,0,0
+334514,Totalizing fluid meter and counting device manufacturing,none,0,0
+334515,Electricity and signal testing instruments manufacturing,none,0,0
+334516,Analytical laboratory instrument manufacturing,none,0,0
+334517,Irradiation apparatus manufacturing,none,0,0
+33451A,"Watch, clock, and other measuring and controlling device manufacturing",shelter,4456,0
+334300,Audio and video equipment manufacturing,meaning,20568,0
+334610,Manufacturing and reproducing magnetic and optical media,meaning,176,0
+335110,Electric lamp bulb and part manufacturing,shelter,633,0
+335120,Lighting fixture manufacturing,shelter,2029,0
+335210,Small electrical appliance manufacturing,shelter,10580,0
+335220,Major household appliance manufacturing,shelter,20303,0
+335311,"Power, distribution, and specialty transformer manufacturing",shelter,6,0
+335312,Motor and generator manufacturing,shelter,91,0
+335313,Switchgear and switchboard apparatus manufacturing,shelter,64,0
+335314,Relay and industrial control manufacturing,none,0,0
+335911,Storage battery manufacturing,energy,4205,0
+335912,Primary battery manufacturing,energy,2160,0
+335920,Communication and energy wire and cable manufacturing,none,0,0
+335930,Wiring device manufacturing,none,0,0
+335991,Carbon and graphite product manufacturing,none,0,0
+335999,All other miscellaneous electrical equipment and component manufacturing,shelter,206,0
+336111,Automobile manufacturing,mobility,20107,0
+336112,Light truck and utility vehicle manufacturing,mobility,136403,0
+336120,Heavy duty truck manufacturing,none,0,0
+336211,Motor vehicle body manufacturing,mobility,81,0
+336212,Truck trailer manufacturing,none,0,0
+336213,Motor home manufacturing,discretionary,5682,0
+336214,Travel trailer and camper manufacturing,discretionary,11675,0
+336310,Motor vehicle gasoline engine and engine parts manufacturing,mobility,3369,0
+336320,Motor vehicle electrical and electronic equipment manufacturing,mobility,3441,0
+336350,Motor vehicle transmission and power train parts manufacturing,mobility,2878,0
+336360,Motor vehicle seating and interior trim manufacturing,none,0,0
+336370,Motor vehicle metal stamping,none,0,0
+336390,Other motor vehicle parts manufacturing,mobility,5114,0
+3363A0,"Motor vehicle steering, suspension component (except spring), and brake systems manufacturing",mobility,1476,0
+336411,Aircraft manufacturing,mobility,927,0
+336412,Aircraft engine and engine parts manufacturing,none,0,0
+336413,Other aircraft parts and auxiliary equipment manufacturing,none,0,0
+336414,Guided missile and space vehicle manufacturing,none,0,0
+33641A,Propulsion units and parts for space vehicles and guided missiles,none,0,0
+336500,Railroad rolling stock manufacturing,none,0,0
+336611,Ship building and repairing,none,0,0
+336612,Boat building,discretionary,9035,0
+336991,"Motorcycle, bicycle, and parts manufacturing",mobility,8054,0
+336992,"Military armored vehicle, tank, and tank component manufacturing",none,0,0
+336999,All other transportation equipment manufacturing,mobility,4007,0
+337110,Wood kitchen cabinet and countertop manufacturing,none,0,0
+337121,Upholstered household furniture manufacturing,shelter,15986,0
+337122,Nonupholstered wood household furniture manufacturing,shelter,13290,0
+337127,Institutional furniture manufacturing,shelter,1,0
+33712N,Other household nonupholstered furniture,shelter,6624,0
+337215,"Showcase, partition, shelving, and locker manufacturing",shelter,402,0
+33721A,Office furniture and custom architectural woodwork and millwork manufacturing,shelter,71,0
+337900,Other furniture related product manufacturing,shelter,10494,0
+339112,Surgical and medical instrument manufacturing,health,46,0
+339113,Surgical appliance and supplies manufacturing,health,8679,0
+339114,Dental equipment and supplies manufacturing,none,0,0
+339115,Ophthalmic goods manufacturing,health,10342,0
+339116,Dental laboratories,none,0,0
+339910,Jewelry and silverware manufacturing,discretionary,14008,0
+339920,Sporting and athletic goods manufacturing,meaning,12707,0
+339930,"Doll, toy, and game manufacturing",meaning,20244,0
+339940,Office supplies (except paper) manufacturing,meaning,2306,0
+339950,Sign manufacturing,none,0,0
+339990,All other miscellaneous manufacturing,shelter,17640,0
+311111,Dog and cat food manufacturing,discretionary,17722,0
+311119,Other animal food manufacturing,discretionary,2340,0
+311210,Flour milling and malt manufacturing,food,3039,0
+311221,Wet corn milling,food,1863,0
+311225,Fats and oils refining and blending,food,3107,0
+311224,Soybean and other oilseed processing,food,2714,0
+311230,Breakfast cereal manufacturing,food,9192,0
+311300,Sugar and confectionery product manufacturing,food,27453,0
+311410,Frozen food manufacturing,food,27834,0
+311420,"Fruit and vegetable canning, pickling, and drying",food,25702,0
+311513,Cheese manufacturing,food,17247,0
+311514,"Dry, condensed, and evaporated dairy product manufacturing",food,9647,0
+31151A,Fluid milk and butter manufacturing,food,24544,0
+311520,Ice cream and frozen dessert manufacturing,food,1881,0
+311615,Poultry processing,food,35940,0
+31161A,"Animal (except poultry) slaughtering, rendering, and processing",food,71550,0
+311700,Seafood product preparation and packaging,food,6329,0
+311810,Bread and bakery product manufacturing,food,44483,0
+3118A0,"Cookie, cracker, pasta, and tortilla manufacturing",food,21597,0
+311910,Snack food manufacturing,food,28768,0
+311920,Coffee and tea manufacturing,food,7850,0
+311930,Flavoring syrup and concentrate manufacturing,food,597,0
+311940,Seasoning and dressing manufacturing,food,13534,0
+311990,All other food manufacturing,food,22683,0
+312110,Soft drink and ice manufacturing,food,42246,0
+312120,Breweries,discretionary,25930,0
+312130,Wineries,discretionary,19401,0
+312140,Distilleries,discretionary,12490,0
+312200,Tobacco manufacturing,discretionary,56674,0
+313100,"Fiber, yarn, and thread mills",clothing,44,0
+313200,Fabric mills,clothing,876,0
+313300,Textile and fabric finishing and fabric coating mills,clothing,507,0
+314110,Carpet and rug mills,shelter,6282,0
+314120,Curtain and linen mills,shelter,9489,0
+314900,Other textile product mills,shelter,3850,0
+315000,Apparel manufacturing,clothing,100488,0
+316000,Leather and allied product manufacturing,clothing,43143,0
+322110,Pulp mills,none,0,0
+322120,Paper mills,shelter,11736,0
+322130,Paperboard mills,none,0,0
+322210,Paperboard container manufacturing,shelter,771,0
+322220,Paper bag and coated and treated paper manufacturing,shelter,1895,0
+322230,Stationery product manufacturing,meaning,742,0
+322291,Sanitary paper product manufacturing,water_sanitation,7043,0
+322299,All other converted paper product manufacturing,shelter,490,0
+323110,Printing,meaning,2802,0
+323120,Support activities for printing,none,0,0
+324110,Petroleum refineries,mobility,169120,0
+324121,Asphalt paving mixture and block manufacturing,none,0,0
+324122,Asphalt shingle and coating materials manufacturing,none,0,0
+324190,Other petroleum and coal products manufacturing,energy,7201,0
+325110,Petrochemical manufacturing,none,0,0
+325120,Industrial gas manufacturing,shelter,363,0
+325130,Synthetic dye and pigment manufacturing,none,0,0
+325180,Other basic inorganic chemical manufacturing,shelter,19,0
+325190,Other basic organic chemical manufacturing,shelter,642,0
+325211,Plastics material and resin manufacturing,none,0,0
+3252A0,Synthetic rubber and artificial and synthetic fibers and filaments manufacturing,none,0,0
+325411,Medicinal and botanical manufacturing,none,0,0
+325412,Pharmaceutical preparation manufacturing,health,196765,0
+325413,In-vitro diagnostic substance manufacturing,none,0,0
+325414,Biological product (except diagnostic) manufacturing,none,0,0
+325310,Fertilizer manufacturing,shelter,141,0
+325320,Pesticide and other agricultural chemical manufacturing,shelter,1157,0
+325510,Paint and coating manufacturing,shelter,2362,0
+325520,Adhesive manufacturing,shelter,1630,0
+325610,Soap and cleaning compound manufacturing,water_sanitation,17539,0
+325620,Toilet preparation manufacturing,water_sanitation,33003,0
+325910,Printing ink manufacturing,none,0,0
+3259A0,All other chemical product and preparation manufacturing,shelter,2038,0
+326110,Plastics packaging materials and unlaminated film and sheet manufacturing,shelter,2803,0
+326120,"Plastics pipe, pipe fitting, and unlaminated profile shape manufacturing",none,0,0
+326130,"Laminated plastics plate, sheet (except packaging), and shape manufacturing",none,0,0
+326140,Polystyrene foam product manufacturing,shelter,705,0
+326150,Urethane and other foam product (except polystyrene) manufacturing,shelter,562,0
+326160,Plastics bottle manufacturing,none,0,0
+326190,Other plastics product manufacturing,shelter,14796,0
+326210,Tire manufacturing,mobility,14316,0
+326220,Rubber and plastics hoses and belting manufacturing,shelter,520,0
+326290,Other rubber product manufacturing,shelter,1308,0
+423100,Motor vehicle and motor vehicle parts and supplies,mobility,23358,0
+423400,Professional and commercial equipment and supplies,margin,35422,0
+423600,Household appliances and electrical and electronic goods,margin,29050,0
+423800,"Machinery, equipment, and supplies",margin,4474,0
+423A00,Other durable goods merchant wholesalers,margin,66712,0
+424200,Drugs and druggists' sundries,health,90503,0
+424400,Grocery and related product wholesalers,food,90702,0
+424700,Petroleum and petroleum products,mobility,64665,0
+424A00,Other nondurable goods merchant wholesalers,margin,157672,0
+425000,Wholesale electronic markets and agents and brokers,margin,3610,0
+4200ID,Customs duties,accounting,0,0
+441000,Motor vehicle and parts dealers,mobility,254196,0
+445000,Food and beverage stores,food,234329,0
+452000,General merchandise stores,margin,219688,0
+444000,Building material and garden equipment and supplies dealers,shelter,50101,0
+446000,Health and personal care stores,health,119329,0
+447000,Gasoline stations,mobility,77900,0
+448000,Clothing and clothing accessories stores,clothing,138795,0
+454000,Nonstore retailers,margin,252459,0
+4B0000,All other retail,margin,199714,0
+481000,Air transportation,mobility,130993,0
+482000,Rail transportation,mobility,7817,0
+483000,Water transportation,discretionary,23267,0
+484000,Truck transportation,margin,85348,0
+485000,Transit and ground passenger transportation,mobility,47460,0
+486000,Pipeline transportation,energy,2986,0
+48A000,Scenic and sightseeing transportation and support activities,discretionary,11399,0
+492000,Couriers and messengers,communication,6456,0
+493000,Warehousing and storage,margin,251,0
+511110,Newspaper publishers,communication,13189,0
+511120,Periodical Publishers,meaning,8236,0
+511130,Book publishers,meaning,17282,0
+5111A0,"Directory, mailing list, and other publishers",meaning,7921,0
+511200,Software publishers,communication,48204,0
+512100,Motion picture and video industries,meaning,21990,0
+512200,Sound recording industries,meaning,1752,0
+515100,Radio and television broadcasting,meaning,11653,0
+515200,Cable and other subscription programming,none,0,0
+517110,Wired telecommunications carriers,communication,201552,0
+517210,Wireless telecommunications carriers (except satellite),communication,122323,0
+517A00,"Satellite, telecommunications resellers, and all other telecommunications",communication,13485,0
+518200,"Data processing, hosting, and related services",communication,31753,0
+519130,Internet publishing and broadcasting and Web search portals,communication,10416,0
+5191A0,"News syndicates, libraries, archives and all other information services",communication,4546,0
+522A00,Nondepository credit intermediation and related activities,finance_legal,42387,0
+52A000,Monetary authorities and depository credit intermediation,finance_legal,236363,0
+523900,Other financial investment activities,finance_legal,177895,0
+523A00,Securities and commodity contracts intermediation and brokerage,finance_legal,47331,0
+524113,Direct life insurance carriers,finance_legal,90314,0
+5241XX,"Insurance carriers, except direct life",finance_legal,308251,0
+524200,"Insurance agencies, brokerages, and related activities",none,0,0
+525000,"Funds, trusts, and other financial vehicles",finance_legal,170526,0
+531HSO,Owner-occupied housing,shelter,1553178,0
+531HST,Tenant-occupied housing,shelter,467675,0
+531ORE,Other real estate,finance_legal,5861,0
+532100,Automotive equipment rental and leasing,mobility,78600,0
+532400,Commercial and industrial machinery and equipment rental and leasing,shelter,441,0
+532A00,General and consumer goods rental,meaning,18051,0
+533000,Lessors of nonfinancial intangible assets,none,0,0
+541100,Legal services,finance_legal,104093,0
+541511,Custom computer programming services,none,0,0
+541512,Computer systems design services,none,0,0
+54151A,"Other computer related services, including facilities management",none,0,0
+541200,"Accounting, tax preparation, bookkeeping, and payroll services",finance_legal,17900,0
+541300,"Architectural, engineering, and related services",none,0,0
+541610,Management consulting services,none,0,0
+5416A0,Environmental and other technical consulting services,none,0,0
+541700,Scientific research and development services,discretionary,5303,0
+541800,"Advertising, public relations, and related services",discretionary,766,0
+541400,Specialized design services,shelter,7558,0
+541920,Photographic services,meaning,7156,0
+541940,Veterinary services,discretionary,33726,0
+5419A0,"All other miscellaneous professional, scientific, and technical services",none,0,0
+550000,Management of companies and enterprises,none,0,0
+561300,Employment services,discretionary,1879,0
+561700,Services to buildings and dwellings,shelter,21348,0
+561100,Office administrative services,none,0,0
+561200,Facilities support services,none,0,0
+561400,Business support services,discretionary,6344,0
+561500,Travel arrangement and reservation services,discretionary,23394,0
+561600,Investigation and security services,safety,11365,0
+561900,Other support services,discretionary,159,0
+562000,Waste management and remediation services,water_sanitation,28334,0
+611100,Elementary and secondary schools,education,53010,0
+611A00,"Junior colleges, colleges, universities, and professional schools",education,238722,0
+611B00,Other educational services,education,68474,0
+621100,Offices of physicians,health,491310,0
+621200,Offices of dentists,health,129315,0
+621300,Offices of other health practitioners,health,94125,0
+621400,Outpatient care centers,health,160922,0
+621500,Medical and diagnostic laboratories,health,38265,0
+621600,Home health care services,health,107517,0
+621900,Other ambulatory health care services,health,29419,0
+622000,Hospitals,health,1039196,0
+623A00,Nursing and community care facilities,health,187578,0
+623B00,"Residential mental health, substance abuse, and other residential care facilities",health,54042,0
+624100,Individual and family services,health,112901,0
+624400,Child day care services,education,56995,0
+624A00,"Community food, housing, and other relief services, including vocational rehabilitation services",safety,55383,0
+711100,Performing arts companies,meaning,32596,0
+711200,Spectator sports,meaning,21320,0
+711500,"Independent artists, writers, and performers",meaning,472,0
+711A00,Promoters of performing arts and sports and agents for public figures,meaning,11360,0
+712000,"Museums, historical sites, zoos, and parks",meaning,21225,0
+713100,Amusement parks and arcades,meaning,17522,0
+713200,Gambling industries (except casino hotels),discretionary,111858,0
+713900,Other amusement and recreation industries,meaning,80832,0
+721000,Accommodation,discretionary,163295,0
+722110,Full-service restaurants,food,279233,0
+722211,Limited-service restaurants,food,344723,0
+722A00,All other food and drinking places,food,107894,0
+811100,Automotive repair and maintenance,mobility,164881,0
+811200,Electronic and precision equipment repair and maintenance,shelter,4114,0
+811300,Commercial and industrial machinery and equipment repair and maintenance,none,0,0
+811400,Personal and household goods repair and maintenance,shelter,22333,0
+812100,Personal care services,discretionary,79038,0
+812200,Death care services,meaning,21338,0
+812300,Dry-cleaning and laundry services,clothing,14091,0
+812900,Other personal services,discretionary,71772,0
+813100,Religious organizations,meaning,100202,0
+813A00,"Grantmaking, giving, and social advocacy organizations",meaning,58233,0
+813B00,"Civic, social, professional, and similar organizations",meaning,58624,0
+814000,Private households,discretionary,18684,0
+S00500,Federal general government (defense),defense,0,599358
+S00600,Federal general government (nondefense),federal_civil,0,379143
+491000,Postal service,communication,6914,0
+S00102,Other federal government enterprises,none,0,0
+GSLGE,State and local government (educational services),education,0,832472
+GSLGH,State and local government (hospitals and health services),health,0,68698
+GSLGO,State and local government (other services),safety,0,836043
+S00203,Other state and local government enterprises,water_sanitation,72509,0
+S00401,Scrap,accounting,-12990,0
+S00402,Used and secondhand goods,accounting,94319,0
+S00300,Noncomparable imports,accounting,110221,0
+S00900,Rest of the world adjustment,accounting,-200997,0
