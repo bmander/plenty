@@ -42,6 +42,29 @@ def test_capabilities_page_carries_the_whole_taxonomy(built):
         assert re.search(rf'<tr id="{k}">.*?In the new list: <a href="#', text, re.S), k
 
 
+def test_home_page_balances_every_capability(built):
+    d = built
+    text = (site.SITE / "index.html").read_text()
+    # every capability is on the balance, under its domain, linked to its derivation
+    for k in d.flow.index:
+        assert f'href="{site.flow_href(k)}"' in text, k
+    assert text.count('class="kind') == (d.tax.level == 0).sum()
+    assert d.balance.flow.sum() == pytest.approx(d.flow.flow.sum())
+    assert (d.balance.open <= d.balance.tasks).all() and (d.balance.bench <= d.balance.tasks).all()
+    # the old function ranking no longer leads the home page
+    assert "Demand: exposure" not in text
+
+
+def test_leaderboards_sit_on_real_capabilities(built):
+    d = built
+    assert set(d.boards.capability) <= set(d.flow.index)
+    assert set(d.boards.function) <= set(d.ct.index)
+    # the same boards the 18 functions carry
+    assert set(d.boards.board) == set(d.caps.board.dropna())
+    for b in d.boards.itertuples():
+        assert b.capability in set(d.tax_func.node[d.tax_func.function == b.function]), b.board
+
+
 def test_flow_pages_add_up_to_the_flows(built):
     d = built
     for k in d.flow.index:

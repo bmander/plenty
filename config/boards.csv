@@ -1,0 +1,5 @@
+board,url,capability,function
+brep-bench,https://brepbench.org/,design.solid_modeling,cad
+FEA leaderboard,,simulate.structural_fea,fea
+cam-bench,https://github.com/bmander/cam-bench,produce.milling_cam,cam
+pcbhdlbench,https://github.com/bmander/pcbhdlbench,design.pcb,pcb

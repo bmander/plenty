@@ -96,9 +96,22 @@ class Data:
         self.flow_work = pd.read_csv(RESULTS / "capability_flow_work.csv", index_col=0)
         self.flow_occ = pd.read_csv(RESULTS / "capability_flow_occupations.csv")
         self.flow_acct = pd.read_csv(RESULTS / "capability_flow_accounting.csv", index_col=0)
+        # Demand and means side by side, per capability: its flow, and how many of its tasks have a
+        # known open tool or could have an open benchmark. Open leaderboards that exist today are in
+        # config/boards.csv, placed on the taxonomy capability each one measures.
+        tasks = self.tax[self.tax.level == 2]
+        self.balance = tasks.groupby("parent").agg(
+            tasks=("id", "size"), open=("open_tools", lambda x: (x != "").sum()),
+            bench=("benchmarkable", lambda x: (x == "yes").sum())).join(self.flow[["name", "domain", "flow", "rank", "top_need"]])
+        self.boards = pd.read_csv(CONFIG / "boards.csv").fillna("")
 
     def cap_name(self, k):
         return self.caps.at[k, "name"]
+
+    def boards_html(self, capabilities, none: str = "") -> str:
+        """Links to the open leaderboards that measure any of these taxonomy capabilities."""
+        b = self.boards[self.boards.capability.isin(list(capabilities))]
+        return "; ".join(f'<a href="{e(x.url)}">{e(x.board)}</a>' if x.url else e(x.board) for x in b.itertuples()) or none
 
     def board_html(self, k):
         if not self.has_board[k]:
@@ -459,57 +472,70 @@ say about it.</p>
     return page(name, f"capability-{k}.html", body, long_title=True)
 
 
-def balance_rows(d: Data, order) -> list[str]:
-    vmax, emax = d.ct["volume weight"].max(), d.ct["exposure"].max()
+def balance_tree(d: Data) -> list[str]:
+    """Demand against means: one row per domain, each followed by its capabilities as hidden
+    child rows that the domain's name toggles open (site.js)."""
+    B = d.balance
+    dom = B.groupby("domain").agg(flow=("flow", "sum"), tasks=("tasks", "sum"), open=("open", "sum"),
+                                  bench=("bench", "sum"), n=("flow", "size")).sort_values("flow", ascending=False)
     rows = []
-    for k in order:
-        r = d.ct.loc[k]
-        wtip = f"{d.cap_name(k)}: {r['volume weight']:.1%} of the value added embodied in the basket, score-weighted. Click for the derivation."
-        xtip = f"{d.cap_name(k)}: {r['exposure'] * 100:.1f} cents of every basket dollar passes through sectors that cannot run without it. Click for the derivation."
+    for i, (k, r) in enumerate(dom.iterrows()):
+        band, name = (" band" if i % 2 == 0 else ""), d.tax_name[k]
+        caps = B[B.domain == k].sort_values("flow", ascending=False)
         rows.append(
-            f'<tr><th scope="row"><a href="{cap_href(k)}">{e(d.cap_name(k))}</a></th>'
-            f'<td><a class="barlink" href="{cap_href(k, "weight")}">{bar(r["volume weight"], vmax, f3(r["volume weight"]), wtip)}</a></td>'
-            f'<td><a class="barlink" href="{cap_href(k, "exposure")}">{bar(r["exposure"], emax, f3(r["exposure"]), xtip)}</a></td>'
-            f'<td>{d.board_html(k)}</td></tr>')
+            f'<tr class="kind{band}"><td><button type="button" class="expander" aria-expanded="false" data-group="b-{k}">'
+            f'{e(name)}</button><div class="dim capdef">{int(r.n)} capabilities</div></td>'
+            f'<td>{bar(r.flow, dom.flow.max(), cents(r.flow, 1), f"{name}: {r.flow * 100:.1f} cents of each need dollar flow through its capabilities")}</td>'
+            f'<td>{bar(r.open / r.tasks, 1, f"{r.open / r.tasks:.0%}", f"{name}: {int(r.open)} of {int(r.tasks)} tasks have a known open-source tool")}</td>'
+            f'<td>{bar(r.bench / r.tasks, 1, f"{r.bench / r.tasks:.0%}", f"{name}: an open benchmark is possible today for {int(r.bench)} of {int(r.tasks)} tasks")}</td>'
+            f'<td>{d.boards_html(caps.index)}</td></tr>')
+        rows += [
+            f'<tr class="sub{band}" data-group="b-{k}" hidden><td class="child"><a href="capabilities.html#{c.Index}">{e(c.name)}</a></td>'
+            f'<td class="num"><a href="{flow_href(c.Index)}" data-tip="Rank {int(c.rank)} of {len(B)}. Click for the derivation.">{cents(c.flow)}</a></td>'
+            f'<td>{int(c.open)} of {int(c.tasks)} tasks</td><td>{int(c.bench)} of {int(c.tasks)} tasks</td>'
+            f'<td>{d.boards_html([c.Index])}</td></tr>' for c in caps.itertuples()]
     return rows
 
 
 def index(d: Data) -> str:
-    order = d.ct.sort_values("volume weight", ascending=False).index
     total = d.needs.final_demand_musd.sum() / 1e6
-    n_gap = int((~d.has_board).sum())
-    s = d.sectors
-    phys = s[s.index.isin(d.physical)]
-    phys_share = phys.value_added_per_basket_dollar.sum() / s.value_added_per_basket_dollar.sum()
-    top = d.ct[~d.has_board.reindex(d.ct.index)].sort_values(["worst_rank", "volume_rank"]).index[:2]
+    B = d.balance
+    acct = d.flow_acct.flow
+    half = B[B.open * 2 < B.tasks].sort_values("flow", ascending=False)
+    lead = ", ".join(f'<a href="{flow_href(k)}">{e(r["name"].lower())}</a>' for k, r in half.head(3).iterrows())
     body = f"""
 <h1>A material balance for the machines behind human needs</h1>
-<p class="lede">Plenty keeps an account of what people need, the engineering capabilities those
-needs depend on, and which of those capabilities exist in the open. Where the two sides do not
-balance, there is work to do.</p>
-<p class="caveat">This is a first pass. The capability scores behind these numbers were written by an
-AI model and have not been reviewed by people who work in each field. <a href="method.html">How far to trust it</a>.</p>
+<p class="lede">Plenty keeps an account of what people need, the capabilities those needs depend on, and which of
+those capabilities exist in the open. Where the two sides do not balance, there is work to do.</p>
+<p class="caveat">This is a first pass. AI models wrote the list of capabilities and what is said about open tools, and
+nobody who works in these fields has reviewed either. <a href="method.html#taxonomy">How far to trust it</a>.</p>
 
 <h2>The balance today</h2>
 {table(
-    [th("Capability"), th("Demand: weight on the path to needs"), th("Demand: exposure"), th("Means: open leaderboard")],
-    balance_rows(d, order),
-    caption="Weight is the share of the basket's embodied value added arising in sectors that depend on the capability. "
-            "Exposure is dollars of output from sectors that cannot run without it, per dollar of basket. "
-            "Click a bar to see the sum behind it, sector by sector.")}
-<p class="note">{n_gap} of {len(d.ct)} capabilities have no open leaderboard. The two that rank highest on both
-measures are {e(d.cap_name(top[0]).lower())} and {e(d.cap_name(top[1]).lower())}. <a href="gaps.html">See the gaps</a>.</p>
+    [th("Domain, then its capabilities"), th("Demand: flow, &cent; per need dollar"), th("Means: tasks with an open tool"),
+     th("Means: open benchmark possible"), th("Open leaderboard today")],
+    balance_tree(d), attrs=" data-tree",
+    caption="Demand is the part of each need dollar that flows through a domain's capabilities today. It shows where the work "
+            "goes, not how much a capability matters. Means is the share of its tasks that have a known open-source tool, and "
+            "the share for which public reference problems exist to score tools on. Click a domain to list its capabilities, "
+            "and a flow to see where it comes from.")}
+<p class="note">{(B.tasks.sum() - B.open.sum()):,} of {B.tasks.sum():,} tasks have no known open tool, and {len(half)} of {len(B)}
+capabilities have one for fewer than half their tasks; the largest of those by flow are {lead}.
+{len(d.boards)} open leaderboards exist. <a href="gaps.html">See the gaps</a>.</p>
+<p class="note">{acct["flowed"] * 100:.0f} cents of each need dollar reach a capability. The rest sits in sectors with no
+occupation data or is work the chain cannot place (<a href="method.html#flows">how value is flowed</a>). An earlier account
+of <a href="capabilities.html#functions">eighteen engineering functions</a> also measures exposure: what cannot run
+without a function.</p>
 
 <h2>How the account is kept</h2>
 <ol class="loop">
 <li><a href="needs.html">Collect needs</a><p>{len(d.needs)} needs, each counted equally, met the way US households
-and governments met them in 2017 with ${total:.1f} trillion of spending. Farming, extraction, utilities, construction and manufacturing carry
-{phys_share:.0%} of the value added embodied in that basket.</p></li>
-<li><a href="capabilities.html">Collect capabilities</a><p>{(d.tax.level == 1).sum()} capabilities in {(d.tax.level == 0).sum()} domains, drafted from
-published taxonomies, each with the part of a need dollar that flows through it today. The {len(d.ct)} engineering
-functions above are weighted by how much of the basket passes through sectors that depend on them. What open tools can actually do today is not collected yet.</p></li>
-<li><a href="gaps.html">Identify gaps</a><p>Capabilities people depend on that nobody is measuring in the open,
-ranked by how much depends on them.</p></li>
+and governments met them in 2017 with ${total:.1f} trillion of spending.</p></li>
+<li><a href="capabilities.html">Collect capabilities</a><p>{len(B)} capabilities in {(d.tax.level == 0).sum()} domains and
+{B.tasks.sum():,} tasks, drafted from published taxonomies. Each has the part of a need dollar that flows through it today,
+and what is known to exist in the open for each task.</p></li>
+<li><a href="gaps.html">Identify gaps</a><p>Capabilities that value flows through and that have no open tool, or that
+nobody is measuring in the open.</p></li>
 <li><a href="work.html">Dispatch work</a><p>{len(d.work)} proposed leaderboards, measurements and reviews. Each one
 can be claimed by opening an issue.</p></li>
 </ol>
@@ -887,22 +913,53 @@ def gaps_page(d: Data) -> str:
                 f'<td>{d.board_html(k)}</td><td class="wrap">{links}</td></tr>')
         return rows
 
-    head = [th("Capability"), th("Rank by weight", "num", "num"), th("Rank by exposure", "num", "num"),
+    head = [th("Function"), th("Rank by weight", "num", "num"), th("Rank by exposure", "num", "num"),
             th("Most exposed need"), th("Open leaderboard"), th("Proposed work")]
     open_gaps = ct[~ct.has_board].sort_values(["worst_rank", "volume_rank"])
     covered = ct[ct.has_board].sort_values(["worst_rank", "volume_rank"])
     thin_rows = [
         f'<tr><td class="name">{e(r["name"])}</td><td class="num">{r.output_per_basket_dollar * 100:.2f}&cent;</td>'
         f'<td class="num">{r.need_breadth_observed:.1f}</td></tr>' for _, r in d.thin.head(15).iterrows()]
+    B = d.balance
+    fmax = B.flow.max()
+
+    def gap_rows(frame):
+        return [
+            f'<tr><th scope="row"><a href="capabilities.html#{k}">{e(r["name"])}</a></th><td class="dim">{e(d.tax_name[r.domain])}</td>'
+            f'<td data-v="{r.flow}"><a class="barlink" href="{flow_href(k)}">{bar(r.flow, fmax, cents(r.flow), f"{r["name"]}: rank {int(r["rank"])} of {len(B)} by flow. Click for the derivation.")}</a></td>'
+            f'<td class="num" data-v="{(r.tasks - r.open) / r.tasks}">{int(r.tasks - r.open)} of {int(r.tasks)}</td>'
+            f'<td class="num" data-v="{r.bench / r.tasks}">{int(r.bench)} of {int(r.tasks)}</td>'
+            f'<td>{d.boards_html([k], none="<span class=dim>none</span>")}</td></tr>' for k, r in frame.iterrows()]
+    ghead = [th("Capability", sort="text"), th("Domain", sort="text"), th("Flow, &cent; per need dollar", sort="num"),
+             th("Tasks with no known open tool", "num", "num"), th("Open benchmark possible", "num", "num"), th("Open leaderboard")]
+    none_open = B[B.open == 0].sort_values("flow", ascending=False)
+    half = B[(B.open > 0) & (B.open * 2 < B.tasks)].sort_values("flow", ascending=False)
+    measured = B[B.index.isin(d.boards.capability)]
     body = f"""
 <h1>Gaps</h1>
-<p class="lede">A gap is a capability people depend on that nobody is measuring in the open.
-{len(open_gaps)} of {len(ct)} capabilities are in that state.</p>
-<h2>No open leaderboard</h2>
-{table(head, rows_for(open_gaps), caption=f"Ordered by the worse of the two ranks, so a capability has to matter on both measures to rise. Ranks are out of {len(ct)}.")}
-<h2>Covered by a leaderboard</h2>
-{table(head, rows_for(covered), caption="A board existing does not mean the gap is closed. It means the distance to the state of the art is being measured.")}
-<p class="caveat">This page ranks gaps by demand alone. A real gap is demand times the distance between open tools and the
+<p class="lede">A gap is a capability that value flows through and that has no open tool, or that nobody is measuring
+in the open. Of {len(B)} capabilities, {len(none_open)} have no known open tool for any task, {len(half)} more have one for
+fewer than half their tasks, and {len(B) - len(measured)} have no open leaderboard.</p>
+<p class="caveat">Read this page as a list of places to look, not a ranking of what matters. Flow shows where today's work
+goes. Open tools are what the authors of the capability list knew of and have not been checked: "no known open tool"
+does not mean none exists, and a tool existing does not mean it is good enough. How far open tools are from the best
+available is <a href="work.html#inventory">not collected yet</a>.</p>
+<h2>No known open tool for any task</h2>
+{table(ghead, gap_rows(none_open), caption="Ordered by flow. Click a column heading to sort.")}
+<h2>An open tool for fewer than half the tasks</h2>
+{table(ghead, gap_rows(half), caption="Ordered by flow.")}
+<h2>Measured in the open today</h2>
+{table(ghead, gap_rows(measured.sort_values("flow", ascending=False)),
+       caption="The capabilities with an open leaderboard. A board existing does not mean the gap is closed. It means the distance to the state of the art is being measured.")}
+
+<h2 id="functions">Engineering functions</h2>
+<p>The earlier account ranks eighteen engineering functions by weight and by exposure: how much of the basket passes
+through sectors that cannot run without the function. Flow cannot give exposure, so this ranking is kept.</p>
+<h3>No open leaderboard</h3>
+{table(head, rows_for(open_gaps), caption=f"Ordered by the worse of the two ranks, so a function has to matter on both measures to rise. Ranks are out of {len(ct)}.")}
+<h3>Covered by a leaderboard</h3>
+{table(head, rows_for(covered))}
+<p class="caveat">This part ranks gaps by demand alone. A real gap is demand times the distance between open tools and the
 best available, and that distance is <a href="work.html#inventory">not collected yet</a>. Where open tools are already strong
 (optimization solvers, water network hydraulics) the true gap is smaller than its rank here suggests.</p>
 

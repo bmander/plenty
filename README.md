@@ -294,7 +294,8 @@ must be set to deploy from GitHub Actions (Settings > Pages > Source).
 
 ## Layout
 
-    config/        the judgment calls: needs, basket, capital allocation, archetypes, scores, software map, proposed work
+    config/        the judgment calls: needs, basket, capital allocation, archetypes, scores, software map, proposed work,
+                   and which capability each open leaderboard measures (boards.csv)
     data/bea/      BEA 2017 detail tables (public domain, via USEPA/useeior)
     data/occupations/  O*NET 31.0 software lists, OEWS May 2021 wages by industry, BEA-NAICS concordance
     data/rd/       NSF business R&D by industry, 2017
