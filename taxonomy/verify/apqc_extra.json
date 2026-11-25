@@ -1,0 +1,235 @@
+{
+ "entries": [
+  {
+   "node": "commerce.customer_relationship",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "3.0",
+   "label": "Market and Sell Products and Services",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "3.0 Market and Sell Products and Services"
+  },
+  {
+   "node": "commerce.customer_relationship",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Develop and manage sales plans",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "3.5 Develop and manage sales plans"
+  },
+  {
+   "node": "commerce.customer_relationship.contact_account_records",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Manage customers and accounts",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "3.5.2 Manage customers and accounts"
+  },
+  {
+   "node": "commerce.customer_relationship.lead_pipeline",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Generate leads",
+   "verdict": "corrected",
+   "correct_code": "3.5.1",
+   "correct_label": "Manage leads/opportunities",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "3.5.1 Manage leads/opportunities"
+  },
+  {
+   "node": "commerce.customer_relationship.territory_quota",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Manage sales force",
+   "verdict": "contradicted",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.customer_relationship.configure_price_quote",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Manage customer sales",
+   "verdict": "corrected",
+   "correct_code": "3.5.3",
+   "correct_label": "Develop and manage sales proposals, bids, and quotes",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "3.5.3 Develop and manage sales proposals, bids, and quotes"
+  },
+  {
+   "node": "commerce.marketing_automation",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Develop and manage marketing plans",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "3.3 Develop and manage marketing plans"
+  },
+  {
+   "node": "commerce.marketing_automation.marketing_resource_planning",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Develop marketing strategy",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "3.2 Develop marketing strategy"
+  },
+  {
+   "node": "commerce.marketing_analytics",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Understand markets, customers, and capabilities",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "3.1 Understand markets, customers, and capabilities"
+  },
+  {
+   "node": "commerce.customer_service",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "6.0",
+   "label": "Manage Customer Service",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "6.0 Manage Customer Service"
+  },
+  {
+   "node": "commerce.customer_service.case_management",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Plan and manage customer service contacts",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "6.2 Plan and manage customer service contacts"
+  },
+  {
+   "node": "commerce.customer_service.complaint_feedback",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Evaluate customer service operations and customer satisfaction",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "6.5 Evaluate customer service operations and customer satisfaction"
+  },
+  {
+   "node": "commerce.service_scheduling",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Service products after sales",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "6.3 Service products after sales"
+  },
+  {
+   "node": "move.supply_chain_planning",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Plan for and align supply chain resources",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "4.1 Plan for and align supply chain resources"
+  },
+  {
+   "node": "move.supply_chain_planning.demand_forecasting",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Develop baseline forecasts",
+   "verdict": "corrected",
+   "correct_code": "4.1.2.1",
+   "correct_label": "Develop baseline demand forecasts",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "4.1.2.1 Develop baseline demand forecasts"
+  },
+  {
+   "node": "move.supply_chain_planning.inventory_policy_optimization",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Manage inventory",
+   "verdict": "corrected",
+   "correct_code": "4.1.6.2",
+   "correct_label": "Establish inventory management constraints",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "4.1.6.2 Establish inventory management constraints"
+  },
+  {
+   "node": "move.supply_chain_planning.network_design",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Design supply chain network",
+   "verdict": "corrected",
+   "correct_code": "4.4.1.2",
+   "correct_label": "Design logistics network",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "4.4.1.2 Design logistics network"
+  },
+  {
+   "node": "move.warehouse_inventory",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Operate warehousing",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "4.4.3 Operate warehousing"
+  },
+  {
+   "node": "move.warehouse_inventory.stock_records",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Manage inventory",
+   "verdict": "corrected",
+   "correct_code": "4.4.3.5",
+   "correct_label": "Track inventory accuracy",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "4.4.3.5 Track inventory accuracy"
+  },
+  {
+   "node": "move.freight_transport",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Operate outbound transportation",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": "4.4.4 Operate outbound transportation"
+  },
+  {
+   "node": "move.freight_transport.carrier_procurement",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Procure transportation services",
+   "verdict": "contradicted",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf",
+   "evidence": ""
+  }
+ ]
+}

@@ -1,0 +1,2763 @@
+{
+  "domain": "commerce",
+  "summary": "Commerce is broken down along the APQC Process Classification Framework's selling (3.0) and customer-service (6.0) categories for the cross-industry functions: customer relationships, campaigns, advertising, measurement, and service. NAICS 44-45, 72, 53 and 81 service lines decide the store, restaurant, lodging, property and personal-service capabilities. Task boundaries inside those capabilities follow ARTS (retail), OpenTravel and HTNG (lodging), RESO (real estate) and IAB Tech Lab (advertising) where they draw a line. Leaves are drawn at the level where a problem has fixed inputs and outputs: demand forecasting, product search, click prediction, room revenue management, workforce staffing and automated valuation have public datasets or reference solutions, but most record-keeping leaves do not.",
+  "capabilities": [
+    {
+      "id": "commerce.customer_relationship",
+      "name": "Customer relationship management",
+      "definition": "Given contacts, accounts and interactions, maintain a unified customer record and move prospects through a sales process to closed revenue.",
+      "crosswalk": [
+        {
+          "scheme": "APQC PCF cross-industry v7",
+          "code": "3.0",
+          "label": "Market and Sell Products and Services",
+          "basis": "fetched",
+          "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+        },
+        {
+          "scheme": "APQC PCF cross-industry v7",
+          "code": "",
+          "label": "Develop and manage sales plans",
+          "basis": "fetched",
+          "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+        }
+      ],
+      "onet_categories": [
+        "Customer relationship management CRM software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "commerce.marketing_automation",
+        "computing.data_integration"
+      ],
+      "notes": "Was seed 'Customer relationship management and sales force automation'; renamed, since sales force automation is the pipeline, forecast and territory tasks here. Donor management is placed here because its function (relationship records, solicitation, pledges) is CRM with gift-specific objects. Industry CRMs for insurance agencies, financial advisors, collections and law firms are handed off to govern.",
+      "tasks": [
+        {
+          "id": "commerce.customer_relationship.contact_account_records",
+          "name": "Contact and account records",
+          "definition": "Given contact details and logged interactions, keep one current record per person and organization with relationships and activity history.",
+          "inputs": "contacts, organizations, emails, calls, meetings, notes",
+          "outputs": "deduplicated contact and account records with activity timelines and relationships",
+          "crosswalk": [
+            {
+              "scheme": "APQC PCF cross-industry v7",
+              "code": "",
+              "label": "Manage customers and accounts",
+              "basis": "fetched",
+              "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+            }
+          ],
+          "onet_products": [
+            "Salesforce software",
+            "Microsoft Dynamics CRM",
+            "Act!",
+            "HEAT Software GoldMine",
+            "Sugar CRM",
+            "vtiger CRM",
+            "Maximizer Software Maximizer Enterprise",
+            "Oracle Siebel CRM",
+            "Customer information databases",
+            "Contact management systems",
+            "Redtail Technology Our Business Online",
+            "Commence Application Suite"
+          ],
+          "state_of_art": [
+            "Salesforce Sales Cloud",
+            "Microsoft Dynamics 365 Sales",
+            "HubSpot CRM"
+          ],
+          "open_tools": [
+            "SuiteCRM",
+            "EspoCRM",
+            "vtiger CRM",
+            "Twenty"
+          ],
+          "benchmarkable": "partly: data-model and import conformance can be tested, record-keeping quality has no reference answer",
+          "notes": ""
+        },
+        {
+          "id": "commerce.customer_relationship.lead_pipeline",
+          "name": "Lead and opportunity management",
+          "definition": "Given inbound leads and sales activity, score and route leads and track opportunities through pipeline stages to won or lost.",
+          "inputs": "leads with source and firmographic or behavioral attributes, rep assignments, stage rules",
+          "outputs": "lead scores and assignments, opportunity stages, conversion rates",
+          "crosswalk": [
+            {
+              "scheme": "APQC PCF cross-industry v7",
+              "code": "3.5.1",
+              "label": "Manage leads/opportunities",
+              "basis": "fetched",
+              "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+            }
+          ],
+          "onet_products": [
+            "Sales force automation software",
+            "InsideSales.com",
+            "Avidian Technologies Prophet",
+            "Sage SalesLogix",
+            "NetSuite NetCRM",
+            "AdTrack Customer Acquisition Management CAM",
+            "DataBasix Technologies Lead Commander",
+            "Moxi Works MoxiEngage",
+            "TopProducer",
+            "Eden Sales Manager",
+            "Salesforce.com Salesforce CRM"
+          ],
+          "state_of_art": [
+            "Salesforce Sales Cloud",
+            "HubSpot Sales Hub",
+            "Microsoft Dynamics 365 Sales"
+          ],
+          "open_tools": [
+            "SuiteCRM",
+            "EspoCRM"
+          ],
+          "benchmarkable": "partly: lead-conversion prediction can be scored on public marketing datasets such as the UCI Bank Marketing set; routing has no reference answer",
+          "notes": ""
+        },
+        {
+          "id": "commerce.customer_relationship.sales_forecasting",
+          "name": "Sales pipeline forecasting",
+          "definition": "Given open opportunities, their stages and history, forecast bookings by period with a range.",
+          "inputs": "opportunity snapshots over time, stage history, rep commits, historical win rates",
+          "outputs": "period revenue forecast with confidence range, at-risk deals",
+          "crosswalk": [],
+          "onet_products": [
+            "Vanguard Software Vanguard Sales Manager",
+            "Software on Sailboats Desktop Sales Manager",
+            "Salesforce software"
+          ],
+          "state_of_art": [
+            "Clari",
+            "Salesforce Sales Cloud forecasting",
+            "Gong Forecast"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: backtests on historical pipeline snapshots work, but public pipeline datasets are scarce",
+          "notes": ""
+        },
+        {
+          "id": "commerce.customer_relationship.territory_quota",
+          "name": "Territory and quota planning",
+          "definition": "Given accounts, geography, potential and rep capacity, design balanced sales territories and set quotas.",
+          "inputs": "accounts with location and potential, rep headcount and capacity, prior sales",
+          "outputs": "territory assignments, workload and potential balance measures, quotas",
+          "crosswalk": [],
+          "onet_products": [
+            "Cegedim Target Software Target SFA Pharmaceutical Suite"
+          ],
+          "state_of_art": [
+            "Salesforce Maps territory planning",
+            "Anaplan sales planning",
+            "Varicent"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: territory design is a districting optimization whose balance and compactness can be scored, though no standard instance set exists",
+          "notes": ""
+        },
+        {
+          "id": "commerce.customer_relationship.configure_price_quote",
+          "name": "Quote and proposal configuration",
+          "definition": "Given a product catalog with configuration and pricing rules and a customer's needs, produce a valid configured, priced quote.",
+          "inputs": "product options and compatibility rules, price lists, discount approvals, customer requirements",
+          "outputs": "valid configuration, priced quote document, approval routing",
+          "crosswalk": [
+            {
+              "scheme": "APQC PCF cross-industry v7",
+              "code": "3.5.3",
+              "label": "Develop and manage sales proposals, bids, and quotes",
+              "basis": "fetched",
+              "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+            }
+          ],
+          "onet_products": [
+            "Contract tracking software"
+          ],
+          "state_of_art": [
+            "Salesforce Revenue Cloud",
+            "Oracle CPQ",
+            "Conga CPQ",
+            "Tacton CPQ"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: configuration is constraint satisfaction with checkable validity; price correctness can be tested against rule sets",
+          "notes": ""
+        },
+        {
+          "id": "commerce.customer_relationship.donor_management",
+          "name": "Donor and fundraising management",
+          "definition": "Given donors, gifts, pledges and prospect wealth data, record giving, target solicitations and produce acknowledgements.",
+          "inputs": "donor records, gifts and pledges, campaign codes, wealth and philanthropy indicators",
+          "outputs": "giving histories, receipts and acknowledgements, prospect ratings, solicitation lists",
+          "crosswalk": [],
+          "onet_products": [
+            "Blackbaud The Raiser's Edge",
+            "Blackbaud eTapestry",
+            "SofterWare DonorPerfect",
+            "Blackbaud Luminate CRM",
+            "Blackbaud CRM",
+            "WealthEngine Findwealth",
+            "Foundatino Directory Online (FDO)",
+            "MightyScout"
+          ],
+          "state_of_art": [
+            "Blackbaud Raiser's Edge NXT",
+            "Salesforce Nonprofit Cloud",
+            "Bloomerang"
+          ],
+          "open_tools": [
+            "CiviCRM"
+          ],
+          "benchmarkable": "no: record-keeping with no reference answer",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "commerce.marketing_automation",
+      "name": "Marketing campaign automation",
+      "definition": "Given audiences, content and rules, plan and execute marketing campaigns across owned channels and record responses.",
+      "crosswalk": [
+        {
+          "scheme": "APQC PCF cross-industry v7",
+          "code": "",
+          "label": "Develop and manage marketing plans",
+          "basis": "fetched",
+          "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+        }
+      ],
+      "onet_categories": [
+        "Sales and marketing software",
+        "Customer relationship management CRM software"
+      ],
+      "see_also": [
+        "commerce.advertising",
+        "commerce.marketing_analytics",
+        "media.public_communication"
+      ],
+      "notes": "Seed 'Marketing automation, advertising and web analytics' split three ways: owned-channel campaigns (here), paid media buying (advertising), and measurement and research (marketing_analytics). Loyalty programs are placed here because they are rules-driven retention marketing; stored-value tender stays at the point of sale.",
+      "tasks": [
+        {
+          "id": "commerce.marketing_automation.email_campaigns",
+          "name": "Email campaign delivery",
+          "definition": "Given a subscriber list, consent status and message content, send personalized email campaigns and record deliveries, opens, clicks and unsubscribes.",
+          "inputs": "subscriber lists, consent flags, templates and personalization fields, send schedule",
+          "outputs": "sent messages, bounce and complaint handling, engagement metrics, updated suppression lists",
+          "crosswalk": [],
+          "onet_products": [
+            "Constant Contact",
+            "Oracle Eloqua",
+            "Marketo Marketing Automation",
+            "HubSpot software",
+            "Lenos marketing automation software"
+          ],
+          "state_of_art": [
+            "Salesforce Marketing Cloud",
+            "Braze",
+            "Mailchimp",
+            "Klaviyo"
+          ],
+          "open_tools": [
+            "Mautic",
+            "listmonk",
+            "phpList"
+          ],
+          "benchmarkable": "partly: deliverability and rendering can be measured against seed lists; campaign quality cannot",
+          "notes": ""
+        },
+        {
+          "id": "commerce.marketing_automation.journey_orchestration",
+          "name": "Customer journey automation",
+          "definition": "Given behavioral triggers and branching rules, run multi-step, multi-channel nurture sequences per customer.",
+          "inputs": "event streams, profile attributes, journey definitions with waits, branches and goals",
+          "outputs": "per-customer message sequences, journey state, goal conversions",
+          "crosswalk": [],
+          "onet_products": [
+            "Marketo Marketing Automation",
+            "Oracle Eloqua",
+            "HubSpot software",
+            "QAD Marketing Automation",
+            "Microsoft Dynamics Marketing",
+            "Sales Automation Software"
+          ],
+          "state_of_art": [
+            "Adobe Journey Optimizer",
+            "Salesforce Marketing Cloud Journey Builder",
+            "Braze Canvas"
+          ],
+          "open_tools": [
+            "Mautic"
+          ],
+          "benchmarkable": "no: correctness is rule execution; value depends on live customers",
+          "notes": ""
+        },
+        {
+          "id": "commerce.marketing_automation.audience_segmentation",
+          "name": "Audience segmentation and targeting",
+          "definition": "Given customer attributes and behavior, build segments and propensity or uplift scores that decide who receives which offer.",
+          "inputs": "customer profiles, transaction and engagement history, past campaign responses",
+          "outputs": "segments, propensity or uplift scores, target lists",
+          "crosswalk": [],
+          "onet_products": [
+            "Vantage MCIF",
+            "Galilee Enterprise TargetPro",
+            "Claritas ConsumerPoint"
+          ],
+          "state_of_art": [
+            "Adobe Real-Time CDP",
+            "Salesforce Data Cloud",
+            "Segment (Twilio)"
+          ],
+          "open_tools": [
+            "scikit-uplift",
+            "CausalML"
+          ],
+          "benchmarkable": "yes: public uplift datasets such as the Criteo uplift set and Hillstrom email data have held-out treatment outcomes",
+          "notes": "Generic clustering and classification belong to science machine learning; this leaf is the offer-targeting problem."
+        },
+        {
+          "id": "commerce.marketing_automation.loyalty_programs",
+          "name": "Loyalty program management",
+          "definition": "Given member transactions and program rules, accrue and redeem points, assign tiers and issue rewards.",
+          "inputs": "member enrollments, purchase transactions, earn and burn rules, tier thresholds",
+          "outputs": "point balances, tier status, reward issuance, liability totals",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Salesforce Loyalty Management",
+            "Comarch Loyalty Management",
+            "Antavo"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: rule execution with no reference problem set",
+          "notes": "No O*NET product names loyalty explicitly; the function is common in POS and CRM suites."
+        },
+        {
+          "id": "commerce.marketing_automation.marketing_resource_planning",
+          "name": "Marketing plan and budget management",
+          "definition": "Given marketing objectives, budgets and planned activities, maintain a campaign calendar, allocate spend and track assets and approvals.",
+          "inputs": "budgets, planned campaigns and channels, creative assets, approval workflows",
+          "outputs": "marketing calendar, budget versus actual, approved asset library",
+          "crosswalk": [
+            {
+              "scheme": "APQC PCF cross-industry v7",
+              "code": "",
+              "label": "Develop marketing strategy",
+              "basis": "fetched",
+              "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+            }
+          ],
+          "onet_products": [
+            "Oracle Siebel Marketing Resource Management",
+            "PaloAlto Advertising Plan Pro",
+            "interlinkONE"
+          ],
+          "state_of_art": [
+            "Planful for Marketing",
+            "Uptempo",
+            "Adobe Workfront"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: planning workflow with no reference answer",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "commerce.advertising",
+      "name": "Advertising buying and serving",
+      "definition": "Given campaign goals, budgets, audiences and creatives, buy paid media in ad auctions and decide which ad fills each impression.",
+      "crosswalk": [
+        {
+          "scheme": "IAB Tech Lab",
+          "code": "",
+          "label": "OpenRTB (Real-Time Bidding)",
+          "basis": "fetched",
+          "url": "https://iabtechlab.com/standards/openrtb/"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "541810",
+          "label": "Advertising Agencies",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "541830",
+          "label": "Media Buying Agencies",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        }
+      ],
+      "onet_categories": [
+        "Sales and marketing software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "commerce.marketing_analytics"
+      ],
+      "notes": "Split out of seed 'Marketing automation, advertising and web analytics'. The task split follows IAB Tech Lab's buy-side and sell-side roles. Creative production goes to media.",
+      "tasks": [
+        {
+          "id": "commerce.advertising.search_campaigns",
+          "name": "Search advertising campaign management",
+          "definition": "Given keywords, ad copy, budgets and conversion goals, set and adjust bids in search-engine ad auctions to maximize conversions within budget.",
+          "inputs": "keyword lists and match types, ad copy, budgets, bid strategies, conversion data",
+          "outputs": "keyword bids, budget pacing, impressions, clicks, cost and conversions",
+          "crosswalk": [],
+          "onet_products": [
+            "Google Ads",
+            "Bing Ads",
+            "Google Search Ads 360",
+            "Search engine marketing SEM software",
+            "Kanoodle"
+          ],
+          "state_of_art": [
+            "Google Ads Smart Bidding",
+            "Microsoft Advertising",
+            "Skai"
+          ],
+          "open_tools": [
+            "AuctionGym"
+          ],
+          "benchmarkable": "partly: bidding policies can be compared in auction simulators such as AuctionGym, but live auction data is proprietary",
+          "notes": ""
+        },
+        {
+          "id": "commerce.advertising.programmatic_bidding",
+          "name": "Programmatic real-time bidding",
+          "definition": "Given a bid request with impression and audience context, campaign budgets and targeting, decide within milliseconds whether to bid, at what price and with which creative.",
+          "inputs": "OpenRTB bid requests, campaign targeting and budgets, audience segments, predicted response rates",
+          "outputs": "bid responses with price and creative, spend pacing, win and delivery logs",
+          "crosswalk": [
+            {
+              "scheme": "IAB Tech Lab",
+              "code": "",
+              "label": "OpenRTB",
+              "basis": "fetched",
+              "url": "https://iabtechlab.com/standards/openrtb/"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "The Trade Desk",
+            "Google Display & Video 360",
+            "Amazon DSP"
+          ],
+          "open_tools": [
+            "AuctionGym"
+          ],
+          "benchmarkable": "yes: the iPinYou real-time bidding dataset supports offline replay of bid strategies under budget",
+          "notes": "No O*NET product names a demand-side platform."
+        },
+        {
+          "id": "commerce.advertising.response_prediction",
+          "name": "Ad response prediction",
+          "definition": "Given impression, user and ad features, predict the probability of a click or conversion.",
+          "inputs": "impression logs with user, context and ad features; click and conversion labels",
+          "outputs": "calibrated click-through and conversion probabilities",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Google Ads prediction models",
+            "Meta ads ranking models"
+          ],
+          "open_tools": [
+            "DeepCTR",
+            "FuxiCTR"
+          ],
+          "benchmarkable": "yes: Criteo and Avazu click logs are standard leaderboards scored by log loss and AUC",
+          "notes": "Kept as a leaf apart from bidding because it is the part with public benchmarks."
+        },
+        {
+          "id": "commerce.advertising.ad_serving",
+          "name": "Publisher ad serving and yield",
+          "definition": "Given a publisher's ad slots, sold line items and programmatic demand, choose the ad for each impression and pace delivery to contracts while maximizing revenue.",
+          "inputs": "ad slot definitions, line items with goals and priorities, header-bidding and exchange bids",
+          "outputs": "ad decisions per impression, delivery pacing, revenue and fill reports",
+          "crosswalk": [
+            {
+              "scheme": "IAB Tech Lab",
+              "code": "",
+              "label": "Digital Video Ad Serving Template (VAST)",
+              "basis": "fetched",
+              "url": "https://iabtechlab.com/standards/vast/"
+            }
+          ],
+          "onet_products": [
+            "AdSense Tracker",
+            "Online advertising reporting software"
+          ],
+          "state_of_art": [
+            "Google Ad Manager",
+            "Magnite",
+            "Kevel"
+          ],
+          "open_tools": [
+            "Revive Adserver",
+            "Prebid.js",
+            "Prebid Server"
+          ],
+          "benchmarkable": "partly: guaranteed-delivery allocation is an online matching problem with known optima on synthetic instances",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "commerce.marketing_analytics",
+      "name": "Marketing measurement and research",
+      "definition": "Given behavioral, spend, survey and market data, measure what marketing caused and what customers and markets want.",
+      "crosswalk": [
+        {
+          "scheme": "APQC PCF cross-industry v7",
+          "code": "",
+          "label": "Understand markets, customers, and capabilities",
+          "basis": "fetched",
+          "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "541910",
+          "label": "Marketing Research and Public Opinion Polling",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Sales and marketing software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "science.social_research",
+        "earth.gis",
+        "enterprise.reporting_bi"
+      ],
+      "notes": "Split from seed 'Marketing automation, advertising and web analytics' and extended with market research. Survey instrument design, telephone interviewing and general statistics stay in science; conjoint, attribution and trade-area modeling are marketing-specific methods and live here.",
+      "tasks": [
+        {
+          "id": "commerce.marketing_analytics.web_analytics",
+          "name": "Web and app traffic analytics",
+          "definition": "Given clickstream events from sites and apps, compute sessions, traffic sources, funnels and conversions.",
+          "inputs": "page-view and event logs, campaign tags, conversion definitions",
+          "outputs": "sessions, users, source attribution, funnel and retention reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Google Analytics",
+            "Adobe Analytics",
+            "Webtrends software",
+            "WebTrends Analytics",
+            "Nedstat Sitestat",
+            "Lyris HQ Web-Analytics Solution",
+            "Magento Analytics"
+          ],
+          "state_of_art": [
+            "Google Analytics 4",
+            "Adobe Analytics",
+            "Amplitude"
+          ],
+          "open_tools": [
+            "Matomo",
+            "Plausible Analytics",
+            "Umami",
+            "PostHog"
+          ],
+          "benchmarkable": "partly: sessionization and attribution rules can be checked against reference logs, but definitions differ by vendor",
+          "notes": ""
+        },
+        {
+          "id": "commerce.marketing_analytics.tag_management",
+          "name": "Site tag management",
+          "definition": "Given measurement and advertising tags and firing rules, deploy and govern them on a site under consent settings.",
+          "inputs": "tag templates, triggers, data-layer variables, consent signals",
+          "outputs": "deployed tag configuration, fired events, consent-compliant data collection",
+          "crosswalk": [
+            {
+              "scheme": "IAB Europe",
+              "code": "",
+              "label": "Transparency and Consent Framework",
+              "basis": "fetched",
+              "url": "https://iabeurope.eu/transparency-consent-framework/"
+            }
+          ],
+          "onet_products": [
+            "Google Tag Manager"
+          ],
+          "state_of_art": [
+            "Google Tag Manager",
+            "Tealium iQ",
+            "Adobe Experience Platform Tags"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: configuration management with no reference problem",
+          "notes": ""
+        },
+        {
+          "id": "commerce.marketing_analytics.experimentation",
+          "name": "Online controlled experiments",
+          "definition": "Given variants, traffic allocation and metrics, run randomized tests and estimate treatment effects with valid inference.",
+          "inputs": "variant definitions, assignment rules, metric events, guardrail metrics",
+          "outputs": "effect estimates with intervals, sample-ratio checks, ship decisions",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Optimizely",
+            "Statsig",
+            "Adobe Target"
+          ],
+          "open_tools": [
+            "GrowthBook",
+            "PostHog"
+          ],
+          "benchmarkable": "partly: inference methods can be checked on simulated A/A and A/B data with known effects",
+          "notes": ""
+        },
+        {
+          "id": "commerce.marketing_analytics.attribution_mix_modeling",
+          "name": "Attribution and media mix modeling",
+          "definition": "Given spend and exposure by channel and business outcomes over time, estimate each channel's incremental contribution and recommend budget reallocation.",
+          "inputs": "channel spend and impressions by period, sales or conversions, controls such as price and seasonality",
+          "outputs": "channel contributions, return on spend, response curves, optimized budget split",
+          "crosswalk": [],
+          "onet_products": [
+            "Online advertising reporting software"
+          ],
+          "state_of_art": [
+            "Google Meridian",
+            "Analytic Partners",
+            "Nielsen marketing mix modeling"
+          ],
+          "open_tools": [
+            "Robyn",
+            "Meridian",
+            "PyMC-Marketing",
+            "LightweightMMM"
+          ],
+          "benchmarkable": "partly: simulated marketing data with known ground-truth effects allows scoring, real data does not",
+          "notes": ""
+        },
+        {
+          "id": "commerce.marketing_analytics.search_optimization",
+          "name": "Search engine optimization auditing",
+          "definition": "Given a site and target queries, crawl it, track ranking positions and report technical and content issues that limit organic search visibility.",
+          "inputs": "site URLs, target keywords, search result pages, crawl data",
+          "outputs": "rank positions, crawl and indexing issues, keyword opportunities",
+          "crosswalk": [],
+          "onet_products": [
+            "Search engine results pages SERP software"
+          ],
+          "state_of_art": [
+            "Semrush",
+            "Ahrefs",
+            "Screaming Frog SEO Spider"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: technical audits are checkable against seeded test sites; ranking outcomes are not reproducible",
+          "notes": ""
+        },
+        {
+          "id": "commerce.marketing_analytics.choice_modeling",
+          "name": "Conjoint and choice modeling",
+          "definition": "Given an experimental design of product profiles and respondents' choices, estimate attribute part-worths and simulate market shares.",
+          "inputs": "attribute and level design, respondent choice or rating data",
+          "outputs": "part-worth utilities, willingness to pay, share-of-preference simulations, perceptual maps",
+          "crosswalk": [],
+          "onet_products": [
+            "Sawtooth Choice-Base Conjoint CBS",
+            "Adaptive conjoint analysis ACA software",
+            "Sawtooth Composite Product Mapping CPM",
+            "Argus Perceptual Mapper",
+            "TNS MarketWhys"
+          ],
+          "state_of_art": [
+            "Sawtooth Lighthouse Studio",
+            "Conjoint.ly",
+            "Qualtrics conjoint"
+          ],
+          "open_tools": [
+            "bayesm",
+            "mlogit"
+          ],
+          "benchmarkable": "yes: designs simulated from known part-worths give recoverable ground truth",
+          "notes": ""
+        },
+        {
+          "id": "commerce.marketing_analytics.trade_area_analysis",
+          "name": "Trade area and site analysis",
+          "definition": "Given store or candidate locations, demographics and competitors, delineate trade areas, profile segments and forecast site sales.",
+          "inputs": "site coordinates, customer origins, geodemographic segment data, competitor locations",
+          "outputs": "trade-area polygons, segment profiles, gravity-model sales forecasts, ranked sites",
+          "crosswalk": [],
+          "onet_products": [
+            "Geographic information system GIS marketing software",
+            "GLOBE Claritas",
+            "Claritas ConsumerPoint"
+          ],
+          "state_of_art": [
+            "Esri Business Analyst",
+            "Placer.ai",
+            "Buxton SCOUT"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: sales forecasts can be backtested where store sales are public, which is rare",
+          "notes": "General spatial analysis belongs to earth.gis; this is the retail-siting model on top of it."
+        }
+      ]
+    },
+    {
+      "id": "commerce.point_of_sale",
+      "name": "Point of sale and payment acceptance",
+      "definition": "Given items, prices, promotions and a customer's tender, complete the sale, take payment in person or online, and reconcile the money.",
+      "crosswalk": [
+        {
+          "scheme": "NRF ARTS",
+          "code": "",
+          "label": "ARTS Operational Data Model (retail transaction)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "NRF ARTS",
+          "code": "",
+          "label": "UnifiedPOS",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "PCI Security Standards Council",
+          "code": "",
+          "label": "PCI Data Security Standard",
+          "basis": "fetched",
+          "url": "https://pcisecuritystandards.org/"
+        }
+      ],
+      "onet_categories": [
+        "Point of sale POS software"
+      ],
+      "see_also": [
+        "govern.banking_payments",
+        "commerce.food_service",
+        "enterprise.accounting",
+        "govern.compliance_financial_crime"
+      ],
+      "notes": "Was seed 'Point of sale and retail store operations'. Store inventory and replenishment moved to merchandising. Restaurant order-taking moved to food_service because table, course and kitchen routing are distinct functions. Card networks and acquiring banks belong to govern; the merchant side of payment acceptance is here.",
+      "tasks": [
+        {
+          "id": "commerce.point_of_sale.checkout",
+          "name": "Checkout transaction processing",
+          "definition": "Given scanned items, price and promotion rules, tax rules and tenders, compute the basket total and record the sale, return or exchange.",
+          "inputs": "item identifiers, price book, promotion and coupon rules, tax tables, tenders",
+          "outputs": "receipts, transaction log records, tax and discount breakdown",
+          "crosswalk": [
+            {
+              "scheme": "NRF ARTS",
+              "code": "",
+              "label": "ARTS POSLog",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "NCR Advanced Checkout Solution",
+            "Intuit QuickBooks Point of Sale",
+            "Advanced Retail Management Systems Retail Pro",
+            "CompuTant CounterPoint",
+            "Specialized Business Solutions Keystroke POS",
+            "Square",
+            "LightSpeed Cloud",
+            "MicroBiz",
+            "Millennium Software Atrex",
+            "CAM Commerce Solutions Retail STAR Point of Sale POS",
+            "Windward Software Windward System Five",
+            "The General Store"
+          ],
+          "state_of_art": [
+            "Oracle Retail Xstore Point of Service",
+            "Square for Retail",
+            "Lightspeed Retail",
+            "Shopify POS"
+          ],
+          "open_tools": [
+            "Open Source Point of Sale",
+            "uniCenta oPOS",
+            "Chromis POS",
+            "Odoo Point of Sale"
+          ],
+          "benchmarkable": "yes: basket pricing with stacked promotions and tax has deterministic correct answers that test cases can fix",
+          "notes": ""
+        },
+        {
+          "id": "commerce.point_of_sale.card_present_payment",
+          "name": "In-person card payment acceptance",
+          "definition": "Given a card or wallet presented at a terminal and an amount, obtain authorization, capture and settle the payment securely.",
+          "inputs": "chip, contactless or swipe card data, amount, merchant credentials",
+          "outputs": "authorization responses, captured transactions, settlement batches",
+          "crosswalk": [
+            {
+              "scheme": "EMVCo",
+              "code": "",
+              "label": "EMV chip card specifications",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "VeriFone PC Charge Pro",
+            "Main Street Softworks Monetra",
+            "Credit card processing software",
+            "Point of sale POS payment software",
+            "Payment processing software",
+            "PayPal Zettle"
+          ],
+          "state_of_art": [
+            "Adyen terminals",
+            "Stripe Terminal",
+            "Clover"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: certification test-card suites define pass or fail, not a ranking",
+          "notes": ""
+        },
+        {
+          "id": "commerce.point_of_sale.online_payment",
+          "name": "Online payment processing",
+          "definition": "Given a checkout amount and a remote payment method, authorize, capture, refund and handle chargebacks through a gateway.",
+          "inputs": "payment method tokens, amounts and currency, order references, dispute notices",
+          "outputs": "authorizations, captures, refunds, payouts, dispute responses",
+          "crosswalk": [],
+          "onet_products": [
+            "PayPal",
+            "ProPay payment processing software",
+            "CCBill",
+            "Google Checkout",
+            "Intuit QuickBoooks Payments",
+            "Snorasson Holdings CCNow",
+            "e-check software"
+          ],
+          "state_of_art": [
+            "Stripe",
+            "Adyen",
+            "Braintree"
+          ],
+          "open_tools": [
+            "Hyperswitch",
+            "BTCPay Server"
+          ],
+          "benchmarkable": "no: integration and reliability, not a problem with a reference answer",
+          "notes": ""
+        },
+        {
+          "id": "commerce.point_of_sale.stored_value",
+          "name": "Gift card and stored value",
+          "definition": "Given gift-card issuance and redemption events, maintain balances and produce outstanding-liability totals.",
+          "inputs": "card issuances, reloads, redemptions, expiry rules",
+          "outputs": "card balances, transaction history, outstanding liability",
+          "crosswalk": [],
+          "onet_products": [
+            "Gift Certificates Plus Giftworks"
+          ],
+          "state_of_art": [
+            "Givex",
+            "Blackhawk Network"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: ledger keeping",
+          "notes": ""
+        },
+        {
+          "id": "commerce.point_of_sale.cash_reconciliation",
+          "name": "Till and cash office reconciliation",
+          "definition": "Given POS tender totals and counted drawer contents, compute over and short by register and shift and prepare deposits.",
+          "inputs": "register tender totals, drawer counts, pickups and loans, safe counts",
+          "outputs": "over and short by cashier, deposit slips, store daily sales audit",
+          "crosswalk": [],
+          "onet_products": [
+            "Compris Advanced Manager's Workstation",
+            "Sales processing software",
+            "Retail sales software"
+          ],
+          "state_of_art": [
+            "Oracle Retail Sales Audit",
+            "Oracle Retail Xstore Point of Service"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: arithmetic bookkeeping",
+          "notes": ""
+        },
+        {
+          "id": "commerce.point_of_sale.loss_prevention",
+          "name": "Exception-based loss prevention",
+          "definition": "Given POS transaction logs, flag cashiers, returns and voids whose patterns suggest theft or fraud and build investigation cases.",
+          "inputs": "transaction logs, returns, voids, discounts, employee identifiers, video references",
+          "outputs": "exception reports, risk-ranked employees and transactions, case files",
+          "crosswalk": [],
+          "onet_products": [
+            "Aspect Loss Prevention Aspect EliteLP",
+            "Epicor Loss Prevention"
+          ],
+          "state_of_art": [
+            "Appriss Retail",
+            "Agilence"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: anomaly detectors can be scored on synthetic logs with seeded fraud; no labeled public data",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "commerce.merchandising",
+      "name": "Merchandise planning, pricing and store inventory",
+      "definition": "Given sales history, costs, space and inventory, decide what each store carries, at what price, in what quantity and where on the shelf.",
+      "crosswalk": [
+        {
+          "scheme": "NRF ARTS",
+          "code": "",
+          "label": "ARTS Operational Data Model (merchandise and inventory)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "44-45",
+          "label": "Retail Trade",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        }
+      ],
+      "onet_categories": [
+        "Inventory management software",
+        "Point of sale POS software"
+      ],
+      "see_also": [
+        "move.supply_chain_planning",
+        "move.warehouse_inventory"
+      ],
+      "notes": "Was seed 'Merchandising, pricing and retail inventory'. Generic inventory tracking, warehouses, RFID and barcoding stay with move; this capability keeps the store-facing decisions.",
+      "tasks": [
+        {
+          "id": "commerce.merchandising.assortment_planning",
+          "name": "Assortment planning",
+          "definition": "Given item sales history, store clusters and space limits, choose which items each store or cluster carries.",
+          "inputs": "item-store sales, store attributes and clusters, space capacity, item attributes",
+          "outputs": "item-by-store assortment, expected sales and margin",
+          "crosswalk": [],
+          "onet_products": [
+            "Oracle Retek"
+          ],
+          "state_of_art": [
+            "Oracle Retail Assortment Planning",
+            "Blue Yonder Assortment Planning",
+            "RELEX Solutions"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: assortment optimization under a choice model has standard formulations but no public reference instances",
+          "notes": ""
+        },
+        {
+          "id": "commerce.merchandising.financial_planning",
+          "name": "Merchandise financial planning",
+          "definition": "Given sales, margin and inventory targets by category and period, produce merchandise plans and open-to-buy budgets.",
+          "inputs": "historical sales and margins, targets, on-hand and on-order inventory",
+          "outputs": "category plans by period, open-to-buy amounts",
+          "crosswalk": [],
+          "onet_products": [
+            "Oracle Retek",
+            "Retail management software"
+          ],
+          "state_of_art": [
+            "Oracle Retail Merchandise Financial Planning",
+            "Anaplan",
+            "Board"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: planning arithmetic with no reference answer",
+          "notes": ""
+        },
+        {
+          "id": "commerce.merchandising.price_markdown_optimization",
+          "name": "Price and markdown optimization",
+          "definition": "Given demand response to price, inventory and season end, set regular prices and markdown schedules that maximize margin or sell-through.",
+          "inputs": "price and sales history, elasticity estimates, inventory, season calendar, pricing rules",
+          "outputs": "recommended prices and markdown dates, projected sell-through and margin",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Revionics",
+            "Oracle Retail Offer Optimization",
+            "Blue Yonder Markdown Optimization"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: policies can be scored in simulators with known demand curves; real outcomes are proprietary",
+          "notes": ""
+        },
+        {
+          "id": "commerce.merchandising.promotion_planning",
+          "name": "Promotion lift forecasting",
+          "definition": "Given a promotion calendar and history, forecast incremental lift, cannibalization and halo for proposed promotions.",
+          "inputs": "past promotions with mechanics, item sales, prices, calendar events",
+          "outputs": "forecast lift by item and store, cannibalization estimates, promotion ROI",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "RELEX Solutions",
+            "Blue Yonder",
+            "Revionics"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: public retail panels such as the M5 Walmart data and dunnhumby The Complete Journey include promotions and support backtests",
+          "notes": ""
+        },
+        {
+          "id": "commerce.merchandising.space_planning",
+          "name": "Planogram and shelf space planning",
+          "definition": "Given fixtures, item dimensions and sales, place items on shelves to meet facing, adjacency and capacity rules.",
+          "inputs": "fixture geometry, item dimensions, sales velocity, adjacency rules",
+          "outputs": "planograms, facings per item, days of supply on shelf",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Blue Yonder Space Planning",
+            "DotActiv",
+            "Symphony RetailAI"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: shelf-space allocation is a knapsack-like optimization scorable on synthetic instances",
+          "notes": ""
+        },
+        {
+          "id": "commerce.merchandising.store_inventory",
+          "name": "Store inventory counts and shrink",
+          "definition": "Given receipts, sales, transfers and physical counts at a store, reconcile book to actual inventory and report shrink.",
+          "inputs": "store receipts, sales, transfers, cycle and physical counts",
+          "outputs": "perpetual inventory, count variances, shrink by category",
+          "crosswalk": [],
+          "onet_products": [
+            "iQmetrix RQ4 Retail Management System",
+            "ManageMore Cellular Manager",
+            "Bibase 4POS Retail",
+            "Comcash ERP",
+            "Retail management software"
+          ],
+          "state_of_art": [
+            "Oracle Retail Store Inventory Operations",
+            "Lightspeed Retail",
+            "RGIS count services software"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record-keeping",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "commerce.ecommerce",
+      "name": "Online storefront and order management",
+      "definition": "Given a catalog, prices and inventory, let customers find and buy products online and route each order to fulfillment.",
+      "crosswalk": [
+        {
+          "scheme": "NAICS 2017",
+          "code": "454110",
+          "label": "Electronic Shopping and Mail-Order Houses",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "schema.org",
+          "code": "",
+          "label": "Product, Offer and Order types",
+          "basis": "fetched",
+          "url": "https://schema.org/Product"
+        }
+      ],
+      "onet_categories": [
+        "Point of sale POS software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "media.web_publishing",
+        "move.warehouse_inventory"
+      ],
+      "notes": "Was seed 'E-commerce storefronts and order management'. Product search and recommendation are split out as leaves because each has public benchmarks.",
+      "tasks": [
+        {
+          "id": "commerce.ecommerce.catalog_management",
+          "name": "Product catalog enrichment",
+          "definition": "Given raw supplier product data, normalize attributes, classify each item into a category taxonomy and produce publishable product content.",
+          "inputs": "supplier feeds, item attributes, images, category taxonomy such as GS1 GPC",
+          "outputs": "classified, attribute-complete product records and channel-ready content",
+          "crosswalk": [
+            {
+              "scheme": "GS1",
+              "code": "",
+              "label": "Global Product Classification",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Salsify",
+            "Akeneo",
+            "inriver"
+          ],
+          "open_tools": [
+            "Akeneo PIM Community Edition",
+            "Pimcore"
+          ],
+          "benchmarkable": "yes: product categorization and attribute extraction have public datasets such as the Rakuten Data Challenge and Amazon product data",
+          "notes": ""
+        },
+        {
+          "id": "commerce.ecommerce.storefront_checkout",
+          "name": "Storefront cart and checkout",
+          "definition": "Given a catalog, prices, shipping and tax rules, let a shopper browse, build a cart and place a paid order.",
+          "inputs": "catalog, prices and promotions, shipping and tax rules, shopper session",
+          "outputs": "placed orders with totals, customer accounts, abandoned-cart events",
+          "crosswalk": [],
+          "onet_products": [
+            "Shopify software",
+            "MyCommerce RegNow",
+            "Gift registry software"
+          ],
+          "state_of_art": [
+            "Shopify",
+            "Salesforce Commerce Cloud",
+            "Adobe Commerce"
+          ],
+          "open_tools": [
+            "Magento Open Source",
+            "WooCommerce",
+            "PrestaShop",
+            "Saleor",
+            "Medusa",
+            "Sylius"
+          ],
+          "benchmarkable": "partly: the WebShop and WebArena shopping environments test agents buying on a storefront, not the storefront itself",
+          "notes": ""
+        },
+        {
+          "id": "commerce.ecommerce.product_search",
+          "name": "Product search ranking",
+          "definition": "Given a shopper's query and a product catalog, return products ranked by relevance and likelihood of purchase.",
+          "inputs": "query text, catalog with titles and attributes, behavioral signals",
+          "outputs": "ranked product list, facets, query corrections",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Algolia",
+            "Bloomreach Discovery",
+            "Coveo"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the Amazon Shopping Queries (ESCI) dataset gives graded relevance labels and a fixed metric",
+          "notes": "General search engines are computing; this leaf is commerce relevance ranking."
+        },
+        {
+          "id": "commerce.ecommerce.recommendation",
+          "name": "Product recommendation",
+          "definition": "Given shopper interaction histories and item data, rank items each shopper is most likely to buy next.",
+          "inputs": "views, carts, purchases, item attributes",
+          "outputs": "ranked item lists per shopper or per item context",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Amazon Personalize",
+            "Dynamic Yield",
+            "Bloomreach"
+          ],
+          "open_tools": [
+            "Microsoft Recommenders",
+            "RecBole",
+            "LensKit"
+          ],
+          "benchmarkable": "yes: public retail interaction sets such as RetailRocket, Amazon reviews and the H&M Kaggle data support ranked-metric leaderboards",
+          "notes": ""
+        },
+        {
+          "id": "commerce.ecommerce.order_orchestration",
+          "name": "Order orchestration and sourcing",
+          "definition": "Given customer orders and inventory across stores and warehouses, choose fulfillment locations, split orders and track them through delivery and return.",
+          "inputs": "orders, inventory by node, node capacities, shipping costs, service promises",
+          "outputs": "sourcing assignments, order splits, status updates, return authorizations",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Manhattan Active Omni",
+            "IBM Sterling Order Management",
+            "Fluent Commerce"
+          ],
+          "open_tools": [
+            "Apache OFBiz"
+          ],
+          "benchmarkable": "partly: sourcing is a cost-minimizing assignment scorable on synthetic order streams",
+          "notes": ""
+        },
+        {
+          "id": "commerce.ecommerce.marketplace_listing",
+          "name": "Marketplace and channel listing",
+          "definition": "Given a catalog, prices and stock, publish and synchronize listings across third-party marketplaces and shopping feeds.",
+          "inputs": "catalog records, channel category mappings, prices, stock levels",
+          "outputs": "channel listings and product feeds, synchronized stock and prices, imported orders",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Rithum (ChannelAdvisor)",
+            "Feedonomics",
+            "Sellbrite"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: integration work",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "commerce.customer_service",
+      "name": "Customer service and contact centers",
+      "definition": "Given customer requests arriving by phone, email, chat or web, route, answer and resolve them while staffing and measuring the service operation.",
+      "crosswalk": [
+        {
+          "scheme": "APQC PCF cross-industry v7",
+          "code": "6.0",
+          "label": "Manage Customer Service",
+          "basis": "fetched",
+          "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "561422",
+          "label": "Telemarketing Bureaus and Other Contact Centers",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "W3C",
+          "code": "",
+          "label": "VoiceXML",
+          "basis": "fetched",
+          "url": "https://www.w3.org/TR/voicexml21/"
+        }
+      ],
+      "onet_categories": [
+        "Helpdesk or call center software",
+        "Contact center software",
+        "Interactive voice response software",
+        "Customer relationship management CRM software"
+      ],
+      "see_also": [
+        "computing.it_operations",
+        "computing.networking",
+        "govern.emergency_response"
+      ],
+      "notes": "Was seed 'Contact center, helpdesk and interactive voice response'. Kept as one capability. IT help desks and service management go to computing, computer-aided emergency dispatch to govern, and telephony infrastructure (softphones, call accounting) to computing.",
+      "tasks": [
+        {
+          "id": "commerce.customer_service.case_management",
+          "name": "Service case tracking and routing",
+          "definition": "Given inbound customer requests, create cases, classify and prioritize them, assign them to agents and track them to resolution under service-level targets.",
+          "inputs": "emails, web forms, chats and calls; customer and product records; routing and SLA rules",
+          "outputs": "cases with category, priority, owner, SLA timers, resolution history",
+          "crosswalk": [
+            {
+              "scheme": "APQC PCF cross-industry v7",
+              "code": "",
+              "label": "Plan and manage customer service contacts",
+              "basis": "fetched",
+              "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+            }
+          ],
+          "onet_products": [
+            "Customer complaint ticketing management software",
+            "Parature eTicket",
+            "Hosted Support ezSupport Pro",
+            "Customer service and support software",
+            "TechExcel ServiceWise",
+            "Call tracking software",
+            "Customer account management software",
+            "Ticket information tracking software"
+          ],
+          "state_of_art": [
+            "Zendesk",
+            "Salesforce Service Cloud",
+            "ServiceNow Customer Service Management",
+            "Freshdesk"
+          ],
+          "open_tools": [
+            "Zammad",
+            "osTicket",
+            "FreeScout",
+            "Chatwoot",
+            "UVdesk"
+          ],
+          "benchmarkable": "partly: automatic ticket classification and routing can be scored on labeled ticket sets; workflow cannot",
+          "notes": ""
+        },
+        {
+          "id": "commerce.customer_service.self_service_agents",
+          "name": "Self-service answers and virtual agents",
+          "definition": "Given a customer's question, a knowledge base, policies and back-end actions, answer or complete the request automatically or hand off to a person.",
+          "inputs": "customer messages, knowledge articles, policies, order and account APIs",
+          "outputs": "answers, completed account actions, escalations with context, deflection rates",
+          "crosswalk": [],
+          "onet_products": [
+            "Customer service knowledge generation software"
+          ],
+          "state_of_art": [
+            "Sierra",
+            "Decagon",
+            "Intercom Fin",
+            "Google Dialogflow CX"
+          ],
+          "open_tools": [
+            "Rasa",
+            "Botpress"
+          ],
+          "benchmarkable": "yes: tau-bench retail and airline tasks score policy-following agents; Banking77 and CLINC150 score intent detection",
+          "notes": ""
+        },
+        {
+          "id": "commerce.customer_service.complaint_feedback",
+          "name": "Complaint and feedback management",
+          "definition": "Given complaints and satisfaction responses, categorize them, investigate root causes and report satisfaction measures.",
+          "inputs": "complaints, survey responses, investigation notes",
+          "outputs": "categorized complaint cases, root-cause codes, CSAT and NPS trends, regulatory complaint reports",
+          "crosswalk": [
+            {
+              "scheme": "APQC PCF cross-industry v7",
+              "code": "",
+              "label": "Evaluate customer service operations and customer satisfaction",
+              "basis": "fetched",
+              "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+            }
+          ],
+          "onet_products": [
+            "Complaint management software",
+            "Customer Expressions i-Sight",
+            "Pemimic Patient Relations Suite",
+            "Prognosis Solutions ResolvPRM",
+            "rL Solutions Feedback MonitorPro",
+            "Insightful Corporation Confirmit"
+          ],
+          "state_of_art": [
+            "Qualtrics XM",
+            "Medallia"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: complaint classification can be scored on the public CFPB consumer complaint database; investigation cannot",
+          "notes": "Patient-relations products are listed because the function is general complaint handling."
+        },
+        {
+          "id": "commerce.customer_service.contact_routing",
+          "name": "Automatic contact distribution",
+          "definition": "Given arriving calls, chats and emails with attributes and agents with skills and states, queue each contact and deliver it to the best available agent.",
+          "inputs": "contact attributes, queues, agent skills and states, routing strategies",
+          "outputs": "agent assignments, queue wait times, abandonment and service-level statistics",
+          "crosswalk": [],
+          "onet_products": [
+            "Automatic call distribution software",
+            "Call center software",
+            "Multi-channel contact center software",
+            "Timpani Contact Center",
+            "Timpani Email",
+            "j2 Global Communications onebox"
+          ],
+          "state_of_art": [
+            "Genesys Cloud CX",
+            "NICE CXone",
+            "Amazon Connect",
+            "Five9"
+          ],
+          "open_tools": [
+            "Asterisk",
+            "FreeSWITCH",
+            "Wazo Platform"
+          ],
+          "benchmarkable": "partly: routing policies can be compared in queueing simulations with fixed arrival and skill mixes",
+          "notes": ""
+        },
+        {
+          "id": "commerce.customer_service.interactive_voice_response",
+          "name": "Interactive voice response",
+          "definition": "Given a call flow and caller speech or keypad input, identify the caller's need, complete self-service steps and route the remainder.",
+          "inputs": "call-flow definitions, prompts, grammars or language models, back-end lookups",
+          "outputs": "completed self-service transactions, captured intents, routed calls, containment rate",
+          "crosswalk": [
+            {
+              "scheme": "W3C",
+              "code": "",
+              "label": "VoiceXML",
+              "basis": "fetched",
+              "url": "https://www.w3.org/TR/voicexml21/"
+            }
+          ],
+          "onet_products": [
+            "CfMC SoundSurvent",
+            "Database Systems Corp Telemation",
+            "Telemation e-CRM"
+          ],
+          "state_of_art": [
+            "Nuance (Microsoft) conversational IVR",
+            "Genesys Cloud CX",
+            "Amazon Connect with Lex"
+          ],
+          "open_tools": [
+            "Asterisk",
+            "FreeSWITCH"
+          ],
+          "benchmarkable": "partly: spoken intent and slot recognition can be scored on public spoken-language datasets; call flows cannot",
+          "notes": ""
+        },
+        {
+          "id": "commerce.customer_service.outbound_dialing",
+          "name": "Outbound and predictive dialing",
+          "definition": "Given call lists, agent availability and do-not-call rules, pace outbound dials to keep agents busy without exceeding abandonment limits.",
+          "inputs": "contact lists, calling windows, do-not-call and consent lists, agent states",
+          "outputs": "dial pacing, connected calls, abandonment rate, compliance logs",
+          "crosswalk": [],
+          "onet_products": [
+            "Acarda Sales Technologies Acarda Outbound",
+            "Austin Logistics CallSelect",
+            "Austin Logistics CallTech",
+            "Austin Logistics Valeo",
+            "Acarda ForbiddenCalls",
+            "Database Systems Corp Telemation"
+          ],
+          "state_of_art": [
+            "NICE CXone",
+            "Five9",
+            "Genesys Cloud CX"
+          ],
+          "open_tools": [
+            "VICIdial"
+          ],
+          "benchmarkable": "partly: pacing algorithms can be scored in simulation on utilization against an abandonment cap",
+          "notes": ""
+        },
+        {
+          "id": "commerce.customer_service.workforce_management",
+          "name": "Contact center workforce management",
+          "definition": "Given historical contact volumes, handle times and service targets, forecast workload by interval, compute required staff and build agent schedules.",
+          "inputs": "interval contact volumes, average handle times, service-level targets, agent availability and rules",
+          "outputs": "interval forecasts, staffing requirements, agent schedules, adherence reports",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "NICE Workforce Management",
+            "Verint Workforce Management",
+            "Calabrio ONE"
+          ],
+          "open_tools": [
+            "pyworkforce"
+          ],
+          "benchmarkable": "yes: Erlang C and Erlang A give reference staffing answers, and public call-center logs (Technion SEELab) support forecast backtests",
+          "notes": "General employee shift scheduling belongs to enterprise; this leaf is the queueing-driven version."
+        },
+        {
+          "id": "commerce.customer_service.interaction_analytics",
+          "name": "Interaction quality and speech analytics",
+          "definition": "Given recorded calls and chat transcripts, score agent quality, detect topics, sentiment and compliance breaches.",
+          "inputs": "call recordings or transcripts, chat logs, quality forms, compliance phrases",
+          "outputs": "quality scores, topic and sentiment trends, compliance flags, coaching items",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "NICE Nexidia",
+            "Verint Speech Analytics",
+            "CallMiner Eureka"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: transcription and sentiment have public benchmarks, quality scoring does not",
+          "notes": "Speech recognition itself belongs to media or computing."
+        }
+      ]
+    },
+    {
+      "id": "commerce.food_service",
+      "name": "Restaurant and food service operations",
+      "definition": "Given recipes, menus, ingredient costs and guest orders, plan what to cook, control food cost and take and route orders through the kitchen.",
+      "crosswalk": [
+        {
+          "scheme": "NAICS 2017",
+          "code": "722",
+          "label": "Food Services and Drinking Places",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "722511",
+          "label": "Full-Service Restaurants",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        }
+      ],
+      "onet_categories": [
+        "Point of sale POS software",
+        "Data base user interface and query software",
+        "Analytical or scientific software",
+        "Inventory management software"
+      ],
+      "see_also": [
+        "health.nutrition",
+        "commerce.point_of_sale",
+        "produce.batch_control"
+      ],
+      "notes": "Was seed 'Restaurant and food-service management (recipes, menus, kitchen inventory)'. It now also holds restaurant order-taking, delivery and institutional meal accounting. Nutrient analysis and diet planning go to health; catering sales go to hospitality events.",
+      "tasks": [
+        {
+          "id": "commerce.food_service.recipe_costing",
+          "name": "Recipe scaling and costing",
+          "definition": "Given standardized recipes, ingredient purchase prices, units and yields, scale recipes and compute portion cost and food-cost percentage.",
+          "inputs": "recipes with quantities and units, purchase pack sizes and prices, trim and cooking yields, menu prices",
+          "outputs": "scaled recipes, cost per portion, food-cost percentage",
+          "crosswalk": [],
+          "onet_products": [
+            "Culinary Software Services ChefTec",
+            "CostGuard",
+            "EGS CALCMENU",
+            "ValuSoft MasterCook",
+            "Barrington Software CookenPro Commercial",
+            "CBORD NetRecipe",
+            "SweetWARE stockCoster",
+            "ChefDesk Chef's Calculators",
+            "IPro Restaurant Inventory, Recipe & Menu Software",
+            "Recipe software",
+            "MicroBlast Recipe Wizard for Windows",
+            "APPCA Personal Chef Office"
+          ],
+          "state_of_art": [
+            "Galley",
+            "meez",
+            "MarketMan"
+          ],
+          "open_tools": [
+            "Tandoor Recipes",
+            "Mealie"
+          ],
+          "benchmarkable": "yes: unit conversion, yield and cost roll-ups have deterministic answers that test recipes can fix",
+          "notes": ""
+        },
+        {
+          "id": "commerce.food_service.menu_planning",
+          "name": "Menu planning and engineering",
+          "definition": "Given recipes, costs, sales mix and cycle or nutrition constraints, build menus and classify items by popularity and contribution margin.",
+          "inputs": "recipes and costs, item sales counts, menu cycle rules, nutrition targets",
+          "outputs": "menu cycles, item profitability classes, production quantities",
+          "crosswalk": [],
+          "onet_products": [
+            "Menu planning software",
+            "CBORD Group Menu Management System",
+            "CBORD Foodservice Suite",
+            "Menu and nutrition database software",
+            "Aurora FoodPro",
+            "Meals Plus"
+          ],
+          "state_of_art": [
+            "CBORD Foodservice Suite",
+            "Galley",
+            "Computrition"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: constrained menu planning is a diet-problem optimization scorable on fixed instances",
+          "notes": ""
+        },
+        {
+          "id": "commerce.food_service.kitchen_inventory",
+          "name": "Kitchen inventory and food cost control",
+          "definition": "Given purchases, counts and sales, compute theoretical versus actual ingredient usage and generate order guides.",
+          "inputs": "invoices, inventory counts, item sales, recipe bills of materials, par levels",
+          "outputs": "actual versus theoretical food cost, variance by item, purchase orders",
+          "crosswalk": [],
+          "onet_products": [
+            "Food Service Solutions FoodCo",
+            "Regnow Chrysanth Inventory Manager",
+            "Food inventory software",
+            "Army Food Management Information System",
+            "Meat inventory software",
+            "CBORD Foodservice Suite"
+          ],
+          "state_of_art": [
+            "MarketMan",
+            "Restaurant365",
+            "CrunchTime"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: variance arithmetic is deterministic; demand-driven ordering can be backtested only on private data",
+          "notes": ""
+        },
+        {
+          "id": "commerce.food_service.order_kitchen_routing",
+          "name": "Restaurant order and kitchen routing",
+          "definition": "Given guest orders with modifiers, tables, seats and courses, send items to the right kitchen stations, fire courses and settle split checks.",
+          "inputs": "menu with modifiers and station routing, table layout, orders by seat and course, tenders and tips",
+          "outputs": "kitchen tickets or display items, course timing, guest checks and splits, server sales",
+          "crosswalk": [],
+          "onet_products": [
+            "MICROS Systems HSI Profits Series",
+            "Hospitality Control Solutions Aloha Point-of-Sale",
+            "Compris software",
+            "Aldelo Systems Aldelo for Restaurants Pro",
+            "RestaurantPlus PRO",
+            "Plexis Software Plexis POS",
+            "Dinerware Intuitive Restaurant",
+            "ParTech PixelPoint POS",
+            "Restaurant Manager",
+            "Point of sale POS restaurant software",
+            "ClubSoft Food & Beverage Point of Sale",
+            "MICROS Systems MICROS 9700 HMS"
+          ],
+          "state_of_art": [
+            "Toast",
+            "Oracle Simphony",
+            "NCR Voyix Aloha"
+          ],
+          "open_tools": [
+            "Floreant POS"
+          ],
+          "benchmarkable": "partly: check and split arithmetic is testable; kitchen pacing has no reference data",
+          "notes": ""
+        },
+        {
+          "id": "commerce.food_service.delivery_takeout",
+          "name": "Takeout and delivery order management",
+          "definition": "Given phone and online orders with addresses and kitchen load, quote ready times, queue production and assign drivers.",
+          "inputs": "orders with addresses and promised times, kitchen capacity, driver availability",
+          "outputs": "quoted times, production queue, driver assignments, delivery status",
+          "crosswalk": [],
+          "onet_products": [
+            "Foodman Home-Delivery"
+          ],
+          "state_of_art": [
+            "Olo",
+            "Toast Delivery Services",
+            "Otter"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the Grubhub meal delivery routing problem instances (Reyes and colleagues) give fixed scenarios with published results",
+          "notes": "General vehicle routing belongs to move."
+        },
+        {
+          "id": "commerce.food_service.meal_accounting",
+          "name": "Cafeteria meal accounting",
+          "definition": "Given patron accounts, eligibility status and meal transactions, record each meal, debit accounts and produce reimbursable-meal claims.",
+          "inputs": "patron rosters, free and reduced eligibility, meal transactions, account deposits",
+          "outputs": "account balances, meal counts by eligibility, reimbursement claims",
+          "crosswalk": [
+            {
+              "scheme": "USDA Food and Nutrition Service",
+              "code": "",
+              "label": "National School Lunch Program meal counting and claiming",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "PCS Revenue Control Systems FASTRAK School Meal Software",
+            "DataTeam Lunch Express",
+            "Food Service Solutions POSitive ID System",
+            "Meals Plus",
+            "Cafe Cartel Systems"
+          ],
+          "state_of_art": [
+            "PowerSchool (Nutrikids)",
+            "LINQ Nutrition",
+            "Heartland School Solutions"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: rule-driven bookkeeping",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "commerce.hospitality",
+      "name": "Lodging, reservations and events",
+      "definition": "Given rooms, tables, tours or function space and guest demand, take reservations, price inventory and run the stay or event.",
+      "crosswalk": [
+        {
+          "scheme": "NAICS 2017",
+          "code": "721110",
+          "label": "Hotels (except Casino Hotels) and Motels",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "561520",
+          "label": "Tour Operators",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "561920",
+          "label": "Convention and Trade Show Organizers",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "OpenTravel Alliance",
+          "code": "",
+          "label": "OpenTravel hotel and tour message specifications",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "HTNG",
+          "code": "",
+          "label": "Hospitality Technology Next Generation workgroups",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software",
+        "Calendar and scheduling software",
+        "Customer relationship management CRM software"
+      ],
+      "see_also": [
+        "move.travel_reservation",
+        "commerce.food_service"
+      ],
+      "notes": "Was seed 'Hospitality, reservation and event management'. Restaurant table reservations, tour booking and events are kept here; airline, rail and global distribution systems and travel-agency booking go to move.",
+      "tasks": [
+        {
+          "id": "commerce.hospitality.hotel_front_office",
+          "name": "Hotel front office operations",
+          "definition": "Given reservations, room inventory and guests, assign rooms, check guests in and out, post charges to folios, track housekeeping and close the day.",
+          "inputs": "reservations, room types and status, rates, guest profiles, charges from outlets",
+          "outputs": "room assignments, guest folios, housekeeping status, night-audit reports",
+          "crosswalk": [
+            {
+              "scheme": "HTNG",
+              "code": "",
+              "label": "Property management system interfaces",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "MICROS Systems OPERA Property Management System PMS",
+            "Property management system PMS software",
+            "Enablez ResortSuite",
+            "GuestServe",
+            "ePOS Business Solutions System 3 POS"
+          ],
+          "state_of_art": [
+            "Oracle OPERA Cloud",
+            "Mews",
+            "Cloudbeds"
+          ],
+          "open_tools": [
+            "QloApps",
+            "HotelDruid"
+          ],
+          "benchmarkable": "partly: room assignment under preferences is an optimization with checkable objectives; folio work is bookkeeping",
+          "notes": ""
+        },
+        {
+          "id": "commerce.hospitality.reservations_distribution",
+          "name": "Central reservations and channel distribution",
+          "definition": "Given rates, availability and restrictions, publish bookable inventory to direct and third-party channels and take reservations without overselling.",
+          "inputs": "room types, rate plans, availability and stay restrictions, channel mappings",
+          "outputs": "channel availability and rate updates, reservations, modification and cancellation messages",
+          "crosswalk": [
+            {
+              "scheme": "OpenTravel Alliance",
+              "code": "",
+              "label": "Hotel availability and reservation messages",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Computer reservation system CRS software",
+            "Property scheduling software"
+          ],
+          "state_of_art": [
+            "Sabre SynXis Central Reservations",
+            "Amadeus iHotelier",
+            "SiteMinder"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: OpenTravel message conformance is testable; distribution strategy is not",
+          "notes": ""
+        },
+        {
+          "id": "commerce.hospitality.revenue_management",
+          "name": "Room revenue management",
+          "definition": "Given booking pace, demand forecasts, cancellations and competitor rates, set prices and availability controls such as overbooking and length-of-stay limits.",
+          "inputs": "on-the-books reservations, historical demand and cancellations, competitor rates, capacity",
+          "outputs": "demand and cancellation forecasts, recommended rates, booking limits and overbooking levels",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "IDeaS G3 RMS",
+            "Duetto",
+            "Oracle OPERA Cloud Revenue Management"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the public hotel booking demand dataset (Antonio, Almeida and Nunes) scores cancellation and demand forecasts, and EMSR-b gives reference booking limits",
+          "notes": ""
+        },
+        {
+          "id": "commerce.hospitality.table_reservations",
+          "name": "Table reservations and waitlist",
+          "definition": "Given party sizes, requested times and a table layout, accept reservations, assign tables and quote waits for walk-ins.",
+          "inputs": "table inventory and combinations, turn times, reservation requests, walk-in queue",
+          "outputs": "confirmed reservations, table assignments, wait quotes, guest notes",
+          "crosswalk": [],
+          "onet_products": [
+            "OpenTable",
+            "iMagic Restaurant Reservation",
+            "Avenista Table Reservations",
+            "GuestBridge Reserve",
+            "Reservation software"
+          ],
+          "state_of_art": [
+            "OpenTable",
+            "Resy",
+            "SevenRooms"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: table assignment is an online packing problem scorable on simulated nights",
+          "notes": ""
+        },
+        {
+          "id": "commerce.hospitality.tour_activity_booking",
+          "name": "Tour and activity booking",
+          "definition": "Given tour departures, capacities and prices, take bookings, build itineraries and produce passenger manifests and supplier vouchers.",
+          "inputs": "tour products and departures, capacity, pricing, supplier contracts, traveler details",
+          "outputs": "bookings, itineraries, manifests, vouchers",
+          "crosswalk": [
+            {
+              "scheme": "OpenTravel Alliance",
+              "code": "",
+              "label": "Tour and activity messages",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Rezdy booking software",
+            "Rezgo online booking software",
+            "TourCMS",
+            "Softrip Travel Software System",
+            "TourTech Systems TourTools",
+            "RBS GoTour Online",
+            "IBS Software Services Tour Partner",
+            "Centaur Systems Centaur Travel Business Management System TBMS",
+            "TourWriter",
+            "Rezopia",
+            "TravelCarma",
+            "Travii reservation system software",
+            "Travel Agent CMS",
+            "Galor Travel Booster"
+          ],
+          "state_of_art": [
+            "FareHarbor",
+            "Rezdy",
+            "Bokun",
+            "Tourplan",
+            "TourCMS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: booking records with no reference problem",
+          "notes": ""
+        },
+        {
+          "id": "commerce.hospitality.event_venue_sales",
+          "name": "Event, venue and catering sales",
+          "definition": "Given event inquiries, function spaces and menus, book space without conflicts and produce banquet event orders and invoices.",
+          "inputs": "inquiries with dates and headcounts, function-space diary, room setups, catering menus and prices",
+          "outputs": "space bookings, banquet event orders, contracts and invoices",
+          "crosswalk": [],
+          "onet_products": [
+            "Dean Evans & Associates EMS Professional",
+            "NSF Hospitality Rendezvous Events",
+            "CaterPro",
+            "ReServe Interactive",
+            "GruupMeet",
+            "Event scheduling software"
+          ],
+          "state_of_art": [
+            "Amadeus Delphi",
+            "Tripleseat",
+            "Cvent"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: function-space assignment is a timetabling problem scorable on synthetic instances",
+          "notes": ""
+        },
+        {
+          "id": "commerce.hospitality.event_registration_ticketing",
+          "name": "Event registration and ticketing",
+          "definition": "Given an event, seating map and price levels, sell registrations or seats, issue tickets and check attendees in.",
+          "inputs": "event sessions, seat maps or capacities, price levels, attendee details",
+          "outputs": "registrations, seat assignments, tickets, check-in records",
+          "crosswalk": [],
+          "onet_products": [
+            "AudienceView Ticketing",
+            "MemberClicks COMPLETE"
+          ],
+          "state_of_art": [
+            "Ticketmaster",
+            "Cvent",
+            "Eventbrite"
+          ],
+          "open_tools": [
+            "pretix",
+            "alf.io",
+            "Indico"
+          ],
+          "benchmarkable": "no: transaction processing with no reference problem",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "commerce.real_estate",
+      "name": "Real estate brokerage and valuation",
+      "definition": "Given property data, listings and comparable sales, market properties, estimate their value and carry a sale from listing to closing.",
+      "crosswalk": [
+        {
+          "scheme": "RESO",
+          "code": "",
+          "label": "RESO Data Dictionary",
+          "basis": "fetched",
+          "url": "https://reso.org/data-dictionary/"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "531210",
+          "label": "Offices of Real Estate Agents and Brokers",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "531320",
+          "label": "Offices of Real Estate Appraisers",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software",
+        "Analytical or scientific software",
+        "Expert system software",
+        "Customer relationship management CRM software"
+      ],
+      "see_also": [
+        "govern.public_administration",
+        "govern.legal_practice",
+        "commerce.property_management"
+      ],
+      "notes": "Seed 'Real estate listing, appraisal and property management' split into brokerage and valuation (here) and property management. Mass appraisal for property tax, title search and closing go to govern. Marketing flyers and newsletters go to media.",
+      "tasks": [
+        {
+          "id": "commerce.real_estate.listing_exchange",
+          "name": "Property listing exchange",
+          "definition": "Given listing data and media from brokers, maintain shared listing records in a standard data dictionary and serve searches and syndication feeds.",
+          "inputs": "listing attributes, photos, status changes, member and office records",
+          "outputs": "standardized listings, status histories, search results, syndication feeds",
+          "crosswalk": [
+            {
+              "scheme": "RESO",
+              "code": "",
+              "label": "Data Dictionary Property resource",
+              "basis": "fetched",
+              "url": "https://reso.org/data-dictionary/"
+            },
+            {
+              "scheme": "RESO",
+              "code": "",
+              "label": "RESO Web API",
+              "basis": "fetched",
+              "url": "https://reso.org/reso-web-api/"
+            }
+          ],
+          "onet_products": [
+            "Multiple listing service software",
+            "FBS Data Systems Flexmls",
+            "Real estate listing databases",
+            "Moxi Works MoxiImpress"
+          ],
+          "state_of_art": [
+            "CoreLogic Matrix",
+            "FBS Flexmls",
+            "Bridge Interactive"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: RESO certification tests data-dictionary and API conformance",
+          "notes": ""
+        },
+        {
+          "id": "commerce.real_estate.comparative_market_analysis",
+          "name": "Comparative market analysis",
+          "definition": "Given a subject property and recent nearby sales and listings, select comparables, adjust for differences and recommend a list-price range.",
+          "inputs": "subject property attributes, comparable sales and active listings, market trends",
+          "outputs": "selected comparables with adjustments, suggested price range, client report",
+          "crosswalk": [],
+          "onet_products": [
+            "CMA Stuffers",
+            "Topaz Software Symplifi (business analysis feature)",
+            "First American CoreLogic RealQuest Pro",
+            "Bruno Realty eNeighboorhoods",
+            "Home rating software",
+            "Property records databases"
+          ],
+          "state_of_art": [
+            "Cloud CMA",
+            "Realtors Property Resource",
+            "CoreLogic RealQuest"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: suggested prices can be scored against later sale prices",
+          "notes": ""
+        },
+        {
+          "id": "commerce.real_estate.appraisal_reporting",
+          "name": "Residential appraisal report preparation",
+          "definition": "Given inspection data, comparables and adjustments, produce a standard residential appraisal report with a reconciled opinion of value.",
+          "inputs": "subject inspection data, sketches and photos, comparable sales, adjustment grid",
+          "outputs": "completed appraisal form (such as Fannie Mae Form 1004) with reconciled value",
+          "crosswalk": [
+            {
+              "scheme": "Fannie Mae / Freddie Mac",
+              "code": "1004",
+              "label": "Uniform Residential Appraisal Report",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "Fannie Mae / Freddie Mac",
+              "code": "",
+              "label": "Uniform Appraisal Dataset",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "a la mode WinTOTAL",
+            "a la mode Pocket TOTAL",
+            "Wilson's Computer Applications RealEasy Appraisals",
+            "WinGap",
+            "Modellium PariTOP"
+          ],
+          "state_of_art": [
+            "a la mode TOTAL",
+            "Bradford ClickFORMS",
+            "ACI Analytics"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: Uniform Appraisal Dataset conformance is checkable; value opinions are judged against sale prices",
+          "notes": ""
+        },
+        {
+          "id": "commerce.real_estate.automated_valuation",
+          "name": "Automated property valuation",
+          "definition": "Given property characteristics, location and transaction history, estimate a property's market value with a confidence measure.",
+          "inputs": "property attributes, geocoded location, sales and listing history, market indices",
+          "outputs": "value estimate, confidence score or range",
+          "crosswalk": [
+            {
+              "scheme": "IAAO",
+              "code": "",
+              "label": "Standard on Automated Valuation Models",
+              "basis": "fetched",
+              "url": "https://www.iaao.org/industry-data/iaao-technical-standards/"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Zillow Zestimate",
+            "CoreLogic Total Home ValueX",
+            "HouseCanary"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: public sale datasets (Ames housing, Zillow Prize) and IAAO ratio-study statistics give standard error metrics",
+          "notes": "Mass appraisal for property taxation uses the same methods but belongs to govern."
+        },
+        {
+          "id": "commerce.real_estate.showing_management",
+          "name": "Showing scheduling and feedback",
+          "definition": "Given listings, seller access rules and buyer-agent requests, confirm showing appointments and collect feedback.",
+          "inputs": "listing access instructions, seller availability, showing requests",
+          "outputs": "confirmed showings, lockbox access, buyer-agent feedback reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Showing Suite real estate software",
+            "Showing Suite Showing Calendar",
+            "Showing Suite HomeFeedback",
+            "Showing Suite HomeFollowup"
+          ],
+          "state_of_art": [
+            "ShowingTime",
+            "BrokerBay"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: scheduling workflow without a reference problem",
+          "notes": ""
+        },
+        {
+          "id": "commerce.real_estate.transaction_management",
+          "name": "Brokerage transaction management",
+          "definition": "Given an accepted offer, track contract deadlines, documents and signatures to closing and compute agent commissions.",
+          "inputs": "purchase contracts, contingency dates, required documents, commission plans",
+          "outputs": "transaction checklists and deadlines, compliance-reviewed files, commission statements",
+          "crosswalk": [],
+          "onet_products": [
+            "Lucero System Office Management",
+            "Real Estate Assistant REA",
+            "RealtyStar Real Estate Assistant",
+            "PrimaSoft PC Realtor Organizer Deluxe",
+            "Agent Business Builder"
+          ],
+          "state_of_art": [
+            "dotloop",
+            "SkySlope",
+            "Lone Wolf Transactions"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: document workflow",
+          "notes": ""
+        },
+        {
+          "id": "commerce.real_estate.investment_analysis",
+          "name": "Income property investment analysis",
+          "definition": "Given rents, expenses, financing and a holding period, project property cash flows and compute returns.",
+          "inputs": "rent roll, operating expenses, growth assumptions, loan terms, exit cap rate",
+          "outputs": "pro forma cash flows, net operating income, internal rate of return, cap rate, debt coverage",
+          "crosswalk": [],
+          "onet_products": [
+            "RealData REIA",
+            "Lease Cost Solutions LseMod"
+          ],
+          "state_of_art": [
+            "ARGUS Enterprise",
+            "RealData Real Estate Investment Analysis"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: discounted-cash-flow results are deterministic given assumptions, so reference cases fix the answer",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "commerce.property_management",
+      "name": "Rental property and lease management",
+      "definition": "Given properties, units, leases and tenants, lease space, bill and collect rent and administer lease obligations.",
+      "crosswalk": [
+        {
+          "scheme": "NAICS 2017",
+          "code": "531311",
+          "label": "Residential Property Managers",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "531312",
+          "label": "Nonresidential Property Managers",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "operate.maintenance_management",
+        "operate.facility_management",
+        "enterprise.accounting"
+      ],
+      "notes": "Split out of seed 'Real estate listing, appraisal and property management'. Maintenance work orders go to operate; general ledger and lease accounting standards go to enterprise.",
+      "tasks": [
+        {
+          "id": "commerce.property_management.rent_roll",
+          "name": "Tenant ledger and rent roll",
+          "definition": "Given leases, recurring charges and payments, post charges, apply receipts and produce rent rolls, delinquency and owner statements.",
+          "inputs": "units, leases and charge schedules, payments, late-fee rules",
+          "outputs": "tenant ledgers, rent roll, delinquency reports, owner statements",
+          "crosswalk": [],
+          "onet_products": [
+            "Yardi software",
+            "Yardi Systems Yardi Voyager Residential",
+            "AppFolio Property Manager",
+            "RealPage OneSite",
+            "Propertyware",
+            "London Computer Systems Rent Manager",
+            "Domin-8 Enterprise Solutions Tenant Pro",
+            "Intuit MRI Residential",
+            "SS&C Technologies Skyline Property Management",
+            "PropertyBoss Solutions PropertyBoss",
+            "LandlordMax",
+            "Qualitica RentBoss"
+          ],
+          "state_of_art": [
+            "Yardi Voyager",
+            "AppFolio Property Manager",
+            "RealPage OneSite",
+            "Entrata"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: ledger keeping",
+          "notes": ""
+        },
+        {
+          "id": "commerce.property_management.leasing_screening",
+          "name": "Leasing and applicant screening",
+          "definition": "Given vacancies, prospects and applications with credit and rental history, qualify applicants and generate leases.",
+          "inputs": "vacant units and pricing, prospect inquiries, applications, screening reports",
+          "outputs": "screening decisions, executed leases, move-in schedules",
+          "crosswalk": [],
+          "onet_products": [
+            "Domin-8 Enterprise Solutions RentRight",
+            "Property Solutions International ResidentPortal",
+            "Yardi Systems Yardi Enterprise"
+          ],
+          "state_of_art": [
+            "Entrata",
+            "RealPage",
+            "TransUnion SmartMove"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: workflow, and screening criteria are regulated rather than optimized",
+          "notes": ""
+        },
+        {
+          "id": "commerce.property_management.commercial_lease_admin",
+          "name": "Commercial lease administration",
+          "definition": "Given commercial leases, abstract key terms, track critical dates and compute escalations and common-area maintenance recoveries.",
+          "inputs": "lease documents, clause terms, operating expenses, tenant shares",
+          "outputs": "lease abstracts, critical-date alerts, escalation and CAM reconciliation statements",
+          "crosswalk": [],
+          "onet_products": [
+            "Visual Lease",
+            "AMTdirect",
+            "Yardi Systems Yardi Voyager Commercial",
+            "Enterprise Software Systems CRE Sync"
+          ],
+          "state_of_art": [
+            "Visual Lease",
+            "MRI Software",
+            "CoStar Real Estate Manager"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: lease abstraction is clause extraction that can be scored on labeled leases; CAM arithmetic is deterministic",
+          "notes": ""
+        },
+        {
+          "id": "commerce.property_management.association_management",
+          "name": "Community association management",
+          "definition": "Given units, owners and association rules, bill assessments, track violations and architectural requests and manage reserves.",
+          "inputs": "units and owners, assessment schedules, violation reports, reserve study",
+          "outputs": "assessment billing, violation notices, owner ledgers, reserve fund reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Yardi Systems Yardi Voyager Condo, Co-op, and HOA",
+            "Jenark Business Systems"
+          ],
+          "state_of_art": [
+            "Vantaca",
+            "CINC Systems",
+            "AppFolio"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record-keeping",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "commerce.service_scheduling",
+      "name": "Appointment and field service management",
+      "definition": "Given customer service requests, staff, technicians and resources, book appointments, dispatch work and track service orders to completion.",
+      "crosswalk": [
+        {
+          "scheme": "APQC PCF cross-industry v7",
+          "code": "",
+          "label": "Service products after sales",
+          "basis": "fetched",
+          "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "811",
+          "label": "Repair and Maintenance",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        }
+      ],
+      "onet_categories": [
+        "Calendar and scheduling software",
+        "Data base user interface and query software",
+        "Point of sale POS software"
+      ],
+      "see_also": [
+        "move.vehicle_routing",
+        "operate.maintenance_management",
+        "health.patient_administration",
+        "enterprise.payroll_time"
+      ],
+      "notes": "Was seed 'Field service and appointment scheduling'. Patient scheduling goes to health, employee shift scheduling to enterprise, and maintenance of an organization's own assets to operate. Repair-shop order tracking was added from point-of-sale and database products for counters and repair shops.",
+      "tasks": [
+        {
+          "id": "commerce.service_scheduling.appointment_booking",
+          "name": "Customer appointment booking",
+          "definition": "Given services with durations, staff and room availability and customer requests, book conflict-free appointments, send reminders and fill cancellations.",
+          "inputs": "service menu and durations, staff and resource calendars, booking rules, customer requests",
+          "outputs": "confirmed appointments, reminders, waitlist fills, utilization and no-show reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Appointment scheduling software",
+            "DaySmart Software Appointment-Plus",
+            "AppointmentQuest Online Appointment Scheduler",
+            "AppointmentQuest Online Appointment Manager",
+            "Genbook",
+            "BookFresh",
+            "Appointment Search",
+            "Booker Software SpaBooker",
+            "MINDBODY business management software",
+            "Thoughtful Systems Scheduling Manager for Auto Detailing",
+            "EZappt",
+            "SpectraSoft AppointmentsPRO"
+          ],
+          "state_of_art": [
+            "Calendly",
+            "Square Appointments",
+            "Acuity Scheduling",
+            "Microsoft Bookings"
+          ],
+          "open_tools": [
+            "Cal.com",
+            "Easy!Appointments"
+          ],
+          "benchmarkable": "partly: multi-resource booking is constraint satisfaction with checkable feasibility and utilization",
+          "notes": ""
+        },
+        {
+          "id": "commerce.service_scheduling.field_dispatch",
+          "name": "Field technician scheduling and dispatch",
+          "definition": "Given service jobs with time windows, skills and locations and technician calendars, assign and sequence jobs and dispatch technicians.",
+          "inputs": "jobs with windows, durations, skills and addresses; technician skills, shifts and start locations; parts",
+          "outputs": "job assignments and routes, arrival windows, dispatch updates, first-time-fix rate",
+          "crosswalk": [],
+          "onet_products": [
+            "Digital Gateway e-automate",
+            "SuccessWare service management software",
+            "RFMS Schedule Pro",
+            "Tigerpaw"
+          ],
+          "state_of_art": [
+            "Salesforce Field Service",
+            "ServiceTitan",
+            "IFS Field Service Management",
+            "Microsoft Dynamics 365 Field Service"
+          ],
+          "open_tools": [
+            "OCA Field Service (Odoo)"
+          ],
+          "benchmarkable": "yes: technician routing and scheduling instances such as the ROADEF 2007 challenge have published best solutions",
+          "notes": "The routing solver is shared with move.vehicle_routing; this leaf adds skills, parts and service windows."
+        },
+        {
+          "id": "commerce.service_scheduling.service_contracts",
+          "name": "Service contracts and warranty entitlements",
+          "definition": "Given service contracts and covered assets, check entitlement for each request, process warranty claims and schedule renewals.",
+          "inputs": "contracts and covered assets, coverage terms, service requests, warranty claims",
+          "outputs": "entitlement decisions, claim submissions, renewal quotes",
+          "crosswalk": [],
+          "onet_products": [
+            "Contract tracking software"
+          ],
+          "state_of_art": [
+            "ServiceNow Field Service Management",
+            "Salesforce Field Service",
+            "Tavant Warranty"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: rule-driven record-keeping",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "commerce.personal_services",
+      "name": "Personal and death care services",
+      "definition": "Given clients and the services a personal-service business sells, keep the industry-specific records each service needs: client service histories, memberships, funeral arrangements, plots, pets and photo jobs.",
+      "crosswalk": [
+        {
+          "scheme": "NAICS 2017",
+          "code": "812",
+          "label": "Personal and Laundry Services",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "812112",
+          "label": "Beauty Salons",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "812210",
+          "label": "Funeral Homes and Funeral Services",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "812220",
+          "label": "Cemeteries and Crematories",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "812910",
+          "label": "Pet Care (except Veterinary) Services",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "541921",
+          "label": "Photography Studios, Portrait",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        },
+        {
+          "scheme": "NAICS 2017",
+          "code": "713940",
+          "label": "Fitness and Recreational Sports Centers",
+          "basis": "fetched",
+          "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx"
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software",
+        "Calendar and scheduling software",
+        "Point of sale POS software"
+      ],
+      "see_also": [
+        "commerce.service_scheduling",
+        "commerce.customer_relationship"
+      ],
+      "notes": "Was seed 'Salon, fitness, funeral and other personal-service management'. This is the one capability split by industry, because its record types (funeral arrangements and vital-statistics data, cemetery plots, salon color formulas, kennel occupancy) are themselves industry-specific. Booking for all of these lives in service_scheduling. Veterinary practice goes to health and animal shelters to govern.",
+      "tasks": [
+        {
+          "id": "commerce.personal_services.salon_spa_records",
+          "name": "Salon and spa client records",
+          "definition": "Given clients, services performed, product sales and staff, keep client service histories and formulas and compute staff commissions and retail attachment.",
+          "inputs": "client profiles, service tickets with formulas and notes, product sales, commission plans",
+          "outputs": "client histories, rebooking prompts, staff commission and productivity reports",
+          "crosswalk": [],
+          "onet_products": [
+            "DaySmart Software Salon Iris",
+            "MINDBODY business management software",
+            "Shortcuts Software Shortcuts Spa",
+            "Rogers Software Development SuperSalon",
+            "Millennium SpaSalon",
+            "PAR Technology SpaSoft",
+            "TouchSuite Salon",
+            "Spa management software",
+            "Elite Software Elite Salon & Spa Management",
+            "Envision Salon",
+            "Neill Technologies SpaBiz",
+            "CRIMPERS Management Software CRIMPERS Salon Software"
+          ],
+          "state_of_art": [
+            "Boulevard",
+            "Phorest",
+            "Vagaro",
+            "Fresha"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record-keeping",
+          "notes": ""
+        },
+        {
+          "id": "commerce.personal_services.club_membership",
+          "name": "Fitness and club membership",
+          "definition": "Given members, plans and facility access, bill recurring dues, control check-in and manage class and court rosters.",
+          "inputs": "member contracts and plans, payment methods, check-ins, class schedules and capacities",
+          "outputs": "recurring dues billing, access decisions, class rosters and attendance, retention reports",
+          "crosswalk": [],
+          "onet_products": [
+            "MINDBODY business management software",
+            "MemberClicks COMPLETE",
+            "SportSoft Equipment Manager"
+          ],
+          "state_of_art": [
+            "ABC Fitness (Glofox)",
+            "Mindbody",
+            "Club Automation"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record-keeping",
+          "notes": ""
+        },
+        {
+          "id": "commerce.personal_services.fitness_programming",
+          "name": "Fitness assessment and program design",
+          "definition": "Given a client's fitness assessment and goals, produce an individualized exercise program and track progress.",
+          "inputs": "assessment measures, goals, health screening, exercise library",
+          "outputs": "exercise prescriptions, progress records",
+          "crosswalk": [],
+          "onet_products": [
+            "BioEx Systems Exercise Expert",
+            "MicroFit HealthWizard",
+            "ICTraining"
+          ],
+          "state_of_art": [
+            "Trainerize",
+            "TrueCoach"
+          ],
+          "open_tools": [
+            "wger"
+          ],
+          "benchmarkable": "no: no agreed reference outcome",
+          "notes": "Clinical exercise and rehabilitation belong to health."
+        },
+        {
+          "id": "commerce.personal_services.funeral_arrangements",
+          "name": "Funeral arrangement and case records",
+          "definition": "Given a death call, decedent and family information and selected goods and services, produce the arrangement contract, vital-statistics data, service schedule and obituary.",
+          "inputs": "decedent and informant details, selected merchandise and services, price list, service dates",
+          "outputs": "statement of goods and services, death-certificate data, service schedule, case file",
+          "crosswalk": [
+            {
+              "scheme": "US Federal Trade Commission",
+              "code": "",
+              "label": "Funeral Rule (General Price List)",
+              "basis": "fetched",
+              "url": "https://www.ftc.gov/business-guidance/resources/funeral-rule-price-list-essentials"
+            }
+          ],
+          "onet_products": [
+            "HMIS Advantage",
+            "Belmar & Associates Mortware",
+            "Mortware Professional",
+            "FPA Software MACCS",
+            "Twin Tier Technologies MIMS",
+            "Twin Tiers Technologies MIMS",
+            "Custom Data Systems Sterling Management Software"
+          ],
+          "state_of_art": [
+            "Passare",
+            "Osiris",
+            "FrontRunner Professional"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record-keeping",
+          "notes": ""
+        },
+        {
+          "id": "commerce.personal_services.cemetery_records",
+          "name": "Cemetery plot and interment records",
+          "definition": "Given cemetery sections, plots, deeds and burials, maintain plot inventory and ownership, record interments and sell preneed contracts.",
+          "inputs": "plot maps, deeds and owners, interment orders, preneed contracts",
+          "outputs": "plot availability and ownership, interment records, contract balances",
+          "crosswalk": [],
+          "onet_products": [
+            "CSR Consultants Cemetery Management SC",
+            "Twin Tiers Technologies CIMS"
+          ],
+          "state_of_art": [
+            "PlotBox",
+            "CIMS Cemetery Software"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record-keeping",
+          "notes": ""
+        },
+        {
+          "id": "commerce.personal_services.pet_care",
+          "name": "Pet grooming and boarding",
+          "definition": "Given pets, owners, kennel runs and services, take boarding and grooming bookings, check vaccinations and track occupancy and care notes.",
+          "inputs": "pet and owner profiles, vaccination records, kennel inventory, service requests",
+          "outputs": "boarding reservations, occupancy charts, groom tickets, care logs",
+          "crosswalk": [],
+          "onet_products": [
+            "Kennel Link",
+            "K9 Bytes K9 Koordinator",
+            "DaySmart Software 123Pet",
+            "Groomsoft",
+            "The Groomer's Write Hand",
+            "Envision Pet Grooming",
+            "CEEJS The Pet Groomer's Secretary",
+            "Groom Pro",
+            "Mobile Dog Grooming Software mGroomer",
+            "Petschedule"
+          ],
+          "state_of_art": [
+            "Gingr",
+            "PetExec",
+            "MoeGo"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record-keeping",
+          "notes": ""
+        },
+        {
+          "id": "commerce.personal_services.photo_studio",
+          "name": "Photography studio job management",
+          "definition": "Given client inquiries, session packages and image orders, book sessions, issue contracts and invoices and fulfill print and album orders.",
+          "inputs": "leads, session types and packages, contracts, image selections and print orders",
+          "outputs": "booked sessions, contracts and invoices, lab orders, job status",
+          "crosswalk": [],
+          "onet_products": [
+            "ShootQ photography studio management software",
+            "Tave Studio Manager",
+            "StudioCloud",
+            "Cradoc fotoBiz",
+            "StudioPlus Spectra",
+            "Light Blue Software Light Blue",
+            "Simplifi pixifi",
+            "Simply Studio System",
+            "HindSight InView",
+            "ShootZilla"
+          ],
+          "state_of_art": [
+            "HoneyBook",
+            "Studio Ninja",
+            "Táve"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record-keeping",
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "existing_function_map": [],
+  "handoffs": [
+    {
+      "what": "Generic inventory tracking, warehouse management, RFID and barcode software (Inventory tracking software, Warehouse management system WMS, Radio frequency identification RFID software, Barcode software)",
+      "to_domain": "move",
+      "why": "warehousing and inventory control are move's; only store-facing merchandising stays here"
+    },
+    {
+      "what": "Global distribution systems, airline reservation and travel-agency booking (Sabre Airline Solutions SabreSonic Ticket, Amadeus CRS, Galileo 360 Fares, Worldspan Go!, Apollo Reservation System, Global distribution system GDS software, Travel Agent CMS)",
+      "to_domain": "move",
+      "why": "travel reservation and distribution is a move seed"
+    },
+    {
+      "what": "Concrete and route-sales dispatch (Command Alkon COMMANDconcrete, Computer Directions Route Sales Tracker, Regulussoft Route Accounting, Soft Essentials Vending Essentials, MobiTech Systems Route Sales Trakker)",
+      "to_domain": "move",
+      "why": "routing and dispatch of delivery vehicles"
+    },
+    {
+      "what": "Valet and parking payment (CorePark Valet, SMS Valet) and shipping (Stamps.com software)",
+      "to_domain": "move",
+      "why": "vehicle storage and mailing operations"
+    },
+    {
+      "what": "Computer-aided dispatch (Computer aided dispatch software, Spillman Technologies Spillman Computer-Aided Dispatch)",
+      "to_domain": "govern",
+      "why": "emergency dispatch is a govern seed"
+    },
+    {
+      "what": "Insurance agency, financial-advisor, collections and loan software filed under CRM (Applied Systems Vision, E-Z Data SmartOffice, eMoneyAdvisor AdvisorPlatform, Junxure CRM Software, Ontario Systems FACS, Columbia Ultimate RPCS, Debt account management and collection software, Loan tracking software)",
+      "to_domain": "govern",
+      "why": "insurance, lending and wealth management are govern's; the general CRM function is modeled here"
+    },
+    {
+      "what": "Law-practice products filed under CRM (Thomson West ProLaw, Software Technology PracticeMaster) and real estate title and closing (Online title search and property report software, Argosy Legal Systems Power Closer)",
+      "to_domain": "govern",
+      "why": "legal practice"
+    },
+    {
+      "what": "Computer-assisted mass appraisal and property-tax billing (Computer assisted mass appraisal CAMA software, Manatron ProVal Plus, GCS Property Assessment and Tax Billing, Ascend Property Assessment)",
+      "to_domain": "govern",
+      "why": "public finance and tax administration"
+    },
+    {
+      "what": "Animal shelter and animal control systems (Animal Shelter Manager, ARK Software Ark Shelter Software, TRAX Animal Control and Dog Warden Officer Software)",
+      "to_domain": "govern",
+      "why": "public animal control"
+    },
+    {
+      "what": "IT help desk and service management (Help desk software, BMC Software Remedy IT Service Management Suite)",
+      "to_domain": "computing",
+      "why": "IT service management is a computing seed"
+    },
+    {
+      "what": "Telephony infrastructure (Softphone software, Call accounting software)",
+      "to_domain": "computing",
+      "why": "network administration and telephony"
+    },
+    {
+      "what": "Survey data collection and telephone interviewing (Computer assisted telephone interviewing CATI software, QuestionPro, Snap Survey Software, Askia products, Voxco PRONTO) and statistics packages used by market researchers",
+      "to_domain": "science",
+      "why": "survey and social-science analysis is a science seed; marketing-specific choice modeling stays here"
+    },
+    {
+      "what": "Nutrient analysis and diet planning (ESHA Research The Food Processor, CyberSoft NutriBase, DietMaster Systems DietMaster, Axxya Systems Nutritionist Pro)",
+      "to_domain": "health",
+      "why": "nutrition and dietetics analysis is a health seed; menu costing stays here"
+    },
+    {
+      "what": "Patient and clinical scheduling (MD Synergy Medical Appointment Scheduling, Siemens Soarian Scheduling, EZappt, McKesson ANSOS One-Staff) and pharmacy dispensing inventory (Pyxis MedStation software)",
+      "to_domain": "health",
+      "why": "anything about a patient"
+    },
+    {
+      "what": "Employee and staff shift scheduling (Employee scheduling software, Workbrain Employee Scheduling, espSoftware Employee Schedule Partner) and general calendars (Google Calendar, Microsoft Office Outlook)",
+      "to_domain": "enterprise",
+      "why": "workforce administration and office tools"
+    },
+    {
+      "what": "Retail accounting packages filed under POS (Sage 50 Accounting Software) and Vendor management system software",
+      "to_domain": "enterprise",
+      "why": "accounting and procurement"
+    },
+    {
+      "what": "Real estate marketing collateral (ProForce Ultimate Brochures, ProForce Highlight Flyer Master, Power Real Estate Letters, Newsletter production software)",
+      "to_domain": "media",
+      "why": "page layout and publishing"
+    },
+    {
+      "what": "Crew and airline scheduling (SBS International Maestro Suite, AD OPT Altitude) and rail yard inventory (Softrail AEI Rail & Road Manager)",
+      "to_domain": "move",
+      "why": "vehicle and crew operations"
+    },
+    {
+      "what": "Broadcast music scheduling (RCS GSelector, Music scheduling software)",
+      "to_domain": "media",
+      "why": "broadcast automation"
+    },
+    {
+      "what": "Court docketing filed under calendars (Aderant CompuLaw, Compugov DocketView, Court docket management software)",
+      "to_domain": "govern",
+      "why": "legal docketing"
+    }
+  ],
+  "unplaced_products": [
+    "TokenWorks Magnetic Card Reader",
+    "Lynk Everest",
+    "Getting Things Done GTD software",
+    "Performance Solutions Technology ManagePro",
+    "Root Systems SPS Process Management",
+    "Virtual Systems Mail-Shop",
+    "Smart card management software",
+    "AFEXDirect",
+    "Columbia Ultimate Remit",
+    "Computerized voice stress analyzer CVSA software",
+    "iView Systems"
+  ],
+  "open_questions": [
+    "personal_services is split by industry. Salon, pet and photo-studio products are mostly booking plus client records, and they could be folded into service_scheduling and customer_relationship. Funeral and cemetery records are the strongest case for keeping the capability.",
+    "Tour-operator booking is kept in commerce.hospitality, and travel-agency and GDS booking go to move. The editor should confirm where tours and packaged travel belong.",
+    "Merchant payment acceptance and merchant fraud screening are placed here, with see_also to govern banking. Confirm that govern does not also model merchant-side acquiring.",
+    "Store demand forecasting (commerce.merchandising.store_replenishment) overlaps move's demand planning. Here it covers the item-store level and move covers the network. The editor may prefer a single node.",
+    "Contact-center workforce management is placed here rather than in enterprise workforce scheduling, because Erlang-based staffing is specific to queues. Confirm.",
+    "Several see_also ids point at nodes I guessed in other domains (computing.it_service_management, computing.network_telephony, computing.data_integration, govern.banking_payments, govern.public_finance, govern.legal_practice, govern.emergency_dispatch, move.travel_reservation, move.vehicle_routing, move.supply_chain_planning, move.warehouse_management, health.nutrition, health.practice_management, health.veterinary_practice, operate.maintenance_management, operate.facility_management, enterprise.accounting, enterprise.business_intelligence, enterprise.workforce_scheduling, media.web_content_management, media.social_media, science.survey_analysis, earth.gis, produce.batch_recipe). They need reconciling once those files exist."
+  ]
+}

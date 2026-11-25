@@ -1,0 +1,135 @@
+onet_category,domains,n_products,grab_bag
+Analytical or scientific software,simulate; operate; earth; science; move; govern; health,1687,True
+Data base user interface and query software,earth; move; enterprise; commerce; govern; health; learn; computing,910,True
+Medical software,health,671,False
+Financial analysis software,govern,356,False
+Computer aided design CAD software,design; simulate; earth,344,False
+Enterprise resource planning ERP software,enterprise,266,False
+Human resources software,enterprise,239,False
+Graphics or photo imaging software,design; media,225,False
+Project management software,design; enterprise,207,False
+Document management software,enterprise,197,False
+Development environment software,design; produce; computing,189,False
+Materials requirements planning logistics and supply chain software,produce; move,171,False
+Industrial control software,simulate; produce; operate,169,False
+Accounting software,enterprise,141,False
+Customer relationship management CRM software,commerce,140,False
+Computer based training software,learn,126,False
+Compliance software,operate; govern,125,True
+Computer aided manufacturing CAM software,produce,123,False
+Information retrieval or search software,govern; learn,117,True
+Map creation software,earth,111,False
+Point of sale POS software,commerce,104,False
+Music or sound editing software,media,102,False
+Word processing software,enterprise,92,False
+Calendar and scheduling software,enterprise; commerce,87,False
+Inventory management software,move; commerce,83,False
+Data base management system software,computing,78,False
+Program testing software,produce; computing,77,False
+Network monitoring software,computing,75,False
+Web platform development software,computing,73,False
+Video creation and editing software,media,69,False
+Object or component oriented development software,science; computing,68,False
+Time accounting software,enterprise,67,False
+Web page creation and editing software,media,63,False
+Facilities management software,operate,55,False
+Operating system software,computing,53,False
+Expert system software,science; govern; health,48,True
+Data base reporting software,enterprise,45,False
+Transaction security and virus protection software,computing,43,False
+Presentation software,enterprise,39,False
+Desktop publishing software,media,38,False
+Geographic information system,earth,37,False
+Library software,learn,37,False
+Tax preparation software,enterprise,37,False
+Business intelligence and data analysis software,science; enterprise,32,False
+Enterprise application integration software,computing,31,False
+Billing and invoicing software,enterprise; health,29,False
+Data mining software,science,28,False
+Metadata management software,computing,28,False
+Optical character reader OCR or scanning software,enterprise; media,27,False
+Network security or virtual private network VPN management software,computing,26,False
+Configuration management software,computing,26,False
+Backup or archival software,computing,25,False
+Mobile location based services software,earth; move,23,False
+Administration software,computing,23,False
+Application server software,computing,22,False
+Compiler and decompiler software,computing,22,False
+Desktop communications software,enterprise,20,False
+Access software,computing,20,False
+Route navigation software,move,20,False
+Electronic mail software,enterprise,20,False
+Foreign language software,learn; media,16,False
+Categorization or classification software,health; learn,16,False
+Voice recognition software,enterprise; health,15,False
+Video conferencing software,enterprise,15,False
+Spreadsheet software,enterprise,15,False
+Procurement software,enterprise,15,False
+Office suite software,enterprise,14,False
+Network security and virtual private network VPN equipment software,computing,14,False
+Filesystem software,computing,13,False
+Content workflow software,enterprise; media,13,False
+Helpdesk or call center software,commerce,12,False
+Internet browser software,computing,12,False
+Requirements analysis and system architecture software,computing,12,False
+Graphical user interface development software,computing,12,False
+Device drivers or system software,computing,12,False
+Network conferencing software,enterprise,12,False
+Pattern design software,design; media,11,False
+Switch or router software,computing,11,False
+Sales and marketing software,commerce,11,False
+Label making software,move,11,False
+Cloud-based data access and sharing software,enterprise; computing,10,False
+Cloud-based management software,computing,10,False
+Internet protocol IP multimedia subsystem software,computing,10,False
+Process mapping and design software,enterprise,10,False
+Risk management data and analysis software,govern,10,False
+Transaction server software,computing,10,False
+Internet directory services software,computing,9,False
+Network operating system enhancement software,computing,9,False
+Flight control software,move,8,False
+Object oriented data base management software,computing,8,False
+Charting software,science,8,False
+Data conversion software,computing,8,False
+Instant messaging software,enterprise,7,False
+File versioning software,computing,7,False
+Storage networking software,computing,6,False
+Authentication server software,computing,6,False
+Clustering software,computing,6,False
+Multi-media educational software,learn,6,False
+Enterprise system management software,computing,6,False
+Platform interconnectivity software,computing,6,False
+Communications server software,computing,5,False
+Action games,media,4,False
+Spell checkers,enterprise,4,False
+Network connectivity terminal emulation software,computing,4,False
+Mobile operator specific application software,computing,4,False
+WAN switching software and firmware,computing,3,False
+Legal management software,govern,3,False
+Network operation system software,computing,3,False
+Procedure management software,operate; enterprise,3,False
+Portal server software,computing,3,False
+Contact center software,commerce,3,False
+Data compression software,computing,3,False
+Cloud-based protection or security software,computing,3,False
+Eye tracking software,science; health,3,False
+Dictionary software,learn,3,False
+Aviation ground support software,move,3,False
+Gateway software,computing,2,False
+Bar coding software,move; commerce,2,False
+Mobile messaging service software,computing,2,False
+Storage media loading software,computing,2,False
+License management software,computing,2,False
+Mailing and shipping software,move,2,False
+Computer aided design CAD and computer aided manufacturing CAM system,design; produce,2,False
+Interactive voice response software,commerce,2,False
+Audit software,enterprise,1,False
+Computer imaging software,media,1,False
+Fax software,enterprise,1,False
+Bridge software,computing,1,False
+LAN software,computing,1,False
+Manufacturing execution system MES software,produce,1,False
+Software defined networking/ virtualization software,computing,1,False
+Text to speech conversion software,health; media,1,False
+Voice synthesizer and recognition software,media,1,False
+Wireless software,computing,1,False

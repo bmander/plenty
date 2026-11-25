@@ -1,0 +1,802 @@
+{
+ "domain": "commerce",
+ "sources": [
+  {
+   "scheme": "NAICS 2017",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "status": "read",
+   "note": "Census 2017 NAICS 2-6 digit code file read; all 23 codes matched"
+  },
+  {
+   "scheme": "APQC PCF cross-industry v7",
+   "url": "https://www.apqc.org/",
+   "status": "blocked",
+   "note": "HTTP 403; not read"
+  },
+  {
+   "scheme": "IAB Tech Lab (OpenRTB, VAST)",
+   "url": "https://iabtechlab.com/standards/openrtb/",
+   "status": "read",
+   "note": "both standard pages read"
+  },
+  {
+   "scheme": "IAB Europe TCF",
+   "url": "https://iabeurope.eu/transparency-consent-framework/",
+   "status": "read",
+   "note": ""
+  },
+  {
+   "scheme": "RESO",
+   "url": "https://reso.org/data-dictionary/",
+   "status": "read",
+   "note": "Data Dictionary and Web API pages read; Web API page does not mention Property"
+  },
+  {
+   "scheme": "PCI SSC",
+   "url": "https://pcisecuritystandards.org/",
+   "status": "partly_read",
+   "note": "standards list on homepage"
+  },
+  {
+   "scheme": "EMVCo",
+   "url": "https://emvco.com/",
+   "status": "partly_read",
+   "note": "homepage only; specification index not opened"
+  },
+  {
+   "scheme": "GS1 GPC",
+   "url": "https://www.gs1.org/standards/gpc",
+   "status": "blocked",
+   "note": "HTTP 403"
+  },
+  {
+   "scheme": "W3C VoiceXML",
+   "url": "https://www.w3.org/TR/voicexml21/",
+   "status": "read",
+   "note": "VoiceXML 2.1 Recommendation"
+  },
+  {
+   "scheme": "schema.org",
+   "url": "https://schema.org/Product",
+   "status": "read",
+   "note": "Product, Offer, Order pages"
+  },
+  {
+   "scheme": "NRF ARTS",
+   "url": "https://nrf.com/",
+   "status": "not_found",
+   "note": "no mention of ARTS on nrf.com"
+  },
+  {
+   "scheme": "OpenTravel Alliance",
+   "url": "https://opentravel.org/download-specs/",
+   "status": "partly_read",
+   "note": "spec exists; no separately named hotel/tour message set seen"
+  },
+  {
+   "scheme": "HTNG",
+   "url": "https://htng.org/",
+   "status": "blocked",
+   "note": "empty body"
+  },
+  {
+   "scheme": "Fannie Mae / Freddie Mac",
+   "url": "https://www.fanniemae.com/",
+   "status": "blocked",
+   "note": "HTTP 403"
+  },
+  {
+   "scheme": "IAAO",
+   "url": "https://www.iaao.org/industry-data/iaao-technical-standards/",
+   "status": "partly_read",
+   "note": "listing read; PDF not opened"
+  },
+  {
+   "scheme": "USDA FNS",
+   "url": "https://www.fns.usda.gov/",
+   "status": "blocked",
+   "note": "HTTP 403"
+  },
+  {
+   "scheme": "US FTC",
+   "url": "https://www.ftc.gov/business-guidance/resources/funeral-rule-price-list-essentials",
+   "status": "read",
+   "note": ""
+  }
+ ],
+ "entries": [
+  {
+   "node": "commerce.customer_relationship",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "3.0",
+   "label": "Market and Sell Products and Services",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.customer_relationship",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Develop and manage sales plans",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.customer_relationship.contact_account_records",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Manage customers and accounts",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.customer_relationship.lead_pipeline",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Generate leads",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.customer_relationship.territory_quota",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Manage sales force",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.customer_relationship.configure_price_quote",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Manage customer sales",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.marketing_automation",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Develop and manage marketing plans",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.marketing_automation.marketing_resource_planning",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Develop marketing strategy",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.advertising",
+   "scheme": "IAB Tech Lab",
+   "code": "",
+   "label": "OpenRTB real-time bidding protocol",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "OpenRTB (Real-Time Bidding)",
+   "url": "https://iabtechlab.com/standards/openrtb/",
+   "evidence": "OpenRTB (Real-Time Bidding)"
+  },
+  {
+   "node": "commerce.advertising",
+   "scheme": "NAICS 2017",
+   "code": "541810",
+   "label": "Advertising Agencies",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "541810 Advertising Agencies"
+  },
+  {
+   "node": "commerce.advertising",
+   "scheme": "NAICS 2017",
+   "code": "541830",
+   "label": "Media Buying Agencies",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "541830 Media Buying Agencies"
+  },
+  {
+   "node": "commerce.advertising.programmatic_bidding",
+   "scheme": "IAB Tech Lab",
+   "code": "",
+   "label": "OpenRTB",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://iabtechlab.com/standards/openrtb/",
+   "evidence": "OpenRTB (Real-Time Bidding)"
+  },
+  {
+   "node": "commerce.advertising.ad_serving",
+   "scheme": "IAB Tech Lab",
+   "code": "",
+   "label": "VAST video ad serving template",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "Digital Video Ad Serving Template (VAST)",
+   "url": "https://iabtechlab.com/standards/vast/",
+   "evidence": "Digital Video Ad Serving Template (VAST)"
+  },
+  {
+   "node": "commerce.marketing_analytics",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Understand markets, customers, and capabilities",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.marketing_analytics",
+   "scheme": "NAICS 2017",
+   "code": "541910",
+   "label": "Marketing Research and Public Opinion Polling",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "541910 Marketing Research and Public Opinion Polling"
+  },
+  {
+   "node": "commerce.marketing_analytics.tag_management",
+   "scheme": "IAB Europe",
+   "code": "",
+   "label": "Transparency and Consent Framework",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://iabeurope.eu/transparency-consent-framework/",
+   "evidence": "Transparency & Consent Framework"
+  },
+  {
+   "node": "commerce.point_of_sale",
+   "scheme": "NRF ARTS",
+   "code": "",
+   "label": "ARTS Operational Data Model (retail transaction)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.point_of_sale",
+   "scheme": "NRF ARTS",
+   "code": "",
+   "label": "UnifiedPOS",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.point_of_sale",
+   "scheme": "PCI Security Standards Council",
+   "code": "",
+   "label": "PCI Data Security Standard",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://pcisecuritystandards.org/",
+   "evidence": "PCI Data Security Standard (PCI DSS)"
+  },
+  {
+   "node": "commerce.point_of_sale.checkout",
+   "scheme": "NRF ARTS",
+   "code": "",
+   "label": "ARTS POSLog",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.point_of_sale.card_present_payment",
+   "scheme": "EMVCo",
+   "code": "",
+   "label": "EMV chip card specifications",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.merchandising",
+   "scheme": "NRF ARTS",
+   "code": "",
+   "label": "ARTS Operational Data Model (merchandise and inventory)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.merchandising",
+   "scheme": "NAICS 2017",
+   "code": "44-45",
+   "label": "Retail Trade",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "44-45 Retail Trade"
+  },
+  {
+   "node": "commerce.ecommerce",
+   "scheme": "NAICS 2017",
+   "code": "454110",
+   "label": "Electronic Shopping and Mail-Order Houses",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "454110 Electronic Shopping and Mail-Order Houses"
+  },
+  {
+   "node": "commerce.ecommerce",
+   "scheme": "schema.org",
+   "code": "",
+   "label": "Product, Offer and Order types",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://schema.org/Product",
+   "evidence": "Product, Offer, Order types all exist"
+  },
+  {
+   "node": "commerce.ecommerce.catalog_management",
+   "scheme": "GS1",
+   "code": "",
+   "label": "Global Product Classification",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.customer_service",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "6.0",
+   "label": "Manage Customer Service",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.customer_service",
+   "scheme": "NAICS 2017",
+   "code": "561422",
+   "label": "Telemarketing Bureaus and Other Contact Centers",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "561422 Telemarketing Bureaus and Other Contact Centers"
+  },
+  {
+   "node": "commerce.customer_service",
+   "scheme": "W3C",
+   "code": "",
+   "label": "VoiceXML",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.w3.org/TR/voicexml21/",
+   "evidence": "Voice Extensible Markup Language (VoiceXML) 2.1"
+  },
+  {
+   "node": "commerce.customer_service.case_management",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Plan and manage customer service contacts",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.customer_service.complaint_feedback",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Evaluate customer service operations and customer satisfaction",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.customer_service.interactive_voice_response",
+   "scheme": "W3C",
+   "code": "",
+   "label": "VoiceXML",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.w3.org/TR/voicexml21/",
+   "evidence": "Voice Extensible Markup Language (VoiceXML) 2.1"
+  },
+  {
+   "node": "commerce.food_service",
+   "scheme": "NAICS 2017",
+   "code": "722",
+   "label": "Food Services and Drinking Places",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "722 Food Services and Drinking Places"
+  },
+  {
+   "node": "commerce.food_service",
+   "scheme": "NAICS 2017",
+   "code": "722511",
+   "label": "Full-Service Restaurants",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "722511 Full-Service Restaurants"
+  },
+  {
+   "node": "commerce.food_service.meal_accounting",
+   "scheme": "USDA Food and Nutrition Service",
+   "code": "",
+   "label": "National School Lunch Program meal counting and claiming",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.hospitality",
+   "scheme": "NAICS 2017",
+   "code": "721110",
+   "label": "Hotels (except Casino Hotels) and Motels",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "721110 Hotels (except Casino Hotels) and Motels"
+  },
+  {
+   "node": "commerce.hospitality",
+   "scheme": "NAICS 2017",
+   "code": "561520",
+   "label": "Tour Operators",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "561520 Tour Operators"
+  },
+  {
+   "node": "commerce.hospitality",
+   "scheme": "NAICS 2017",
+   "code": "561920",
+   "label": "Convention and Trade Show Organizers",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "561920 Convention and Trade Show Organizers"
+  },
+  {
+   "node": "commerce.hospitality",
+   "scheme": "OpenTravel Alliance",
+   "code": "",
+   "label": "OpenTravel hotel and tour message specifications",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.hospitality",
+   "scheme": "HTNG",
+   "code": "",
+   "label": "Hospitality Technology Next Generation workgroups",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.hospitality.hotel_front_office",
+   "scheme": "HTNG",
+   "code": "",
+   "label": "Property management system interfaces",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.hospitality.reservations_distribution",
+   "scheme": "OpenTravel Alliance",
+   "code": "",
+   "label": "Hotel availability and reservation messages",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.hospitality.tour_activity_booking",
+   "scheme": "OpenTravel Alliance",
+   "code": "",
+   "label": "Tour and activity messages",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.real_estate",
+   "scheme": "RESO",
+   "code": "",
+   "label": "RESO Data Dictionary",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://reso.org/data-dictionary/",
+   "evidence": "Property, Member ... and Media are all resources."
+  },
+  {
+   "node": "commerce.real_estate",
+   "scheme": "NAICS 2017",
+   "code": "531210",
+   "label": "Offices of Real Estate Agents and Brokers",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "531210 Offices of Real Estate Agents and Brokers"
+  },
+  {
+   "node": "commerce.real_estate",
+   "scheme": "NAICS 2017",
+   "code": "531320",
+   "label": "Offices of Real Estate Appraisers",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "531320 Offices of Real Estate Appraisers"
+  },
+  {
+   "node": "commerce.real_estate.listing_exchange",
+   "scheme": "RESO",
+   "code": "",
+   "label": "Data Dictionary Property resource",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://reso.org/data-dictionary/",
+   "evidence": "Property, Member ... and Media are all resources."
+  },
+  {
+   "node": "commerce.real_estate.listing_exchange",
+   "scheme": "RESO",
+   "code": "",
+   "label": "RESO Web API",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://reso.org/reso-web-api/",
+   "evidence": "RESO Web API"
+  },
+  {
+   "node": "commerce.real_estate.appraisal_reporting",
+   "scheme": "Fannie Mae / Freddie Mac",
+   "code": "1004",
+   "label": "Uniform Residential Appraisal Report",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.real_estate.appraisal_reporting",
+   "scheme": "Fannie Mae / Freddie Mac",
+   "code": "",
+   "label": "Uniform Appraisal Dataset",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.real_estate.automated_valuation",
+   "scheme": "IAAO",
+   "code": "",
+   "label": "Standard on Automated Valuation Models",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.iaao.org/industry-data/iaao-technical-standards/",
+   "evidence": "Automated Valuation Models (AVMs); Standard_on_Automated_Valuation_Models.pdf"
+  },
+  {
+   "node": "commerce.property_management",
+   "scheme": "NAICS 2017",
+   "code": "531311",
+   "label": "Residential Property Managers",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "531311 Residential Property Managers"
+  },
+  {
+   "node": "commerce.property_management",
+   "scheme": "NAICS 2017",
+   "code": "531312",
+   "label": "Nonresidential Property Managers",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "531312 Nonresidential Property Managers"
+  },
+  {
+   "node": "commerce.service_scheduling",
+   "scheme": "APQC PCF cross-industry v7",
+   "code": "",
+   "label": "Service products after sales",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "commerce.service_scheduling",
+   "scheme": "NAICS 2017",
+   "code": "811",
+   "label": "Repair and Maintenance",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "811 Repair and Maintenance"
+  },
+  {
+   "node": "commerce.personal_services",
+   "scheme": "NAICS 2017",
+   "code": "812",
+   "label": "Personal and Laundry Services",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "812 Personal and Laundry Services"
+  },
+  {
+   "node": "commerce.personal_services",
+   "scheme": "NAICS 2017",
+   "code": "812112",
+   "label": "Beauty Salons",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "812112 Beauty Salons"
+  },
+  {
+   "node": "commerce.personal_services",
+   "scheme": "NAICS 2017",
+   "code": "812210",
+   "label": "Funeral Homes and Funeral Services",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "812210 Funeral Homes and Funeral Services"
+  },
+  {
+   "node": "commerce.personal_services",
+   "scheme": "NAICS 2017",
+   "code": "812220",
+   "label": "Cemeteries and Crematories",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "812220 Cemeteries and Crematories"
+  },
+  {
+   "node": "commerce.personal_services",
+   "scheme": "NAICS 2017",
+   "code": "812910",
+   "label": "Pet Care (except Veterinary) Services",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "812910 Pet Care (except Veterinary) Services"
+  },
+  {
+   "node": "commerce.personal_services",
+   "scheme": "NAICS 2017",
+   "code": "541921",
+   "label": "Photography Studios, Portrait",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "541921 Photography Studios, Portrait"
+  },
+  {
+   "node": "commerce.personal_services",
+   "scheme": "NAICS 2017",
+   "code": "713940",
+   "label": "Fitness and Recreational Sports Centers",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.census.gov/naics/2017NAICS/2-6%20digit_2017_Codes.xlsx",
+   "evidence": "713940 Fitness and Recreational Sports Centers"
+  },
+  {
+   "node": "commerce.personal_services.funeral_arrangements",
+   "scheme": "US Federal Trade Commission",
+   "code": "",
+   "label": "Funeral Rule (General Price List)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.ftc.gov/business-guidance/resources/funeral-rule-price-list-essentials",
+   "evidence": "requires three price lists: the General Price List (GPL)"
+  }
+ ]
+}

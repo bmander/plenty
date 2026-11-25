@@ -1,0 +1,3591 @@
+{
+  "domain": "earth",
+  "summary": "The domain is split along the data pipeline of the geosciences: capture (surveying, photogrammetry and lidar, remote sensing), management and analysis (GIS, cartography), the subsurface (geophysics and geological modeling, reservoirs, mines), natural fluids (surface water, groundwater, atmosphere, contaminated sites), and living resources (agriculture; forests, range, wildlife and fire). The geospatial half follows the UCGIS GIS&T Body of Knowledge knowledge areas, the ASPRS divisions and the FIG commissions; the subsurface half follows the SPE technical disciplines and Energistics standards; the natural-system half follows the WMO programmes and the USGS, EPA and USACE model families that O*NET products are mostly built on.",
+  "capabilities": [
+    {
+      "id": "earth.gis",
+      "name": "Geographic information systems",
+      "definition": "Given vector and raster geodata with attributes, store, query, transform and combine them to produce derived layers and answers to spatial questions.",
+      "crosswalk": [
+        {
+          "scheme": "UCGIS GIS&T Body of Knowledge",
+          "code": "AM",
+          "label": "Analytics and Modeling",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "UCGIS GIS&T Body of Knowledge",
+          "code": "DM",
+          "label": "Data Management",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 19119 service taxonomy",
+          "code": "",
+          "label": "Geographic processing services (spatial, thematic)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "OGC standards",
+          "code": "",
+          "label": "Simple Features Access",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Geographic information system",
+        "Map creation software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "computing.databases",
+        "science.statistics"
+      ],
+      "notes": "Was seed 'Geographic information systems and spatial analysis'. Terrain analysis and geostatistics are kept here as tasks rather than as separate capabilities because the same GIS products carry them; routing on street networks is handed to move.",
+      "tasks": [
+        {
+          "id": "earth.gis.geodata_management",
+          "name": "Geodata storage and translation",
+          "definition": "Given geodata in mixed formats and coordinate systems, validate, reproject and load it into a managed spatial store or another format without losing geometry or attributes.",
+          "inputs": "vector and raster files or services, coordinate reference systems, schema mappings",
+          "outputs": "spatial database tables or files in the target format and projection; validation reports",
+          "crosswalk": [
+            {
+              "scheme": "UCGIS GIS&T Body of Knowledge",
+              "code": "DM",
+              "label": "Data Management",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "ESRI ArcCatalog",
+            "ESRI ArcSDE",
+            "ESRI Personal Geodatabase",
+            "Geospatial data abstraction library GDAL",
+            "Safe Software FME",
+            "Autodesk Topobase",
+            "Geographic information system GIS databases",
+            "ESRI ArcGIS software",
+            "Unidata Network common data form NetCDF"
+          ],
+          "state_of_art": [
+            "ArcGIS Pro",
+            "FME",
+            "Oracle Spatial"
+          ],
+          "open_tools": [
+            "GDAL/OGR",
+            "PostGIS",
+            "PROJ"
+          ],
+          "benchmarkable": "partly: round-trip fidelity and OGC conformance tests are scoreable; schema mapping is case-specific",
+          "notes": ""
+        },
+        {
+          "id": "earth.gis.vector_overlay",
+          "name": "Vector overlay and geoprocessing",
+          "definition": "Given point, line and polygon layers, compute buffers, clips, intersections, unions, dissolves and spatial joins.",
+          "inputs": "vector layers with attributes, tolerances, operation parameters",
+          "outputs": "derived vector layers with combined attributes",
+          "crosswalk": [],
+          "onet_products": [
+            "ESRI ArcGIS software",
+            "ESRI ArcToolbox",
+            "QGIS",
+            "MapInfo Professional",
+            "Geographic information system GIS software",
+            "Caliper Maptitude",
+            "CDA International Manifold System",
+            "Cadcorp desktop GIS",
+            "TatukGIS Editor",
+            "ESRI ArcView",
+            "ESRI ArcInfo",
+            "Autodesk AutoCAD Map 3D"
+          ],
+          "state_of_art": [
+            "ArcGIS Pro",
+            "FME"
+          ],
+          "open_tools": [
+            "QGIS",
+            "GEOS",
+            "GeoPandas",
+            "PostGIS"
+          ],
+          "benchmarkable": "yes: results are exact geometry, and robustness suites such as the JTS/GEOS test cases exist",
+          "notes": ""
+        },
+        {
+          "id": "earth.gis.raster_terrain",
+          "name": "Raster and terrain analysis",
+          "definition": "Given elevation and other raster layers, compute map-algebra results and terrain derivatives such as slope, aspect, viewshed, cost distance, flow direction and catchments.",
+          "inputs": "digital elevation models and raster layers, analysis parameters",
+          "outputs": "derived rasters, viewsheds, least-cost paths, drainage networks and basins",
+          "crosswalk": [
+            {
+              "scheme": "UCGIS GIS&T Body of Knowledge",
+              "code": "AM",
+              "label": "Analytics and Modeling (surface and terrain analysis)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "ESRI ArcGIS Spatial Analyst",
+            "ESRI ArcView 3D Analyst",
+            "Geographic resources analysis support system GRASS",
+            "LandSerf",
+            "MICRODEM",
+            "Global Mapper Software Global Mapper",
+            "Softree Technical Systems Terrain Tools",
+            "Clark Labs IDRISI Selva",
+            "Terrain surface mapping software",
+            "Clark Labs IDRISI Andes",
+            "ITC Integrated Land and Water Information System ILWIS"
+          ],
+          "state_of_art": [
+            "ArcGIS Spatial Analyst",
+            "Global Mapper"
+          ],
+          "open_tools": [
+            "GRASS GIS",
+            "WhiteboxTools",
+            "SAGA GIS",
+            "TauDEM"
+          ],
+          "benchmarkable": "yes: derivatives on synthetic surfaces have analytic answers and drainage extraction can be scored against mapped streams",
+          "notes": ""
+        },
+        {
+          "id": "earth.gis.geostatistics",
+          "name": "Spatial interpolation and geostatistics",
+          "definition": "Given measurements at scattered locations, model spatial dependence and predict values and uncertainty on a grid, or test for clustering and hot spots.",
+          "inputs": "point samples with values, optional covariates and boundaries",
+          "outputs": "variograms, interpolated grids, prediction variance, conditional simulations, cluster statistics",
+          "crosswalk": [
+            {
+              "scheme": "UCGIS GIS&T Body of Knowledge",
+              "code": "AM",
+              "label": "Analytics and Modeling (geostatistics, spatial statistics)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Golden Software Surfer",
+            "ESRI ArcGIS Geostatistical Analyst",
+            "Geostatistics software GS+",
+            "Geostatistical modeling GSTAT software",
+            "Gstat",
+            "SGeMS",
+            "GSLIB",
+            "GEOEAS",
+            "Variogram Estimation and Spatial Prediction plus Error Vesper",
+            "Surface III",
+            "GeoDa",
+            "Scientific Software Group SURF"
+          ],
+          "state_of_art": [
+            "ArcGIS Geostatistical Analyst",
+            "Surfer",
+            "Isatis"
+          ],
+          "open_tools": [
+            "gstat",
+            "GSLIB",
+            "SGeMS",
+            "PyKrige",
+            "GeoDa",
+            "PySAL"
+          ],
+          "benchmarkable": "yes: held-out cross-validation error, as in the Spatial Interpolation Comparison exercises",
+          "notes": "General statistics lives in science; this node is kept for methods that model spatial dependence."
+        },
+        {
+          "id": "earth.gis.suitability",
+          "name": "Land suitability and site selection",
+          "definition": "Given criteria layers, weights and constraints, rank locations or allocate land uses and compare planning scenarios.",
+          "inputs": "criteria rasters or polygons, weights, constraints, demand targets",
+          "outputs": "suitability surfaces, selected sites or corridors, scenario indicators",
+          "crosswalk": [],
+          "onet_products": [
+            "ESRI What if?",
+            "Criterion Planners INDEX",
+            "Spatial decision support systems SDSS software",
+            "CorridorDesigner",
+            "Clark Labs IDRISI Andes",
+            "Land management databases"
+          ],
+          "state_of_art": [
+            "ArcGIS Pro suitability modeler",
+            "CommunityViz",
+            "Marxan with Zones"
+          ],
+          "open_tools": [
+            "Marxan",
+            "GRASS GIS"
+          ],
+          "benchmarkable": "partly: reserve-selection objectives are scoreable on shared problem sets; criteria weights are a value judgment",
+          "notes": ""
+        },
+        {
+          "id": "earth.gis.field_capture",
+          "name": "Mobile field data capture",
+          "definition": "Given a data schema and a GNSS-enabled device, record attributed features and observations in the field and synchronize them with a spatial database.",
+          "inputs": "form schemas, basemaps, device positions",
+          "outputs": "georeferenced feature records and photos synchronized to a geodatabase",
+          "crosswalk": [
+            {
+              "scheme": "UCGIS GIS&T Body of Knowledge",
+              "code": "DC",
+              "label": "Data Capture",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "ESRI ArcPad",
+            "ESRI ArcGIS Survey 123",
+            "Trimble TerraSync",
+            "Juniper Systems LandMark Mobile",
+            "Global positioning system GPS software",
+            "Field data recorder software"
+          ],
+          "state_of_art": [
+            "ArcGIS Field Maps",
+            "ArcGIS Survey123",
+            "Trimble TerraFlex"
+          ],
+          "open_tools": [
+            "QField",
+            "ODK",
+            "KoboToolbox"
+          ],
+          "benchmarkable": "no: a workflow tool whose quality is usability and sync reliability",
+          "notes": ""
+        },
+        {
+          "id": "earth.gis.geocoding",
+          "name": "Geocoding and address matching",
+          "definition": "Given postal addresses or place names, return coordinates with match quality, and the reverse.",
+          "inputs": "address strings, reference street and address-point data",
+          "outputs": "coordinates, match scores, standardized addresses",
+          "crosswalk": [],
+          "onet_products": [
+            "MapInfo MapMarker"
+          ],
+          "state_of_art": [
+            "ArcGIS World Geocoding Service",
+            "Precisely Spectrum Geocoding"
+          ],
+          "open_tools": [
+            "Nominatim",
+            "Pelias",
+            "libpostal"
+          ],
+          "benchmarkable": "yes: match rate and positional error against authoritative address points",
+          "notes": ""
+        },
+        {
+          "id": "earth.gis.web_services",
+          "name": "Web map and feature services",
+          "definition": "Given spatial layers, publish them as standard map, tile, feature and processing services that remote clients can query.",
+          "inputs": "spatial layers, styles, service configuration",
+          "outputs": "map images, tiles, feature responses and processing results over standard protocols",
+          "crosswalk": [
+            {
+              "scheme": "OGC standards",
+              "code": "",
+              "label": "Web Map Service, Web Feature Service, OGC API Features",
+              "basis": "fetched",
+              "url": "https://www.ogc.org/standards/"
+            },
+            {
+              "scheme": "ISO 19119 service taxonomy",
+              "code": "",
+              "label": "Geographic human interaction and model/information management services",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "ESRI ArcIMS",
+            "ESRI MapObjects",
+            "PlanGraphics Citywide GIS Utility"
+          ],
+          "state_of_art": [
+            "ArcGIS Enterprise"
+          ],
+          "open_tools": [
+            "GeoServer",
+            "MapServer",
+            "QGIS Server",
+            "pygeoapi"
+          ],
+          "benchmarkable": "partly: OGC conformance suites test correctness; performance depends on deployment",
+          "notes": "General web application platforms belong to computing."
+        }
+      ]
+    },
+    {
+      "id": "earth.cartography",
+      "name": "Cartography and map production",
+      "definition": "Given geodata and a purpose and scale, design and render maps, charts and 3D views that communicate it correctly.",
+      "crosswalk": [
+        {
+          "scheme": "UCGIS GIS&T Body of Knowledge",
+          "code": "CV",
+          "label": "Cartography and Visualization",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "International Cartographic Association commissions",
+          "code": "",
+          "label": "Map Design; Generalisation and Multiple Representation; Map Projections",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO/TC 211 standards",
+          "code": "ISO 19117",
+          "label": "Portrayal",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Map creation software",
+        "Geographic information system"
+      ],
+      "see_also": [
+        "media.vector_graphics",
+        "earth.gis"
+      ],
+      "notes": "Seed kept. Nautical chart compilation is placed here, beside topographic compilation, rather than in surveying, because it is a portrayal and product-specification task.",
+      "tasks": [
+        {
+          "id": "earth.cartography.thematic_mapping",
+          "name": "Thematic map design",
+          "definition": "Given attribute data joined to geography, classify and symbolize it as choropleth, proportional-symbol, dot or flow maps with legends and layout.",
+          "inputs": "attribute data, boundaries, classification and symbol choices",
+          "outputs": "symbolized map layouts and legends",
+          "crosswalk": [],
+          "onet_products": [
+            "Mapping software",
+            "Digital mapping software",
+            "Cartography software",
+            "MapInfo",
+            "Caliper Maptitude",
+            "ESRI ArcMap",
+            "RockWare ArcMap",
+            "Map building software",
+            "ESRI ArcGIS software",
+            "Postal boundary mapping software"
+          ],
+          "state_of_art": [
+            "ArcGIS Pro",
+            "Mapbox Studio"
+          ],
+          "open_tools": [
+            "QGIS",
+            "Mapnik"
+          ],
+          "benchmarkable": "partly: rule checks (class breaks, color legibility) are scoreable; overall design quality needs human judgment",
+          "notes": ""
+        },
+        {
+          "id": "earth.cartography.label_placement",
+          "name": "Automated label placement",
+          "definition": "Given features, label text and placement rules, place labels without overlap and in preferred positions.",
+          "inputs": "features, label strings, fonts, priorities and rules",
+          "outputs": "label positions and a list of unplaced labels",
+          "crosswalk": [],
+          "onet_products": [
+            "ESRI Maplex"
+          ],
+          "state_of_art": [
+            "ArcGIS Maplex label engine"
+          ],
+          "open_tools": [
+            "QGIS labeling engine",
+            "Mapnik"
+          ],
+          "benchmarkable": "yes: labels placed, conflicts and rule violations are countable on shared datasets",
+          "notes": ""
+        },
+        {
+          "id": "earth.cartography.map_projection",
+          "name": "Map projection design",
+          "definition": "Given a region and a map purpose, choose and parameterize a projection and report its area, shape and distance distortion.",
+          "inputs": "geographic extent, purpose, candidate projections",
+          "outputs": "projection definition, distortion statistics, reprojected graticules",
+          "crosswalk": [
+            {
+              "scheme": "International Cartographic Association commissions",
+              "code": "",
+              "label": "Map Projections",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Mapthematics GeoCart"
+          ],
+          "state_of_art": [
+            "Geocart",
+            "Projection Wizard"
+          ],
+          "open_tools": [
+            "PROJ"
+          ],
+          "benchmarkable": "yes: distortion measures are computable exactly",
+          "notes": ""
+        },
+        {
+          "id": "earth.cartography.generalization",
+          "name": "Map generalization",
+          "definition": "Given detailed geodata and a target scale, simplify, aggregate, displace and select features so the map stays legible.",
+          "inputs": "large-scale vector data, target scale, constraints",
+          "outputs": "generalized vector data",
+          "crosswalk": [
+            {
+              "scheme": "International Cartographic Association commissions",
+              "code": "",
+              "label": "Generalisation and Multiple Representation",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "ArcGIS Pro cartography toolset",
+            "1Spatial 1Generalise"
+          ],
+          "open_tools": [
+            "mapshaper",
+            "GRASS GIS"
+          ],
+          "benchmarkable": "partly: constraint violations are measurable; agreement with human-generalized maps is subjective",
+          "notes": "No O*NET product names this function directly."
+        },
+        {
+          "id": "earth.cartography.topographic_compilation",
+          "name": "Topographic and thematic base mapping",
+          "definition": "Given surveys, imagery and elevation data, compile standard map sheets with contours, hillshade, geology or soil units and standard symbology.",
+          "inputs": "survey data, orthoimagery, elevation models, thematic field maps, product specification",
+          "outputs": "map sheets and base-map databases",
+          "crosswalk": [],
+          "onet_products": [
+            "Topographic map software",
+            "DeLorme Topo USA",
+            "Trimble MyTopo Terrain Navigator Pro",
+            "Hexagon Intergraph",
+            "Intergraph MGE",
+            "PC-Mapper software",
+            "Geological mapping software",
+            "Soil mapping software",
+            "Site mapping software",
+            "Clark Labs CartaLinx"
+          ],
+          "state_of_art": [
+            "ArcGIS Production Mapping",
+            "Global Mapper"
+          ],
+          "open_tools": [
+            "QGIS",
+            "GRASS GIS"
+          ],
+          "benchmarkable": "partly: completeness and positional accuracy against specification are checkable; symbol design is not",
+          "notes": ""
+        },
+        {
+          "id": "earth.cartography.terrain_visualization",
+          "name": "3D terrain and globe visualization",
+          "definition": "Given elevation models, imagery and features, render interactive 3D scenes, virtual globes and fly-throughs.",
+          "inputs": "elevation models, imagery, vector features, camera paths",
+          "outputs": "interactive 3D scenes, rendered views and animations",
+          "crosswalk": [],
+          "onet_products": [
+            "Google Earth Pro",
+            "3D Nature LLC Visual Nature Studio",
+            "3D Nature LLC World Construction Set",
+            "Martin D Adamiker's TruFlite",
+            "MultiGen Paradigm Vega Prime",
+            "Autodesk World",
+            "3dMapper",
+            "Cosmo Software Cosmo World"
+          ],
+          "state_of_art": [
+            "Google Earth Pro",
+            "ArcGIS Pro scenes",
+            "Cesium ion"
+          ],
+          "open_tools": [
+            "CesiumJS",
+            "osgEarth",
+            "QGIS 3D"
+          ],
+          "benchmarkable": "no: visual quality and interactivity have no reference answer",
+          "notes": "General 3D rendering belongs to media."
+        },
+        {
+          "id": "earth.cartography.nautical_charting",
+          "name": "Nautical chart compilation",
+          "definition": "Given validated bathymetry and maritime features, compile electronic and paper navigational charts to the hydrographic product specification.",
+          "inputs": "bathymetric surfaces, soundings, aids to navigation, coastline, product specification",
+          "outputs": "electronic navigational chart cells and paper charts, validation reports",
+          "crosswalk": [
+            {
+              "scheme": "IHO standards",
+              "code": "S-57",
+              "label": "Transfer standard for digital hydrographic data (and S-100 successor)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "TELEDYNE CARIS"
+          ],
+          "state_of_art": [
+            "Teledyne CARIS HPD",
+            "ESRI ArcGIS Maritime"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: product validation checks (S-58) are scoreable; generalization of soundings needs review",
+          "notes": "Chart display and voyage planning aboard ship belong to move."
+        }
+      ]
+    },
+    {
+      "id": "earth.surveying",
+      "name": "Land and hydrographic surveying",
+      "definition": "Given field measurements of angles, distances, satellite signals or sonar returns, compute positions, boundaries and surfaces of land and seafloor with stated accuracy.",
+      "crosswalk": [
+        {
+          "scheme": "FIG (International Federation of Surveyors) commissions",
+          "code": "5",
+          "label": "Positioning and Measurement",
+          "basis": "fetched",
+          "url": "https://fig.net/organisation/comm/"
+        },
+        {
+          "scheme": "FIG (International Federation of Surveyors) commissions",
+          "code": "4",
+          "label": "Hydrography",
+          "basis": "fetched",
+          "url": "https://fig.net/organisation/comm/"
+        },
+        {
+          "scheme": "FIG (International Federation of Surveyors) commissions",
+          "code": "7",
+          "label": "Cadastre and Land Management",
+          "basis": "fetched",
+          "url": "https://fig.net/organisation/comm/"
+        },
+        {
+          "scheme": "ISO/TC 211 standards",
+          "code": "ISO 19111",
+          "label": "Referencing by coordinates",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Map creation software",
+        "Analytical or scientific software",
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "design.civil_site",
+        "earth.photogrammetry"
+      ],
+      "notes": "Was seed 'Land surveying, coordinate geometry and GNSS processing'. Hydrographic surveying is added here (FIG treats hydrography as a surveying commission) instead of as its own capability. Civil site, road and corridor design stays in design.",
+      "tasks": [
+        {
+          "id": "earth.surveying.field_collection",
+          "name": "Survey field data collection",
+          "definition": "Given an instrument connection and a job file, record coded total-station and GNSS observations and stake out design points.",
+          "inputs": "instrument observations, control points, point codes, stakeout coordinates",
+          "outputs": "raw observation files, coded points, stakeout reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Carlson SurvCE",
+            "MicroSurvey FieldGenius",
+            "Trimble Digital Fieldbook",
+            "Sokkia Spectrum Survey Suite",
+            "Tripod Data Systems software",
+            "Carlson Simplicity Sight Survey",
+            "Sokkia Imap",
+            "Tripod Data Systems Foresight",
+            "Datalog with guidance DLWG software"
+          ],
+          "state_of_art": [
+            "Trimble Access",
+            "Leica Captivate",
+            "Carlson SurvPC"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: an instrument-control and logging workflow",
+          "notes": ""
+        },
+        {
+          "id": "earth.surveying.gnss_processing",
+          "name": "GNSS post-processing",
+          "definition": "Given raw satellite-positioning observations and reference data, compute corrected positions by baseline, differential, kinematic or precise-point processing.",
+          "inputs": "raw GNSS observations, base-station or network data, orbits and clocks",
+          "outputs": "baseline vectors, corrected coordinates and their precision",
+          "crosswalk": [
+            {
+              "scheme": "FIG (International Federation of Surveyors) commissions",
+              "code": "5",
+              "label": "Positioning and Measurement",
+              "basis": "fetched",
+              "url": "https://fig.net/organisation/comm/"
+            }
+          ],
+          "onet_products": [
+            "Trimble Pathfinder Office",
+            "Trimble GPS Pathfinder Office",
+            "Trimble Geomatics Office",
+            "Trimble Total Control",
+            "Geodetic software",
+            "Global positioning system GPS software"
+          ],
+          "state_of_art": [
+            "Trimble Business Center",
+            "Leica Infinity",
+            "NovAtel Inertial Explorer"
+          ],
+          "open_tools": [
+            "RTKLIB",
+            "GNSSTk",
+            "PRIDE PPP-AR"
+          ],
+          "benchmarkable": "yes: position error against known stations such as IGS and CORS sites",
+          "notes": ""
+        },
+        {
+          "id": "earth.surveying.network_adjustment",
+          "name": "Least-squares network adjustment",
+          "definition": "Given redundant angle, distance, height and GNSS-vector observations and control, compute adjusted coordinates, error ellipses and blunder tests.",
+          "inputs": "observations with standard errors, control coordinates",
+          "outputs": "adjusted coordinates, residuals, error ellipses, statistical test results",
+          "crosswalk": [],
+          "onet_products": [
+            "MicroSurvey Star*Net",
+            "Traverse PC",
+            "Trimble Geomatics Office",
+            "Underhill Geomatics Copan",
+            "Trimble Total Control"
+          ],
+          "state_of_art": [
+            "STAR*NET",
+            "Trimble Business Center",
+            "Columbus"
+          ],
+          "open_tools": [
+            "GNU Gama"
+          ],
+          "benchmarkable": "yes: published test networks have reference adjusted solutions",
+          "notes": ""
+        },
+        {
+          "id": "earth.surveying.cogo",
+          "name": "Coordinate geometry and boundaries",
+          "definition": "Given bearings, distances, curves and legal descriptions, compute coordinates, misclosure, areas and parcel plats.",
+          "inputs": "traverse or deed calls, curve data, control points",
+          "outputs": "parcel coordinates, closure reports, areas, plat drawings",
+          "crosswalk": [
+            {
+              "scheme": "FIG (International Federation of Surveyors) commissions",
+              "code": "7",
+              "label": "Cadastre and Land Management",
+              "basis": "fetched",
+              "url": "https://fig.net/organisation/comm/"
+            }
+          ],
+          "onet_products": [
+            "Coordinate geometry COGO software",
+            "Advanced Graphics Technology ProCogo",
+            "QuickCogo",
+            "CMT CogoCAD",
+            "Tripod Data Systems COGO",
+            "Foresoft CDS Cogo",
+            "Greenbrier Graphics Deed Plotter",
+            "Informatik MapDraw Deed Mapper",
+            "Muncy Plat Pronto",
+            "Boundary survey software",
+            "CE SURVEYOR III",
+            "Geo-Plus"
+          ],
+          "state_of_art": [
+            "Carlson Survey",
+            "Civil 3D survey tools"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: closure and area from a set of calls are exactly computable",
+          "notes": ""
+        },
+        {
+          "id": "earth.surveying.datum_transformation",
+          "name": "Geodetic datum transformation",
+          "definition": "Given coordinates in one horizontal or vertical reference frame and projection, convert them to another and report transformation uncertainty.",
+          "inputs": "coordinates, source and target reference frames, epochs, geoid and grid models",
+          "outputs": "transformed coordinates and heights with uncertainty",
+          "crosswalk": [
+            {
+              "scheme": "ISO/TC 211 standards",
+              "code": "ISO 19111",
+              "label": "Referencing by coordinates",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Corpscon",
+            "National Geodetic Survey NGS VERTCON",
+            "National Geodetic Survey NGS Geodetic Toolkit",
+            "Geodetic software",
+            "Geocomp Systems GeoCalc"
+          ],
+          "state_of_art": [
+            "NGS NCAT",
+            "Blue Marble Geographic Calculator"
+          ],
+          "open_tools": [
+            "PROJ",
+            "GeographicLib"
+          ],
+          "benchmarkable": "yes: agency test points give reference results",
+          "notes": ""
+        },
+        {
+          "id": "earth.surveying.survey_drafting",
+          "name": "Survey drafting and existing surface",
+          "definition": "Given coded survey points, build linework, a triangulated existing-ground surface, contours and the survey drawing.",
+          "inputs": "coded points, breaklines, drafting standards",
+          "outputs": "survey linework, surface model, contours, survey plans",
+          "crosswalk": [],
+          "onet_products": [
+            "Carlson Survey",
+            "Carlson SurvCADD",
+            "MicroSurveyCAD",
+            "MicroSurvey Software MicroSurvey CAD",
+            "Trimble Terramodel",
+            "TRS Software TomCADD",
+            "Autodesk Land Desktop",
+            "Foresoft CDS Model",
+            "SiteComp Survey",
+            "Autodesk AutoCAD Civil 3D",
+            "Carlson Civil Suite",
+            "AzTechSoft GPS2CAD"
+          ],
+          "state_of_art": [
+            "Autodesk Civil 3D",
+            "Carlson Survey",
+            "Trimble Business Center"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: the surface and contours from given points are deterministic; linework from codes follows local conventions",
+          "notes": "Design surfaces and corridors belong to design.civil_site."
+        },
+        {
+          "id": "earth.surveying.bathymetry",
+          "name": "Hydrographic survey and bathymetry processing",
+          "definition": "Given planned lines and vessel sensor records (positioning, motion, sound velocity, echo sounder or multibeam), produce cleaned soundings and depth surfaces that meet a survey order.",
+          "inputs": "survey lines, raw sonar, positioning, motion and sound-velocity records, tides",
+          "outputs": "cleaned soundings, bathymetric grids, uncertainty surfaces, survey reports",
+          "crosswalk": [
+            {
+              "scheme": "IHO standards",
+              "code": "S-44",
+              "label": "IHO Standards for Hydrographic Surveys",
+              "basis": "fetched",
+              "url": "https://iho.int/en/standards-and-specifications"
+            }
+          ],
+          "onet_products": [
+            "HYPACK MAX",
+            "HYPACK HYSWEEP",
+            "CARIS HIPS",
+            "Trimble HYDROpro",
+            "Quality Positioning Services Fledermaus",
+            "Teledyne Odom Hydrographic ODOM eChart",
+            "TELEDYNE CARIS",
+            "National Geophysical Data Center GEODAS"
+          ],
+          "state_of_art": [
+            "Teledyne CARIS HIPS and SIPS",
+            "QPS Qimera",
+            "HYPACK"
+          ],
+          "open_tools": [
+            "MB-System"
+          ],
+          "benchmarkable": "yes: reference surfaces and IHO total vertical uncertainty limits make results scoreable",
+          "notes": ""
+        },
+        {
+          "id": "earth.surveying.seabed_imaging",
+          "name": "Side-scan mosaicking and seabed classification",
+          "definition": "Given side-scan or backscatter records, build georeferenced mosaics, pick targets and classify seabed type.",
+          "inputs": "side-scan or multibeam backscatter, navigation, ground-truth samples",
+          "outputs": "mosaics, target lists, seabed class maps",
+          "crosswalk": [],
+          "onet_products": [
+            "CARIS SIPS",
+            "Triton Elics International Isis",
+            "Triton Elics International SeaClass",
+            "SeeByte SeeTrack"
+          ],
+          "state_of_art": [
+            "Chesapeake SonarWiz",
+            "QPS FMGT",
+            "Teledyne CARIS SIPS"
+          ],
+          "open_tools": [
+            "MB-System"
+          ],
+          "benchmarkable": "partly: labeled seabed and target datasets exist but are few",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "earth.remote_sensing",
+      "name": "Remote sensing image analysis",
+      "definition": "Given satellite or airborne imagery from optical, thermal or radar sensors, extract calibrated physical quantities, classes, objects and changes.",
+      "crosswalk": [
+        {
+          "scheme": "ASPRS divisions",
+          "code": "",
+          "label": "Remote Sensing Applications",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "UCGIS GIS&T Body of Knowledge",
+          "code": "DC",
+          "label": "Data Capture (remote sensing)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 19119 service taxonomy",
+          "code": "",
+          "label": "Geographic processing services - thematic (image processing, classification, change detection)",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Map creation software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "science.machine_learning",
+        "earth.photogrammetry"
+      ],
+      "notes": "Seed 'Remote sensing, photogrammetry and LiDAR processing; drone mission planning' was split: this node takes spectral and radiometric analysis, earth.photogrammetry takes geometric 3D reconstruction, following the ASPRS division between Remote Sensing Applications and Photogrammetric Applications/Lidar.",
+      "tasks": [
+        {
+          "id": "earth.remote_sensing.preprocessing",
+          "name": "Radiometric and atmospheric correction",
+          "definition": "Given raw image digital numbers and sensor metadata, compute top-of-atmosphere and surface reflectance or brightness temperature, with cloud and shadow masks.",
+          "inputs": "raw imagery, calibration coefficients, atmospheric data, acquisition geometry",
+          "outputs": "surface reflectance or temperature images, quality masks",
+          "crosswalk": [],
+          "onet_products": [
+            "ITT Visual Information Solutions ENVI",
+            "Leica Geosystems ERDAS IMAGINE",
+            "PCI Geomatics Geomatica",
+            "ERDAS ER Mapper",
+            "Remote sensing software",
+            "FLIR Thermal Studio Suite",
+            "Bilko"
+          ],
+          "state_of_art": [
+            "ENVI FLAASH",
+            "ERDAS IMAGINE ATCOR",
+            "Sen2Cor",
+            "LaSRC"
+          ],
+          "open_tools": [
+            "Orfeo ToolBox",
+            "Py6S",
+            "Fmask"
+          ],
+          "benchmarkable": "yes: atmospheric correction intercomparisons score against ground-measured reflectance",
+          "notes": ""
+        },
+        {
+          "id": "earth.remote_sensing.classification",
+          "name": "Land cover classification",
+          "definition": "Given multispectral imagery and training samples, assign each pixel a land-cover class and assess accuracy.",
+          "inputs": "image stacks, training and validation samples, class legend",
+          "outputs": "class maps, confusion matrices, area estimates",
+          "crosswalk": [],
+          "onet_products": [
+            "ITT Visual Information Solutions ENVI",
+            "RSI ENVI",
+            "ITT Exelis Visual Information Solutions ENVI",
+            "Leica Geosystems ERDAS IMAGINE",
+            "Clark Labs IDRISI",
+            "ITC Integrated Land and Water Information System ILWIS",
+            "PCI Geomatics software",
+            "Clark Labs IDRISI Selva"
+          ],
+          "state_of_art": [
+            "Google Earth Engine",
+            "ENVI",
+            "ERDAS IMAGINE"
+          ],
+          "open_tools": [
+            "Orfeo ToolBox",
+            "GRASS GIS",
+            "TorchGeo"
+          ],
+          "benchmarkable": "yes: labeled datasets such as EuroSAT and BigEarthNet",
+          "notes": ""
+        },
+        {
+          "id": "earth.remote_sensing.object_extraction",
+          "name": "Object-based feature extraction",
+          "definition": "Given high-resolution imagery, segment it and extract objects such as buildings, roads, tree crowns or water bodies.",
+          "inputs": "high-resolution imagery, optional elevation and training labels, rule sets",
+          "outputs": "object polygons or lines with class and attributes",
+          "crosswalk": [],
+          "onet_products": [
+            "Definiens Developer",
+            "PCI Geomatics eCognition"
+          ],
+          "state_of_art": [
+            "Trimble eCognition",
+            "ArcGIS Pro deep learning tools"
+          ],
+          "open_tools": [
+            "Orfeo ToolBox",
+            "segment-geospatial",
+            "TorchGeo"
+          ],
+          "benchmarkable": "yes: SpaceNet building and road challenges",
+          "notes": ""
+        },
+        {
+          "id": "earth.remote_sensing.change_detection",
+          "name": "Change detection and image time series",
+          "definition": "Given co-registered images over time, map where and when the surface changed and characterize trends and seasonal cycles.",
+          "inputs": "multi-date image stacks, masks, change legend",
+          "outputs": "change maps, disturbance dates, trend and phenology metrics",
+          "crosswalk": [],
+          "onet_products": [
+            "Clark Labs IDRISI Selva",
+            "Leica Geosystems ERDAS IMAGINE",
+            "ITT Visual Information Solutions ENVI"
+          ],
+          "state_of_art": [
+            "Google Earth Engine (LandTrendr, CCDC)",
+            "TerrSet Land Change Modeler"
+          ],
+          "open_tools": [
+            "BFAST",
+            "pyccd",
+            "LandTrendr"
+          ],
+          "benchmarkable": "yes: labeled change datasets such as OSCD and xView2",
+          "notes": ""
+        },
+        {
+          "id": "earth.remote_sensing.spectral_analysis",
+          "name": "Hyperspectral and spectral analysis",
+          "definition": "Given spectral image cubes and spectral libraries, identify materials and estimate their abundance per pixel.",
+          "inputs": "hyperspectral or multispectral cubes, spectral libraries",
+          "outputs": "material and abundance maps, anomaly and target detections",
+          "crosswalk": [],
+          "onet_products": [
+            "ITT Exelis Visual Information Solutions ENVI",
+            "RSI ENVI",
+            "Opticks",
+            "Common MASINT Exploitation Tool COMET"
+          ],
+          "state_of_art": [
+            "ENVI"
+          ],
+          "open_tools": [
+            "Opticks",
+            "Spectral Python"
+          ],
+          "benchmarkable": "partly: standard scenes (Indian Pines, Pavia) have ground truth but are small",
+          "notes": ""
+        },
+        {
+          "id": "earth.remote_sensing.radar",
+          "name": "Radar imaging and interferometry",
+          "definition": "Given synthetic-aperture radar acquisitions, produce calibrated backscatter, coherence, interferograms and surface-deformation time series.",
+          "inputs": "SAR single-look complex or detected images, orbits, elevation model",
+          "outputs": "backscatter images, interferograms, displacement maps and time series",
+          "crosswalk": [],
+          "onet_products": [
+            "Gamma remote sensing software"
+          ],
+          "state_of_art": [
+            "GAMMA",
+            "SARscape",
+            "SNAP"
+          ],
+          "open_tools": [
+            "ESA SNAP",
+            "ISCE",
+            "GMTSAR",
+            "MintPy"
+          ],
+          "benchmarkable": "yes: deformation estimates can be scored against GNSS stations",
+          "notes": ""
+        },
+        {
+          "id": "earth.remote_sensing.image_exploitation",
+          "name": "Image interpretation and mensuration",
+          "definition": "Given georeferenced imagery, let an analyst view, measure, annotate and report on features and activity.",
+          "inputs": "imagery with sensor models, reference data",
+          "outputs": "measurements, annotated products, reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Textron Systems Geospatial Solutions RemoteView",
+            "BAE Systems SOCET GXP",
+            "Common MASINT Exploitation Tool COMET",
+            "Opticks"
+          ],
+          "state_of_art": [
+            "SOCET GXP",
+            "RemoteView"
+          ],
+          "open_tools": [
+            "Opticks"
+          ],
+          "benchmarkable": "partly: mensuration accuracy is scoreable; interpretation is analyst judgment",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "earth.photogrammetry",
+      "name": "Photogrammetry, lidar and aerial mapping",
+      "definition": "Given overlapping images or laser scans from aircraft, drones or ground vehicles, reconstruct accurate 3D geometry: orientations, point clouds, elevation models and orthoimages.",
+      "crosswalk": [
+        {
+          "scheme": "ASPRS divisions",
+          "code": "",
+          "label": "Photogrammetric Applications; Lidar; UAS",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ASPRS standards",
+          "code": "",
+          "label": "LAS point cloud format; Positional Accuracy Standards for Digital Geospatial Data",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Map creation software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "move.flight_operations",
+        "produce.metrology",
+        "earth.remote_sensing"
+      ],
+      "notes": "Split from the remote-sensing seed (see earth.remote_sensing). Drone mission planning is kept as a mapping task (coverage, overlap, ground sample distance); flying and airspace operations belong to move.",
+      "tasks": [
+        {
+          "id": "earth.photogrammetry.mission_planning",
+          "name": "Aerial mapping mission planning",
+          "definition": "Given an area, a sensor and an accuracy target, compute flight lines, altitude, overlap and waypoints that achieve the required coverage and ground sample distance.",
+          "inputs": "area of interest, camera or lidar specification, terrain, accuracy and overlap requirements",
+          "outputs": "flight plan, waypoints, predicted coverage and resolution",
+          "crosswalk": [],
+          "onet_products": [
+            "UgCS",
+            "Litchi",
+            "Kitty Hawk",
+            "ESRI Site Scan for ArcGIS",
+            "Leica AEROPLAN LiDAR"
+          ],
+          "state_of_art": [
+            "DJI Pilot 2",
+            "UgCS",
+            "Leica MissionPro"
+          ],
+          "open_tools": [
+            "Mission Planner",
+            "QGroundControl"
+          ],
+          "benchmarkable": "partly: coverage and resolution are computable; feasibility depends on airspace and aircraft",
+          "notes": ""
+        },
+        {
+          "id": "earth.photogrammetry.aerial_triangulation",
+          "name": "Aerial triangulation and bundle adjustment",
+          "definition": "Given overlapping images, approximate positions and ground control, solve camera orientations and tie-point coordinates by least-squares bundle adjustment.",
+          "inputs": "images, camera calibration, GNSS/IMU data, ground control points",
+          "outputs": "exterior and interior orientations, tie points, accuracy report",
+          "crosswalk": [],
+          "onet_products": [
+            "Aerotriangulation adjustment software",
+            "Precision analytical aerotriangulation pugging software",
+            "Intergraph ImageStation Stereo Softcopy Kit SSK",
+            "Hexagon Geospatial Imagine Photogrammetry",
+            "IMAGINE OrthoBASE",
+            "BAE Systems SOCET SET",
+            "Desktop digital photogrammetry system DDPS",
+            "Photogrammetric software"
+          ],
+          "state_of_art": [
+            "Trimble Inpho MATCH-AT",
+            "Hexagon HxMap",
+            "Pix4Dmatic"
+          ],
+          "open_tools": [
+            "MicMac",
+            "COLMAP"
+          ],
+          "benchmarkable": "yes: ISPRS and EuroSDR benchmark blocks have independent checkpoints",
+          "notes": ""
+        },
+        {
+          "id": "earth.photogrammetry.structure_from_motion",
+          "name": "Structure from motion and dense matching",
+          "definition": "Given unordered overlapping photographs, recover camera poses and a dense 3D point cloud or mesh.",
+          "inputs": "photographs, optional positions and control",
+          "outputs": "camera poses, sparse and dense point clouds, textured meshes",
+          "crosswalk": [],
+          "onet_products": [
+            "Pix4D Pix4Dmapper",
+            "Agisoft Metashape",
+            "OpenDroneMap",
+            "ESRI Site Scan for ArcGIS"
+          ],
+          "state_of_art": [
+            "Pix4Dmapper",
+            "Agisoft Metashape",
+            "Bentley iTwin Capture (ContextCapture)",
+            "RealityCapture"
+          ],
+          "open_tools": [
+            "OpenDroneMap",
+            "COLMAP",
+            "OpenMVS",
+            "Meshroom"
+          ],
+          "benchmarkable": "yes: ETH3D and Tanks and Temples score reconstructions against laser-scanned ground truth",
+          "notes": ""
+        },
+        {
+          "id": "earth.photogrammetry.orthorectification",
+          "name": "Orthorectification and mosaicking",
+          "definition": "Given oriented images and an elevation model, remove relief and tilt displacement and blend the images into a seamless orthomosaic.",
+          "inputs": "images, orientations or sensor models, elevation model",
+          "outputs": "orthoimages, seamlines, mosaics, accuracy report",
+          "crosswalk": [],
+          "onet_products": [
+            "IMAGINE OrthoBASE",
+            "Pix4D Pix4Dmapper",
+            "Agisoft Metashape",
+            "Leica Geosystems ERDAS IMAGINE",
+            "PCI Geomatics Geomatica",
+            "OpenDroneMap"
+          ],
+          "state_of_art": [
+            "PCI Geomatica OrthoEngine",
+            "Trimble Inpho OrthoVista",
+            "Pix4Dmapper"
+          ],
+          "open_tools": [
+            "OpenDroneMap",
+            "Orfeo ToolBox",
+            "GDAL"
+          ],
+          "benchmarkable": "yes: checkpoint error under the ASPRS positional accuracy standard",
+          "notes": ""
+        },
+        {
+          "id": "earth.photogrammetry.stereo_compilation",
+          "name": "Stereo feature compilation",
+          "definition": "Given oriented stereo pairs, digitize 3D features such as breaklines, buildings, roads and hydrography.",
+          "inputs": "oriented stereo models, feature specification",
+          "outputs": "3D vector features",
+          "crosswalk": [],
+          "onet_products": [
+            "BAE Systems SOCET SET",
+            "Boeing Kork Digital Mapping",
+            "Boeing SoftPlotter",
+            "Intergraph ImageStation Stereo Softcopy Kit SSK",
+            "Desktop digital photogrammetry system DDPS",
+            "Hexagon Intergraph"
+          ],
+          "state_of_art": [
+            "DAT/EM Summit Evolution",
+            "SOCET GXP",
+            "Hexagon ImageStation"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: positional accuracy is scoreable against checkpoints; completeness depends on the specification",
+          "notes": ""
+        },
+        {
+          "id": "earth.photogrammetry.point_cloud_classification",
+          "name": "Lidar point cloud classification",
+          "definition": "Given georeferenced lidar or image-derived points, label them as ground, vegetation, buildings, water and other standard classes.",
+          "inputs": "point clouds with intensity and returns, trajectories, class scheme",
+          "outputs": "classified point clouds, strip-alignment and accuracy reports",
+          "crosswalk": [
+            {
+              "scheme": "ASPRS standards",
+              "code": "",
+              "label": "LAS classification codes",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Terrasolid TerraScan",
+            "LP360",
+            "GeoCue LIDAR and drone mapping software",
+            "GeoCue PointVue LE",
+            "Applied Imagery Quick Terrain Modeler",
+            "CloudCompare",
+            "Laser imaging detection and ranging LIDAR system"
+          ],
+          "state_of_art": [
+            "Terrasolid TerraScan",
+            "LP360",
+            "Global Mapper Lidar Module"
+          ],
+          "open_tools": [
+            "PDAL",
+            "CloudCompare",
+            "lidR"
+          ],
+          "benchmarkable": "yes: ISPRS filter test, DALES and Semantic3D have labeled points",
+          "notes": ""
+        },
+        {
+          "id": "earth.photogrammetry.elevation_models",
+          "name": "Elevation model generation",
+          "definition": "Given classified points or stereo matches, interpolate bare-earth and surface elevation models with breaklines and contours.",
+          "inputs": "classified point clouds or stereo matches, breaklines",
+          "outputs": "digital terrain and surface models, contours, vertical accuracy report",
+          "crosswalk": [],
+          "onet_products": [
+            "Digital elevation model DEM software",
+            "Digital terrain modeling software",
+            "Scientific Software Group DTM",
+            "Applied Imagery Quick Terrain Modeler",
+            "LP360",
+            "Global Mapper Software Global Mapper",
+            "Surface modeling software"
+          ],
+          "state_of_art": [
+            "Terrasolid TerraModeler",
+            "Global Mapper",
+            "LP360"
+          ],
+          "open_tools": [
+            "PDAL",
+            "lidR",
+            "WhiteboxTools"
+          ],
+          "benchmarkable": "yes: vertical error against surveyed checkpoints",
+          "notes": ""
+        },
+        {
+          "id": "earth.photogrammetry.mobile_mapping",
+          "name": "Mobile mapping and SLAM",
+          "definition": "Given lidar, camera and inertial streams from a moving platform, estimate its trajectory and build a consistent georeferenced map.",
+          "inputs": "lidar scans, images, IMU and GNSS streams",
+          "outputs": "trajectory, registered point cloud or map",
+          "crosswalk": [],
+          "onet_products": [
+            "Simultaneous location and mapping SLAM"
+          ],
+          "state_of_art": [
+            "GeoSLAM Connect",
+            "Leica Cyclone",
+            "NavVis IVION"
+          ],
+          "open_tools": [
+            "Cartographer",
+            "LIO-SAM",
+            "KISS-ICP",
+            "ORB-SLAM3"
+          ],
+          "benchmarkable": "yes: KITTI odometry and Hilti SLAM challenge score trajectory error",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "earth.subsurface",
+      "name": "Subsurface imaging and geological modeling",
+      "definition": "Given seismic, potential-field, electrical and well measurements, image the subsurface and build interpreted 3D geological models.",
+      "crosswalk": [
+        {
+          "scheme": "SPE technical disciplines",
+          "code": "",
+          "label": "Reservoir Description and Dynamics",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "SEG (Society of Exploration Geophysicists) technical areas",
+          "code": "",
+          "label": "Seismic acquisition and processing; interpretation; near-surface; mining geophysics",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "Energistics standards",
+          "code": "",
+          "label": "RESQML (earth models); WITSML (well data)",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Computer aided design CAD software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "simulate.geotechnical",
+        "earth.reservoir",
+        "earth.mining"
+      ],
+      "notes": "Seed 'Subsurface modeling: geology, seismic interpretation, reservoir and mine planning' was split three ways: imaging and geological modeling here, flow and well performance in earth.reservoir, and mine planning in earth.mining, because each has its own inputs, outputs and product families. Soil and rock mechanics for design stay in simulate.",
+      "tasks": [
+        {
+          "id": "earth.subsurface.seismic_processing",
+          "name": "Seismic data processing and imaging",
+          "definition": "Given field seismic records and acquisition geometry, apply corrections, velocity analysis, stacking and migration to produce subsurface images.",
+          "inputs": "shot records, geometry, velocity models",
+          "outputs": "stacked and migrated volumes, velocity models",
+          "crosswalk": [],
+          "onet_products": [
+            "Halliburton ProMAX",
+            "GeoCenter SeisUP",
+            "Parallel Geoscience SPW",
+            "IRIS Seismic Processing Workshop",
+            "RockWare WinSism"
+          ],
+          "state_of_art": [
+            "SLB Omega",
+            "Halliburton SeisSpace ProMAX",
+            "CGG Geovation",
+            "Shearwater Reveal"
+          ],
+          "open_tools": [
+            "Seismic Unix",
+            "Madagascar",
+            "Devito"
+          ],
+          "benchmarkable": "yes: synthetic models such as Marmousi and the SEG/EAGE salt model have known truth",
+          "notes": ""
+        },
+        {
+          "id": "earth.subsurface.seismic_interpretation",
+          "name": "Seismic interpretation",
+          "definition": "Given migrated seismic volumes and well ties, pick horizons and faults, compute attributes and convert time to depth.",
+          "inputs": "seismic volumes, well logs and tops, velocity data",
+          "outputs": "horizon and fault surfaces, attribute volumes, time and depth maps",
+          "crosswalk": [],
+          "onet_products": [
+            "Seismic Micro-Technology KINGDOM",
+            "IHS Kingdom",
+            "Landmark SeisWorks",
+            "Halliburton Landmark GeoProbe",
+            "OpendTect",
+            "Schlumberger Petrel E&P",
+            "Schlumberger GeoFrame",
+            "Schlumberger Inside Reality",
+            "Seismic interpretation software",
+            "Seismic visualization software",
+            "RockWare DepthCon2000",
+            "Landmark Graphics GeoGraphix"
+          ],
+          "state_of_art": [
+            "SLB Petrel",
+            "S&P Global Kingdom",
+            "Halliburton DecisionSpace"
+          ],
+          "open_tools": [
+            "OpendTect"
+          ],
+          "benchmarkable": "yes: labeled fault and facies volumes such as the F3 Netherlands facies benchmark",
+          "notes": ""
+        },
+        {
+          "id": "earth.subsurface.inversion_rock_physics",
+          "name": "Seismic inversion and rock physics",
+          "definition": "Given seismic data and well logs, estimate elastic properties, run amplitude-versus-offset analysis and relate them to lithology and fluids.",
+          "inputs": "pre- or post-stack seismic, wavelets, well logs, rock physics models",
+          "outputs": "impedance and elastic property volumes, synthetic seismograms, lithology and fluid probability",
+          "crosswalk": [],
+          "onet_products": [
+            "CGG HampsonRussell",
+            "Ikon Science RokDoc",
+            "RockWare QuickSyn"
+          ],
+          "state_of_art": [
+            "GeoSoftware HampsonRussell",
+            "Ikon Science RokDoc",
+            "Jason"
+          ],
+          "open_tools": [
+            "PyLops",
+            "bruges"
+          ],
+          "benchmarkable": "yes: synthetic earth models with known properties allow exact scoring",
+          "notes": ""
+        },
+        {
+          "id": "earth.subsurface.potential_field_near_surface",
+          "name": "Potential-field and near-surface geophysics",
+          "definition": "Given gravity, magnetic, electrical, electromagnetic or refraction measurements, produce anomaly maps and forward or inverted earth models.",
+          "inputs": "survey readings, station positions, terrain, starting models",
+          "outputs": "corrected anomaly grids, 2D and 3D property models, depth-to-source estimates",
+          "crosswalk": [],
+          "onet_products": [
+            "Geosoft Oasis montaj",
+            "RockWare Grav2Dc",
+            "RockWare Potent",
+            "Interpex IXID",
+            "RockWare GRADIX",
+            "Socorro Scientific Software Refract2K",
+            "RockWare FIRSTPIX",
+            "Geosoft DAP server"
+          ],
+          "state_of_art": [
+            "Seequent Oasis montaj",
+            "Seequent VOXI",
+            "Res2DInv"
+          ],
+          "open_tools": [
+            "SimPEG",
+            "pyGIMLi",
+            "Harmonica",
+            "ResIPy"
+          ],
+          "benchmarkable": "yes: synthetic models with known structure",
+          "notes": ""
+        },
+        {
+          "id": "earth.subsurface.well_log_analysis",
+          "name": "Well log analysis and petrophysics",
+          "definition": "Given wireline or drilling logs and core data, compute porosity, water saturation, lithology and net pay.",
+          "inputs": "log curves, core measurements, formation tops, parameters",
+          "outputs": "petrophysical curves, zone summaries, net-pay reports",
+          "crosswalk": [
+            {
+              "scheme": "Energistics standards",
+              "code": "",
+              "label": "WITSML / LAS log data",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Techsia Techlog",
+            "TERRASCIENCES TerraStation",
+            "IHS Petra",
+            "GeoPLUS Petra",
+            "Landmark Graphics GeoGraphix",
+            "Well logging software",
+            "MJ Systems Logsleuth",
+            "Petroleum Software Technologies"
+          ],
+          "state_of_art": [
+            "SLB Techlog",
+            "Halliburton DecisionSpace Petrophysics",
+            "Interactive Petrophysics"
+          ],
+          "open_tools": [
+            "welly",
+            "lasio"
+          ],
+          "benchmarkable": "yes: FORCE 2020 lithology and SPWLA prediction contests",
+          "notes": ""
+        },
+        {
+          "id": "earth.subsurface.borehole_correlation",
+          "name": "Borehole logs and stratigraphic correlation",
+          "definition": "Given borehole descriptions, samples and logs, draft log plots and correlate units into cross sections and fence diagrams.",
+          "inputs": "lithology descriptions, sample and test results, downhole logs, locations",
+          "outputs": "borehole log plots, correlated cross sections, fence diagrams",
+          "crosswalk": [],
+          "onet_products": [
+            "Golden Software Strater",
+            "Logplot software",
+            "Groundwater Software QuickLog",
+            "Groundwater Software QuickCross/Fence",
+            "Rockware CrossLog",
+            "RockWare Jlog",
+            "Bentley Systems gINT",
+            "Advanced Logic Technology WellCAD",
+            "RockWare Stratbugs",
+            "EarthWorks Downhole Explorer",
+            "Scientific Software GroupWinFence"
+          ],
+          "state_of_art": [
+            "Bentley OpenGround",
+            "Golden Software Strater",
+            "RockWorks"
+          ],
+          "open_tools": [
+            "striplog"
+          ],
+          "benchmarkable": "no: drafting and interpretive correlation without a reference answer",
+          "notes": "Geotechnical test interpretation for design belongs to simulate.geotechnical."
+        },
+        {
+          "id": "earth.subsurface.geological_modeling",
+          "name": "Structural and 3D geological modeling",
+          "definition": "Given horizons, faults, well tops and outcrop data, build a consistent 3D structural framework, restore sections and populate property grids.",
+          "inputs": "interpreted surfaces, fault sticks, well tops, orientation data, property data",
+          "outputs": "3D structural models, restored sections, gridded property models",
+          "crosswalk": [
+            {
+              "scheme": "Energistics standards",
+              "code": "",
+              "label": "RESQML",
+              "basis": "fetched",
+              "url": "https://www.energistics.org/resqml-data-standards"
+            }
+          ],
+          "onet_products": [
+            "Paradigm SKUA-GOCAD",
+            "Dynamic Graphics EarthVision",
+            "EarthVision",
+            "Midland Valley Move Suite",
+            "Midland Valley 2DMove",
+            "Midland Valley 3DMove",
+            "Geo-Logic Systems LithoTect Interpreter",
+            "RockWare RockWorks",
+            "Schlumberger Petrel E&P",
+            "Scientific Software Group EVS",
+            "GeoModel",
+            "Atoll GeoCAD"
+          ],
+          "state_of_art": [
+            "SLB Petrel",
+            "Emerson SKUA-GOCAD",
+            "Seequent Leapfrog Geo",
+            "Petroleum Experts Move"
+          ],
+          "open_tools": [
+            "GemPy",
+            "LoopStructural"
+          ],
+          "benchmarkable": "partly: synthetic models test reproduction of known structure; interpretation is non-unique",
+          "notes": ""
+        },
+        {
+          "id": "earth.subsurface.basin_modeling",
+          "name": "Basin and petroleum system modeling",
+          "definition": "Given stratigraphy, lithology and heat-flow history, simulate burial, temperature, maturity and hydrocarbon generation and migration.",
+          "inputs": "layer ages and thicknesses, lithologies, heat flow, source-rock kinetics",
+          "outputs": "burial and thermal histories, maturity maps, charge and migration estimates",
+          "crosswalk": [],
+          "onet_products": [
+            "Platte River Associates BasinMod",
+            "Hydrogeology Basin2"
+          ],
+          "state_of_art": [
+            "SLB PetroMod",
+            "Zetaware Trinity",
+            "BasinMod"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: calibration to measured temperature and vitrinite reflectance in wells",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "earth.reservoir",
+      "name": "Reservoir and well performance engineering",
+      "definition": "Given a reservoir description, fluid properties and well data, predict flow, pressure and recoverable volumes over time.",
+      "crosswalk": [
+        {
+          "scheme": "SPE technical disciplines",
+          "code": "",
+          "label": "Reservoir Description and Dynamics; Production and Operations",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "SPE Petroleum Resources Management System",
+          "code": "",
+          "label": "PRMS reserves and resources classification",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "Energistics standards",
+          "code": "",
+          "label": "PRODML",
+          "basis": "fetched",
+          "url": "https://www.energistics.org/prodml-data-standards"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "simulate.pipe_networks",
+        "operate.pipeline_operations"
+      ],
+      "notes": "Split from the subsurface seed. Pipelines and surface gathering networks are engineered networks (simulate); drilling operations reporting goes to operate.",
+      "tasks": [
+        {
+          "id": "earth.reservoir.reservoir_simulation",
+          "name": "Reservoir flow simulation",
+          "definition": "Given a gridded reservoir model, fluid and rock properties and well controls, simulate multiphase flow and forecast production and pressure.",
+          "inputs": "property grids, relative permeability and capillary data, fluid model, well schedules",
+          "outputs": "pressure and saturation fields, well rates, forecasts",
+          "crosswalk": [],
+          "onet_products": [
+            "Schlumberger ECLIPSE",
+            "Computer Modelling Group CMG STARS",
+            "Landmark VIP"
+          ],
+          "state_of_art": [
+            "SLB ECLIPSE and INTERSECT",
+            "CMG IMEX/GEM/STARS",
+            "Stone Ridge Echelon"
+          ],
+          "open_tools": [
+            "OPM Flow",
+            "MRST"
+          ],
+          "benchmarkable": "yes: SPE Comparative Solution Projects provide shared problems and reference results",
+          "notes": ""
+        },
+        {
+          "id": "earth.reservoir.fluid_pvt",
+          "name": "Reservoir fluid characterization",
+          "definition": "Given laboratory pressure-volume-temperature data, tune an equation-of-state or black-oil model of the reservoir fluid.",
+          "inputs": "fluid composition, lab experiments (constant composition expansion, differential liberation, separator tests)",
+          "outputs": "tuned equation-of-state model, black-oil tables",
+          "crosswalk": [],
+          "onet_products": [
+            "Schlumberger PVTi"
+          ],
+          "state_of_art": [
+            "SLB PVTi",
+            "Calsep PVTsim",
+            "Petroleum Experts PVTP"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: error against measured lab properties on public fluid datasets",
+          "notes": "General thermodynamic property packages belong to simulate's process flowsheeting."
+        },
+        {
+          "id": "earth.reservoir.well_performance",
+          "name": "Well inflow and lift performance",
+          "definition": "Given reservoir, completion and tubing data, compute inflow and vertical-lift curves, operating rates and artificial-lift designs.",
+          "inputs": "reservoir pressure and productivity, completion and tubing geometry, fluid model",
+          "outputs": "inflow and outflow curves, operating point, lift design",
+          "crosswalk": [],
+          "onet_products": [
+            "Neotec WELLFLO",
+            "Well Flow Dynamics Wellflow",
+            "Schlumberger PIPESIM"
+          ],
+          "state_of_art": [
+            "SLB PIPESIM",
+            "Petroleum Experts PROSPER"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: correlations can be scored against measured well tests",
+          "notes": ""
+        },
+        {
+          "id": "earth.reservoir.pressure_transient",
+          "name": "Pressure transient analysis",
+          "definition": "Given flow-rate and pressure records from a well test, estimate permeability, skin, boundaries and reservoir pressure.",
+          "inputs": "rate and pressure history, well and fluid properties",
+          "outputs": "diagnostic plots, model match, reservoir parameters",
+          "crosswalk": [],
+          "onet_products": [
+            "eProduction Solutions PanSystem"
+          ],
+          "state_of_art": [
+            "KAPPA Saphir",
+            "Weatherford PanSystem"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: synthetic tests with known parameters",
+          "notes": "Aquifer tests are the groundwater analogue (earth.groundwater.aquifer_tests)."
+        },
+        {
+          "id": "earth.reservoir.decline_reserves",
+          "name": "Decline analysis and reserves evaluation",
+          "definition": "Given production history and economics, forecast rates, estimate ultimate recovery and classify reserves.",
+          "inputs": "monthly production, prices, costs, ownership",
+          "outputs": "rate forecasts, estimated ultimate recovery, reserves and cash-flow reports",
+          "crosswalk": [
+            {
+              "scheme": "SPE Petroleum Resources Management System",
+              "code": "",
+              "label": "PRMS",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "TRC Consultants PHDWin",
+            "GeoGraphix ARIES Portfolio",
+            "IHS Energy PowerTools"
+          ],
+          "state_of_art": [
+            "Halliburton ARIES",
+            "PHDWin",
+            "Enverus PRISM"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: hindcasts on public state production data are scoreable",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "earth.mining",
+      "name": "Mineral resource and mine planning",
+      "definition": "Given drillhole data, a geological model and economic parameters, estimate the mineral resource and design and schedule its extraction.",
+      "crosswalk": [
+        {
+          "scheme": "CRIRSCO / JORC Code",
+          "code": "",
+          "label": "Mineral Resources and Ore Reserves classification",
+          "basis": "fetched",
+          "url": "https://www.jorc.org/"
+        },
+        {
+          "scheme": "SME Mining Engineering Handbook",
+          "code": "",
+          "label": "Mine planning and design",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Computer aided design CAD software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "move.fleet_dispatch",
+        "simulate.geotechnical",
+        "earth.subsurface",
+        "simulate.pipe_networks"
+      ],
+      "notes": "Split from the subsurface seed. Mine fleet dispatch is vehicle operations (move); rock mechanics and roof support are geotechnical analysis (simulate).",
+      "tasks": [
+        {
+          "id": "earth.mining.drillhole_data",
+          "name": "Drillhole data management and compositing",
+          "definition": "Given collars, downhole surveys, assays and geology logs, validate them into a drillhole database and produce composites.",
+          "inputs": "collar, survey, assay and lithology tables",
+          "outputs": "validated drillhole database, 3D traces, composites",
+          "crosswalk": [],
+          "onet_products": [
+            "EarthWorks Downhole Explorer",
+            "Gemcom GEMS",
+            "Maptek Vulcan",
+            "TECHBASE"
+          ],
+          "state_of_art": [
+            "Seequent MX Deposit",
+            "Datamine Fusion",
+            "acQuire"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: data management without a reference answer",
+          "notes": ""
+        },
+        {
+          "id": "earth.mining.resource_estimation",
+          "name": "Block modeling and resource estimation",
+          "definition": "Given composites and geological domains, estimate grades into a block model and classify the resource by confidence.",
+          "inputs": "composites, domain wireframes, variograms, estimation parameters",
+          "outputs": "block model with grades and classification, grade-tonnage curves",
+          "crosswalk": [
+            {
+              "scheme": "CRIRSCO / JORC Code",
+              "code": "",
+              "label": "Measured, Indicated and Inferred Resources",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Maptek Vulcan",
+            "Gemcom Surpac",
+            "MineSight",
+            "Gemcom GEMS",
+            "TECHBASE",
+            "Mincom MineScape",
+            "GijimaAst Mining Solutions International Mine2-4D",
+            "MineGeo software"
+          ],
+          "state_of_art": [
+            "Datamine Studio RM",
+            "Maptek Vulcan",
+            "Seequent Leapfrog Edge",
+            "Deswik"
+          ],
+          "open_tools": [
+            "GeostatsPy",
+            "SGeMS"
+          ],
+          "benchmarkable": "yes: synthetic and exhaustive datasets (Walker Lake) allow scoring estimates against truth",
+          "notes": ""
+        },
+        {
+          "id": "earth.mining.pit_optimization",
+          "name": "Open-pit limit optimization",
+          "definition": "Given block economic values and slope constraints, find the ultimate pit and nested shells that maximize value.",
+          "inputs": "block model with values, slope angles, prices and costs",
+          "outputs": "ultimate pit, nested shells, pushback candidates",
+          "crosswalk": [],
+          "onet_products": [
+            "Gemcom Whittle",
+            "Earthworks MaxiPit",
+            "Gemcom PCBC"
+          ],
+          "state_of_art": [
+            "Dassault GEOVIA Whittle",
+            "Deswik.GO",
+            "MiningMath"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: MineLib instances have known optima",
+          "notes": "Gemcom PCBC is the block-cave analogue for underground mines."
+        },
+        {
+          "id": "earth.mining.mine_design",
+          "name": "Mine layout design",
+          "definition": "Given an optimal shell or stope envelope, design practical benches, ramps, stopes and development openings.",
+          "inputs": "pit shells or stope shapes, design parameters, topography",
+          "outputs": "pit and underground designs, reserve volumes",
+          "crosswalk": [],
+          "onet_products": [
+            "Maptek Vulcan",
+            "Gemcom Surpac",
+            "MineSight",
+            "Promine",
+            "Ohio Automation Integrated Computer Aided Mine Planning System ICAMPS",
+            "Mincom MineScape",
+            "Carlson SurvCADD"
+          ],
+          "state_of_art": [
+            "Deswik.CAD",
+            "Maptek Vulcan",
+            "GEOVIA Surpac"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: designs can be checked against constraints and shell volume; practicality needs review",
+          "notes": ""
+        },
+        {
+          "id": "earth.mining.production_scheduling",
+          "name": "Mine production scheduling",
+          "definition": "Given a reserve model, precedences and capacities, schedule extraction by period to maximize net present value.",
+          "inputs": "mining blocks or solids, precedences, equipment and plant capacities, economics",
+          "outputs": "period schedules, stockpile plans, NPV",
+          "crosswalk": [],
+          "onet_products": [
+            "RungePincockMinarco XPAC",
+            "Minemax iGantt",
+            "Gemcom Whittle",
+            "MineSight"
+          ],
+          "state_of_art": [
+            "Deswik.Sched",
+            "Minemax Scheduler",
+            "Epiroc XPAC"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: MineLib scheduling instances have best known solutions",
+          "notes": "General optimization solvers belong to science."
+        }
+      ]
+    },
+    {
+      "id": "earth.surface_water",
+      "name": "Surface water hydrology and hydraulics",
+      "definition": "Given precipitation, terrain, land cover, soils and channel geometry, predict runoff, river flows, water levels, floods, erosion and water quality in natural waters.",
+      "crosswalk": [
+        {
+          "scheme": "WMO programmes",
+          "code": "",
+          "label": "Hydrology and Water Resources Programme",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "USACE Hydrologic Engineering Center model family",
+          "code": "",
+          "label": "HEC-HMS, HEC-RAS",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "EPA water models",
+          "code": "",
+          "label": "HSPF, SWMM, WASP",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "simulate.pipe_networks",
+        "earth.groundwater",
+        "earth.gis"
+      ],
+      "notes": "Was seed 'Hydrology and natural water modeling (rivers, watersheds, groundwater, coasts)'; groundwater split into earth.groundwater. Pressurized water, sewer and storm-drain pipe networks belong to simulate; urban runoff generation stays here.",
+      "tasks": [
+        {
+          "id": "earth.surface_water.rainfall_runoff",
+          "name": "Rainfall-runoff and watershed modeling",
+          "definition": "Given precipitation, basin geometry, land cover and soils, compute infiltration, runoff hydrographs and continuous streamflow.",
+          "inputs": "rainfall or meteorological series, subbasin parameters, loss and routing methods",
+          "outputs": "runoff hydrographs, peak flows, water balances",
+          "crosswalk": [
+            {
+              "scheme": "USACE Hydrologic Engineering Center model family",
+              "code": "",
+              "label": "HEC-HMS",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "HEC-HMS",
+            "HEC-1",
+            "Hydrologic simulation program fortan HSPF software",
+            "Watershed modeling system WMS software",
+            "Automated Geospatial Watershed Assessment AGWA",
+            "Vieux & Associates Vflow",
+            "Hydrological modeling software",
+            "Visual OTTHYMO",
+            "HydroCAD Software Solutions HydroCAD Stormwater Modeling System",
+            "EPA Storm Water Management Model SWMM",
+            "DHI Water and Environment MIKE SHE",
+            "Stormwater runoff modeling software"
+          ],
+          "state_of_art": [
+            "HEC-HMS",
+            "DHI MIKE SHE",
+            "PCSWMM"
+          ],
+          "open_tools": [
+            "EPA SWMM",
+            "SWAT",
+            "PRMS",
+            "WRF-Hydro"
+          ],
+          "benchmarkable": "yes: CAMELS catchments give observed streamflow for scoring",
+          "notes": ""
+        },
+        {
+          "id": "earth.surface_water.river_hydraulics",
+          "name": "Open-channel and river hydraulics",
+          "definition": "Given channel and floodplain geometry, roughness, structures and flows, compute water-surface profiles, velocities and shear in one or two dimensions.",
+          "inputs": "cross sections or terrain mesh, roughness, bridges and culverts, boundary flows",
+          "outputs": "water-surface elevations, velocities, depths, hydraulic tables",
+          "crosswalk": [
+            {
+              "scheme": "USACE Hydrologic Engineering Center model family",
+              "code": "",
+              "label": "HEC-RAS",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "HEC-RAS",
+            "HEC-2",
+            "HEC-GeoRAS",
+            "Scientific Software Group TUFLOW",
+            "Surface water modeling system SMS software",
+            "Water flow modeling software",
+            "RIVERMorph",
+            "FishXing"
+          ],
+          "state_of_art": [
+            "HEC-RAS",
+            "TUFLOW",
+            "DHI MIKE 21"
+          ],
+          "open_tools": [
+            "TELEMAC-MASCARET",
+            "LISFLOOD-FP",
+            "ANUGA",
+            "iRIC"
+          ],
+          "benchmarkable": "yes: the UK Environment Agency 2D hydraulic benchmark tests",
+          "notes": "Culverts and fish passage are kept here because they are natural-channel hydraulics."
+        },
+        {
+          "id": "earth.surface_water.flood_mapping",
+          "name": "Flood inundation and hazard mapping",
+          "definition": "Given design or observed flows and terrain, map flood extent, depth and hazard zones.",
+          "inputs": "flow frequencies or hydraulic results, terrain models, structures",
+          "outputs": "inundation extents, depth grids, flood-zone maps",
+          "crosswalk": [],
+          "onet_products": [
+            "Flood modeling software",
+            "FloodMaps",
+            "HEC-GeoRAS",
+            "Scientific Software Group TUFLOW"
+          ],
+          "state_of_art": [
+            "HEC-RAS Mapper",
+            "TUFLOW",
+            "JBA Flood Modeller",
+            "Fathom Global"
+          ],
+          "open_tools": [
+            "LISFLOOD-FP",
+            "TauDEM"
+          ],
+          "benchmarkable": "yes: observed flood extents from imagery give a reference",
+          "notes": ""
+        },
+        {
+          "id": "earth.surface_water.hydrologic_statistics",
+          "name": "Hydrologic data and frequency analysis",
+          "definition": "Given gauge and logger records, quality-control the series, build rating curves and estimate flow and rainfall frequency.",
+          "inputs": "stage, discharge and rainfall records, field measurements",
+          "outputs": "cleaned series, rating curves, frequency curves and design values",
+          "crosswalk": [],
+          "onet_products": [
+            "NIWA Tideda",
+            "Logger data manager LDM",
+            "Scientific Software Group QHM"
+          ],
+          "state_of_art": [
+            "Aquatic Informatics AQUARIUS",
+            "USGS PeakFQ",
+            "HEC-SSP"
+          ],
+          "open_tools": [
+            "PeakFQ"
+          ],
+          "benchmarkable": "yes: published frequency estimates for test sites",
+          "notes": ""
+        },
+        {
+          "id": "earth.surface_water.water_quality",
+          "name": "Surface water quality and loading",
+          "definition": "Given pollutant sources, flows and kinetics, simulate nutrient, sediment and contaminant concentrations in streams and lakes and allocate loads.",
+          "inputs": "point and nonpoint loads, flows, reaction rates, temperatures",
+          "outputs": "concentration series, load budgets, load allocations",
+          "crosswalk": [
+            {
+              "scheme": "EPA water models",
+              "code": "",
+              "label": "HSPF, WASP, QUAL2K",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Hydrologic simulation program fortan HSPF software",
+            "WAM software",
+            "Water Soil and Hydro-Environmental Decision Support System WATERSHEDSS",
+            "Chemicals and Irrigation CANDI"
+          ],
+          "state_of_art": [
+            "EPA WASP",
+            "DHI MIKE ECO Lab",
+            "HSPF"
+          ],
+          "open_tools": [
+            "SWAT",
+            "QUAL2K"
+          ],
+          "benchmarkable": "partly: monitored concentrations exist but calibration data are sparse",
+          "notes": ""
+        },
+        {
+          "id": "earth.surface_water.erosion_sediment",
+          "name": "Soil erosion and sediment yield",
+          "definition": "Given rainfall, soils, slopes, cover and practices, estimate soil loss, sediment delivery and pond trapping.",
+          "inputs": "rainfall erosivity, soil erodibility, slope, cover and practice factors or process parameters",
+          "outputs": "soil loss rates, sediment yields, basin trap efficiency",
+          "crosswalk": [],
+          "onet_products": [
+            "Revised universal soil loss equation RUSLE software",
+            "Water Erosion Prediction Project WEPP",
+            "European Soil Erosion Model EUROSEM",
+            "Erosion Productivity Impact Calculator EPIC",
+            "WinEPIC",
+            "Salix Applied Earthcare Erosion Draw",
+            "SEDCAD"
+          ],
+          "state_of_art": [
+            "RUSLE2",
+            "WEPP"
+          ],
+          "open_tools": [
+            "WEPP",
+            "SWAT"
+          ],
+          "benchmarkable": "partly: plot-scale erosion datasets exist",
+          "notes": ""
+        },
+        {
+          "id": "earth.surface_water.coastal",
+          "name": "Coastal and estuarine hydrodynamics",
+          "definition": "Given bathymetry, tides, winds and river inflows, simulate water levels, currents, waves, storm surge and salinity.",
+          "inputs": "bathymetric mesh, tidal and meteorological forcing, river inflows",
+          "outputs": "water levels, currents, wave fields, surge and salinity",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "DHI MIKE 21",
+            "Delft3D FM",
+            "ADCIRC"
+          ],
+          "open_tools": [
+            "Delft3D",
+            "SWAN",
+            "SCHISM",
+            "ROMS"
+          ],
+          "benchmarkable": "yes: hindcasts scored against tide gauges and wave buoys",
+          "notes": "No O*NET product names this function."
+        }
+      ]
+    },
+    {
+      "id": "earth.groundwater",
+      "name": "Groundwater and vadose zone modeling",
+      "definition": "Given aquifer and soil geometry, properties, boundaries and stresses, predict groundwater flow, unsaturated moisture, and solute and contaminant transport and chemistry.",
+      "crosswalk": [
+        {
+          "scheme": "USGS groundwater software",
+          "code": "",
+          "label": "MODFLOW, MT3D, SUTRA, PHREEQC",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ASTM standards",
+          "code": "D5447",
+          "label": "Guide for application of a numerical groundwater flow model to a site-specific problem",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Data base user interface and query software",
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "simulate.geotechnical",
+        "earth.environmental_site",
+        "earth.surface_water"
+      ],
+      "notes": "Split from the hydrology seed: groundwater models, data and products are a separate family. Seepage through dams and embankments for slope design stays with simulate.geotechnical.",
+      "tasks": [
+        {
+          "id": "earth.groundwater.flow_modeling",
+          "name": "Groundwater flow modeling",
+          "definition": "Given aquifer layers, hydraulic properties, boundaries and pumping or recharge, compute heads, drawdowns and water budgets.",
+          "inputs": "layer geometry, conductivity and storage, boundary conditions, stresses",
+          "outputs": "head fields, drawdowns, budgets, capture zones",
+          "crosswalk": [
+            {
+              "scheme": "USGS groundwater software",
+              "code": "",
+              "label": "MODFLOW",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "RockWare MODFLOW",
+            "Visual MODFLOW Pro",
+            "Groundwater modeling system GMS",
+            "Groundwater Vistas",
+            "Scientific Software Group FEFLOW",
+            "Scientific Software Group MODFLOWT",
+            "Argus ONE Open Numerical Environments",
+            "Scientific Software Group GFLOW",
+            "Scientific Software Group SLAEM/MLAEM",
+            "Scientific Software Group WinFlow",
+            "Fitts Geosolutions TWODAN",
+            "BOSS International Visual Groundwater"
+          ],
+          "state_of_art": [
+            "MODFLOW 6 via GMS or Groundwater Vistas",
+            "DHI FEFLOW",
+            "Visual MODFLOW Flex"
+          ],
+          "open_tools": [
+            "MODFLOW 6",
+            "FloPy",
+            "ParFlow"
+          ],
+          "benchmarkable": "yes: analytic solutions and the MODFLOW test problems",
+          "notes": ""
+        },
+        {
+          "id": "earth.groundwater.solute_transport",
+          "name": "Solute transport and particle tracking",
+          "definition": "Given a flow field, sources and reaction parameters, compute plume concentrations, travel paths and times.",
+          "inputs": "velocity field, porosity, dispersivity, source terms, decay and sorption",
+          "outputs": "concentration fields over time, pathlines, travel times",
+          "crosswalk": [
+            {
+              "scheme": "USGS groundwater software",
+              "code": "",
+              "label": "MT3D, MODPATH, SUTRA",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Scientific Software Group MT3D99",
+            "MODPATH",
+            "Waterloo Hydrogeologic FlowPath II",
+            "Scientific Software Group MOCDENSE",
+            "Environmental Software and Services SUTRA",
+            "Scientific Software Group AT123D",
+            "Scientific Software Group BIOF&T",
+            "Scientific Software Group WinTran",
+            "Biodegration flow and transport modeling software",
+            "Scientific Software Group BIO1D",
+            "Studio of Analytical Models STANMOD",
+            "Scientific Software Group 3DFATMIC"
+          ],
+          "state_of_art": [
+            "MT3D-USGS",
+            "FEFLOW",
+            "MODPATH 7"
+          ],
+          "open_tools": [
+            "MT3D-USGS",
+            "MODPATH",
+            "SUTRA",
+            "PFLOTRAN"
+          ],
+          "benchmarkable": "yes: analytic solutions and published field tracer tests",
+          "notes": ""
+        },
+        {
+          "id": "earth.groundwater.aquifer_tests",
+          "name": "Aquifer and slug test analysis",
+          "definition": "Given drawdown or recovery records from pumping or slug tests, estimate transmissivity, storativity and leakage.",
+          "inputs": "time-drawdown data, well geometry, pumping rates",
+          "outputs": "aquifer parameters, curve matches",
+          "crosswalk": [],
+          "onet_products": [
+            "HydroSOLVE AQTESOLV",
+            "Waterloo Hydrogeologic AquiferTest Pro",
+            "Aquifer test software",
+            "Starpint Software Super Slug",
+            "Scientific Software Group AQUIPACK",
+            "Scientific Software Group Aquifer win32",
+            "Scientific Software Group StepMaster",
+            "Scientific Software Group Infinite Extent",
+            "Scientific Software Group MODPUMP"
+          ],
+          "state_of_art": [
+            "AQTESOLV",
+            "AquiferTest Pro"
+          ],
+          "open_tools": [
+            "TTim"
+          ],
+          "benchmarkable": "yes: synthetic and textbook tests with known parameters",
+          "notes": ""
+        },
+        {
+          "id": "earth.groundwater.vadose_zone",
+          "name": "Unsaturated zone flow and leaching",
+          "definition": "Given soil hydraulic properties, climate and surface loads, simulate infiltration, soil moisture, recharge and leaching through the unsaturated zone.",
+          "inputs": "soil water-retention and conductivity functions, weather, crop or surface conditions, solute loads",
+          "outputs": "moisture profiles, fluxes, recharge, leachate concentrations",
+          "crosswalk": [],
+          "onet_products": [
+            "HYDRUS-2D",
+            "PC-Progress HYDRUS",
+            "UNSATFLOW",
+            "Scientific Software Group SVFlux",
+            "Scientific Software Group SESOIL",
+            "Scientific Software GroupWHI UnSAT Suite",
+            "SoilVision Systems SVOFFICE",
+            "Scientific Software Group SOILPARA",
+            "SPAW",
+            "Scientific Software Group VAM2D",
+            "Scientific Software Group SVHeat",
+            "SoilVision Systems SVGrainsize"
+          ],
+          "state_of_art": [
+            "HYDRUS",
+            "SVFlux",
+            "FEFLOW"
+          ],
+          "open_tools": [
+            "ParFlow",
+            "PFLOTRAN"
+          ],
+          "benchmarkable": "yes: analytic infiltration solutions and lysimeter data",
+          "notes": ""
+        },
+        {
+          "id": "earth.groundwater.geochemistry",
+          "name": "Aqueous geochemical modeling",
+          "definition": "Given water analyses and mineral data, compute speciation, saturation indices and reaction paths and classify water types.",
+          "inputs": "major and trace ion analyses, temperature, mineral assemblages, thermodynamic database",
+          "outputs": "species distributions, saturation indices, reaction-path results, water-type diagrams",
+          "crosswalk": [
+            {
+              "scheme": "USGS groundwater software",
+              "code": "",
+              "label": "PHREEQC",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "RockWare Geochemist's Workbench GWB",
+            "Scientific Software Group MINTEQA2",
+            "Waterloo Hydrogeologic AquaChem",
+            "RockWare ChemFlux",
+            "Scientific Software Group HYDROGEOCHEM",
+            "Scientific Software Group ChemGraph"
+          ],
+          "state_of_art": [
+            "Geochemist's Workbench",
+            "PHREEQC",
+            "AquaChem"
+          ],
+          "open_tools": [
+            "PHREEQC",
+            "Reaktoro"
+          ],
+          "benchmarkable": "yes: reference speciation problems with published answers",
+          "notes": ""
+        },
+        {
+          "id": "earth.groundwater.multiphase",
+          "name": "Free-product and multiphase flow",
+          "definition": "Given spilled hydrocarbon or other non-aqueous liquid data, estimate its volume, spread and recovery by pumping or vapor extraction.",
+          "inputs": "well product thickness, soil properties, fluid properties, recovery system design",
+          "outputs": "free-product volume, plume extent, recovery rates",
+          "crosswalk": [],
+          "onet_products": [
+            "Scientific Software Group BIOSLURP",
+            "Scientific Software Group MOFAT",
+            "Scientific Software Group OILVOL",
+            "Scientific Software Group Soil Vapor Extraction BioSVE",
+            "Scientific Software Group MARS 2-D/3-D"
+          ],
+          "state_of_art": [
+            "API LNAPL Distribution and Recovery Model",
+            "TOUGH3"
+          ],
+          "open_tools": [
+            "PFLOTRAN"
+          ],
+          "benchmarkable": "partly: laboratory column and tank experiments provide references",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "earth.atmosphere",
+      "name": "Weather, climate and air quality",
+      "definition": "Given atmospheric observations, model fields and emissions, analyze and forecast weather, project climate and predict pollutant concentrations and wind resources.",
+      "crosswalk": [
+        {
+          "scheme": "WMO programmes",
+          "code": "",
+          "label": "World Weather Watch; World Climate Programme; Global Atmosphere Watch",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "EPA Support Center for Regulatory Atmospheric Modeling",
+          "code": "",
+          "label": "Preferred dispersion, screening and photochemical models",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "science.visualization_imaging",
+        "simulate.cfd",
+        "move.flight_operations",
+        "operate.environmental_compliance"
+      ],
+      "notes": "Was seed 'Atmosphere: weather, climate and air-dispersion modeling'. Wind and solar resource assessment and air emissions estimation are added. Indoor and fire-smoke modeling stays with simulate.",
+      "tasks": [
+        {
+          "id": "earth.atmosphere.weather_analysis",
+          "name": "Weather data analysis and display",
+          "definition": "Given surface, upper-air, satellite and model data, decode, analyze and display weather maps, soundings and diagnostics.",
+          "inputs": "observation feeds, gridded model output, satellite imagery",
+          "outputs": "analyzed charts, soundings and stability indices, diagnostic fields",
+          "crosswalk": [],
+          "onet_products": [
+            "Unidata GEMPAK",
+            "Unidata Gempak Analysis and Rendering Program GARP",
+            "Unidata McIDAS-X",
+            "Unidata Integrated Data Viewer IDV",
+            "Grid analysis and display system GrADS",
+            "Ferret",
+            "WINGRIDDS",
+            "Environmental Research Services RAOB",
+            "SVRPLOT",
+            "SatView",
+            "Vis5d+",
+            "NCAR Command Language NCL"
+          ],
+          "state_of_art": [
+            "AWIPS",
+            "IBM Weather Operations Center (WSI)",
+            "Unidata IDV"
+          ],
+          "open_tools": [
+            "MetPy",
+            "Unidata IDV",
+            "OpenGrADS",
+            "PyFerret"
+          ],
+          "benchmarkable": "no: display and diagnosis tools without a reference answer",
+          "notes": "General scientific plotting belongs to science."
+        },
+        {
+          "id": "earth.atmosphere.radar_meteorology",
+          "name": "Weather radar analysis",
+          "definition": "Given radar volume scans, produce quality-controlled reflectivity and velocity products, precipitation estimates and storm identification.",
+          "inputs": "radar volume scans, calibration, gauge data",
+          "outputs": "mosaics, rainfall estimates, hydrometeor classes, storm cells",
+          "crosswalk": [],
+          "onet_products": [
+            "Baron Volumetric Imaging and Processing of Integrated Radar VIPIR",
+            "Interactive radar analysis software IRAS",
+            "Baron Services FasTrac",
+            "WSI Titan",
+            "Cave5D"
+          ],
+          "state_of_art": [
+            "Baron Lynx",
+            "GR2Analyst",
+            "MRMS"
+          ],
+          "open_tools": [
+            "Py-ART",
+            "wradlib",
+            "LROSE"
+          ],
+          "benchmarkable": "yes: radar rainfall estimates scored against gauges",
+          "notes": ""
+        },
+        {
+          "id": "earth.atmosphere.weather_prediction",
+          "name": "Numerical weather prediction",
+          "definition": "Given initial and boundary conditions, forecast the atmospheric state at global or mesoscale resolution.",
+          "inputs": "analyses and observations, boundary conditions, terrain and land surface",
+          "outputs": "forecast fields of wind, temperature, humidity and precipitation",
+          "crosswalk": [
+            {
+              "scheme": "WMO programmes",
+              "code": "",
+              "label": "World Weather Watch (Global Data-processing and Forecasting System)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Mesoscale modeling software",
+            "Aninoquisi MesoTRAC",
+            "Flow Analysis Software Toolkit FAST"
+          ],
+          "state_of_art": [
+            "ECMWF IFS",
+            "NOAA GFS and HRRR",
+            "GraphCast"
+          ],
+          "open_tools": [
+            "WRF",
+            "MPAS",
+            "Anemoi"
+          ],
+          "benchmarkable": "yes: WeatherBench 2 scores forecasts against reanalysis",
+          "notes": ""
+        },
+        {
+          "id": "earth.atmosphere.severe_storms",
+          "name": "Tropical cyclone and severe storm tracking",
+          "definition": "Given forecasts and observations, track hurricanes and severe storms and estimate their paths, intensity and local threat.",
+          "inputs": "advisories, model tracks, radar and observations, site locations",
+          "outputs": "tracks, wind swaths, arrival times, site threat assessments",
+          "crosswalk": [
+            {
+              "scheme": "WMO programmes",
+              "code": "",
+              "label": "Tropical Cyclone Programme",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "PC Weather Products HURRTRAK",
+            "VorTek Site Assessment of Tornado Threat SATT",
+            "Baron Services FasTrac"
+          ],
+          "state_of_art": [
+            "HURRTRAK",
+            "Baron Threat Net"
+          ],
+          "open_tools": [
+            "TempestExtremes"
+          ],
+          "benchmarkable": "yes: track and intensity error against best-track records",
+          "notes": ""
+        },
+        {
+          "id": "earth.atmosphere.climate_modeling",
+          "name": "Climate modeling and downscaling",
+          "definition": "Given forcing scenarios, simulate the coupled climate system and downscale results to regional scale.",
+          "inputs": "greenhouse gas and aerosol scenarios, boundary data, model configuration",
+          "outputs": "long-term climate fields, regional projections",
+          "crosswalk": [
+            {
+              "scheme": "WMO programmes",
+              "code": "",
+              "label": "World Climate Programme / World Climate Research Programme",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Community Climate System Model CCSM",
+            "North American Regional Climate Change Assessment Program NARCCAP data tables"
+          ],
+          "state_of_art": [
+            "CESM",
+            "E3SM",
+            "EC-Earth"
+          ],
+          "open_tools": [
+            "CESM",
+            "E3SM",
+            "ESMValTool"
+          ],
+          "benchmarkable": "partly: model evaluation against observations (PCMDI metrics) but no single correct projection",
+          "notes": ""
+        },
+        {
+          "id": "earth.atmosphere.air_dispersion",
+          "name": "Air pollutant dispersion modeling",
+          "definition": "Given emission sources, meteorology and terrain, compute downwind concentrations and deposition of pollutants or accidental releases.",
+          "inputs": "source parameters, meteorological data, terrain and receptors",
+          "outputs": "concentration and deposition fields, design values, plume footprints",
+          "crosswalk": [
+            {
+              "scheme": "EPA Support Center for Regulatory Atmospheric Modeling",
+              "code": "",
+              "label": "AERMOD and screening models",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Lakes Environmental ISC-AERMOD View",
+            "Air dispersion modeling software",
+            "ADMS pollution modeling software",
+            "Gas dispersion model software",
+            "Lakes Environmental SLAB View",
+            "Plume modeling software",
+            "Air quality modeling software",
+            "CAP88-PC",
+            "Hotspot",
+            "A Large Outdoor Fire plume Trajectory model Flat Terrain ALOFT-FT",
+            "Lakes Environmental Software WRPLOT View"
+          ],
+          "state_of_art": [
+            "AERMOD",
+            "CALPUFF",
+            "CERC ADMS",
+            "HYSPLIT"
+          ],
+          "open_tools": [
+            "AERMOD",
+            "CMAQ"
+          ],
+          "benchmarkable": "yes: field tracer studies used in EPA model evaluation",
+          "notes": ""
+        },
+        {
+          "id": "earth.atmosphere.wind_solar_resource",
+          "name": "Wind and solar resource assessment",
+          "definition": "Given measured wind or irradiance data and terrain, estimate the long-term resource across a site and expected energy yield.",
+          "inputs": "met mast, lidar or irradiance measurements, reference data, terrain and roughness",
+          "outputs": "wind or solar resource maps, long-term corrected statistics, energy yield estimates",
+          "crosswalk": [],
+          "onet_products": [
+            "Risoe National Laboratory Wind Atlas Analysis and Application Program WAsP",
+            "EMD International WindPRO",
+            "WindSim",
+            "ReSoft WindFarm",
+            "Solar and Wind Energy Resource Assessment SWERA",
+            "Wind flow modeling software"
+          ],
+          "state_of_art": [
+            "WAsP",
+            "windPRO",
+            "Meteodyn WT",
+            "Solargis"
+          ],
+          "open_tools": [
+            "PyWake",
+            "pvlib"
+          ],
+          "benchmarkable": "yes: flow benchmarks such as Askervein and Bolund hills and operating-farm yields",
+          "notes": "Turbine layout and plant electrical design sit with design and simulate."
+        }
+      ]
+    },
+    {
+      "id": "earth.environmental_site",
+      "name": "Environmental sampling and site assessment",
+      "definition": "Given a potentially contaminated site, plan sampling, manage monitoring results, and assess risk and remedies.",
+      "crosswalk": [
+        {
+          "scheme": "EPA Data Quality Objectives process",
+          "code": "QA/G-4",
+          "label": "Guidance on Systematic Planning Using the Data Quality Objectives Process",
+          "basis": "fetched",
+          "url": "https://www.epa.gov/quality/quality-program-directives"
+        },
+        {
+          "scheme": "EPA Risk Assessment Guidance for Superfund",
+          "code": "",
+          "label": "RAGS",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ASTM standards",
+          "code": "E1527",
+          "label": "Phase I Environmental Site Assessment",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "operate.environmental_compliance",
+        "earth.groundwater",
+        "science.lab_informatics"
+      ],
+      "notes": "Was seed 'Environmental sampling and fate modeling'. Fate and transport models moved to earth.groundwater and earth.atmosphere, where the physics lives; this node keeps the site-investigation workflow around them.",
+      "tasks": [
+        {
+          "id": "earth.environmental_site.sampling_design",
+          "name": "Environmental sampling design",
+          "definition": "Given decision objectives, site layout and prior data, compute how many samples to take and where, with the probability of detecting a hot spot.",
+          "inputs": "data quality objectives, site boundaries, prior concentrations, error tolerances",
+          "outputs": "sample counts and locations, detection probabilities",
+          "crosswalk": [
+            {
+              "scheme": "EPA Data Quality Objectives process",
+              "code": "QA/G-4",
+              "label": "Data Quality Objectives",
+              "basis": "fetched",
+              "url": "https://www.epa.gov/quality/quality-program-directives"
+            }
+          ],
+          "onet_products": [
+            "DQO ELIPGRID-PC",
+            "DQO-PRO",
+            "Spatial Analysis and Decision Assistance SADA",
+            "Fully Integrated Environmental Location Decision Support FIELDS"
+          ],
+          "state_of_art": [
+            "Visual Sample Plan",
+            "SADA"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: detection probabilities and sample sizes are analytically checkable",
+          "notes": ""
+        },
+        {
+          "id": "earth.environmental_site.monitoring_data",
+          "name": "Environmental monitoring data management",
+          "definition": "Given field measurements and laboratory results, validate them into a site database and report exceedances against standards.",
+          "inputs": "electronic lab deliverables, field logs, logger feeds, regulatory limits",
+          "outputs": "validated database, exceedance tables, maps and charts",
+          "crosswalk": [],
+          "onet_products": [
+            "EarthSoft EQuIS Geology",
+            "Scientific Software Group Enviro-Base Pro",
+            "EnviroData Solutions",
+            "Groundwater Software Visual Site Manager",
+            "Ecotech WinCollect",
+            "Field Operations and Records Management System (FORMS) II Lite",
+            "Scientific Software Group HydroGeo Analyst",
+            "Water resources databases",
+            "Link Microtek"
+          ],
+          "state_of_art": [
+            "EarthSoft EQuIS",
+            "Locus EIM",
+            "Esdat"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: data management without a reference answer",
+          "notes": "General laboratory information systems belong to science."
+        },
+        {
+          "id": "earth.environmental_site.monitoring_statistics",
+          "name": "Monitoring statistics and trends",
+          "definition": "Given monitoring results over time and space, compute background levels, upper confidence limits, trends and plume stability.",
+          "inputs": "concentration series by well or station, nondetects, background data",
+          "outputs": "statistical limits, trend tests, plume stability metrics",
+          "crosswalk": [],
+          "onet_products": [
+            "ChemStat",
+            "Monitoring and Remediation Optimization System MAROS",
+            "Scientific Software Group BioTrends"
+          ],
+          "state_of_art": [
+            "EPA ProUCL",
+            "Sanitas",
+            "MAROS"
+          ],
+          "open_tools": [
+            "GWSDAT"
+          ],
+          "benchmarkable": "yes: statistical outputs are reproducible against reference datasets",
+          "notes": ""
+        },
+        {
+          "id": "earth.environmental_site.risk_assessment",
+          "name": "Human health and ecological risk assessment",
+          "definition": "Given concentrations, exposure pathways and toxicity values, compute risks and hazard indices and derive cleanup levels.",
+          "inputs": "media concentrations, receptor and exposure assumptions, toxicity data",
+          "outputs": "risk and hazard estimates, risk-based cleanup levels, site rankings",
+          "crosswalk": [
+            {
+              "scheme": "EPA Risk Assessment Guidance for Superfund",
+              "code": "",
+              "label": "RAGS",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Waterloo Hydrogeologic RBC Tier 2 Analyzer",
+            "Scientific Software Group RISC WorkBench",
+            "Lakes Environmental EcoRisk View",
+            "Ecological risk assessment software",
+            "HRS Quickscore",
+            "Rapid Assessment Tools R.A.T.",
+            "Environmental Knowledge and Assessment Tool EKAT"
+          ],
+          "state_of_art": [
+            "EPA Regional Screening Levels calculator",
+            "RISC"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: deterministic calculations are checkable against agency calculators; assumptions are site-specific",
+          "notes": ""
+        },
+        {
+          "id": "earth.environmental_site.remediation_design",
+          "name": "Remediation design and optimization",
+          "definition": "Given plume data and remedial options, compare alternatives, estimate mass flux and optimize remediation and monitoring networks.",
+          "inputs": "plume extents, mass estimates, remedy options and costs, monitoring network",
+          "outputs": "ranked alternatives, mass-flux estimates, optimized well networks",
+          "crosswalk": [],
+          "onet_products": [
+            "Monitoring and Remediation Optimization System MAROS",
+            "Mass Flux Toolkit",
+            "Site remediation management software",
+            "Sustainable Management Approaches and Revitalization Tools SMARTe"
+          ],
+          "state_of_art": [
+            "MAROS",
+            "SiteWise"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: network optimization objectives are scoreable; remedy selection is judgment",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "earth.agriculture",
+      "name": "Crop, soil and livestock management",
+      "definition": "Given fields, soils, weather, crops and animals, record operations, analyze spatial field data, prescribe inputs, simulate crop growth and formulate livestock feeding and breeding.",
+      "crosswalk": [
+        {
+          "scheme": "AgGateway ADAPT",
+          "code": "",
+          "label": "Agricultural Data Application Programming Toolkit (field operations data model)",
+          "basis": "fetched",
+          "url": "https://adaptframework.org/"
+        },
+        {
+          "scheme": "ISO 11783 (ISOBUS)",
+          "code": "ISO 11783-10",
+          "label": "Task controller and management information system data interchange",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ICAR guidelines",
+          "code": "",
+          "label": "International Committee for Animal Recording: animal identification, recording and genetic evaluation",
+          "basis": "fetched",
+          "url": "https://www.icar.org/"
+        },
+        {
+          "scheme": "USDA NRCS National Cooperative Soil Survey",
+          "code": "",
+          "label": "SSURGO / NASIS soil data",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software",
+        "Analytical or scientific software",
+        "Map creation software"
+      ],
+      "see_also": [
+        "enterprise.accounting",
+        "produce.plc_programming"
+      ],
+      "notes": "Was seed 'Precision agriculture and farm management; livestock and herd management'. Kept as one capability with crop and livestock tasks, so the domain stays at 14 capabilities. Farm accounting and payroll go to enterprise; tractor guidance and implement control are machine control (produce).",
+      "tasks": [
+        {
+          "id": "earth.agriculture.field_records",
+          "name": "Field operations records",
+          "definition": "Given fields, crops and applied inputs, record planting, spraying, fertilizing and harvest operations and produce field histories and compliance reports.",
+          "inputs": "field boundaries, crop plans, operation logs, product labels",
+          "outputs": "field histories, input-use and compliance reports",
+          "crosswalk": [
+            {
+              "scheme": "AgGateway ADAPT",
+              "code": "",
+              "label": "Field operations data",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Farm Works Software Trac",
+            "Trimble Farm Works",
+            "John Deere Apex Farm Management",
+            "Ag Connections Land.db",
+            "BCL Landview Systems WinCrop",
+            "Farm Files Crops",
+            "Pear Technology Fieldman Farmer",
+            "ProducePak Mobile Farm Management",
+            "AgTerra Technologies AgTrac",
+            "TapLogic FarmLogic",
+            "Stenco Technologies Farm Trends",
+            "Martens Farms Farm Trac"
+          ],
+          "state_of_art": [
+            "John Deere Operations Center",
+            "Climate FieldView",
+            "Trimble Ag Software"
+          ],
+          "open_tools": [
+            "farmOS",
+            "LiteFarm"
+          ],
+          "benchmarkable": "no: record keeping without a reference answer",
+          "notes": ""
+        },
+        {
+          "id": "earth.agriculture.precision_zones",
+          "name": "Yield mapping and variable-rate prescriptions",
+          "definition": "Given yield-monitor, soil-sample and imagery data for a field, clean and map it, delineate management zones and write variable-rate application maps.",
+          "inputs": "yield monitor logs, soil test points, imagery, agronomic rules",
+          "outputs": "cleaned yield maps, management zones, prescription files for machine controllers",
+          "crosswalk": [
+            {
+              "scheme": "ISO 11783 (ISOBUS)",
+              "code": "ISO 11783-10",
+              "label": "Task data (prescriptions and as-applied)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Ag Leader Technology SMS Advanced",
+            "SST Development Group SSToolbox",
+            "SST Development Group Stratus",
+            "MapShots EASi Suite",
+            "Farm Works Site Pro",
+            "Novariant AutoFarm AF Viewer",
+            "AGCO GTA Software Suite",
+            "GeoAgro GIS",
+            "Trimble AgGPS EZ-Map",
+            "Delta Data Systems AGIS"
+          ],
+          "state_of_art": [
+            "Ag Leader SMS",
+            "Climate FieldView",
+            "John Deere Operations Center"
+          ],
+          "open_tools": [
+            "QGIS"
+          ],
+          "benchmarkable": "partly: yield cleaning can be scored on data with planted errors; prescription value needs field trials",
+          "notes": ""
+        },
+        {
+          "id": "earth.agriculture.crop_modeling",
+          "name": "Crop growth and irrigation simulation",
+          "definition": "Given weather, soils, cultivar and management, simulate crop development, yield, water and nitrogen balance and irrigation needs.",
+          "inputs": "daily weather, soil profile, cultivar parameters, management schedule",
+          "outputs": "growth stages, biomass and yield, soil water and nitrogen, irrigation schedules",
+          "crosswalk": [],
+          "onet_products": [
+            "CropSyst Suite",
+            "CroPMan",
+            "Agronomic modeling software",
+            "Erosion Productivity Impact Calculator EPIC",
+            "WinEPIC",
+            "SPAW",
+            "Sunrise Software CropSave"
+          ],
+          "state_of_art": [
+            "DSSAT",
+            "APSIM",
+            "AquaCrop"
+          ],
+          "open_tools": [
+            "DSSAT",
+            "APSIM",
+            "PCSE/WOFOST",
+            "AquaCrop-OSPy"
+          ],
+          "benchmarkable": "yes: AgMIP intercomparisons score simulated against observed yields",
+          "notes": ""
+        },
+        {
+          "id": "earth.agriculture.soil_survey",
+          "name": "Soil survey and soil interpretation",
+          "definition": "Given pedon descriptions, lab data and soil maps, describe soils, map their properties and derive suitability and limitation ratings.",
+          "inputs": "pedon descriptions, laboratory analyses, map units, interpretation criteria",
+          "outputs": "soil property maps, map-unit descriptions, interpretation ratings",
+          "crosswalk": [
+            {
+              "scheme": "USDA NRCS National Cooperative Soil Survey",
+              "code": "",
+              "label": "SSURGO, STATSGO, NASIS",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "State Soil Geographic STATSGO Database",
+            "Soil Survey Geographic SSURGO",
+            "National Resources Conservation Service Web Soil Survey WSS",
+            "National Soil Information System NASIS",
+            "National Resources Conservation Service NRCS PEDON Description Program PDP",
+            "PedonCE",
+            "USDA NRCS Soil Data Viewer",
+            "National Resources Conservation Service NRCS Soils Explorer",
+            "Soil information databases",
+            "Soil mapping software"
+          ],
+          "state_of_art": [
+            "NRCS Web Soil Survey",
+            "SoilGrids"
+          ],
+          "open_tools": [
+            "aqp"
+          ],
+          "benchmarkable": "yes: digital soil mapping scored against held-out profiles",
+          "notes": ""
+        },
+        {
+          "id": "earth.agriculture.herd_records",
+          "name": "Livestock herd records",
+          "definition": "Given animal identities and events (breeding, birth, health, milk, weights), maintain herd records and report performance and action lists.",
+          "inputs": "animal IDs, pedigrees, event records, milk and weight tests",
+          "outputs": "herd registers, performance reports, action lists",
+          "crosswalk": [
+            {
+              "scheme": "ICAR guidelines",
+              "code": "",
+              "label": "Animal identification and recording",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Valley Agricultural Software DairyCOMP 305",
+            "Cattlesoft CattleMax",
+            "Lion Edge Technologies Ranch Manager",
+            "KELTEC Systems HerdMaster",
+            "PigCHAMP Care 3000",
+            "Lancaster DHIA PCDART",
+            "Farm Files Livestock",
+            "Breedtrak",
+            "KinTraks",
+            "Reudink Software ZooEasy",
+            "Winners Programs BirdStud",
+            "Hatchery database systems"
+          ],
+          "state_of_art": [
+            "VAS DairyComp",
+            "DeLaval DelPro",
+            "CattleMax"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record keeping without a reference answer",
+          "notes": "Veterinary clinical records belong to health."
+        },
+        {
+          "id": "earth.agriculture.ration_formulation",
+          "name": "Feed ration formulation",
+          "definition": "Given animal requirements, available feeds with composition and price, formulate a least-cost ration that meets nutrient constraints.",
+          "inputs": "animal class and production level, feed analyses, prices, constraints",
+          "outputs": "ration composition, predicted nutrient supply and performance, cost",
+          "crosswalk": [],
+          "onet_products": [
+            "Master Ration Calculator",
+            "Nutrition Balance Analyzer NUTBAL",
+            "FEEDLOT CALC",
+            "Cowculator",
+            "Farm Business Software Systems Smart Feeder",
+            "Valley Agricultural Software Feed Watch"
+          ],
+          "state_of_art": [
+            "AMTS.Cattle",
+            "NDS Professional",
+            "Format Solutions"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: nutrient-requirement models give reference outputs and least-cost solutions are checkable",
+          "notes": ""
+        },
+        {
+          "id": "earth.agriculture.genetic_evaluation",
+          "name": "Genetic evaluation and mating",
+          "definition": "Given pedigrees, performance records and genotypes, estimate breeding values and plan matings.",
+          "inputs": "pedigrees, phenotypes, genotypes, model specification",
+          "outputs": "estimated breeding values, accuracies, mating recommendations",
+          "crosswalk": [
+            {
+              "scheme": "ICAR guidelines",
+              "code": "",
+              "label": "Genetic evaluation (Interbull)",
+              "basis": "fetched",
+              "url": "https://www.icar.org/"
+            }
+          ],
+          "onet_products": [
+            "Best Linear Unbiased Prediction BLUP",
+            "VSNi ASReml",
+            "COWGAME",
+            "Winners Programs Uni-Stud"
+          ],
+          "state_of_art": [
+            "BLUPF90 family",
+            "ASReml",
+            "MiXBLUP"
+          ],
+          "open_tools": [
+            "sommer",
+            "AlphaSimR"
+          ],
+          "benchmarkable": "yes: Interbull test runs and simulated populations with known true breeding values",
+          "notes": "Genomic sequence analysis belongs to science's bioinformatics."
+        }
+      ]
+    },
+    {
+      "id": "earth.forestry",
+      "name": "Forests, rangelands, wildlife and fire",
+      "definition": "Given measurements of vegetation, fuels, weather and animal populations, inventory and project forests and rangelands, plan harvests, predict wildland fire, and estimate wildlife and fish populations.",
+      "crosswalk": [
+        {
+          "scheme": "USDA Forest Service Forest Inventory and Analysis",
+          "code": "",
+          "label": "FIA plot design and estimation",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "National Wildfire Coordinating Group fire behavior system",
+          "code": "",
+          "label": "Rothermel surface fire spread; fire behavior prediction",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "BLM Assessment, Inventory and Monitoring",
+          "code": "",
+          "label": "Rangeland core indicators",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "govern.emergency_response",
+        "earth.remote_sensing",
+        "move.maritime"
+      ],
+      "notes": "Was seed 'Forestry, wildfire behavior and wildlife management'; rangeland monitoring and fisheries are added. Fire suppression dispatch is govern; fire protection engineering in buildings is simulate.",
+      "tasks": [
+        {
+          "id": "earth.forestry.forest_inventory",
+          "name": "Forest inventory and timber cruising",
+          "definition": "Given plot and tree measurements and a sampling design, compute stand tables, volumes, values and sampling error.",
+          "inputs": "tree species, diameters, heights, plot design, volume equations",
+          "outputs": "stand and stock tables, volume and value estimates, sampling statistics",
+          "crosswalk": [
+            {
+              "scheme": "USDA Forest Service Forest Inventory and Analysis",
+              "code": "",
+              "label": "FIA estimation",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Haglof Sweden AB TCruise Forest Inventory",
+            "Forest Metrix",
+            "Fountains Forestry TwoDog",
+            "Atterbury Consultants SuperAce",
+            "Assisi Compiler",
+            "Assisi Forest",
+            "Forest EcoSurvey",
+            "JRP Consulting Plant Wizard",
+            "JRP Consulting Survey Wizard",
+            "Allegro Landmark"
+          ],
+          "state_of_art": [
+            "Two Dog",
+            "SuperACE",
+            "FIA EVALIDator"
+          ],
+          "open_tools": [
+            "rFIA"
+          ],
+          "benchmarkable": "yes: volumes and estimates are reproducible from published equations and FIA reference estimates",
+          "notes": ""
+        },
+        {
+          "id": "earth.forestry.growth_yield",
+          "name": "Forest growth and yield projection",
+          "definition": "Given tree lists or stand data, site and treatments, project stand development and landscape change over time.",
+          "inputs": "tree lists, site index, management prescriptions, disturbance regimes",
+          "outputs": "projected stand attributes, yields, landscape states",
+          "crosswalk": [],
+          "onet_products": [
+            "USDA Forest Vegetation Simulator FVS",
+            "Forest vegetation simulators",
+            "Forest yield software",
+            "Landscape Management System LMS",
+            "ESSA Technologies Path Landscape Model",
+            "ESSA TechnologiesTool for Exploratory Landscape Scenario Analyses TELSA"
+          ],
+          "state_of_art": [
+            "Forest Vegetation Simulator",
+            "LANDIS-II",
+            "3-PG"
+          ],
+          "open_tools": [
+            "Forest Vegetation Simulator",
+            "LANDIS-II"
+          ],
+          "benchmarkable": "partly: remeasured permanent plots give observed growth",
+          "notes": ""
+        },
+        {
+          "id": "earth.forestry.harvest_planning",
+          "name": "Harvest scheduling and forest planning",
+          "definition": "Given stands, growth projections and constraints, schedule treatments and harvests over a planning horizon to meet value and sustainability goals.",
+          "inputs": "stand inventory and yields, adjacency and flow constraints, prices and costs",
+          "outputs": "harvest schedules, spatial patterns, projected flows and values",
+          "crosswalk": [],
+          "onet_products": [
+            "HARVEST",
+            "PhoenixPRO Forest Activity Tracking",
+            "BCS Woodlands Systems The Logger Tracker"
+          ],
+          "state_of_art": [
+            "Remsoft Woodstock",
+            "Spatial Woodstock"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: optimization objectives are scoreable on shared forest planning instances, though few are public",
+          "notes": "General optimization solvers belong to science."
+        },
+        {
+          "id": "earth.forestry.fire_behavior",
+          "name": "Wildland fire behavior prediction",
+          "definition": "Given fuels, weather and terrain, predict fire spread rate, intensity, perimeter growth and burn probability.",
+          "inputs": "fuel models, fuel moisture, wind and weather, terrain, ignitions",
+          "outputs": "spread rates, flame lengths, perimeters over time, burn probability maps",
+          "crosswalk": [
+            {
+              "scheme": "National Wildfire Coordinating Group fire behavior system",
+              "code": "",
+              "label": "Rothermel surface fire spread",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "BehavePlus",
+            "FARSITE",
+            "FlamMap",
+            "Fire Spread Probability FSPro",
+            "Fire behavior modeling software",
+            "Wildland Fire Assessment System WFAS"
+          ],
+          "state_of_art": [
+            "FlamMap",
+            "WFDSS FSPro",
+            "Prometheus",
+            "Technosylva Wildfire Analyst"
+          ],
+          "open_tools": [
+            "ELMFIRE",
+            "WRF-SFIRE",
+            "Cell2Fire"
+          ],
+          "benchmarkable": "yes: observed fire perimeters provide ground truth",
+          "notes": ""
+        },
+        {
+          "id": "earth.forestry.fuels_fire_effects",
+          "name": "Fuels and fire effects",
+          "definition": "Given stand and fuel measurements, characterize fuelbeds and estimate fuel consumption, emissions and fire effects, and track monitoring plots.",
+          "inputs": "fuel inventory, vegetation plots, burn conditions",
+          "outputs": "fuelbed characteristics, consumption and emissions, effects summaries",
+          "crosswalk": [],
+          "onet_products": [
+            "Fuel Characteristic Classification System FCCS",
+            "FEAT/Firemon integrated FFI"
+          ],
+          "state_of_art": [
+            "FCCS",
+            "Consume",
+            "FOFEM"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: consumption can be scored against measured burns",
+          "notes": ""
+        },
+        {
+          "id": "earth.forestry.rangeland_monitoring",
+          "name": "Rangeland and vegetation monitoring",
+          "definition": "Given transect, plot and photo data, compute vegetation cover and composition, ecological site condition and grazing capacity.",
+          "inputs": "line-point intercept, gap and plot data, photos, ecological site descriptions",
+          "outputs": "cover and composition indicators, condition assessments, stocking rates",
+          "crosswalk": [
+            {
+              "scheme": "BLM Assessment, Inventory and Monitoring",
+              "code": "",
+              "label": "Core indicators",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "USDA Database for Inventory, Monitoring and Assessment (DIMA)",
+            "USDA SamplePoint",
+            "University of Arizona RangeView",
+            "National Resources Conservation Service Grazing Spatial Analysis Tool",
+            "National Resources Conservation Service Ecological Site Information System ESIS",
+            "USDA NRCS VegSpec",
+            "Viper Tools",
+            "The Nature Conservancy Weed Information Management System WIMS",
+            "RSAC Riparian Mapping Tool",
+            "Aquatic Plant Information Retrieval System APIRS",
+            "USDA Comet"
+          ],
+          "state_of_art": [
+            "DIMA / LandscapeDataCommons",
+            "Rangeland Analysis Platform"
+          ],
+          "open_tools": [
+            "terradactyl"
+          ],
+          "benchmarkable": "partly: cover estimates can be scored against plot data",
+          "notes": ""
+        },
+        {
+          "id": "earth.forestry.wildlife_populations",
+          "name": "Wildlife population and habitat analysis",
+          "definition": "Given counts, captures, telemetry and habitat layers, estimate abundance, survival, home ranges and habitat suitability.",
+          "inputs": "survey counts, capture histories, telemetry fixes, habitat covariates",
+          "outputs": "abundance and survival estimates, home ranges, habitat suitability maps",
+          "crosswalk": [],
+          "onet_products": [
+            "DeerDays",
+            "HATPRO"
+          ],
+          "state_of_art": [
+            "Program MARK",
+            "Distance",
+            "Maxent"
+          ],
+          "open_tools": [
+            "unmarked",
+            "Distance (R package)",
+            "adehabitatHR",
+            "Maxent"
+          ],
+          "benchmarkable": "partly: simulated populations with known abundance",
+          "notes": ""
+        },
+        {
+          "id": "earth.forestry.fish_stocks",
+          "name": "Fish stock assessment and catch records",
+          "definition": "Given catch logbooks, survey indices and biology, record catch and stocking and estimate stock size and sustainable harvest.",
+          "inputs": "catch and effort logs, survey indices, age and length data, stocking records",
+          "outputs": "catch records, biomass and fishing-mortality estimates, reference points",
+          "crosswalk": [],
+          "onet_products": [
+            "Catchlog Trading Catchlog",
+            "OLRAC Electronic Logbook Software Solution",
+            "Fish stocking databases"
+          ],
+          "state_of_art": [
+            "Stock Synthesis",
+            "NOAA Fisheries Integrated Toolbox"
+          ],
+          "open_tools": [
+            "Stock Synthesis",
+            "FLR"
+          ],
+          "benchmarkable": "partly: simulation-tested assessments with known true stocks",
+          "notes": "Fishing-vessel navigation and fish-finder plotters go to move."
+        }
+      ]
+    }
+  ],
+  "existing_function_map": [
+    {
+      "function": "gis",
+      "nodes": [
+        "earth.gis",
+        "earth.cartography",
+        "earth.surveying",
+        "earth.remote_sensing",
+        "earth.photogrammetry",
+        "earth.subsurface",
+        "earth.reservoir",
+        "earth.mining",
+        "earth.agriculture"
+      ],
+      "note": "The old catch-all 'Geospatial' function (surveying, mapping, remote sensing, subsurface models, precision agriculture) is split into these nine capabilities."
+    },
+    {
+      "function": "hydraulics",
+      "nodes": [
+        "earth.surface_water",
+        "earth.groundwater"
+      ],
+      "note": "Only the natural-water part: rivers, watersheds, floods, urban runoff generation and groundwater. Pipe networks (water, sewer, storm drains, gas, pipelines: EPANET, WaterCAD, InfoWater, KYPipe, AFT) go to simulate's engineered network hydraulics."
+    }
+  ],
+  "handoffs": [
+    {
+      "what": "ETAP (filed under Geographic information system)",
+      "to_domain": "simulate",
+      "why": "power system analysis"
+    },
+    {
+      "what": "Pipe-network hydraulics: KYPipe, Bentley WaterCAD, Bentley StormCAD, Bentley Haestad Methods CivilStorm pipe side, Wallingford InfoWater, InfoWorks WS/CS, InfoSewer, MWH Soft H2ONET MSX, DHI MIKE URBAN, Hydraulic modeling software, Water surface pressure gradient WSPG software",
+      "to_domain": "simulate",
+      "why": "engineered water, sewer and storm-drain networks"
+    },
+    {
+      "what": "Slope stability and geotechnical seepage: Mitre Software GSLOPE, Delft GeoSystems MStab, GEO-SLOPE GeoStudio, GEO-SLOPE SEEP/W, Interstudio Geo-Tec B, Clover Technology GALENA, Datasurge GEOPRO, Geomechanical design analysis GDA software, Geomechanical stress analysis software, NIOSH LaModel, Roof support design software, Scientific Software Group Filter Drain FD",
+      "to_domain": "simulate",
+      "why": "geotechnical analysis for design"
+    },
+    {
+      "what": "Fire protection engineering: CFAST, FDS, ASET, egress and smoke-control tools, FIRECALC, zone models",
+      "to_domain": "simulate",
+      "why": "fire and smoke physics in buildings"
+    },
+    {
+      "what": "Environmental noise mapping: SoundPLAN, Wolfel IMMI; ocean acoustics: MIT OASES, SACLANTCEN",
+      "to_domain": "simulate",
+      "why": "acoustics"
+    },
+    {
+      "what": "Ground-source heat pump loop design: WaterFurnace Ground Loop Design PREMIER, ClimateMaster GeoDesigner",
+      "to_domain": "simulate",
+      "why": "building energy and heat transfer"
+    },
+    {
+      "what": "Street routing and navigation: ESRI ArcLogistics, AOL MapQuest, Microsoft MapPoint, Delivery Routing System DRS, Route planning software, Routeware software, GEOCOMtms A.Maze Planning, MapInfo StreetPro, Telogis GeoBase",
+      "to_domain": "move",
+      "why": "vehicle routing and road navigation"
+    },
+    {
+      "what": "Mobile location based services category: dispatch, taxi, TMS and fleet products; mine fleet dispatch (Modular Mining Systems DISPATCH, Leica Geosystems FMS, Hitachi ZXLink, Fleet monitoring system software)",
+      "to_domain": "move",
+      "why": "dispatch and fleet tracking"
+    },
+    {
+      "what": "Marine plotters and navigation for fishing: MaxSea TIMEZERO, Signet Nobeltec Catch, P-Sea WindPlot, SEA.AI Offshore ONE",
+      "to_domain": "move",
+      "why": "vessel navigation"
+    },
+    {
+      "what": "Drone flight control and airspace operations beyond mapping-mission design",
+      "to_domain": "move",
+      "why": "aviation operations"
+    },
+    {
+      "what": "Tractor guidance, land-leveling control and implement control: Trimble AgGPS MultiPlane, Martens Farms Farm Site Mate",
+      "to_domain": "produce",
+      "why": "machine control"
+    },
+    {
+      "what": "Crime mapping software, Electronic tracking device software, Situation resource tracking software",
+      "to_domain": "govern",
+      "why": "law enforcement and corrections"
+    },
+    {
+      "what": "Property assessment and appraisal tools in GIS and map categories: Apex IV Assessor, Apex IV Fee Appraiser, Apex MobileSketch, Emerald Data Deed-Chek, Govern Software GovMap, Business Management Systems Municipal Geographic Management System MGMS, First American Data Tree Parcel IQ, Landtitle USA",
+      "to_domain": "commerce",
+      "why": "real estate appraisal and title (or govern for public assessment)"
+    },
+    {
+      "what": "Disease Mapping and Analysis Program DMAP, World Health Organization HealthMapper",
+      "to_domain": "health",
+      "why": "public health surveillance"
+    },
+    {
+      "what": "Animal shelter, kennel and grooming systems in the database category",
+      "to_domain": "commerce",
+      "why": "personal-service and shelter management"
+    },
+    {
+      "what": "Farm accounting and farm ERP (The Farmer's Office, FarmBooks, CenterPoint Accounting for Agriculture, AgriSoft/ERP, Ag Payroll)",
+      "to_domain": "enterprise",
+      "why": "accounting, ERP and payroll"
+    },
+    {
+      "what": "General analytical tools used by geoscientists: Statistical software, Mathematica, IDL, Origin, SigmaPlot, Tecplot, IGOR Pro, KaleidaGraph, DPlot, PAST, Parameter Estimation PEST",
+      "to_domain": "science",
+      "why": "general statistics, numerical computing, plotting and model calibration"
+    },
+    {
+      "what": "Reliability, FMEA and fault-tree tools; Pason WellView Field Solution and Landmark Graphics TOW/cs drilling reporting; Overland Conveyor Belt Analyst",
+      "to_domain": "operate",
+      "why": "reliability engineering and field operations reporting"
+    },
+    {
+      "what": "Radiation dose calculators: RSA RadCalc, Rad Pro Calculator",
+      "to_domain": "operate",
+      "why": "health physics and safety"
+    },
+    {
+      "what": "Archeological Sites Management Information System ASMIS",
+      "to_domain": "govern",
+      "why": "public cultural-resource records"
+    }
+  ],
+  "unplaced_products": [
+    "PaleoMag",
+    "PaleoTax",
+    "StrainSim",
+    "Gresens 92",
+    "Solvcalv",
+    "Shape software",
+    "Enigma software",
+    "PolyMap",
+    "RockWare GeoTrig",
+    "RockWare Plan",
+    "RockWare RockPack III",
+    "RockWare MicroMODEL",
+    "RockWare Erupt",
+    "RockWare Visual STUNT",
+    "EasySolve Software SizePerm",
+    "MLPU",
+    "PRINCE",
+    "Formlink HydroGEN",
+    "Compass software",
+    "Pattern searching software",
+    "Strat-Tech Deer Hunting Expert",
+    "Winchester Ammunition Ballistics Calculator",
+    "IWR-PLAN",
+    "Scientific Software Group MohrView",
+    "Scientific Software Group QuickSoil",
+    "Scientific Software Group SEQUENCE",
+    "Scientific Software Group SOLUTRANS",
+    "Scientific Software Group POLLUTE",
+    "Scientific Software Group MOVER",
+    "Scientific Software Group MS-VMS",
+    "Scientific Software Group MODRET",
+    "Scientific Software Group CHASM",
+    "Scientific Software Group AQUASEA",
+    "Scientific Software Group AQUA3D",
+    "Scientific Software Group AquaDyn",
+    "Scientific Software Group EnviroScape",
+    "Scientific Software Group RMT",
+    "Scientific Software Group MIGRATE",
+    "Satellite database software",
+    "Satellite image databases",
+    "River Lake Altimetry Product",
+    "National Land Cover Database NLCD",
+    "Electric Rain Swift 3D"
+  ],
+  "open_questions": [
+    "Capability count is 14, at the top of the range. If the editor wants fewer, the cleanest merges are earth.reservoir into earth.subsurface and earth.environmental_site into earth.groundwater; if more are allowed, livestock (herd records, rations, genetics) should become its own capability apart from crops and soils.",
+    "Urban stormwater sits on the boundary: SWMM-type runoff generation is placed here, storm-drain pipe hydraulics in simulate. The editor should confirm simulate uses the same cut.",
+    "Geotechnical seepage (SEEP/W) and slope stability were handed to simulate per the boundary table, but hydrologists and conservation scientists are the listed users; confirm simulate takes them.",
+    "Many products are public datasets rather than software (SSURGO, STATSGO, NLCD, NARCCAP tables, satellite image databases). I listed some as examples of the task their data serves and left pure data products unplaced; the editor should decide a policy for data products.",
+    "A small family of geology calculators (paleomagnetism, strain, petrologic mass balance, stereonets: PaleoMag, StrainSim, Gresens 92, RockPack) has no node. A task 'structural geology and petrologic calculations' could be added under earth.subsurface if a home is wanted.",
+    "Several Scientific Software Group product names in the unplaced list could not be identified confidently from the name alone; a later pass with product descriptions could place them, most likely in earth.groundwater or earth.environmental_site."
+  ]
+}

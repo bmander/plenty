@@ -1,0 +1,4070 @@
+{
+  "domain": "design",
+  "summary": "Design is broken down by the kind of artifact whose definition is authored: mechanical geometry (solid and surface modeling, geometry exchange, product definition and tolerancing, product data management), the built environment (buildings, civil sites, plant and building services, electrical wiring), electronics (boards, circuit simulation, digital logic, digital IC implementation, custom IC design, IC signoff), quantity takeoff and estimating, and craft patterns. The mechanical split follows ISO 10303 application protocols (AP203/214/242) and the CIMdata MCAD and cPDm segments; the AEC split follows buildingSMART IFC domains, OmniClass and MasterFormat; the electronics split follows the ACM CCS 2012 Hardware subtree (EDA, functional verification, hardware test, printed circuit boards) and the ESD Alliance categories (CAE, IC physical design and verification, PCB and MCM). The IC and board leaves are drawn at the grain of the ISPD, ICCAD, TAU and IWLS contests and the VerilogEval-style LLM benchmarks, so that most have a public benchmark already.",
+  "capabilities": [
+    {
+      "id": "design.solid_modeling",
+      "name": "Mechanical solid and surface modeling",
+      "definition": "Given design intent as requirements, sketches or reference geometry, produce exact boundary-representation or implicit models of parts, tooling and assemblies.",
+      "crosswalk": [
+        {
+          "scheme": "CIMdata PLM market taxonomy",
+          "code": "",
+          "label": "Mechanical computer-aided design (MCAD)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 10303 (STEP)",
+          "code": "AP242",
+          "label": "Managed model-based 3D engineering",
+          "basis": "fetched",
+          "url": "https://www.steptools.com/stds/step/step_2.html"
+        },
+        {
+          "scheme": "ISO 10303 (STEP)",
+          "code": "AP203",
+          "label": "Configuration Controlled Design",
+          "basis": "fetched",
+          "url": "https://www.steptools.com/stds/step/step_2.html"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Physical sciences and engineering > Engineering > Computer-aided design",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Computing methodologies > Computer graphics > Shape modeling",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Computer aided design CAD software",
+        "Graphics or photo imaging software"
+      ],
+      "see_also": [
+        "simulate.design_exploration",
+        "produce.additive_prep",
+        "media.three_d_animation"
+      ],
+      "notes": "Was seed 'Solid and surface modeling'. Kept as one capability because sketch solving, features, kernel operations, assemblies and surfacing are layers of one modeling stack. Geometry exchange and repair split into its own capability because translation and healing are separately benchmarked (CAx-IF) and serve every CAD system. Topology optimization and generative design are left to simulate because they are driven by a physics solve. Organic and entertainment 3D modeling stays in media.",
+      "tasks": [
+        {
+          "id": "design.solid_modeling.sketch_constraints",
+          "name": "Constrained sketch solving",
+          "definition": "Given 2D sketch entities with geometric and dimensional constraints, compute a consistent solution and report remaining degrees of freedom or conflicts.",
+          "inputs": "points, lines, arcs, splines; coincidence, tangency, parallel, distance, angle and other constraints",
+          "outputs": "solved entity positions; degrees-of-freedom status; over- or under-constrained diagnosis",
+          "crosswalk": [],
+          "onet_products": [
+            "Dassault Systemes SolidWorks",
+            "PTC Creo Parametric",
+            "Autodesk Inventor",
+            "OnShape"
+          ],
+          "state_of_art": [
+            "Siemens D-Cubed 2D DCM",
+            "Dassault Systemes CGM constraint solver"
+          ],
+          "open_tools": [
+            "SolveSpace",
+            "FreeCAD Sketcher (PlaneGCS)"
+          ],
+          "benchmarkable": "yes: the SketchGraphs dataset gives millions of real constraint graphs whose solutions can be checked exactly",
+          "notes": "The commercial solvers are licensed components embedded in most mechanical CAD systems."
+        },
+        {
+          "id": "design.solid_modeling.parametric_part",
+          "name": "Feature-based parametric part modeling",
+          "definition": "Given design intent and dimensions, build a history of sketches and features (extrude, revolve, sweep, loft, hole, pattern, fillet) that evaluates to a valid solid.",
+          "inputs": "requirements, dimensions, reference geometry, material",
+          "outputs": "editable feature tree and the boundary-representation solid it evaluates to",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10303 (STEP)",
+              "code": "AP242",
+              "label": "Construction history and parametric features (AP242 edition 2)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Dassault Systemes SolidWorks",
+            "Dassault Systemes CATIA",
+            "PTC Creo Parametric",
+            "Siemens NX",
+            "Autodesk Inventor",
+            "Siemens Solid Edge",
+            "OnShape",
+            "Autodesk Fusion 360",
+            "IronCAD",
+            "Alibre Design",
+            "PTC Pro/ENGINEER Wildfire",
+            "Three-dimensional parametric design software"
+          ],
+          "state_of_art": [
+            "Dassault Systemes SolidWorks",
+            "Dassault Systemes CATIA",
+            "PTC Creo",
+            "Siemens NX",
+            "Onshape"
+          ],
+          "open_tools": [
+            "FreeCAD",
+            "CadQuery",
+            "build123d",
+            "OpenSCAD"
+          ],
+          "benchmarkable": "yes: target solids from the DeepCAD and Fusion 360 Gallery reconstruction datasets allow geometric comparison (volume overlap, surface distance) of a rebuilt part",
+          "notes": "Code-based modelers (CadQuery, build123d, OpenSCAD) make the feature history a program, which is what most open benchmarks score."
+        },
+        {
+          "id": "design.solid_modeling.model_from_specification",
+          "name": "Model generation from text, images or drawings",
+          "definition": "Given a natural-language description, image, sketch or 2D engineering drawing of a part, produce an editable parametric model that matches it.",
+          "inputs": "text description, photograph or render, hand sketch, or multi-view dimensioned drawing",
+          "outputs": "parametric part model or modeling program; deviation from the specified geometry",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Autodesk Fusion 360 (AI-assisted features)",
+            "Zoo Text-to-CAD"
+          ],
+          "open_tools": [
+            "Text2CAD",
+            "CadQuery"
+          ],
+          "benchmarkable": "yes: Text2CAD, DeepCAD and Fusion 360 Gallery provide paired inputs and ground-truth models; drawing-to-model can be scored by rebuilding the drawing views",
+          "notes": "Distinct from parametric part modeling by its input: the task is interpreting an informal or 2D specification, which is where the project's brep-bench sits. No O*NET product does this."
+        },
+        {
+          "id": "design.solid_modeling.brep_operations",
+          "name": "Boundary representation modeling operations",
+          "definition": "Given one or more boundary-representation solids and an operation, compute the resulting valid solid for Booleans, fillets and chamfers, shelling, offsets and drafts.",
+          "inputs": "B-rep solids; operation type and parameters; tolerances",
+          "outputs": "valid closed B-rep solid, or a located failure",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Computing methodologies > Computer graphics > Shape modeling > Parametric curve and surface models",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Three-dimensional modeling software",
+            "Hewlett-Packard HP SolidDesigner",
+            "Think3 ThinkDesign Engineering"
+          ],
+          "state_of_art": [
+            "Siemens Parasolid",
+            "Spatial ACIS",
+            "Dassault Systemes CGM"
+          ],
+          "open_tools": [
+            "Open CASCADE Technology",
+            "CGAL",
+            "Manifold"
+          ],
+          "benchmarkable": "partly: validity and success rate of operations on ABC dataset models are measurable, but no standard kernel robustness suite exists",
+          "notes": "This is the geometric kernel layer that every modeler above relies on. Manifold works on meshes, not exact B-rep."
+        },
+        {
+          "id": "design.solid_modeling.assembly_modeling",
+          "name": "Assembly modeling with mating constraints",
+          "definition": "Given part models and mating relations or joints, position the parts, solve the assembly constraints and report remaining motion and interferences.",
+          "inputs": "part models; mates, joints and reference skeletons; assembly structure",
+          "outputs": "positioned assembly; degrees of freedom; interference and clearance report; assembly structure",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10303 (STEP)",
+              "code": "AP242",
+              "label": "Assembly structure and kinematic constraints",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Dassault Systemes CATIA",
+            "Dassault Systemes SolidWorks",
+            "PTC Creo Parametric",
+            "Siemens NX",
+            "Autodesk Inventor",
+            "Siemens Solid Edge"
+          ],
+          "state_of_art": [
+            "Dassault Systemes CATIA",
+            "Siemens NX",
+            "PTC Creo",
+            "Dassault Systemes SolidWorks"
+          ],
+          "open_tools": [
+            "FreeCAD (Assembly workbench)"
+          ],
+          "benchmarkable": "yes: the Fusion 360 Gallery Assembly dataset gives ground-truth joints between parts; interference detection is deterministic",
+          "notes": "Mechanism motion over time belongs to simulate (multibody dynamics)."
+        },
+        {
+          "id": "design.solid_modeling.sheet_metal",
+          "name": "Sheet metal design and unfolding",
+          "definition": "Given material thickness, bend rules and flange geometry, model a formed sheet metal part and compute its flat pattern and bend data.",
+          "inputs": "thickness, bend radius, bend allowance or K-factor, flanges, reliefs, forming features",
+          "outputs": "folded model; flat pattern; bend table and sequence",
+          "crosswalk": [],
+          "onet_products": [
+            "Applied Production ProFold",
+            "FCC Software AutoPOL Series",
+            "Revcad Software Sheet Lightning",
+            "data M Software COPRA MetalBender",
+            "Dassault Systemes SolidWorks",
+            "Autodesk Inventor"
+          ],
+          "state_of_art": [
+            "Dassault Systemes SolidWorks",
+            "Siemens Solid Edge",
+            "Autodesk Inventor",
+            "data M COPRA"
+          ],
+          "open_tools": [
+            "FreeCAD (SheetMetal workbench)"
+          ],
+          "benchmarkable": "yes: flat-pattern dimensions follow from bend-allowance formulas and can be checked exactly",
+          "notes": "Nesting flat patterns on stock is production (produce)."
+        },
+        {
+          "id": "design.solid_modeling.freeform_surfacing",
+          "name": "Freeform and class-A surface modeling",
+          "definition": "Given styling sketches, character lines or scans and continuity targets, build a fair NURBS surface set that closes into a manufacturable body.",
+          "inputs": "sketches, curves, reference scans, continuity requirements (G1 to G3), hull or styling constraints",
+          "outputs": "trimmed NURBS surface set; curvature and continuity analysis; closed solid",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Computing methodologies > Computer graphics > Shape modeling > Parametric curve and surface models",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "ISO 10303 (STEP)",
+              "code": "AP216",
+              "label": "Ship Moulded Form",
+              "basis": "fetched",
+              "url": "https://www.steptools.com/stds/step/step_2.html"
+            }
+          ],
+          "onet_products": [
+            "McNeel Rhinoceros 3D",
+            "Autodesk Alias Automotive",
+            "Autodesk Alias Surface",
+            "Autodesk AliasStudio",
+            "Autodesk Alias Design",
+            "Alias Wavefront Design Studio",
+            "AeroHydro MultiSurf",
+            "Proteus Engineering FastShip",
+            "solidThinking",
+            "Ashlar-Vellum Cobalt",
+            "AutoDesSys form Z",
+            "Non uniform rational b-splines NURBS software"
+          ],
+          "state_of_art": [
+            "Autodesk Alias",
+            "ICEM Surf",
+            "McNeel Rhinoceros 3D",
+            "Dassault Systemes CATIA"
+          ],
+          "open_tools": [
+            "FreeCAD (Surface workbench)"
+          ],
+          "benchmarkable": "partly: continuity, deviation from reference and curvature fairness are measurable, but class-A aesthetic quality is judged by people",
+          "notes": "Includes ship hull fairing; hydrostatics and resistance belong to simulate."
+        },
+        {
+          "id": "design.solid_modeling.implicit_lattice",
+          "name": "Implicit and lattice modeling",
+          "definition": "Given a design envelope, field functions and lattice or infill specifications, produce implicit or voxel geometry with graded lattices and smooth blends for additive manufacture.",
+          "inputs": "design space, keep-out regions, lattice cell type, density or thickness fields",
+          "outputs": "implicit or voxel model; exported mesh; volume fraction and minimum-feature report",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Computing methodologies > Computer graphics > Shape modeling > Volumetric models",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "nTop",
+            "Materialise 3-matic"
+          ],
+          "open_tools": [
+            "libfive",
+            "PicoGK"
+          ],
+          "benchmarkable": "partly: volume fraction, minimum feature size and watertightness are measurable; fitness for purpose needs a physics solve",
+          "notes": "No O*NET product is specific to this; build preparation (slicing, supports) belongs to produce."
+        },
+        {
+          "id": "design.solid_modeling.tooling_design",
+          "name": "Mold and die tooling design",
+          "definition": "Given a part model and process parameters, design the mold or die: parting surfaces, core and cavity split, draft, strip layout and die set.",
+          "inputs": "part model; shrinkage; pull direction; press and stock parameters; standard component catalogs",
+          "outputs": "core and cavity or punch and die geometry; parting surfaces; progressive die strip layout; tooling bill of materials",
+          "crosswalk": [],
+          "onet_products": [
+            "Logopress",
+            "Striker Systems SS-Die Design",
+            "Striker Systems SS-Strip Design",
+            "Striker Systems SS-Draw Form",
+            "MAKER CAD/CAM Services DIEMAKER",
+            "VX Corporation VX Mold & Die",
+            "Vero International VISI-Mould",
+            "Cimatron CimatronE Master",
+            "Kubotek USA KeyCreator"
+          ],
+          "state_of_art": [
+            "Cimatron",
+            "Vero VISI",
+            "Siemens NX Mold Design",
+            "Logopress"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: draft, undercut and parting-line validity and strip material utilization are measurable; tool quality is not",
+          "notes": "Mold filling and forming simulation belong to simulate (manufacturing process simulation)."
+        }
+      ]
+    },
+    {
+      "id": "design.geometry_exchange",
+      "name": "Geometry exchange, repair and reverse engineering",
+      "definition": "Given geometry in one representation or format, possibly damaged or measured rather than modeled, produce a valid model in the representation and format a downstream user needs.",
+      "crosswalk": [
+        {
+          "scheme": "ISO 10303 (STEP)",
+          "code": "AP242",
+          "label": "Managed model-based 3D engineering (exchange of geometry, assemblies and PMI)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 10303 (STEP)",
+          "code": "Part 21",
+          "label": "Clear text encoding of the exchange structure",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "CIMdata PLM market taxonomy",
+          "code": "",
+          "label": "MCAD (data exchange and translation tools)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Computing methodologies > Computer graphics > Shape modeling > Mesh models",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "design.solid_modeling",
+        "produce.metrology",
+        "earth.remote_sensing"
+      ],
+      "notes": "New capability, split from the seed 'Solid and surface modeling'. The existing 'cad' function already matched 'reverse engineering software' and IGES tools; these are a different function from authoring: they transform or recover geometry and are judged against a reference.",
+      "tasks": [
+        {
+          "id": "design.geometry_exchange.neutral_translation",
+          "name": "Neutral format model translation",
+          "definition": "Given a model in a native or neutral format, write it to a target format preserving geometry, topology, assembly structure, attributes and product manufacturing information.",
+          "inputs": "native CAD file or STEP, IGES, JT or Parasolid file",
+          "outputs": "translated file; validation properties (volume, area, centroid, PMI counts) compared before and after",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10303 (STEP)",
+              "code": "AP242",
+              "label": "Managed model-based 3D engineering",
+              "basis": "fetched",
+              "url": "https://www.steptools.com/stds/step/step_2.html"
+            },
+            {
+              "scheme": "ISO 10303 (STEP)",
+              "code": "AP214",
+              "label": "Automotive Design",
+              "basis": "fetched",
+              "url": "https://www.steptools.com/stds/step/step_2.html"
+            }
+          ],
+          "onet_products": [
+            "International TechneGroup IGESworks",
+            "LinkCAD"
+          ],
+          "state_of_art": [
+            "CAD Exchanger",
+            "Datakit CrossManager",
+            "Spatial 3D InterOp",
+            "Theorem Solutions",
+            "ITI CADfix"
+          ],
+          "open_tools": [
+            "Open CASCADE Technology",
+            "STEPcode",
+            "FreeCAD"
+          ],
+          "benchmarkable": "yes: CAx Implementor Forum round-robin test models carry validation properties that a translation must preserve",
+          "notes": "LinkCAD converts between DXF, GDSII and other layout formats; it also serves IC and MEMS layout."
+        },
+        {
+          "id": "design.geometry_exchange.healing_defeaturing",
+          "name": "Geometry healing and defeaturing",
+          "definition": "Given an imported or damaged boundary-representation model, close gaps, remove slivers and self-intersections, and optionally remove small features, yielding a valid watertight solid.",
+          "inputs": "B-rep model with defects; tolerances; feature-size thresholds",
+          "outputs": "valid closed solid; log of repairs; simplified model for analysis",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "ITI CADfix",
+            "Ansys Discovery (SpaceClaim)",
+            "Spatial 3D InterOp"
+          ],
+          "open_tools": [
+            "Open CASCADE Technology (ShapeFix)",
+            "FreeCAD"
+          ],
+          "benchmarkable": "partly: validity after repair is objectively checkable; faithfulness to the intended shape needs a reference model",
+          "notes": "Meshing for analysis belongs to simulate."
+        },
+        {
+          "id": "design.geometry_exchange.tessellation_mesh_repair",
+          "name": "Tessellation and mesh repair",
+          "definition": "Given an exact model or a defective triangle mesh, produce a watertight, manifold mesh within a stated chordal and angular tolerance.",
+          "inputs": "B-rep model or triangle mesh; tolerances; target format (STL, 3MF, glTF)",
+          "outputs": "manifold, watertight mesh; deviation report",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Computing methodologies > Computer graphics > Shape modeling > Mesh models",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "3D Printing software",
+            "Materilise Magics",
+            "Rapid prototyping software"
+          ],
+          "state_of_art": [
+            "Materialise Magics",
+            "Autodesk Netfabb"
+          ],
+          "open_tools": [
+            "MeshLab",
+            "Manifold",
+            "Open CASCADE Technology (BRepMesh)",
+            "ADMesh"
+          ],
+          "benchmarkable": "yes: Thingi10K provides thousands of defective meshes; manifoldness and deviation are measurable",
+          "notes": ""
+        },
+        {
+          "id": "design.geometry_exchange.feature_recognition",
+          "name": "Feature recognition from boundary representations",
+          "definition": "Given a boundary-representation model without history, identify and parameterize its features such as holes, pockets, slots, bosses and fillets.",
+          "inputs": "B-rep model",
+          "outputs": "labeled faces; feature list with types and parameters",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10303 (STEP)",
+              "code": "AP224",
+              "label": "Feature-Based Process Planning",
+              "basis": "fetched",
+              "url": "https://www.steptools.com/stds/step/step_2.html"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "HCL CAMWorks automatic feature recognition",
+            "Spatial CGM",
+            "Siemens NX feature recognition"
+          ],
+          "open_tools": [
+            "Analysis Situs"
+          ],
+          "benchmarkable": "yes: the MFCAD and MFCAD++ datasets give face-level feature labels",
+          "notes": "Feeds CAM (produce) and defeaturing; kept here because it reads geometry rather than planning machining."
+        },
+        {
+          "id": "design.geometry_exchange.scan_to_cad",
+          "name": "Scan-to-CAD surface reconstruction",
+          "definition": "Given a point cloud or scan mesh of a physical object, segment it into surface primitives and fit an exact, editable model within a deviation tolerance.",
+          "inputs": "point cloud or scan mesh; tolerance; optional design intent (symmetry, standard features)",
+          "outputs": "fitted primitives and NURBS surfaces; solid or parametric model; deviation map",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Computing methodologies > Computer graphics > Shape modeling > Point-based models",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "3D Systems Geomagic Design X",
+            "InnovMetric PolyWorks",
+            "Metrix Imageware Surfacer",
+            "Reverse engineering software",
+            "Polhemus FastSCAN",
+            "MENSI 3Dipsos"
+          ],
+          "state_of_art": [
+            "3D Systems Geomagic Design X",
+            "InnovMetric PolyWorks Modeler",
+            "Siemens NX Reverse Engineering"
+          ],
+          "open_tools": [
+            "Point Cloud Library",
+            "MeshLab"
+          ],
+          "benchmarkable": "partly: point clouds sampled from ABC dataset models give ground-truth primitives and surfaces; real scans lack ground truth",
+          "notes": "Inspection of a made part against its model is metrology (produce)."
+        }
+      ]
+    },
+    {
+      "id": "design.product_definition",
+      "name": "Drawings, tolerancing and manufacturability",
+      "definition": "Given part and assembly geometry, produce the authoritative definition for making it, as drawings or annotated models with dimensions and tolerances, and check that it can be made and assembled within them.",
+      "crosswalk": [
+        {
+          "scheme": "ISO 10303 (STEP)",
+          "code": "AP242",
+          "label": "Product manufacturing information and 2D drawings",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ASME standards",
+          "code": "Y14.5",
+          "label": "Dimensioning and tolerancing",
+          "basis": "fetched",
+          "url": "https://www.asme.org/codes-standards/y14-standards"
+        },
+        {
+          "scheme": "ASME standards",
+          "code": "Y14.41",
+          "label": "Digital product definition data practices",
+          "basis": "fetched",
+          "url": "https://www.asme.org/codes-standards/y14-standards"
+        },
+        {
+          "scheme": "ISO standards",
+          "code": "ISO 1101",
+          "label": "Geometrical product specifications: geometrical tolerancing",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO standards",
+          "code": "ISO 128",
+          "label": "Technical product documentation: general principles of representation",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided design CAD software",
+        "Graphics or photo imaging software"
+      ],
+      "see_also": [
+        "produce.metrology",
+        "design.solid_modeling"
+      ],
+      "notes": "Merges seed '2D drafting and drawings' with the tolerancing and model-based definition half of seed 'PDM/PLM, tolerancing, model-based definition'. Drawings and model-based definition are two carriers of the same thing (AP242 covers both), and tolerance analysis is how that definition is checked. Design-for-manufacture review joins them as the other check on the definition. General 2D drafting of any discipline lives here as its general home.",
+      "tasks": [
+        {
+          "id": "design.product_definition.drafting_2d",
+          "name": "Two-dimensional drafting",
+          "definition": "Given a design to document, create precise 2D geometry, hatches, blocks, layers and text forming a scaled technical drawing.",
+          "inputs": "dimensions, sketches, standards, title block and layer conventions",
+          "outputs": "2D drawing file (DWG, DGN, DXF) and plotted sheets",
+          "crosswalk": [
+            {
+              "scheme": "ISO standards",
+              "code": "ISO 128",
+              "label": "Technical product documentation: general principles of representation",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Autodesk AutoCAD",
+            "Autodesk AutoCAD LT",
+            "Bentley MicroStation",
+            "Micro-Press MicroStation PowerDraft",
+            "Computer aided design and drafting CADD software",
+            "Drawing and drafting software",
+            "SofTech CADRA",
+            "IMSI TurboCAD",
+            "IntelliCAD",
+            "RibbonSoft QCad",
+            "EasyCAD Iris 2D",
+            "Two-dimensional 2D computer aided design CAD software"
+          ],
+          "state_of_art": [
+            "Autodesk AutoCAD",
+            "Bentley MicroStation",
+            "Bricsys BricsCAD",
+            "Dassault Systemes DraftSight"
+          ],
+          "open_tools": [
+            "LibreCAD",
+            "QCAD",
+            "FreeCAD (Draft workbench)"
+          ],
+          "benchmarkable": "partly: drawn geometry can be compared exactly with a reference DXF, but no standard drafting suite exists",
+          "notes": "General home for 2D CAD across mechanical, architectural, civil and electrical drafting."
+        },
+        {
+          "id": "design.product_definition.drawing_views",
+          "name": "Drawing view generation from models",
+          "definition": "Given a 3D part or assembly, generate associative orthographic, section, detail and pictorial views with correct hidden lines and a parts list.",
+          "inputs": "part or assembly model; sheet format; view and section specifications",
+          "outputs": "drawing sheet with projected views, sections, balloons and bill of materials table",
+          "crosswalk": [
+            {
+              "scheme": "ASME standards",
+              "code": "Y14.3",
+              "label": "Orthographic and pictorial views",
+              "basis": "fetched",
+              "url": "https://www.asme.org/codes-standards/y14-standards"
+            }
+          ],
+          "onet_products": [
+            "Dassault Systemes SolidWorks",
+            "PTC Creo Parametric",
+            "Autodesk Inventor",
+            "Autodesk AutoCAD Mechanical",
+            "Autodesk Mechanical",
+            "Siemens NX",
+            "Vectorworks Machine Design"
+          ],
+          "state_of_art": [
+            "Siemens NX",
+            "PTC Creo",
+            "Dassault Systemes SolidWorks",
+            "Autodesk Inventor"
+          ],
+          "open_tools": [
+            "FreeCAD (TechDraw workbench)"
+          ],
+          "benchmarkable": "yes: projected and sectioned view geometry is deterministic and can be compared with reference drawings",
+          "notes": ""
+        },
+        {
+          "id": "design.product_definition.dimensioning",
+          "name": "Dimensioning and annotation",
+          "definition": "Given drawing views and design intent, place a complete, non-redundant set of dimensions, notes and symbols that conforms to the governing drafting standard.",
+          "inputs": "drawing views; functional requirements; drafting standard",
+          "outputs": "dimensioned and annotated drawing; completeness check",
+          "crosswalk": [
+            {
+              "scheme": "ISO standards",
+              "code": "ISO 129",
+              "label": "Technical product documentation: presentation of dimensions and tolerances",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Autodesk AutoCAD",
+            "Autodesk AutoCAD Mechanical",
+            "Dassault Systemes SolidWorks"
+          ],
+          "state_of_art": [
+            "Siemens NX",
+            "PTC Creo",
+            "Dassault Systemes SolidWorks"
+          ],
+          "open_tools": [
+            "FreeCAD (TechDraw workbench)"
+          ],
+          "benchmarkable": "partly: whether the geometry is fully and not over-dimensioned is checkable; the choice of dimensioning scheme is judgment",
+          "notes": ""
+        },
+        {
+          "id": "design.product_definition.gdt_pmi",
+          "name": "Geometric tolerancing and model-based definition",
+          "definition": "Given a part model and its function, assign datums and geometric tolerances and encode them as semantic product manufacturing information on the 3D model.",
+          "inputs": "part model; mating and functional requirements; tolerancing standard",
+          "outputs": "datum reference frames; feature control frames; semantic PMI exportable to STEP AP242",
+          "crosswalk": [
+            {
+              "scheme": "ASME standards",
+              "code": "Y14.41",
+              "label": "Digital product definition data practices",
+              "basis": "fetched",
+              "url": "https://www.asme.org/codes-standards/y14-standards"
+            },
+            {
+              "scheme": "ISO standards",
+              "code": "ISO 16792",
+              "label": "Digital product definition data practices",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Siemens NX",
+            "PTC Creo Parametric",
+            "Dassault Systemes CATIA"
+          ],
+          "state_of_art": [
+            "Sigmetrix GD&T Advisor",
+            "Dassault Systemes CATIA 3D Master",
+            "Siemens NX PMI"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the NIST MBE PMI validation and conformance test models specify the expected annotations; standard syntax rules are checkable",
+          "notes": ""
+        },
+        {
+          "id": "design.product_definition.tolerance_analysis",
+          "name": "Tolerance stack-up and variation analysis",
+          "definition": "Given an assembly, its tolerances and assembly sequence, compute the predicted variation of critical dimensions by worst-case, statistical or Monte Carlo methods and rank contributors.",
+          "inputs": "assembly geometry or loop diagram; dimensional and geometric tolerances; distributions; assembly process",
+          "outputs": "worst-case and statistical ranges; percent out of spec; contributor ranking",
+          "crosswalk": [],
+          "onet_products": [
+            "Sigmetrix CETOL 6 Sigma",
+            "Advanced Dimensional Management 3D-GD&T",
+            "Tolerance analysis software"
+          ],
+          "state_of_art": [
+            "Sigmetrix CETOL 6 Sigma",
+            "DCS 3DCS Variation Analyst",
+            "Siemens Teamcenter Variation Analysis",
+            "CETOL 6 Sigma",
+            "3DCS Variation Analyst",
+            "Siemens VSA"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: one-dimensional stack-ups have closed-form answers and textbook worked examples; 3D cases can be checked against Monte Carlo references",
+          "notes": "Kept in design per the seed; it is geometric, not a physics solve."
+        },
+        {
+          "id": "design.product_definition.drawing_digitization",
+          "name": "Drawing digitization and recognition",
+          "definition": "Given a scanned or raster drawing, recover vector geometry, text, dimensions and symbols as an editable, structured drawing.",
+          "inputs": "raster or PDF drawing",
+          "outputs": "vector entities; recognized dimensions, notes and symbols; layer assignment",
+          "crosswalk": [],
+          "onet_products": [
+            "GTX RastorCAD",
+            "MagicTracer"
+          ],
+          "state_of_art": [
+            "GTX RasterCAD",
+            "Scan2CAD"
+          ],
+          "open_tools": [
+            "Potrace"
+          ],
+          "benchmarkable": "partly: FloorPlanCAD (symbol spotting) and CubiCasa5K cover floor plans; mechanical drawing datasets are scarce",
+          "notes": "Reading P&IDs is covered by design.plant_services.pid_authoring."
+        },
+        {
+          "id": "design.product_definition.manufacturability_review",
+          "name": "Design for manufacture and assembly review",
+          "definition": "Given a part or assembly model and a target process, find features that violate process rules and estimate assembly difficulty.",
+          "inputs": "part or assembly model; process (machining, molding, casting, sheet metal, additive); rule set",
+          "outputs": "rule violations (wall thickness, draft, undercuts, hole depth, bend relief); assembly efficiency score",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Applied computing > Physical sciences and engineering > Engineering > Computer-aided design",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "HCL DFMPro",
+            "Boothroyd Dewhurst DFMA",
+            "Siemens NX Check-Mate",
+            "aPriori",
+            "DFMPro"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: rule violations are objectively checkable for a fixed rule set; there is no public labeled dataset",
+          "notes": "Cost estimates from the model are in design.estimating.parametric_cost."
+        }
+      ]
+    },
+    {
+      "id": "design.product_data",
+      "name": "Product data and lifecycle management",
+      "definition": "Given the design files and structures of a product, keep their versions, bills of materials, configurations and changes consistent and traceable through release.",
+      "crosswalk": [
+        {
+          "scheme": "CIMdata PLM market taxonomy",
+          "code": "",
+          "label": "Collaborative product definition management (cPDm)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 10303 (STEP)",
+          "code": "AP239",
+          "label": "Product life cycle support",
+          "basis": "fetched",
+          "url": "https://www.steptools.com/stds/step/step_2.html"
+        },
+        {
+          "scheme": "ISO 10303 (STEP)",
+          "code": "AP242",
+          "label": "Managed model-based 3D engineering (product structure and configuration)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 19650",
+          "code": "ISO 19650-1",
+          "label": "Information management using building information modelling: concepts and principles (common data environment)",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Project management software",
+        "Enterprise resource planning ERP software",
+        "Document management software",
+        "Materials requirements planning logistics and supply chain software"
+      ],
+      "see_also": [
+        "enterprise.documents",
+        "computing.requirements_design",
+        "produce.manufacturing_execution"
+      ],
+      "notes": "Split from seed 'PDM/PLM, tolerancing, model-based definition'; tolerancing moved to design.product_definition. Requirements management is left to computing ('Requirements, modeling and architecture'), which owns it for software and systems alike; general document management is enterprise.",
+      "tasks": [
+        {
+          "id": "design.product_data.vaulting",
+          "name": "Design data vaulting and revision control",
+          "definition": "Given CAD files with their references, check them in and out, version and revise them, and answer where-used queries without breaking references.",
+          "inputs": "CAD files and their reference graph; lifecycle states; access rules",
+          "outputs": "versioned vault; resolved references; where-used and history reports",
+          "crosswalk": [
+            {
+              "scheme": "ISO 19650",
+              "code": "ISO 19650-2",
+              "label": "Common data environment (delivery phase)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "SolidWorks Enterprise PDM",
+            "PTC Pro/INTRALINK",
+            "PTC Windchill",
+            "Siemens Teamcenter",
+            "Bentley Systems ProjectWise"
+          ],
+          "state_of_art": [
+            "Siemens Teamcenter",
+            "PTC Windchill",
+            "Dassault Systemes ENOVIA",
+            "Autodesk Vault",
+            "Bentley ProjectWise"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: correctness is integration behavior over a repository, not a computed answer",
+          "notes": "ProjectWise is the AEC equivalent, acting as an ISO 19650 common data environment."
+        },
+        {
+          "id": "design.product_data.bom_management",
+          "name": "Bill of materials management",
+          "definition": "Given a product structure from CAD and part master data, build the engineering bill of materials and transform it into manufacturing and service views with effectivity.",
+          "inputs": "CAD assembly structure; part master; plant and process information; effectivity",
+          "outputs": "engineering and manufacturing bills of materials; roll-ups of mass and cost; reconciliation report",
+          "crosswalk": [],
+          "onet_products": [
+            "Bill of materials software",
+            "Agile Product Lifecyle Management PLM",
+            "Oracle Agile Product Lifecycle Management PLM",
+            "Siemens Teamcenter",
+            "PTC Windchill",
+            "Product lifecycle management PLM software"
+          ],
+          "state_of_art": [
+            "Siemens Teamcenter",
+            "PTC Windchill",
+            "Dassault Systemes ENOVIA",
+            "Arena PLM"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: roll-ups and engineering-to-manufacturing restructuring have checkable answers under stated rules",
+          "notes": "Material requirements planning from the bill of materials is enterprise or produce."
+        },
+        {
+          "id": "design.product_data.change_management",
+          "name": "Engineering change management",
+          "definition": "Given a proposed change to released items, determine affected parts, documents and assemblies, route the change for approval and release the new revisions.",
+          "inputs": "change request; product structure; where-used relations; approval rules",
+          "outputs": "impact analysis; change order; released revisions; audit trail",
+          "crosswalk": [],
+          "onet_products": [
+            "Agile Product Lifecyle Management PLM",
+            "Oracle Agile Product Lifecycle Management PLM",
+            "PTC Windchill",
+            "Siemens Teamcenter",
+            "Siemens PLM software"
+          ],
+          "state_of_art": [
+            "PTC Windchill",
+            "Siemens Teamcenter",
+            "Arena PLM",
+            "Oracle Agile PLM"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: impact sets over a given product structure are checkable; workflow behavior is not",
+          "notes": ""
+        },
+        {
+          "id": "design.product_data.configuration",
+          "name": "Product configuration and variant management",
+          "definition": "Given a product family's options, rules and overloaded structure, validate the rule set and resolve any valid option selection to a configured product structure.",
+          "inputs": "feature or option model; compatibility rules; overloaded (150 percent) structure",
+          "outputs": "valid or invalid verdict; configured bill of materials; rule conflicts",
+          "crosswalk": [],
+          "onet_products": [
+            "Siemens Teamcenter",
+            "PTC Windchill"
+          ],
+          "state_of_art": [
+            "Siemens Teamcenter Product Configurator",
+            "pure-systems pure::variants",
+            "Tacton CPQ"
+          ],
+          "open_tools": [
+            "FeatureIDE"
+          ],
+          "benchmarkable": "yes: rule-based configuration has determinate answers, and industrial instances such as the Renault vehicle configuration benchmark are public",
+          "notes": "Sales configuration and quoting are commerce."
+        },
+        {
+          "id": "design.product_data.part_reuse_search",
+          "name": "Part classification and similarity search",
+          "definition": "Given a part model or description and a part library, classify the part and retrieve existing parts that are geometrically or functionally similar.",
+          "inputs": "query part model or attributes; classified part library",
+          "outputs": "classification; ranked similar or duplicate parts",
+          "crosswalk": [],
+          "onet_products": [
+            "Siemens Teamcenter"
+          ],
+          "state_of_art": [
+            "Siemens Teamcenter Classification",
+            "CADENAS PARTsolutions",
+            "Physna"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: shape retrieval can be scored on labeled CAD collections such as the ABC dataset; real libraries are private",
+          "notes": ""
+        },
+        {
+          "id": "design.product_data.material_compliance",
+          "name": "Material and substance compliance roll-up",
+          "definition": "Given a bill of materials and supplier material declarations, roll up substance content and test it against restricted-substance lists.",
+          "inputs": "bill of materials; supplier full material declarations; regulatory substance lists",
+          "outputs": "substance roll-up per part and product; compliance status and declarations",
+          "crosswalk": [],
+          "onet_products": [
+            "International Material Data System IMDS"
+          ],
+          "state_of_art": [
+            "International Material Data System",
+            "Assent Compliance",
+            "PTC Windchill"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the roll-up is arithmetic over declared masses against published thresholds",
+          "notes": "Regulatory filing as such is govern."
+        }
+      ]
+    },
+    {
+      "id": "design.architecture",
+      "name": "Architectural design and building modeling",
+      "definition": "Given a building program, site and codes, author the building's spaces, elements and documents as a coordinated information model.",
+      "crosswalk": [
+        {
+          "scheme": "buildingSMART IFC 4.3",
+          "code": "IfcArchitectureDomain",
+          "label": "Architecture domain schema",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "buildingSMART IFC 4.3",
+          "code": "IfcSharedBldgElements",
+          "label": "Shared building elements (walls, slabs, roofs, doors, stairs)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "OmniClass",
+          "code": "",
+          "label": "Table 13 Spaces by Function; Table 21 Elements",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 19650",
+          "code": "",
+          "label": "Information management using building information modelling",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "CIMdata PLM market taxonomy",
+          "code": "",
+          "label": "Architecture, engineering and construction (AEC)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Arts and humanities > Architecture (buildings) > Computer-aided design",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Computer aided design CAD software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "simulate.structural_design",
+        "simulate.building_energy",
+        "media.rendering_effects",
+        "operate.facility_management"
+      ],
+      "notes": "Was seed 'Building information modeling and architectural design'. Structural steel and rebar detailing is here because it authors fabrication geometry; structural analysis and code checking of the frame stay in simulate. Specification writing was added because the project manual is half of the construction documents. Rendering and walkthroughs (3ds Max, Lumion, Enscape) are media.",
+      "tasks": [
+        {
+          "id": "design.architecture.space_planning",
+          "name": "Space planning and floor plan layout",
+          "definition": "Given a room program with areas and adjacencies and a building footprint, generate floor plan layouts that satisfy them.",
+          "inputs": "space program; adjacency matrix; footprint or site; circulation and code constraints",
+          "outputs": "floor plan layouts; area schedule; constraint satisfaction report",
+          "crosswalk": [
+            {
+              "scheme": "OmniClass",
+              "code": "",
+              "label": "Table 13 Spaces by Function",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "buildingSMART IFC 4.3",
+              "code": "IfcSpace",
+              "label": "Space",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Drcauto Smart Architect LT Pro",
+            "MyFamilySoftware Instant Architect",
+            "Artifice DesignWorkshop",
+            "Autodesk Architectural Studio"
+          ],
+          "state_of_art": [
+            "Autodesk Forma",
+            "TestFit",
+            "Finch"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: RPLAN and similar datasets give real plans, and areas and adjacencies are checkable; plan quality is judged by people",
+          "notes": ""
+        },
+        {
+          "id": "design.architecture.massing",
+          "name": "Conceptual massing and form modeling",
+          "definition": "Given a site, zoning envelope and program, model building masses and report floor area, ratios and envelope compliance.",
+          "inputs": "site boundary and terrain; zoning setbacks, heights and floor-area limits; program areas",
+          "outputs": "3D massing model; gross floor area and floor-area ratio; envelope check",
+          "crosswalk": [],
+          "onet_products": [
+            "Trimble SketchUp Pro",
+            "AutoDesSys form Z",
+            "McNeel Rhinoceros 3D"
+          ],
+          "state_of_art": [
+            "Trimble SketchUp",
+            "McNeel Rhinoceros 3D with Grasshopper",
+            "Autodesk Forma"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: zoning-envelope compliance and area metrics are exact; design merit is not",
+          "notes": ""
+        },
+        {
+          "id": "design.architecture.bim_authoring",
+          "name": "Building information model authoring",
+          "definition": "Given a design, model the building as typed parametric elements with properties and derive plans, sections, elevations and schedules from that model.",
+          "inputs": "design layout; element types; levels and grids; project standards",
+          "outputs": "building information model (native and IFC); drawings and schedules derived from it",
+          "crosswalk": [
+            {
+              "scheme": "buildingSMART IFC 4.3",
+              "code": "IfcSharedBldgElements",
+              "label": "Shared building elements",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO 19650",
+              "code": "",
+              "label": "Information models for the delivery phase",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Autodesk Revit",
+            "Autodesk Revit Architecture",
+            "Graphisoft ArchiCAD",
+            "VectorWorks ARCHITECT",
+            "Bentley MicroStation",
+            "Autodesk Architectural Desktop",
+            "Autodesk Softdesk"
+          ],
+          "state_of_art": [
+            "Autodesk Revit",
+            "Graphisoft Archicad",
+            "Vectorworks Architect",
+            "Nemetschek Allplan"
+          ],
+          "open_tools": [
+            "FreeCAD (BIM workbench)",
+            "Bonsai",
+            "IfcOpenShell"
+          ],
+          "benchmarkable": "partly: model validity against information delivery specifications is checkable; whether the model is the intended building needs a reference",
+          "notes": ""
+        },
+        {
+          "id": "design.architecture.structural_detailing",
+          "name": "Steel and reinforcement detailing",
+          "definition": "Given member sizes, connection designs and reinforcement requirements, model the fabrication detail and produce shop drawings, bar schedules and fabrication files.",
+          "inputs": "analysis model results; member sizes; connection types; concrete outlines; reinforcement rules",
+          "outputs": "detailed steel and rebar model; shop drawings; bar bending schedules; numerical-control files",
+          "crosswalk": [
+            {
+              "scheme": "buildingSMART IFC 4.3",
+              "code": "IfcStructuralElementsDomain",
+              "label": "Structural elements domain (reinforcement, fasteners)",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO 10303 (STEP)",
+              "code": "AP218",
+              "label": "Ship structures",
+              "basis": "fetched",
+              "url": "https://www.steptools.com/stds/step/step_2.html"
+            }
+          ],
+          "onet_products": [
+            "Tekla software",
+            "OTP ArmaCAD",
+            "Applied Systems Associates aSa Rebar",
+            "ShipConstructor"
+          ],
+          "state_of_art": [
+            "Trimble Tekla Structures",
+            "Autodesk Advance Steel",
+            "SDS2",
+            "Allplan Reinforcement"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: bar schedules and bending dimensions follow from detailing standards and can be checked; connection design checks belong to simulate",
+          "notes": "ShipConstructor does the same job for ship hull structure."
+        },
+        {
+          "id": "design.architecture.interior_layout",
+          "name": "Interior, kitchen and fixture layout",
+          "definition": "Given a room and a product catalog, lay out cabinets, furniture, fixtures and finishes that meet clearance rules, and produce elevations and order lists.",
+          "inputs": "room geometry; product catalogs; clearance and accessibility rules",
+          "outputs": "furnished plan and elevations; finish and tile layout; order list",
+          "crosswalk": [],
+          "onet_products": [
+            "20-20 Technologies 20-20 Design",
+            "Vectorworks Designer",
+            "KCD cabinet design software",
+            "TileGem",
+            "Nemetschek Vectorworks Spotlight"
+          ],
+          "state_of_art": [
+            "2020 Design Live",
+            "Chief Architect",
+            "Vectorworks Spotlight"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: clearance and accessibility rules are checkable; layout quality is judged by people",
+          "notes": "Vectorworks Spotlight is the theater and event equivalent (set and lighting-rig layout)."
+        },
+        {
+          "id": "design.architecture.landscape",
+          "name": "Landscape and hardscape design",
+          "definition": "Given a site plan, design planting, hardscape patterns and irrigation layout and produce plans and quantities.",
+          "inputs": "site plan and grades; plant palette; paver and wall systems; irrigation sources",
+          "outputs": "planting and hardscape plans; irrigation layout; plant and material schedules",
+          "crosswalk": [
+            {
+              "scheme": "CSI MasterFormat",
+              "code": "Division 32",
+              "label": "Exterior improvements",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Coyote Software DynaSCAPE Design",
+            "Eagle Point LANDCADD",
+            "Depiction Software Hardscape Imaging",
+            "UNI-GROUP Lockpave Pro",
+            "Landscape modeling software"
+          ],
+          "state_of_art": [
+            "Vectorworks Landmark",
+            "Land F/X",
+            "DynaSCAPE"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: coverage, spacing and quantity takeoffs are computable; design quality is not",
+          "notes": ""
+        },
+        {
+          "id": "design.architecture.model_coordination",
+          "name": "Model coordination and clash detection",
+          "definition": "Given federated discipline models, detect hard and clearance clashes and track them as coordination issues.",
+          "inputs": "architectural, structural and services models (native or IFC); clash rules and tolerances",
+          "outputs": "clash list with locations and grouping; issues in BIM Collaboration Format",
+          "crosswalk": [
+            {
+              "scheme": "buildingSMART",
+              "code": "BCF",
+              "label": "BIM Collaboration Format",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Autodesk Navisworks",
+            "NavisWorks Jetstream",
+            "Bentley Navigator"
+          ],
+          "state_of_art": [
+            "Autodesk Navisworks",
+            "Solibri Office",
+            "Revizto"
+          ],
+          "open_tools": [
+            "IfcOpenShell (IfcClash)"
+          ],
+          "benchmarkable": "yes: geometric clashes between given models are deterministic",
+          "notes": ""
+        },
+        {
+          "id": "design.architecture.code_checking",
+          "name": "Automated building model checking",
+          "definition": "Given a building model and a rule set derived from codes or information requirements, report each rule's pass or fail with the offending elements.",
+          "inputs": "IFC model; rule set (information delivery specification, code clauses)",
+          "outputs": "pass and fail results per rule and element",
+          "crosswalk": [
+            {
+              "scheme": "buildingSMART",
+              "code": "IDS",
+              "label": "Information Delivery Specification",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Solibri Office",
+            "Autodesk Revit Model Checker"
+          ],
+          "open_tools": [
+            "IfcOpenShell (IfcTester)"
+          ],
+          "benchmarkable": "partly: rule execution is deterministic; turning code text into executable rules is an open problem with no shared test set",
+          "notes": "Plan review by permitting authorities is govern."
+        },
+        {
+          "id": "design.architecture.specifications",
+          "name": "Construction specification authoring",
+          "definition": "Given the project scope and a master guide specification, edit and assemble the project manual sections that state materials, products and execution requirements.",
+          "inputs": "project scope and model; master guide specifications; owner standards",
+          "outputs": "project manual organized by MasterFormat sections; coordination report against drawings",
+          "crosswalk": [
+            {
+              "scheme": "CSI MasterFormat",
+              "code": "",
+              "label": "Divisions 01 to 49 section structure",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "OmniClass",
+              "code": "",
+              "label": "Table 22 Work Results",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "SpecsInTact",
+            "ARCOM Masterspec",
+            "Design specification database software"
+          ],
+          "state_of_art": [
+            "SpecsIntact",
+            "Deltek Specpoint",
+            "NBS Chorus",
+            "BSD SpecLink"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: section completeness and consistency with the model are checkable; specification prose is not",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "design.civil_site",
+      "name": "Civil site, road and corridor design",
+      "definition": "Given survey data and design criteria, author the geometry of roads, rail, sites and earthworks as alignments, corridors and design surfaces.",
+      "crosswalk": [
+        {
+          "scheme": "buildingSMART IFC 4.3",
+          "code": "IfcAlignment",
+          "label": "Alignment",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "buildingSMART IFC 4.3",
+          "code": "IfcRoad",
+          "label": "Road; also IfcRail and IfcBridge",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "LandXML",
+          "code": "",
+          "label": "Alignments, surfaces and parcels",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "CIMdata PLM market taxonomy",
+          "code": "",
+          "label": "Architecture, engineering and construction (AEC)",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided design CAD software",
+        "Map creation software"
+      ],
+      "see_also": [
+        "earth.surveying",
+        "simulate.pipe_networks",
+        "simulate.geotechnical",
+        "move.road_traffic"
+      ],
+      "notes": "Was seed 'Civil site, road and corridor design'; it is the design half of the existing 'civil' function. Survey processing and coordinate geometry stay with earth; stormwater and sewer network analysis go to simulate; traffic capacity and signal timing go to move.",
+      "tasks": [
+        {
+          "id": "design.civil_site.terrain_surface",
+          "name": "Terrain and design surface modeling",
+          "definition": "Given survey points, breaklines and boundaries, build existing and proposed terrain surfaces and derive contours, slopes and spot elevations.",
+          "inputs": "survey points; breaklines; boundaries; design feature lines",
+          "outputs": "triangulated surfaces; contours; slope and elevation analysis",
+          "crosswalk": [
+            {
+              "scheme": "LandXML",
+              "code": "",
+              "label": "Surfaces",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Autodesk AutoCAD Civil 3D",
+            "Trimble Terramodel",
+            "Carlson SurvCADD",
+            "Autodesk Land Desktop",
+            "Autodesk AutoCAD Land Desktop",
+            "Bentley InRoads Suite",
+            "Eagle Point Site Design"
+          ],
+          "state_of_art": [
+            "Autodesk Civil 3D",
+            "Bentley OpenRoads Designer",
+            "12d Model"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: surfaces, contours and volumes from given points and breaklines are deterministic",
+          "notes": ""
+        },
+        {
+          "id": "design.civil_site.alignment",
+          "name": "Horizontal and vertical alignment design",
+          "definition": "Given control points, design speed and geometric criteria, lay out tangents, curves, spirals and vertical curves that satisfy sight distance, superelevation and grade limits.",
+          "inputs": "corridor control points; design speed; geometric design criteria (road or rail)",
+          "outputs": "horizontal alignment; profile; superelevation; criteria compliance report",
+          "crosswalk": [
+            {
+              "scheme": "AASHTO",
+              "code": "",
+              "label": "A Policy on Geometric Design of Highways and Streets",
+              "basis": "fetched",
+              "url": "https://store.transportation.org/"
+            },
+            {
+              "scheme": "buildingSMART IFC 4.3",
+              "code": "IfcAlignment",
+              "label": "Alignment (horizontal, vertical, cant)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Autodesk AutoCAD Civil 3D",
+            "Bentley GEOPAK Civil Engineering Suite",
+            "Bentley InRoads Suite",
+            "OpenRoads Designer",
+            "Autodesk CAiCE Visual Transportation",
+            "Road design software"
+          ],
+          "state_of_art": [
+            "Autodesk Civil 3D",
+            "Bentley OpenRoads Designer",
+            "Bentley OpenRail Designer",
+            "12d Model"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: geometric design criteria are explicit formulas, and alignments exchanged in LandXML or IFC can be compared exactly",
+          "notes": "Includes rail track geometry with cant."
+        },
+        {
+          "id": "design.civil_site.corridor",
+          "name": "Corridor and cross-section modeling",
+          "definition": "Given an alignment, profile and typical sections, build a 3D corridor model with cross sections, intersections and finished-grade surfaces.",
+          "inputs": "alignment and profile; typical section assemblies; targets and transitions; existing surface",
+          "outputs": "corridor model; cross sections; finished surfaces; intersection and roundabout geometry",
+          "crosswalk": [
+            {
+              "scheme": "buildingSMART IFC 4.3",
+              "code": "IfcRoad",
+              "label": "Road and its parts",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Autodesk AutoCAD Civil 3D",
+            "OpenRoads Designer",
+            "Bentley InRoads Suite",
+            "Bentley GEOPAK Civil Engineering Suite",
+            "Road design software"
+          ],
+          "state_of_art": [
+            "Autodesk Civil 3D",
+            "Bentley OpenRoads Designer",
+            "Trimble Quantm"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: cross-section geometry is deterministic for a given template; template choice is design judgment",
+          "notes": ""
+        },
+        {
+          "id": "design.civil_site.earthwork",
+          "name": "Earthwork volumes and mass haul",
+          "definition": "Given existing and design surfaces, compute cut and fill volumes by station and a mass haul diagram, and balance the earthwork.",
+          "inputs": "existing and design surfaces or cross sections; shrink and swell factors; haul constraints",
+          "outputs": "cut and fill volumes; mass haul diagram; balance points and haul plan",
+          "crosswalk": [
+            {
+              "scheme": "buildingSMART IFC 4.3",
+              "code": "IfcEarthworksCut",
+              "label": "Earthworks cut and fill",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Autodesk AutoCAD Civil 3D",
+            "Trimble Terramodel",
+            "Carlson Civil Suite",
+            "Eagle Point Site Design"
+          ],
+          "state_of_art": [
+            "Autodesk Civil 3D",
+            "Trimble Business Center",
+            "Carlson Civil"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: average-end-area and surface-to-surface volumes are deterministic",
+          "notes": ""
+        },
+        {
+          "id": "design.civil_site.grading_drainage",
+          "name": "Site grading and drainage layout",
+          "definition": "Given a site plan and drainage requirements, grade pads, slopes and paved areas and lay out inlets and pipe networks for later hydraulic analysis.",
+          "inputs": "site plan; existing surface; grading criteria; outfalls",
+          "outputs": "grading plan and design surface; drainage structure and pipe layout",
+          "crosswalk": [],
+          "onet_products": [
+            "Eagle Point Site Design",
+            "Autodesk AutoCAD Civil 3D",
+            "Carlson Civil Suite"
+          ],
+          "state_of_art": [
+            "Autodesk Civil 3D",
+            "Bentley OpenSite Designer"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: slope and cover criteria are checkable; layout optimality is not",
+          "notes": "Pipe sizing and hydraulic analysis are simulate."
+        },
+        {
+          "id": "design.civil_site.parcel_layout",
+          "name": "Subdivision lot and parcel layout",
+          "definition": "Given a boundary, zoning rules and a street layout, subdivide land into lots meeting area and frontage minimums and produce plat geometry.",
+          "inputs": "boundary; zoning minimums; street rights of way; easements",
+          "outputs": "lot layout; areas and frontages; plat geometry and legal-description data",
+          "crosswalk": [
+            {
+              "scheme": "LandXML",
+              "code": "",
+              "label": "Parcels",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Carlson Civil Suite",
+            "Autodesk AutoCAD Civil 3D"
+          ],
+          "state_of_art": [
+            "Autodesk Civil 3D",
+            "TestFit"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: areas and frontages are exact and lot yield is measurable; plat review is not",
+          "notes": "Boundary survey and coordinate geometry are earth."
+        },
+        {
+          "id": "design.civil_site.swept_path",
+          "name": "Vehicle swept path analysis",
+          "definition": "Given a design vehicle and a path through a layout, compute the swept envelope and report encroachments.",
+          "inputs": "design vehicle dimensions and steering; path; curb and lane geometry",
+          "outputs": "swept envelopes; encroachment locations",
+          "crosswalk": [],
+          "onet_products": [
+            "Transoft Solutions AutoTURN"
+          ],
+          "state_of_art": [
+            "Transoft AutoTURN",
+            "Autodesk Vehicle Tracking"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the kinematic vehicle model gives determinate envelopes for a given path",
+          "notes": ""
+        },
+        {
+          "id": "design.civil_site.bridge_geometry",
+          "name": "Bridge geometric layout",
+          "definition": "Given a roadway alignment and superstructure type, lay out piers, bearings and girder lines and compute deck and seat elevations.",
+          "inputs": "alignment and profile; superelevation; span arrangement; girder type",
+          "outputs": "girder and bearing layout; deck, haunch and seat elevations",
+          "crosswalk": [
+            {
+              "scheme": "buildingSMART IFC 4.3",
+              "code": "IfcBridge",
+              "label": "Bridge",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Bentley GeoPak Bridge",
+            "Bridge design software"
+          ],
+          "state_of_art": [
+            "Bentley OpenBridge Modeler",
+            "Autodesk InfraWorks"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: elevations follow deterministically from alignment, profile and girder geometry",
+          "notes": "Structural analysis and load rating are simulate."
+        }
+      ]
+    },
+    {
+      "id": "design.plant_services",
+      "name": "Plant and building services layout",
+      "definition": "Given process or building service requirements and a spatial model, author the system schematics and route pipes, ducts and supports through 3D space, producing fabrication drawings and lists.",
+      "crosswalk": [
+        {
+          "scheme": "ISO 10303 (STEP)",
+          "code": "AP227",
+          "label": "Plant spatial configuration",
+          "basis": "fetched",
+          "url": "https://www.steptools.com/stds/step/step_2.html"
+        },
+        {
+          "scheme": "ISO 10303 (STEP)",
+          "code": "AP221",
+          "label": "Functional Data and Schematics for Process Plant",
+          "basis": "fetched",
+          "url": "https://www.steptools.com/stds/step/step_2.html"
+        },
+        {
+          "scheme": "buildingSMART IFC 4.3",
+          "code": "IfcHvacDomain",
+          "label": "HVAC domain; also IfcPlumbingFireProtectionDomain",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "CSI MasterFormat",
+          "code": "Divisions 21, 22, 23",
+          "label": "Fire suppression; plumbing; heating, ventilating and air conditioning",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "simulate.process_flowsheet",
+        "simulate.pipe_networks",
+        "simulate.structural_fea",
+        "simulate.building_energy"
+      ],
+      "notes": "Split from seed 'Plant, piping and electrical-system layout': the electrical half became design.electrical_systems because wiring and harness design has its own tools, standards (IEC 81346, ISO 10303 AP212) and users across vehicles and machines, not only plants. Building services (ducts, plumbing, sprinklers) joined plant piping because both route spec-driven distribution systems. Pipe stress, duct and pipe network hydraulics and HVAC loads are simulate.",
+      "tasks": [
+        {
+          "id": "design.plant_services.pid_authoring",
+          "name": "Piping and instrumentation diagram authoring",
+          "definition": "Given a process flow scheme, author an intelligent piping and instrumentation diagram with tagged equipment, lines, valves and instruments and their data, or recover one from a drawing.",
+          "inputs": "process flow diagram; equipment and line lists; instrument and valve specifications; or a raster P&ID",
+          "outputs": "data-rich P&ID; line, equipment and instrument lists; loop diagrams; DEXPI export",
+          "crosswalk": [
+            {
+              "scheme": "ISO standards",
+              "code": "ISO 10628",
+              "label": "Diagrams for the chemical and petrochemical industry",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "DEXPI",
+              "code": "",
+              "label": "DEXPI: common data exchange standard for the process industry, focused on P&IDs",
+              "basis": "fetched",
+              "url": "https://dexpi.org/"
+            }
+          ],
+          "onet_products": [
+            "Piping and instrumentation design PID software",
+            "COADE CADWorx P&ID",
+            "Intergraph INtools"
+          ],
+          "state_of_art": [
+            "Hexagon Smart P&ID",
+            "AVEVA Diagrams",
+            "Autodesk AutoCAD Plant 3D P&ID"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: P&ID digitization datasets (Dataset-P&ID) and DEXPI consistency rules allow scoring; design correctness needs process review",
+          "notes": "Includes the instrument index and loop diagrams (Intergraph INtools)."
+        },
+        {
+          "id": "design.plant_services.plant_arrangement",
+          "name": "Plant equipment arrangement",
+          "definition": "Given equipment, process connectivity and site constraints, place equipment, structures and platforms in a 3D plant or ship model meeting spacing, access and safety rules.",
+          "inputs": "equipment list and dimensions; P&ID connectivity; plot or hull; spacing and access rules",
+          "outputs": "3D plant arrangement; plot plan; clearance and access report",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10303 (STEP)",
+              "code": "AP227",
+              "label": "Plant spatial configuration",
+              "basis": "fetched",
+              "url": "https://www.steptools.com/stds/step/step_2.html"
+            },
+            {
+              "scheme": "ISO 10303 (STEP)",
+              "code": "AP215",
+              "label": "Ship arrangement",
+              "basis": "fetched",
+              "url": "https://www.steptools.com/stds/step/step_2.html"
+            }
+          ],
+          "onet_products": [
+            "Aveva Group Plant Design Management System PDMS",
+            "Plant design management system PDMS",
+            "Intergraph Plant Design System PDS",
+            "Intergraph SmartMarine 3D",
+            "Bentley AutoPLANT",
+            "Bentley I/RAS B"
+          ],
+          "state_of_art": [
+            "AVEVA E3D Design",
+            "Hexagon Smart 3D",
+            "Autodesk AutoCAD Plant 3D"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: spacing and access rules are checkable, but plant layout is a multi-objective design problem with no reference answers",
+          "notes": ""
+        },
+        {
+          "id": "design.plant_services.pipe_routing",
+          "name": "Specification-driven pipe routing",
+          "definition": "Given nozzle locations, line list and piping specifications, route pipes with spec-correct fittings, valves and supports around obstacles.",
+          "inputs": "equipment nozzles; line list; piping class specifications; obstacles; support standards",
+          "outputs": "3D piping model with components and supports; clash and spec-compliance report",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10303 (STEP)",
+              "code": "AP227",
+              "label": "Plant Spatial Configuration",
+              "basis": "fetched",
+              "url": "https://www.steptools.com/stds/step/step_2.html"
+            },
+            {
+              "scheme": "buildingSMART IFC 4.3",
+              "code": "IfcPipeSegment",
+              "label": "Pipe segment and fittings",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "PTC Pro/Pipe",
+            "AEC Design Group CADPIPE",
+            "Bentley AutoPLANT",
+            "Bentley PlantSpace SupportModeler",
+            "Aveva Group Plant Design Management System PDMS",
+            "Intergraph Plant Design System PDS",
+            "EZ Pipe"
+          ],
+          "state_of_art": [
+            "AVEVA E3D Design",
+            "Hexagon Smart 3D",
+            "Hexagon CADWorx Plant"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: spec compliance and clashes are checkable and route length and fittings count are measurable; there is no standard instance set",
+          "notes": "Pipe stress analysis is simulate."
+        },
+        {
+          "id": "design.plant_services.piping_isometrics",
+          "name": "Piping isometric and spool generation",
+          "definition": "Given a 3D piping model, generate dimensioned isometric drawings, fabrication spools, cut lists and material take-off.",
+          "inputs": "3D piping model; drawing and spool-break rules",
+          "outputs": "isometric drawings; spool sheets; weld and cut lists; bill of materials",
+          "crosswalk": [],
+          "onet_products": [
+            "Bentley AutoPLANT",
+            "AEC Design Group CADPIPE",
+            "PTC Pro/Pipe"
+          ],
+          "state_of_art": [
+            "Hexagon Isogen",
+            "Hexagon Spoolgen",
+            "AVEVA E3D Design"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: dimensions and material lists are determinate from the model",
+          "notes": ""
+        },
+        {
+          "id": "design.plant_services.duct_design",
+          "name": "Duct layout and sizing",
+          "definition": "Given air terminals with flows and a building model, route and size ductwork by a standard method and produce fabrication fittings.",
+          "inputs": "terminal airflows; air handler locations; building model; sizing method (equal friction, static regain)",
+          "outputs": "duct layout and sizes; fitting list; fabrication drawings and patterns",
+          "crosswalk": [
+            {
+              "scheme": "buildingSMART IFC 4.3",
+              "code": "IfcDuctSegment",
+              "label": "Duct segment and fittings",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "CSI MasterFormat",
+              "code": "Division 23",
+              "label": "Heating, ventilating and air conditioning",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "QuickPen DuctDesigner 3D",
+            "Revcad Software Sheet Lightning",
+            "HVAC tools software",
+            "Mechanical electrical plumbing MEP design software",
+            "Autodesk Building Systems"
+          ],
+          "state_of_art": [
+            "Autodesk Revit (MEP)",
+            "Trimble SysQue",
+            "Trimble QuickPen DuctDesigner 3D"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: equal-friction and static-regain sizing give determinate sizes from the ASHRAE duct design method",
+          "notes": "Heating and cooling load calculation is simulate (building energy)."
+        },
+        {
+          "id": "design.plant_services.plumbing_sprinkler",
+          "name": "Plumbing and fire sprinkler layout",
+          "definition": "Given fixtures or hazard classification and a building model, lay out and size plumbing or sprinkler piping to code.",
+          "inputs": "fixture schedule or occupancy hazard; building model; water supply; plumbing or sprinkler code",
+          "outputs": "pipe layout and sizes; head spacing; fixture-unit or hydraulic design basis",
+          "crosswalk": [
+            {
+              "scheme": "buildingSMART IFC 4.3",
+              "code": "IfcPlumbingFireProtectionDomain",
+              "label": "Plumbing and fire protection domain",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "NFPA standards",
+              "code": "NFPA 13",
+              "label": "Standard for the installation of sprinkler systems",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Elite Software Plumbing CAD",
+            "Elite Software Sprinkler CAD",
+            "Horizon Engineering Sigma Plumbing Calculator",
+            "ViziFlow",
+            "Mechanical electrical plumbing MEP design software"
+          ],
+          "state_of_art": [
+            "M.E.P. CAD AutoSPRINK",
+            "HydraCAD",
+            "Autodesk Revit (MEP)"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: fixture-unit sizing and sprinkler spacing rules are determinate; the hydraulic calculation is simulate",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "design.electrical_systems",
+      "name": "Electrical wiring and harness design",
+      "definition": "Given a machine's, vehicle's or installation's electrical functions, author wiring schematics, panel layouts, cable routes and harnesses with consistent connectivity and manufacturing documents.",
+      "crosswalk": [
+        {
+          "scheme": "ISO 10303 (STEP)",
+          "code": "AP212",
+          "label": "Electrotechnical design and installation",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "IEC standards",
+          "code": "IEC 81346",
+          "label": "Structuring principles and reference designations",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "IEC standards",
+          "code": "IEC 61082",
+          "label": "Preparation of documents used in electrotechnology",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "buildingSMART IFC 4.3",
+          "code": "IfcElectricalDomain",
+          "label": "Electrical domain",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided design CAD software",
+        "Industrial control software"
+      ],
+      "see_also": [
+        "simulate.power_systems",
+        "produce.plc_programming"
+      ],
+      "notes": "New capability split from seed 'Plant, piping and electrical-system layout' (see design.plant_services). Power-system studies (load flow, short circuit, arc flash) are simulate; PLC programming is produce.",
+      "tasks": [
+        {
+          "id": "design.electrical_systems.schematics_panels",
+          "name": "Control schematics and panel layout",
+          "definition": "Given control functions, input and output lists and device catalogs, draw wiring schematics with cross-references and wire numbers and lay out the enclosure and terminals.",
+          "inputs": "control narrative; input and output list; device catalog; reference designation rules",
+          "outputs": "wiring diagrams; terminal and wire lists; panel layout; device bill of materials",
+          "crosswalk": [
+            {
+              "scheme": "IEC standards",
+              "code": "IEC 60617",
+              "label": "Graphical symbols for diagrams",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "EPLAN software",
+            "Zuken E3.schematic",
+            "Zuken electrical design software",
+            "One Mile Up Panel Planner"
+          ],
+          "state_of_art": [
+            "EPLAN Electric P8",
+            "Autodesk AutoCAD Electrical",
+            "Zuken E3.series",
+            "SEE Electrical"
+          ],
+          "open_tools": [
+            "QElectroTech"
+          ],
+          "benchmarkable": "partly: connectivity, cross-reference and designation consistency are checkable; the control design itself is judged by review",
+          "notes": "Includes one-line power distribution diagrams and panel schedules as drawings; their analysis is simulate."
+        },
+        {
+          "id": "design.electrical_systems.raceway_cables",
+          "name": "Cable tray, raceway and cable routing",
+          "definition": "Given a cable list and a tray and conduit network, route each cable, compute fill and lengths, and produce cable schedules.",
+          "inputs": "cable list with sizes and endpoints; tray and conduit network; segregation and fill rules",
+          "outputs": "cable routes and lengths; tray and conduit fill; cable and pull schedules",
+          "crosswalk": [
+            {
+              "scheme": "buildingSMART IFC 4.3",
+              "code": "IfcCableCarrierSegment",
+              "label": "Cable carrier segment",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "NFPA standards",
+              "code": "NFPA 70 Article 392",
+              "label": "National Electrical Code: cable trays",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "ECT International Raceway Multi-Pack"
+          ],
+          "state_of_art": [
+            "Hexagon Smart Electrical",
+            "AVEVA Electrical"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: shortest feasible routes and fill percentages are determinate under stated rules",
+          "notes": ""
+        },
+        {
+          "id": "design.electrical_systems.harness_design",
+          "name": "Wire harness design",
+          "definition": "Given logical connectivity and a 3D routing path, define the harness topology, wires, connectors and protection and produce lengths, formboard drawings and a bill of materials.",
+          "inputs": "logical wiring connectivity; 3D bundle paths; connector and terminal libraries; wire rules",
+          "outputs": "harness topology; wire cut lengths; formboard drawing; harness bill of materials",
+          "crosswalk": [],
+          "onet_products": [
+            "Mentor Graphics VeSys Design",
+            "PTC Pro/Cable",
+            "Zuken electrical design software"
+          ],
+          "state_of_art": [
+            "Siemens Capital",
+            "Zuken E3.series",
+            "Dassault Systemes CATIA Electrical"
+          ],
+          "open_tools": [
+            "WireViz"
+          ],
+          "benchmarkable": "partly: lengths and bills of materials are determinate from topology; routing quality is not",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "design.pcb",
+      "name": "Printed circuit board design",
+      "definition": "Given a circuit's function and component choices, capture its schematic and lay out a manufacturable board with placed parts and routed interconnect.",
+      "crosswalk": [
+        {
+          "scheme": "ESD Alliance MSS",
+          "code": "",
+          "label": "Printed Circuit Board and Multi-Chip Module (PCB and MCM)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 10303 (STEP)",
+          "code": "AP210",
+          "label": "Electronic assembly, interconnect and packaging design",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Printed circuit boards > PCB design and layout",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "IPC standards",
+          "code": "IPC-2221",
+          "label": "Generic standard on printed board design",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "CIMdata PLM market taxonomy",
+          "code": "",
+          "label": "Electronic design automation (EDA)",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "design.circuit_simulation",
+        "simulate.electromagnetics",
+        "produce.process_specific_prep"
+      ],
+      "notes": "Was the board half of seed 'Schematic capture and PCB layout'. Board-level circuit simulation, which the existing 'pcb' function included, moved to design.circuit_simulation because the same simulators serve IC design. Board thermal and full-wave field analysis are simulate.",
+      "tasks": [
+        {
+          "id": "design.pcb.schematic_capture",
+          "name": "Schematic capture and netlisting",
+          "definition": "Given a circuit's function and selected components, draw a hierarchical schematic, pass electrical rule checks and export a netlist.",
+          "inputs": "block diagram or specification; component library; design rules for connectivity",
+          "outputs": "schematic; netlist; electrical rule check report",
+          "crosswalk": [],
+          "onet_products": [
+            "OrCAD Capture",
+            "Cadence Allegro Design Entry Capture and Capture CIS",
+            "Cadence Concept",
+            "Cadence Schematic Composer",
+            "Mentor Graphics Xpedition xDX Designer",
+            "Schematic capture software",
+            "Schematic design entry software",
+            "Schematic editors",
+            "Xcircuit",
+            "gEDA",
+            "KiCad",
+            "Zuken CADSTAR"
+          ],
+          "state_of_art": [
+            "Altium Designer",
+            "Cadence OrCAD Capture",
+            "Siemens Xpedition Designer"
+          ],
+          "open_tools": [
+            "KiCad",
+            "gEDA",
+            "Horizon EDA",
+            "LibrePCB"
+          ],
+          "benchmarkable": "partly: netlist equivalence with a reference and electrical rule checks are exact; producing a working schematic from a specification can be scored by simulation",
+          "notes": "Schematic capture for IC design uses the same function in design.custom_ic.transistor_schematic."
+        },
+        {
+          "id": "design.pcb.component_library",
+          "name": "Symbol and footprint creation",
+          "definition": "Given a component datasheet, create its schematic symbol, land pattern and 3D body to the governing land-pattern standard.",
+          "inputs": "datasheet package drawing and pinout; land-pattern standard and density level",
+          "outputs": "schematic symbol; footprint with pads, courtyard and silkscreen; 3D model",
+          "crosswalk": [
+            {
+              "scheme": "IPC standards",
+              "code": "IPC-7351",
+              "label": "Generic requirements for surface mount design and land pattern standard",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Altium Designer",
+            "KiCad",
+            "Cadence OrCAD software"
+          ],
+          "state_of_art": [
+            "Altium Designer",
+            "Siemens PADS Professional",
+            "SnapMagic",
+            "Ultra Librarian"
+          ],
+          "open_tools": [
+            "KiCad (footprint wizards)"
+          ],
+          "benchmarkable": "yes: IPC-7351 formulas give reference pad geometry, and pinouts can be checked against datasheets",
+          "notes": ""
+        },
+        {
+          "id": "design.pcb.stackup_impedance",
+          "name": "Stackup and controlled impedance design",
+          "definition": "Given target impedances, layer count and materials, choose a layer stackup and trace geometries that meet impedance and manufacturing limits.",
+          "inputs": "target single-ended and differential impedances; material properties; fabricator limits",
+          "outputs": "layer stackup; trace widths and spacings per layer; impedance tables",
+          "crosswalk": [
+            {
+              "scheme": "IPC standards",
+              "code": "IPC-2141",
+              "label": "Design guide for high-speed controlled impedance circuit boards",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Altium Designer",
+            "Cadence Allegro PCB Designer"
+          ],
+          "state_of_art": [
+            "Polar Instruments Si9000",
+            "Altium Designer Layer Stack Manager"
+          ],
+          "open_tools": [
+            "KiCad (PCB Calculator)"
+          ],
+          "benchmarkable": "yes: impedances can be checked against 2D field-solver references",
+          "notes": ""
+        },
+        {
+          "id": "design.pcb.placement",
+          "name": "Board component placement",
+          "definition": "Given a netlist, board outline and placement constraints, position components to minimize wirelength and meet keep-outs, thermal and grouping rules.",
+          "inputs": "netlist; footprints; board outline; keep-outs; placement rooms and constraints",
+          "outputs": "placed board; ratsnest wirelength and congestion estimates",
+          "crosswalk": [],
+          "onet_products": [
+            "Mentor Graphics PADS",
+            "Altium Designer",
+            "Cadence Allegro PCB Designer",
+            "Zuken CADSTAR",
+            "National Instruments Ultiboard",
+            "Mentor Graphics Expedition Enterprise",
+            "Printed circuit board design software"
+          ],
+          "state_of_art": [
+            "Cadence Allegro X",
+            "Siemens Xpedition",
+            "Altium Designer",
+            "Zuken CR-8000"
+          ],
+          "open_tools": [
+            "KiCad"
+          ],
+          "benchmarkable": "partly: wirelength and rule compliance are measurable on open-hardware boards, but there is no standard placement suite",
+          "notes": ""
+        },
+        {
+          "id": "design.pcb.routing",
+          "name": "Board interconnect routing",
+          "definition": "Given a placed board and net classes, route all connections with traces and vias meeting width, clearance, differential-pair and length-matching rules.",
+          "inputs": "placed board; net classes; clearance, width, via and length rules; layer stackup",
+          "outputs": "routed board; completion rate; via count; length-matching report",
+          "crosswalk": [],
+          "onet_products": [
+            "Cadence Allegro PCB Designer",
+            "Mentor Graphics PADS",
+            "Mentor Graphics Expedition Enterprise",
+            "Altium Designer",
+            "Zuken CADSTAR",
+            "National Instruments Ultiboard",
+            "KiCad"
+          ],
+          "state_of_art": [
+            "Cadence Allegro PCB Router",
+            "Siemens Xpedition",
+            "Altium Designer"
+          ],
+          "open_tools": [
+            "Freerouting",
+            "KiCad"
+          ],
+          "benchmarkable": "partly: completion, rule violations, via count and wirelength are measurable on open designs; no standard instance set exists",
+          "notes": "The project's pcbhdlbench covers board design from specification."
+        },
+        {
+          "id": "design.pcb.rule_checking",
+          "name": "Board design rule checking",
+          "definition": "Given a laid-out board and a rule deck covering electrical, fabrication and assembly limits, report every violation with its location.",
+          "inputs": "board layout; design rules; fabricator capabilities",
+          "outputs": "violation list; manufacturability report",
+          "crosswalk": [],
+          "onet_products": [
+            "Cadence Allegro PCB Designer",
+            "Altium Designer",
+            "Mentor Graphics PADS"
+          ],
+          "state_of_art": [
+            "Siemens Valor NPI",
+            "Cadence Allegro Constraint Manager",
+            "Altium Designer"
+          ],
+          "open_tools": [
+            "KiCad"
+          ],
+          "benchmarkable": "yes: rule checking is deterministic against a given deck",
+          "notes": ""
+        },
+        {
+          "id": "design.pcb.fabrication_outputs",
+          "name": "Fabrication and assembly outputs",
+          "definition": "Given a finished board, generate the fabrication and assembly data set and verify it against the design netlist.",
+          "inputs": "finished board design; output conventions",
+          "outputs": "Gerber, ODB++ or IPC-2581 data; drill files; pick-and-place file; assembly bill of materials; test netlist",
+          "crosswalk": [
+            {
+              "scheme": "IPC standards",
+              "code": "IPC-2581",
+              "label": "Generic requirements for printed board assembly products manufacturing description data",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "IPC standards",
+              "code": "IPC-D-356",
+              "label": "Bare substrate electrical test data format",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Printed circuit board design software",
+            "Electronic design automation EDA software",
+            "Altium Designer",
+            "KiCad"
+          ],
+          "state_of_art": [
+            "Altium Designer",
+            "Siemens Valor",
+            "DownStream CAM350"
+          ],
+          "open_tools": [
+            "KiCad",
+            "gerbv"
+          ],
+          "benchmarkable": "yes: outputs can be checked against the design netlist and geometry",
+          "notes": "Fabricator-side CAM editing is produce."
+        }
+      ]
+    },
+    {
+      "id": "design.circuit_simulation",
+      "name": "Circuit and interconnect simulation",
+      "definition": "Given a circuit or interconnect netlist with device models and stimuli, compute its electrical behavior in time or frequency.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Electronic design automation > Timing analysis > Electrical-level simulation",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Electronic design automation > Modeling and parameter extraction",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ESD Alliance MSS",
+          "code": "",
+          "label": "Computer-aided engineering (CAE): analog simulation",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Printed circuit boards > Electromagnetic interference and compatibility",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "simulate.electromagnetics",
+        "design.pcb",
+        "design.custom_ic"
+      ],
+      "notes": "New capability. The seed put circuit simulation inside IC design and the existing 'pcb' function matched board-level SPICE; the same simulators serve both, so it is one capability. The brief assigns circuit simulation and signal integrity inside the EDA flow to design. Full-wave and quasi-static field solvers (HFSS, CST, Sonnet) are simulate; this capability consumes their S-parameter results. Device model extraction absorbs the compact-model half of the old TCAD patterns.",
+      "tasks": [
+        {
+          "id": "design.circuit_simulation.analog_spice",
+          "name": "Analog circuit simulation",
+          "definition": "Given a transistor- or component-level netlist with device models and sources, compute operating points, AC response, transients and noise.",
+          "inputs": "SPICE netlist; device models; sources and analysis commands",
+          "outputs": "node voltages and branch currents over time or frequency; noise; measurements",
+          "crosswalk": [],
+          "onet_products": [
+            "Simulation program with integrated circuit emphasis SPICE",
+            "Cadence PSpice",
+            "Cadence OrCAD PSpice",
+            "Linear Technology LTSpice",
+            "Synopsys HSPICE",
+            "Cadence Virtuoso Spectre Circuit Simulator",
+            "Tanner EDA T-SPICE",
+            "Beige Bag Software B2 Spice",
+            "Spectrum Software Micro-Cap",
+            "Penzar TopSPICE",
+            "ngspice",
+            "Circuit simulation software"
+          ],
+          "state_of_art": [
+            "Cadence Spectre",
+            "Synopsys HSPICE",
+            "Siemens Eldo",
+            "Analog Devices LTspice"
+          ],
+          "open_tools": [
+            "ngspice",
+            "Xyce",
+            "Qucs-S",
+            "Gnucap"
+          ],
+          "benchmarkable": "yes: analytic circuits and cross-simulator references give exact or agreed answers; designing a circuit to a specification can be scored by simulating it",
+          "notes": ""
+        },
+        {
+          "id": "design.circuit_simulation.fast_transistor",
+          "name": "Fast transistor-level simulation",
+          "definition": "Given a large transistor-level netlist, simulate it with table, switch-level or partitioned methods trading bounded accuracy for speed.",
+          "inputs": "full-block or full-chip transistor netlist; models; stimuli; accuracy settings",
+          "outputs": "waveforms and measurements; error against a reference simulation",
+          "crosswalk": [],
+          "onet_products": [
+            "Synopsys HSIM",
+            "IRSIM",
+            "CAzM",
+            "Integrated circuit simulation software"
+          ],
+          "state_of_art": [
+            "Synopsys PrimeSim",
+            "Cadence Spectre FX",
+            "Siemens Analog FastSPICE"
+          ],
+          "open_tools": [
+            "IRSIM"
+          ],
+          "benchmarkable": "partly: accuracy against SPICE references and runtime are measurable; large open netlists are few",
+          "notes": ""
+        },
+        {
+          "id": "design.circuit_simulation.mixed_signal",
+          "name": "Mixed-signal and behavioral simulation",
+          "definition": "Given a design mixing analog, digital and behavioral models, co-simulate the parts at their own levels of abstraction.",
+          "inputs": "SPICE netlists; HDL blocks; Verilog-A or VHDL-AMS behavioral models; stimuli",
+          "outputs": "mixed analog and digital waveforms; system-level measurements",
+          "crosswalk": [
+            {
+              "scheme": "IEEE standards",
+              "code": "IEEE 1076.1",
+              "label": "VHDL analog and mixed-signal extensions",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Synopsys Saber",
+            "Dolphin Integration SMASH",
+            "Ansoft Simplorer",
+            "Powersim PSIM",
+            "APLAC",
+            "National Instruments Multisim",
+            "Electronic breadboard software"
+          ],
+          "state_of_art": [
+            "Cadence Spectre AMS Designer",
+            "Siemens Symphony",
+            "Synopsys Saber"
+          ],
+          "open_tools": [
+            "Xyce",
+            "ngspice",
+            "OpenVAF"
+          ],
+          "benchmarkable": "partly: results can be compared with full transistor-level references; few public mixed-signal test cases exist",
+          "notes": "Power-electronics circuit simulators (PSIM, Simplorer) sit here; drive-system dynamics are simulate."
+        },
+        {
+          "id": "design.circuit_simulation.rf_microwave",
+          "name": "Radio frequency circuit simulation",
+          "definition": "Given an RF or microwave circuit with distributed elements and nonlinear devices, compute S-parameters, harmonic balance and envelope responses.",
+          "inputs": "RF schematic; transmission-line and S-parameter models; nonlinear device models; tones",
+          "outputs": "S-parameters; gain, noise figure, compression and intermodulation; matching networks",
+          "crosswalk": [],
+          "onet_products": [
+            "Keysight Technologies Advanced Design System",
+            "Agilent Advanced Design System ADS",
+            "PUFF",
+            "Microwave circuit simulation software",
+            "Optiwave OptiSPICE"
+          ],
+          "state_of_art": [
+            "Keysight ADS",
+            "Cadence AWR Microwave Office",
+            "Cadence Spectre RF"
+          ],
+          "open_tools": [
+            "Qucs-S",
+            "scikit-rf"
+          ],
+          "benchmarkable": "yes: S-parameters of standard networks have analytic references, and filter and matching syntheses are checkable",
+          "notes": "Optiwave OptiSPICE simulates optoelectronic circuits."
+        },
+        {
+          "id": "design.circuit_simulation.signal_integrity",
+          "name": "Signal integrity and channel analysis",
+          "definition": "Given driver and receiver models and interconnect S-parameters, compute reflections, crosstalk, eye diagrams and channel margins.",
+          "inputs": "IBIS or IBIS-AMI models; interconnect S-parameters or extracted traces; data patterns",
+          "outputs": "waveforms; eye diagrams; crosstalk; bit error rate and channel operating margin",
+          "crosswalk": [
+            {
+              "scheme": "IBIS Open Forum",
+              "code": "",
+              "label": "I/O Buffer Information Specification",
+              "basis": "fetched",
+              "url": "https://ibis.org/"
+            }
+          ],
+          "onet_products": [
+            "Signal integrity simulation software",
+            "SpectraQuest",
+            "Transmission line simulators"
+          ],
+          "state_of_art": [
+            "Siemens HyperLynx",
+            "Cadence Sigrity",
+            "Keysight ADS SIPro and ChannelSim",
+            "Ansys SIwave"
+          ],
+          "open_tools": [
+            "PyBERT",
+            "SignalIntegrity",
+            "scikit-rf"
+          ],
+          "benchmarkable": "partly: the IEEE 802.3 channel operating margin reference code and public channel files give a shared metric; other interfaces lack one",
+          "notes": ""
+        },
+        {
+          "id": "design.circuit_simulation.power_integrity",
+          "name": "Board and package power integrity",
+          "definition": "Given a board or package power distribution network and its decoupling, compute impedance against target, DC voltage drop and an optimized decoupling set.",
+          "inputs": "board or package layout; decoupling capacitor models; current demands; target impedance",
+          "outputs": "network impedance versus frequency; DC drop and current density; decoupling selection",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Cadence Sigrity PowerSI and PowerDC",
+            "Siemens HyperLynx PI",
+            "Ansys SIwave"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: target-impedance compliance and capacitor count are measurable; there is no public instance set",
+          "notes": "On-chip IR drop is design.ic_signoff.power_grid."
+        },
+        {
+          "id": "design.circuit_simulation.model_extraction",
+          "name": "Device model parameter extraction",
+          "definition": "Given measured current-voltage and capacitance-voltage data, fit compact device model parameters for circuit simulation.",
+          "inputs": "device measurements across bias, geometry and temperature; compact model choice",
+          "outputs": "fitted model card; fit error per characteristic",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Electronic design automation > Modeling and parameter extraction",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Hewlett-Packard HP Semiconductor Parameter Analyzer"
+          ],
+          "state_of_art": [
+            "Keysight IC-CAP",
+            "Keysight Model Builder Program"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: fit error against measured data is computable",
+          "notes": "Process and device physics simulation (TCAD) is handed to simulate."
+        }
+      ]
+    },
+    {
+      "id": "design.digital_design",
+      "name": "Digital logic design and verification",
+      "definition": "Given a functional specification, produce register-transfer-level hardware descriptions and demonstrate by simulation and formal methods that they meet it, including mapping to programmable logic.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Electronic design automation > High-level and register-transfer level synthesis",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Electronic design automation > Hardware description languages and compilation",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Hardware validation > Functional verification",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ESD Alliance MSS",
+          "code": "",
+          "label": "Computer-aided engineering (CAE): design entry, logic simulation, formal verification",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "IEEE standards",
+          "code": "IEEE 1800",
+          "label": "SystemVerilog unified hardware design, specification and verification language",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Development environment software",
+        "Analytical or scientific software",
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "computing.languages",
+        "computing.embedded",
+        "design.ic_implementation"
+      ],
+      "notes": "Split from seed 'Integrated circuit design and verification', which was too broad to benchmark as one node; this part is front-end design common to FPGAs and ASICs. Hardware description languages (Verilog, VHDL, SystemVerilog) are placed here, not in computing, because they describe circuits, not programs. FPGA implementation is here because it consumes RTL directly and is benchmarked separately (VTR).",
+      "tasks": [
+        {
+          "id": "design.digital_design.rtl_authoring",
+          "name": "Register-transfer-level design",
+          "definition": "Given a functional and interface specification, write synthesizable hardware description code that implements it.",
+          "inputs": "specification; interface protocols and timing diagrams; target clocking and reset scheme",
+          "outputs": "synthesizable Verilog, VHDL or SystemVerilog; interface timing description",
+          "crosswalk": [
+            {
+              "scheme": "IEEE standards",
+              "code": "IEEE 1364",
+              "label": "Verilog hardware description language",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "IEEE standards",
+              "code": "IEEE 1076",
+              "label": "VHDL language reference manual",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Verilog",
+            "Very high-speed integrated circuit VHSIC hardware description language VHDL",
+            "SystemVerilog",
+            "Hardware description language HDL",
+            "Register transfer language RTL",
+            "Altera hardware description language AHDL",
+            "Advanced boolean expression language ABEL",
+            "Hardware description and verification language",
+            "State diagram software",
+            "Block diagram software",
+            "EMA TimingDesigner",
+            "Digital timing diagram editing software"
+          ],
+          "state_of_art": [
+            "Siemens HDL Designer",
+            "Sigasi Visual HDL"
+          ],
+          "open_tools": [
+            "Chisel",
+            "Amaranth",
+            "SpinalHDL",
+            "Verible"
+          ],
+          "benchmarkable": "yes: VerilogEval, RTLLM and the Comprehensive Verilog Design Problems set score functional correctness by simulation against reference testbenches",
+          "notes": "The leaf where language models are most often benchmarked in hardware."
+        },
+        {
+          "id": "design.digital_design.high_level_synthesis",
+          "name": "High-level synthesis",
+          "definition": "Given an algorithm in C, C++ or SystemC with throughput and resource constraints, schedule and bind it into register-transfer-level hardware.",
+          "inputs": "untimed algorithm source; clock target; directives for pipelining, unrolling and interfaces",
+          "outputs": "RTL; schedule; latency, throughput and area estimates",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Electronic design automation > High-level and register-transfer level synthesis",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "IEEE standards",
+              "code": "IEEE 1666",
+              "label": "SystemC language reference manual",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "PARTHENON"
+          ],
+          "state_of_art": [
+            "Siemens Catapult HLS",
+            "Cadence Stratus HLS",
+            "AMD Vitis HLS"
+          ],
+          "open_tools": [
+            "Bambu",
+            "XLS",
+            "Dynamatic"
+          ],
+          "benchmarkable": "yes: CHStone, MachSuite and PolyBench give functional checks and comparable latency and area results",
+          "notes": "PARTHENON was an early NTT behavioral synthesis system."
+        },
+        {
+          "id": "design.digital_design.logic_simulation",
+          "name": "Hardware description language simulation",
+          "definition": "Given RTL or gate-level code and a testbench, simulate it event-driven or cycle-based and produce waveforms and check results.",
+          "inputs": "RTL or gate-level netlist; testbench; timing annotations",
+          "outputs": "waveforms; assertion and check results; simulation logs",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Hardware validation > Functional verification > Simulation and emulation",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Siemens ModelSim",
+            "Xilinx ModelSim",
+            "Very high speed integrated circuit VHSIC hardware description language VHDL simulation software",
+            "Cadence Incisive Enterprise Simulator",
+            "Logisim"
+          ],
+          "state_of_art": [
+            "Synopsys VCS",
+            "Cadence Xcelium",
+            "Siemens Questa"
+          ],
+          "open_tools": [
+            "Verilator",
+            "Icarus Verilog",
+            "GHDL"
+          ],
+          "benchmarkable": "yes: language conformance suites such as sv-tests and throughput on open designs are measurable",
+          "notes": "Hardware emulation and prototyping systems fit here at larger scale."
+        },
+        {
+          "id": "design.digital_design.testbench_verification",
+          "name": "Testbench and coverage-driven verification",
+          "definition": "Given a design and its specification, build a self-checking testbench with stimulus, reference model and functional coverage, and drive coverage to closure while finding bugs.",
+          "inputs": "design under test; specification; verification plan",
+          "outputs": "testbench; coverage model and results; bug reports",
+          "crosswalk": [
+            {
+              "scheme": "IEEE standards",
+              "code": "IEEE 1800.2",
+              "label": "Universal Verification Methodology",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Hardware validation > Functional verification > Coverage metrics",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Functional verification software",
+            "Verification software",
+            "Cadence Incisive Enterprise Specman Elite Testbench",
+            "Hardware description and verification language"
+          ],
+          "state_of_art": [
+            "Cadence Xcelium with vManager",
+            "Synopsys VCS with Verdi",
+            "Siemens Questa"
+          ],
+          "open_tools": [
+            "cocotb",
+            "Verilator",
+            "UVM reference implementation"
+          ],
+          "benchmarkable": "partly: coverage reached and seeded bugs found are measurable, and the Comprehensive Verilog Design Problems set includes verification tasks",
+          "notes": ""
+        },
+        {
+          "id": "design.digital_design.formal_verification",
+          "name": "Formal property and equivalence checking",
+          "definition": "Given a design with temporal properties, or two designs, prove the properties or their equivalence or return a counterexample trace.",
+          "inputs": "RTL or netlist; assertions and assumptions; or a reference and a revised design",
+          "outputs": "proofs, bounded results or counterexample traces; equivalence verdict",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Hardware validation > Functional verification > Model checking; Equivalence checking",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Functional verification software",
+            "Verification software"
+          ],
+          "state_of_art": [
+            "Cadence Jasper",
+            "Synopsys VC Formal",
+            "Synopsys Formality",
+            "Cadence Conformal"
+          ],
+          "open_tools": [
+            "SymbiYosys",
+            "ABC",
+            "EBMC",
+            "Yosys"
+          ],
+          "benchmarkable": "yes: the Hardware Model Checking Competition supplies instances with known results; equivalence is exact",
+          "notes": ""
+        },
+        {
+          "id": "design.digital_design.lint_cdc",
+          "name": "Design linting and clock-domain crossing",
+          "definition": "Given RTL with its clock and reset structure, report coding-rule violations and unsafe clock- and reset-domain crossings.",
+          "inputs": "RTL; clock and reset definitions; rule set",
+          "outputs": "lint violations; crossing report with synchronizer analysis",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Synopsys SpyGlass",
+            "Siemens Questa CDC",
+            "Real Intent Meridian CDC"
+          ],
+          "open_tools": [
+            "Verible",
+            "Verilator"
+          ],
+          "benchmarkable": "partly: designs with seeded violations can be scored; there is no standard public suite",
+          "notes": ""
+        },
+        {
+          "id": "design.digital_design.fpga_implementation",
+          "name": "Programmable logic implementation",
+          "definition": "Given RTL, timing constraints and a target field-programmable gate array, synthesize, place and route the design and produce a configuration bitstream.",
+          "inputs": "RTL; constraints; device and package",
+          "outputs": "bitstream; utilization and timing reports",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Integrated circuits > Reconfigurable logic and FPGAs",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Field programmable gate array FPGA design software",
+            "Xilinx ISE Foundation",
+            "Xilinx Integrated Software Environment ISE",
+            "Altera Quartus II",
+            "Altera MAX",
+            "Xilinx Synthesis Technology XST",
+            "Synplicity Synplify",
+            "Mentor Graphics Precision RTL",
+            "Magma Design Automation Blast FPGA",
+            "Field programmable gate array FPGA logic synthesis software",
+            "Xilinx TMRTool",
+            "Anadigm Designer2 EDA"
+          ],
+          "state_of_art": [
+            "AMD Vivado",
+            "Intel Quartus Prime",
+            "Synopsys Synplify Pro"
+          ],
+          "open_tools": [
+            "Yosys",
+            "nextpnr",
+            "Verilog-to-Routing",
+            "F4PGA"
+          ],
+          "benchmarkable": "yes: the VTR and Titan benchmark suites and the ISPD 2016 and 2017 FPGA placement contests give comparable quality-of-result measures",
+          "notes": "Anadigm Designer2 configures field-programmable analog arrays, the analog counterpart."
+        },
+        {
+          "id": "design.digital_design.architecture_modeling",
+          "name": "Microarchitecture performance modeling",
+          "definition": "Given an instruction set, microarchitectural parameters and workloads, simulate or model the design to predict cycles, throughput and power before implementation.",
+          "inputs": "instruction set; pipeline, cache and memory parameters; workload binaries or traces",
+          "outputs": "cycle counts and instructions per cycle; cache and branch statistics; power estimates",
+          "crosswalk": [],
+          "onet_products": [
+            "Microarchitecture simulation software",
+            "M-Sim"
+          ],
+          "state_of_art": [
+            "Synopsys Platform Architect",
+            "Arm Fast Models"
+          ],
+          "open_tools": [
+            "gem5",
+            "ChampSim",
+            "Sniper"
+          ],
+          "benchmarkable": "yes: ChampSim trace sets and SPEC CPU workloads give shared inputs; accuracy can be checked against hardware counters",
+          "notes": "Instruction-set simulators used for firmware development are computing (embedded toolchains)."
+        }
+      ]
+    },
+    {
+      "id": "design.ic_implementation",
+      "name": "Digital integrated circuit implementation",
+      "definition": "Given verified RTL, a cell library and constraints, synthesize, insert test structures, place, clock and route the design and close timing and power to produce a layout.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Electronic design automation > Logic synthesis",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Electronic design automation > Physical design (EDA)",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Electronic design automation > Timing analysis",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Hardware test",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ESD Alliance MSS",
+          "code": "",
+          "label": "IC physical design and verification; CAE: synthesis and timing analysis",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "design.digital_design",
+        "design.ic_signoff",
+        "science.optimization"
+      ],
+      "notes": "Split from seed 'Integrated circuit design and verification'. Leaves follow the ACM CCS physical design subtree and the ISPD, ICCAD and TAU contest problems, each of which has public benchmarks and reference results.",
+      "tasks": [
+        {
+          "id": "design.ic_implementation.logic_synthesis",
+          "name": "Logic synthesis and technology mapping",
+          "definition": "Given RTL, a standard-cell library and timing constraints, produce an optimized gate-level netlist that meets timing at minimum area and power.",
+          "inputs": "RTL; Liberty cell library; design constraints",
+          "outputs": "gate-level netlist; area, timing and power reports",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Electronic design automation > Logic synthesis > Technology-mapping",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Synopsys Design Compiler",
+            "Cadence Encounter RTL Compiler",
+            "Logic synthesis software",
+            "Application-specific integrated circuit ASIC logic synthesis software",
+            "Mentor Graphics LeonardoSpectrum",
+            "Magma Design Automation Blast Create"
+          ],
+          "state_of_art": [
+            "Synopsys Fusion Compiler",
+            "Cadence Genus"
+          ],
+          "open_tools": [
+            "Yosys",
+            "ABC"
+          ],
+          "benchmarkable": "yes: the EPFL combinational benchmark suite keeps best-known results, and IWLS and ISCAS circuits are standard",
+          "notes": ""
+        },
+        {
+          "id": "design.ic_implementation.test_insertion",
+          "name": "Design for test and pattern generation",
+          "definition": "Given a gate-level netlist, insert scan chains, built-in self-test and boundary scan and generate test patterns that maximize fault coverage with few patterns.",
+          "inputs": "gate-level netlist; fault models; test architecture constraints",
+          "outputs": "test-ready netlist; test patterns; fault coverage; boundary-scan description",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Hardware test > Design for testability; Test-pattern generation and fault simulation",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "IEEE standards",
+              "code": "IEEE 1149.1",
+              "label": "Test access port and boundary-scan architecture",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Design-for-testability DFT insertion software",
+            "Automatic test program generation ATPG",
+            "Synopsys TetraMax ATPG",
+            "Cadence Encounter Test",
+            "LogicVision icBIST",
+            "Mentor Graphics BSDArchitect",
+            "Boundary scan insertion software",
+            "Built-in self-test BIST debugging software",
+            "Boundary scan description language BSDL",
+            "Fault modeling software"
+          ],
+          "state_of_art": [
+            "Siemens Tessent",
+            "Synopsys TestMAX",
+            "Cadence Modus"
+          ],
+          "open_tools": [
+            "Fault",
+            "Atalanta"
+          ],
+          "benchmarkable": "yes: ISCAS'85, ISCAS'89 and ITC'99 circuits give comparable fault coverage and pattern counts",
+          "notes": "Running tests on manufactured parts is produce."
+        },
+        {
+          "id": "design.ic_implementation.floorplanning",
+          "name": "Floorplanning and power planning",
+          "definition": "Given a netlist with macros, a die outline and input-output requirements, place macros and pins and build the power grid.",
+          "inputs": "netlist; macro abstracts; die and core size; pin constraints; power budget",
+          "outputs": "floorplan; macro and pin placement; power grid",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Electronic design automation > Physical design (EDA) > Partitioning and floorplanning",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Physical design software",
+            "Chip design software",
+            "Place-and-route software"
+          ],
+          "state_of_art": [
+            "Cadence Innovus",
+            "Synopsys IC Compiler II",
+            "Synopsys Fusion Compiler"
+          ],
+          "open_tools": [
+            "OpenROAD"
+          ],
+          "benchmarkable": "yes: MCNC and GSRC floorplanning benchmarks, and macro placement test cases on open designs, have published results",
+          "notes": ""
+        },
+        {
+          "id": "design.ic_implementation.placement",
+          "name": "Standard cell placement",
+          "definition": "Given a floorplanned netlist, place standard cells legally to minimize wirelength, congestion and timing violations.",
+          "inputs": "floorplanned netlist; cell library abstracts; timing constraints",
+          "outputs": "legal placement; wirelength, density and timing metrics",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Electronic design automation > Physical design (EDA) > Placement",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Place-and-route software",
+            "Physical design software"
+          ],
+          "state_of_art": [
+            "Cadence Innovus",
+            "Synopsys Fusion Compiler"
+          ],
+          "open_tools": [
+            "OpenROAD",
+            "DREAMPlace"
+          ],
+          "benchmarkable": "yes: ISPD 2005 and 2006 placement contests and the ICCAD 2015 timing-driven placement contest supply instances and scores",
+          "notes": ""
+        },
+        {
+          "id": "design.ic_implementation.clock_tree",
+          "name": "Clock tree synthesis",
+          "definition": "Given placed clock sinks and skew, latency and slew targets, build a buffered clock distribution network.",
+          "inputs": "placed design; clock definitions; buffer library; skew and slew targets",
+          "outputs": "clock tree; skew, latency and power report",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Electronic design automation > Physical design (EDA) > Clock-network synthesis",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Place-and-route software"
+          ],
+          "state_of_art": [
+            "Cadence Innovus",
+            "Synopsys Fusion Compiler"
+          ],
+          "open_tools": [
+            "OpenROAD"
+          ],
+          "benchmarkable": "yes: the ISPD 2009 and 2010 clock network synthesis contests provide instances and evaluation",
+          "notes": ""
+        },
+        {
+          "id": "design.ic_implementation.routing",
+          "name": "Global and detailed routing",
+          "definition": "Given a placed and clocked design and routing rules, route all nets on the metal layers without design rule violations.",
+          "inputs": "placed design; technology routing rules; layer stack",
+          "outputs": "routed layout; wirelength, via count and rule violations",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Electronic design automation > Physical design (EDA) > Wire routing",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Place-and-route software",
+            "Physical design software"
+          ],
+          "state_of_art": [
+            "Cadence Innovus",
+            "Synopsys Fusion Compiler"
+          ],
+          "open_tools": [
+            "OpenROAD"
+          ],
+          "benchmarkable": "yes: ISPD 2007 and 2008 global routing and ISPD 2018 and 2019 detailed routing contests provide instances and evaluators",
+          "notes": ""
+        },
+        {
+          "id": "design.ic_implementation.static_timing",
+          "name": "Static timing analysis and closure",
+          "definition": "Given a netlist, parasitics, cell timing models and constraints, compute arrival times and slacks and resize or restructure gates to close timing.",
+          "inputs": "netlist; parasitics; Liberty timing models; design constraints; corners",
+          "outputs": "slack and critical-path reports; timing fixes (sizing, buffering, engineering change orders)",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Electronic design automation > Timing analysis",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Synopsys PrimeTime",
+            "Timing analysis software"
+          ],
+          "state_of_art": [
+            "Synopsys PrimeTime",
+            "Cadence Tempus"
+          ],
+          "open_tools": [
+            "OpenSTA",
+            "OpenTimer"
+          ],
+          "benchmarkable": "yes: TAU timing analysis contests and ISPD 2012 and 2013 gate sizing contests provide instances and golden results",
+          "notes": ""
+        },
+        {
+          "id": "design.ic_implementation.power_optimization",
+          "name": "Power analysis and low-power design",
+          "definition": "Given a netlist, switching activity and power intent, estimate dynamic and leakage power and apply gating, multi-voltage and power-shutoff structures.",
+          "inputs": "netlist; switching activity; power intent; library power models",
+          "outputs": "power reports by block and mode; low-power structures; power-intent checks",
+          "crosswalk": [
+            {
+              "scheme": "IEEE standards",
+              "code": "IEEE 1801",
+              "label": "Design and verification of low power, energy-aware electronic systems (Unified Power Format)",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Hardware > Power and energy > Power estimation and optimization",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Power analysis software"
+          ],
+          "state_of_art": [
+            "Synopsys PrimePower",
+            "Cadence Joules",
+            "Ansys PowerArtist"
+          ],
+          "open_tools": [
+            "OpenSTA"
+          ],
+          "benchmarkable": "partly: estimates can be checked against gate-level simulation references; there is no standard suite",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "design.custom_ic",
+      "name": "Analog and custom IC design",
+      "definition": "Given circuit specifications and a process design kit, design transistor-level circuits, size them, draw their layout and build the cell and memory libraries digital flows consume.",
+      "crosswalk": [
+        {
+          "scheme": "ESD Alliance MSS",
+          "code": "",
+          "label": "IC physical design and verification: custom layout; CAE: analog design",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Integrated circuits",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "CIMdata PLM market taxonomy",
+          "code": "",
+          "label": "Electronic design automation (EDA)",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided design CAD software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "design.circuit_simulation",
+        "design.ic_signoff",
+        "simulate.electromagnetics"
+      ],
+      "notes": "Split from seed 'Integrated circuit design and verification' as the full-custom and analog half. MEMS layout is here because it uses the same layout tools and mask flow; MEMS physics is simulate.",
+      "tasks": [
+        {
+          "id": "design.custom_ic.transistor_schematic",
+          "name": "Transistor-level circuit design",
+          "definition": "Given block specifications, choose a circuit topology and draw the transistor-level schematic with its test benches.",
+          "inputs": "specifications (gain, bandwidth, noise, power, offset); process design kit",
+          "outputs": "transistor-level schematic; simulation test benches",
+          "crosswalk": [],
+          "onet_products": [
+            "Cadence Schematic Composer",
+            "Cadence Opus",
+            "Tanner EDA L-Edit"
+          ],
+          "state_of_art": [
+            "Cadence Virtuoso Schematic Editor",
+            "Synopsys Custom Compiler",
+            "Siemens Tanner S-Edit"
+          ],
+          "open_tools": [
+            "Xschem"
+          ],
+          "benchmarkable": "partly: whether a design meets its specification is checkable by simulation on open process kits such as SkyWater SKY130; topology choice is open-ended",
+          "notes": ""
+        },
+        {
+          "id": "design.custom_ic.analog_sizing",
+          "name": "Analog circuit sizing",
+          "definition": "Given a topology, specifications and process corners, choose device sizes and biases that meet all specifications with margin.",
+          "inputs": "schematic topology; specifications; process corners and mismatch models",
+          "outputs": "device sizes and biases; specification margins across corners and Monte Carlo",
+          "crosswalk": [],
+          "onet_products": [
+            "Cadence Virtuoso Spectre Circuit Simulator",
+            "Synopsys HSPICE"
+          ],
+          "state_of_art": [
+            "Siemens Solido Design Environment",
+            "Cadence Virtuoso ADE optimization",
+            "MunEDA WiCkeD"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: specifications are verified by simulation on open process kits, and standard amplifier and regulator test benches recur in the literature",
+          "notes": ""
+        },
+        {
+          "id": "design.custom_ic.custom_layout",
+          "name": "Custom and analog layout",
+          "definition": "Given a transistor-level schematic and process rules, draw or generate a matched, rule-clean physical layout.",
+          "inputs": "schematic; process design kit; matching and symmetry constraints; floorplan",
+          "outputs": "polygon layout (GDSII or OASIS); rule-check and layout-versus-schematic results",
+          "crosswalk": [
+            {
+              "scheme": "SEMI standards",
+              "code": "SEMI P39",
+              "label": "OASIS open artwork system interchange standard",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Cadence Virtuoso Layout Suite",
+            "Tanner EDA L-Edit",
+            "Tanner Research L-Edit",
+            "MAGIC",
+            "Static Free Software Electric VLSI Design System",
+            "Complementary-symmetry/metal-oxide semiconductor CMOS layout software",
+            "Microwind Dsch",
+            "OctTools",
+            "Cadence Opus",
+            "Chip design software"
+          ],
+          "state_of_art": [
+            "Cadence Virtuoso Layout Suite",
+            "Synopsys Custom Compiler"
+          ],
+          "open_tools": [
+            "Magic",
+            "KLayout",
+            "ALIGN",
+            "MAGICAL"
+          ],
+          "benchmarkable": "partly: rule-cleanliness and post-layout performance are measurable, and ALIGN and MAGICAL publish test circuits; layout quality beyond that is judged",
+          "notes": ""
+        },
+        {
+          "id": "design.custom_ic.cell_libraries",
+          "name": "Cell library and memory generation",
+          "definition": "Given a process and cell or memory specifications, generate standard cells or memory arrays and characterize their timing and power into library models.",
+          "inputs": "process design kit; cell list or memory size and ports; characterization corners",
+          "outputs": "cell or memory layouts and abstracts; Liberty timing and power tables; behavioral models",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Cadence Liberate",
+            "Synopsys PrimeLib",
+            "foundry memory compilers"
+          ],
+          "open_tools": [
+            "OpenRAM",
+            "LibreCell"
+          ],
+          "benchmarkable": "yes: characterized tables can be compared with SPICE references, and generated memories are checkable by simulation and layout verification",
+          "notes": ""
+        },
+        {
+          "id": "design.custom_ic.mems_layout",
+          "name": "Microelectromechanical device design",
+          "definition": "Given a MEMS device concept and fabrication process, create its parameterized layout and process-aware 3D model for downstream physics simulation.",
+          "inputs": "device concept; process flow and layer stack; design rules",
+          "outputs": "mask layout; 3D device model; component-level behavioral model",
+          "crosswalk": [],
+          "onet_products": [
+            "MEMSCAP MEMS Pro",
+            "Coventor ARCHITECT3D",
+            "Coventor CoventorWare",
+            "Microelectromechanical systems MEMS simulation software",
+            "LinkCAD"
+          ],
+          "state_of_art": [
+            "Coventor CoventorWare",
+            "Coventor MEMS+",
+            "Siemens Tanner L-Edit MEMS"
+          ],
+          "open_tools": [
+            "KLayout"
+          ],
+          "benchmarkable": "partly: layouts can be rule-checked; device performance needs physics simulation",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "design.ic_signoff",
+      "name": "IC physical verification and signoff",
+      "definition": "Given a completed IC layout, verify it against manufacturing rules and its netlist, extract parasitics, check power-grid integrity and prepare mask data.",
+      "crosswalk": [
+        {
+          "scheme": "ESD Alliance MSS",
+          "code": "",
+          "label": "IC physical design and verification: physical verification",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Hardware > Very large scale integration design > VLSI design manufacturing considerations",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "design.ic_implementation",
+        "design.custom_ic",
+        "simulate.semiconductor_device"
+      ],
+      "notes": "Split from seed 'Integrated circuit design and verification'. Mask synthesis (optical proximity correction) is kept here as the last step of the design flow; the lithography, etch, process and device simulators matched by the old 'ic' function's TCAD patterns (SUPREM, FLOOPS, PISCES, Medici, PROLITH as a process simulator) are handed to simulate.",
+      "tasks": [
+        {
+          "id": "design.ic_signoff.design_rule_check",
+          "name": "Layout design rule checking",
+          "definition": "Given a layout and a foundry rule deck, report every geometric rule violation with its location.",
+          "inputs": "GDSII or OASIS layout; rule deck",
+          "outputs": "violation database with markers",
+          "crosswalk": [],
+          "onet_products": [
+            "Mentor Graphics Calibre",
+            "Cadence Dracula",
+            "Synopsys Hercules",
+            "MAGIC software"
+          ],
+          "state_of_art": [
+            "Siemens Calibre",
+            "Synopsys IC Validator",
+            "Cadence Pegasus"
+          ],
+          "open_tools": [
+            "KLayout",
+            "Magic"
+          ],
+          "benchmarkable": "yes: rule checking is deterministic against a deck, and open process kits publish decks",
+          "notes": ""
+        },
+        {
+          "id": "design.ic_signoff.layout_versus_schematic",
+          "name": "Layout versus schematic checking",
+          "definition": "Given a layout and its reference netlist, extract devices and connectivity from the layout and report any mismatch.",
+          "inputs": "layout; reference netlist; extraction rules",
+          "outputs": "extracted netlist; match or mismatch report with locations",
+          "crosswalk": [],
+          "onet_products": [
+            "Mentor Graphics Calibre",
+            "Cadence Dracula",
+            "Synopsys Hercules"
+          ],
+          "state_of_art": [
+            "Siemens Calibre",
+            "Synopsys IC Validator",
+            "Cadence Pegasus"
+          ],
+          "open_tools": [
+            "Netgen",
+            "KLayout"
+          ],
+          "benchmarkable": "yes: comparison results are exact for given inputs",
+          "notes": ""
+        },
+        {
+          "id": "design.ic_signoff.parasitic_extraction",
+          "name": "Parasitic resistance and capacitance extraction",
+          "definition": "Given a routed layout and process interconnect description, compute parasitic resistances and capacitances for post-layout timing and simulation.",
+          "inputs": "routed layout; interconnect technology description; corners",
+          "outputs": "parasitic netlist (SPEF or DSPF)",
+          "crosswalk": [
+            {
+              "scheme": "IEEE standards",
+              "code": "IEEE 1481",
+              "label": "Integrated circuit delay and power calculation (includes the Standard Parasitic Exchange Format)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Mentor Graphics Calibre"
+          ],
+          "state_of_art": [
+            "Synopsys StarRC",
+            "Cadence Quantus",
+            "Siemens Calibre xACT"
+          ],
+          "open_tools": [
+            "OpenROAD (OpenRCX)",
+            "Magic"
+          ],
+          "benchmarkable": "partly: accuracy against 3D field-solver references is measurable, but no open standard suite exists",
+          "notes": ""
+        },
+        {
+          "id": "design.ic_signoff.power_grid",
+          "name": "On-chip voltage drop and electromigration",
+          "definition": "Given a power grid, current sources and process limits, compute static and dynamic voltage drop and electromigration violations.",
+          "inputs": "power grid layout and parasitics; current maps or activity; electromigration rules",
+          "outputs": "voltage-drop maps; electromigration violations",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Ansys RedHawk-SC",
+            "Cadence Voltus"
+          ],
+          "open_tools": [
+            "OpenROAD (PDNSim)"
+          ],
+          "benchmarkable": "yes: the ICCAD 2023 contest on static voltage-drop prediction and the CircuitNet dataset provide cases with golden results",
+          "notes": ""
+        },
+        {
+          "id": "design.ic_signoff.mask_synthesis",
+          "name": "Optical proximity correction and hotspot detection",
+          "definition": "Given drawn layout and a lithography model, modify mask shapes so that printed patterns match intent and flag hotspots that will not print reliably.",
+          "inputs": "layout; lithography and resist models; process window",
+          "outputs": "corrected mask data; printed-contour error; hotspot list",
+          "crosswalk": [],
+          "onet_products": [
+            "KLA-Tencor PROLITH"
+          ],
+          "state_of_art": [
+            "Siemens Calibre nmOPC",
+            "Synopsys Proteus",
+            "ASML Brion Tachyon"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the ICCAD 2012 hotspot detection and ICCAD 2013 mask optimization contests provide instances and scoring",
+          "notes": "The lithography simulation engine itself is shared with simulate."
+        }
+      ]
+    },
+    {
+      "id": "design.estimating",
+      "name": "Quantity takeoff and cost estimating",
+      "definition": "Given drawings, models or design parameters, measure quantities and price them into a cost estimate for a building, structure or product.",
+      "crosswalk": [
+        {
+          "scheme": "AACE International",
+          "code": "18R-97",
+          "label": "Cost estimate classification system for engineering, procurement and construction in the process industries",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "AACE International",
+          "code": "56R-08",
+          "label": "Cost estimate classification system for building and general construction",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "RICS",
+          "code": "NRM",
+          "label": "New Rules of Measurement",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "OmniClass",
+          "code": "",
+          "label": "Table 21 Elements (UniFormat) and Table 22 Work Results (MasterFormat) as estimate breakdowns",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Project management software",
+        "Financial analysis software",
+        "Analytical or scientific software",
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "enterprise.projects",
+        "govern.insurance",
+        "produce.process_planning"
+      ],
+      "notes": "Was seed 'Quantity takeoff and cost estimating from drawings'. Roof measurement is a separate leaf because it is a large, distinct product niche with its own geometry problem. Insurance repair estimating (Xactimate, Mitchell, Audatex) is govern; software cost estimation (SEER-SEM) is enterprise or computing; scheduling and project controls are enterprise.",
+      "tasks": [
+        {
+          "id": "design.estimating.drawing_takeoff",
+          "name": "Quantity takeoff from drawings",
+          "definition": "Given drawing sheets as PDF, raster or CAD, measure counts, lengths, areas and volumes of each work item by trade.",
+          "inputs": "drawing sheets; scale; item and assembly definitions",
+          "outputs": "quantities by item, location and trade",
+          "crosswalk": [
+            {
+              "scheme": "RICS",
+              "code": "NRM2",
+              "label": "Detailed measurement for building works",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "On Center On-Screen Takeoff",
+            "ConstructConnect PlanSwift",
+            "PlanSwift",
+            "eTakeoff",
+            "ConEst SureCount",
+            "Measure Square",
+            "Measure Square FloorEstimate Pro",
+            "Pacific Solutions FloorRight"
+          ],
+          "state_of_art": [
+            "Bluebeam Revu",
+            "PlanSwift",
+            "On Center On-Screen Takeoff",
+            "Togal.AI"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: counts, lengths and areas on given drawings have exact answers; floor plan datasets such as CubiCasa5K support area checks",
+          "notes": ""
+        },
+        {
+          "id": "design.estimating.model_takeoff",
+          "name": "Model-based quantity takeoff",
+          "definition": "Given a building or civil information model, extract quantities by classification for estimating.",
+          "inputs": "building or civil model; classification system; measurement rules",
+          "outputs": "quantities by element and classification",
+          "crosswalk": [
+            {
+              "scheme": "buildingSMART IFC 4.3",
+              "code": "IfcElementQuantity",
+              "label": "Element quantity sets",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Autodesk Navisworks",
+            "Autodesk Revit"
+          ],
+          "state_of_art": [
+            "Autodesk Takeoff",
+            "RIB CostX",
+            "RIB iTWO"
+          ],
+          "open_tools": [
+            "IfcOpenShell"
+          ],
+          "benchmarkable": "yes: quantities computed from model geometry under stated rules are deterministic",
+          "notes": ""
+        },
+        {
+          "id": "design.estimating.roof_measurement",
+          "name": "Roof measurement and layout",
+          "definition": "Given a roof plan, aerial image or pitches, compute true roof areas, edge lengths and material quantities, including tapered insulation layouts.",
+          "inputs": "roof outline; pitches; or aerial imagery; material systems",
+          "outputs": "roof facets and true areas; ridge, hip, valley and eave lengths; material and taper layouts",
+          "crosswalk": [],
+          "onet_products": [
+            "AppliCad Roof Wizard",
+            "DigiTools Roof CAD",
+            "Ziatek RoofDraw",
+            "ASR Software TopView LE",
+            "ASR Software TopView ME",
+            "ASR Software LWC-Plus",
+            "ASR Software Taper-Plus",
+            "Roof Builder Tools"
+          ],
+          "state_of_art": [
+            "EagleView",
+            "AppliCad Roof Wizard",
+            "Hover"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: true areas and edge lengths follow from plan geometry and pitch",
+          "notes": ""
+        },
+        {
+          "id": "design.estimating.construction_pricing",
+          "name": "Construction cost estimating and bidding",
+          "definition": "Given quantities, unit costs, crew productivity and markups, produce a priced construction estimate or bid.",
+          "inputs": "quantities; cost database; labor rates and productivity; equipment; markups",
+          "outputs": "itemized estimate; bid summary; cost breakdown by classification",
+          "crosswalk": [
+            {
+              "scheme": "AACE International",
+              "code": "56R-08",
+              "label": "Cost estimate classification for building and general construction",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Cost estimating software",
+            "HCSS HeavyBid",
+            "On Center Quick Bid",
+            "Construction Software Center EasyEst",
+            "CPR Visual Estimator",
+            "Craftsman CD Estimator",
+            "WinEstimator WinEst",
+            "Construction Management Software ProEst",
+            "Maxwell Systems Quest Estimator",
+            "The Gordian Group PROGEN Online",
+            "Piping construction costs estimation software",
+            "ConEst IntelliBid Design Build"
+          ],
+          "state_of_art": [
+            "Trimble WinEst",
+            "Sage Estimating",
+            "HCSS HeavyBid",
+            "Autodesk ProEst",
+            "RSMeans Data"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: pricing arithmetic is checkable, but accuracy against actual cost needs bid and outcome data that are rarely public",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "design.craft_design",
+      "name": "Apparel, jewelry and craft design",
+      "definition": "Given a style and fit or form requirements, author the patterns, models or stitch programs from which garments, jewelry, textiles and craft goods are made.",
+      "crosswalk": [
+        {
+          "scheme": "ISO standards",
+          "code": "ISO 8559",
+          "label": "Size designation of clothes: anthropometric definitions for body measurement",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided design CAD software",
+        "Pattern design software",
+        "Graphics or photo imaging software"
+      ],
+      "see_also": [
+        "produce.profile_cutting_cam",
+        "media.vector_graphics",
+        "health.therapy_planning"
+      ],
+      "notes": "Was seed 'Apparel, pattern, jewelry and other craft design'. Marker making (nesting pattern pieces on fabric) is left to produce with other nesting. Orthotic, prosthetic, dental and eyeglass design are handed to health. Sign design is media.",
+      "tasks": [
+        {
+          "id": "design.craft_design.pattern_drafting",
+          "name": "Garment pattern drafting",
+          "definition": "Given body measurements and a style, draft the flat pattern pieces of a garment with seam allowances, notches and grain lines.",
+          "inputs": "body measurements or size chart; style description or sketch; fabric properties",
+          "outputs": "pattern pieces with annotations; tech pack data",
+          "crosswalk": [],
+          "onet_products": [
+            "Gerber Technology AccuMark",
+            "PatternMaker",
+            "Patternmaking software",
+            "Garment design software",
+            "Fashion Toolbox",
+            "C-DESIGN Fashion",
+            "Optitex 3D Suite",
+            "Pattern design software",
+            "StartingAClothingLine.com Digital Fashion Pro",
+            "Template design software",
+            "Autodesk AutoCAD Design Suite"
+          ],
+          "state_of_art": [
+            "Lectra Modaris",
+            "Gerber AccuMark",
+            "Optitex PDS",
+            "CLO 3D"
+          ],
+          "open_tools": [
+            "Seamly2D",
+            "Valentina",
+            "FreeSewing"
+          ],
+          "benchmarkable": "partly: measurement-driven drafts can be checked against drafting systems, and sewing-pattern datasets such as GarmentCode exist; fit and style are judged",
+          "notes": ""
+        },
+        {
+          "id": "design.craft_design.pattern_grading",
+          "name": "Pattern grading",
+          "definition": "Given a base-size pattern, a size chart and grade rules, generate the pattern in every size.",
+          "inputs": "base pattern; size chart; grade rules",
+          "outputs": "graded nest of sizes",
+          "crosswalk": [],
+          "onet_products": [
+            "Gerber Technology AccuMark",
+            "PatternMaker",
+            "Optitex 3D Suite"
+          ],
+          "state_of_art": [
+            "Gerber AccuMark",
+            "Lectra Modaris"
+          ],
+          "open_tools": [
+            "Seamly2D",
+            "Valentina"
+          ],
+          "benchmarkable": "yes: rule-based grading is deterministic",
+          "notes": ""
+        },
+        {
+          "id": "design.craft_design.virtual_garment",
+          "name": "Virtual garment fitting",
+          "definition": "Given pattern pieces, an avatar and fabric properties, sew and drape the garment virtually to evaluate fit and appearance before sampling.",
+          "inputs": "pattern pieces and sewing instructions; avatar; fabric mechanical properties",
+          "outputs": "draped garment; strain and pressure fit maps; renders",
+          "crosswalk": [],
+          "onet_products": [
+            "CLO Virtual Fashion Marvelous Designer",
+            "Optitex 3D Suite"
+          ],
+          "state_of_art": [
+            "CLO 3D",
+            "Browzwear VStitcher"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: drape can be compared with physical drape tests; fit judgment is human",
+          "notes": "Kept in design because it is part of the pattern loop; the cloth solver is physics."
+        },
+        {
+          "id": "design.craft_design.jewelry_gem",
+          "name": "Jewelry and gemstone design",
+          "definition": "Given a design concept and stones, model rings, settings and stone layouts for casting or printing, or design gemstone facet diagrams.",
+          "inputs": "concept; finger or chain sizes; stone sizes and shapes; metal; for gems, rough dimensions and refractive index",
+          "outputs": "printable or castable jewelry model with metal weight; facet diagram and cutting instructions",
+          "crosswalk": [],
+          "onet_products": [
+            "Computer assisted jewelry design CAD software",
+            "Jewelry design software",
+            "Metal designing software",
+            "GemCad"
+          ],
+          "state_of_art": [
+            "Gemvision MatrixGold",
+            "RhinoGold",
+            "3Design"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: metal weight, stone fit and facet light return are computable; design is judged",
+          "notes": ""
+        },
+        {
+          "id": "design.craft_design.embroidery_quilting",
+          "name": "Embroidery and quilt design",
+          "definition": "Given artwork or a block layout, produce machine stitch programs or quilt layouts with yardage.",
+          "inputs": "artwork; fabric and thread; stitch types; or quilt block and layout choices",
+          "outputs": "machine embroidery stitch file; quilt layout and fabric yardage",
+          "crosswalk": [],
+          "onet_products": [
+            "Embroidery design software",
+            "DRAWSTITCH Artistic Sewing Suite",
+            "Electric Quilt Quilt Design Wizard",
+            "Floriani MDQ My Decorative Quilter"
+          ],
+          "state_of_art": [
+            "Wilcom EmbroideryStudio",
+            "Hatch Embroidery",
+            "Electric Quilt"
+          ],
+          "open_tools": [
+            "Ink/Stitch"
+          ],
+          "benchmarkable": "partly: stitch count, density and yardage are measurable; visual fidelity needs judgment",
+          "notes": ""
+        },
+        {
+          "id": "design.craft_design.textile_repeat",
+          "name": "Textile print repeat design",
+          "definition": "Given motifs and a repeat type, compose a seamless repeating print and its colorways for textile printing.",
+          "inputs": "motifs; repeat type and size; color palette",
+          "outputs": "seamless repeat tile; colorway separations",
+          "crosswalk": [],
+          "onet_products": [
+            "Lectra Prima Vision Print Repeat"
+          ],
+          "state_of_art": [
+            "Lectra Kaledo",
+            "NedGraphics"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: seamlessness and color count are checkable; aesthetics are not",
+          "notes": ""
+        },
+        {
+          "id": "design.craft_design.cabinetry",
+          "name": "Cabinet and millwork design",
+          "definition": "Given a room layout and a construction standard, design cabinets and millwork and generate parts lists and cut lists.",
+          "inputs": "room layout; cabinet construction standards; materials and hardware",
+          "outputs": "cabinet models; parts and cut lists; shop drawings",
+          "crosswalk": [],
+          "onet_products": [
+            "KCD cabinet design software"
+          ],
+          "state_of_art": [
+            "Hexagon Cabinet Vision",
+            "Microvellum",
+            "KCD"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: part dimensions follow from construction rules and are checkable",
+          "notes": "Panel nesting and CNC output are produce."
+        }
+      ]
+    }
+  ],
+  "existing_function_map": [
+    {
+      "function": "cad",
+      "nodes": [
+        "design.solid_modeling",
+        "design.geometry_exchange",
+        "design.product_definition",
+        "design.plant_services"
+      ],
+      "note": "Mechanical and surface modelers go to solid_modeling; generic and 2D CAD to product_definition (drafting); 'reverse engineering', IGES and Geomagic patterns to geometry_exchange; the 3D plant layout patterns (PDMS, SmartMarine, AutoPLANT, CADWorx) to plant_services."
+    },
+    {
+      "function": "pcb",
+      "nodes": [
+        "design.pcb",
+        "design.circuit_simulation"
+      ],
+      "note": "Board design patterns to pcb; the board-level SPICE patterns (PSpice, LTspice, Multisim, ngspice) to circuit_simulation, which also serves IC design."
+    },
+    {
+      "function": "ic",
+      "nodes": [
+        "design.digital_design",
+        "design.ic_implementation",
+        "design.custom_ic",
+        "design.ic_signoff",
+        "design.circuit_simulation"
+      ],
+      "note": "Split five ways. The device and process TCAD patterns (SUPREM, PISCES, Medici, FLOOPS, FLOODS, etch simulation) are handed to simulate; MEMS layout stays in custom_ic and lithography correction in ic_signoff."
+    },
+    {
+      "function": "civil",
+      "nodes": [
+        "design.architecture",
+        "design.civil_site",
+        "design.estimating"
+      ],
+      "note": "Design half only: BIM and architecture, road and site design, structural detailing (Tekla). The structural analysis patterns (STAAD, RISA, STRUDL, ENERCALC) and geotechnical patterns (gINT, GeoStudio) go to simulate."
+    }
+  ],
+  "handoffs": [
+    {
+      "what": "Semiconductor process and device simulation (SUPREM, FLOOPS, FLOODS, PISCES IIB, Synopsys Taurus Medici, SimWindows, Anisotropic Crystalline Etch Simulation ACES)",
+      "to_domain": "simulate",
+      "why": "solving device and process physics; was part of the existing 'ic' function"
+    },
+    {
+      "what": "Optical and photonic design and simulation (Zemax, Lambda Research OSLO, LightTools, Breault ASAP, Photon Design FIMMWAVE and CrystalWave, Optiwave OptiBPM and OptiFDTD)",
+      "to_domain": "simulate",
+      "why": "simulate's seed includes optics; lens design is ray-tracing optimization"
+    },
+    {
+      "what": "Full-wave electromagnetic solvers (CST Microwave Studio, Ansoft HFSS)",
+      "to_domain": "simulate",
+      "why": "field physics; circuit_simulation consumes their S-parameters"
+    },
+    {
+      "what": "Structural frame analysis in the CAD category (Bentley STAAD, RISA-3D, GT STRUDL, ENERCALC FastFrame, StruCAD*3D, BeamChek, RISAMasonry)",
+      "to_domain": "simulate",
+      "why": "frame analysis and code checking per the boundary table"
+    },
+    {
+      "what": "Pipe and storm network hydraulics in the CAD category (Bentley WaterCAD, SewerCAD, CivilStorm, HydroCAD)",
+      "to_domain": "simulate",
+      "why": "engineered network analysis"
+    },
+    {
+      "what": "Topology optimization and generative design",
+      "to_domain": "simulate",
+      "why": "driven by a physics solve; solid_modeling authors the result"
+    },
+    {
+      "what": "Ship hydrostatics and stability (The Napa Group NAPA, Creative System GHS, HECSALV)",
+      "to_domain": "simulate",
+      "why": "physics of the hull, not its geometry"
+    },
+    {
+      "what": "CAM and fabrication programs in the CAD category (Vero Software Edgecam, ALPHACAM, GibbsCAM, SmartCAM, SolidCAM, Mastercam Design, Kipware, CAD/CAM engraving, Corte Certo, XY Soft Sheet Cutting Suite, Cutlist Plus fx, 3D printing preparation)",
+      "to_domain": "produce",
+      "why": "toolpaths, nesting and build preparation"
+    },
+    {
+      "what": "Factory layout (Facilities design software, Facilities planning software)",
+      "to_domain": "produce",
+      "why": "factory layout is with production simulation"
+    },
+    {
+      "what": "Geology, mining and subsurface modeling in the CAD category (Paradigm SKUA-GOCAD, Midland Valley Move, EarthVision, WellCAD, MineSight, Promine, Visual Groundwater, EVS, 3DFATMIC)",
+      "to_domain": "earth",
+      "why": "subsurface modeling"
+    },
+    {
+      "what": "Survey and coordinate geometry (Carlson SurvCADD survey half, MicroSurvey CAD, Tripod Data Systems Foresight, TomCADD, GPS2CAD, CogoCAD, Trimble Geomatics Office)",
+      "to_domain": "earth",
+      "why": "surveying; civil_site consumes the surveyed surface"
+    },
+    {
+      "what": "Urban and regional planning models (CommunityViz, UrbanSim, 3D urban simulation, Luminous Table, MultiGen 3D GIS, Autodesk AutoCAD Map 3D)",
+      "to_domain": "earth",
+      "why": "GIS and land-use modeling"
+    },
+    {
+      "what": "Stormwater hydrology (SEDCAD, Stormwater hydrology software, WinTR-55, HEC-HMS)",
+      "to_domain": "earth",
+      "why": "natural water"
+    },
+    {
+      "what": "Architectural and product rendering and animation (Autodesk 3ds Max, Maya, VIZ, Lumion, Chaos Enscape, e-on VUE, Visual Nature Studio, World Construction Set, VRML tools)",
+      "to_domain": "media",
+      "why": "rendering and 3D content creation"
+    },
+    {
+      "what": "Sign layout (SignCAD) and diagramming or mind-mapping tools filed under Pattern design software (OmniGraffle, MindView, MindGenius, Diagramming software)",
+      "to_domain": "media",
+      "why": "graphic layout and diagrams, not engineering design; mind maps may belong to enterprise"
+    },
+    {
+      "what": "Orthotic, prosthetic, dental and eyeglass design (Shapemaker, CANFIT-PLUS, OMEGA Tracer, AutoSculpt, Dental product design software, Eyeglass design software)",
+      "to_domain": "health",
+      "why": "therapy and appliance planning for a patient"
+    },
+    {
+      "what": "Accident and crime scene diagramming and claims tools in the CAD and graphics categories (MapScenes, WinSMAC, StiffCalcs, CAD Zone Insurance, The Crime Zone, Visual Statement, PhotoModeler for scenes)",
+      "to_domain": "govern",
+      "why": "insurance and public-safety forensics"
+    },
+    {
+      "what": "Insurance repair estimating (Xactware Xactimate, Mitchell, Audatex)",
+      "to_domain": "govern",
+      "why": "insurance claims estimating"
+    },
+    {
+      "what": "Requirements management (IBM Rational DOORS, Requirements management software)",
+      "to_domain": "computing",
+      "why": "computing owns 'Requirements, modeling and architecture'"
+    },
+    {
+      "what": "Mathcad and similar engineering calculation worksheets",
+      "to_domain": "science",
+      "why": "general numerical computing"
+    },
+    {
+      "what": "Traffic analysis in the CAD category (Caliper TransCAD, Trafficware SimTraffic)",
+      "to_domain": "move",
+      "why": "traffic and transport planning"
+    },
+    {
+      "what": "Building energy design tools in the CAD category (Home Energy Efficient Design HEED, Thermal design software)",
+      "to_domain": "simulate",
+      "why": "building energy and thermal simulation"
+    },
+    {
+      "what": "Molecular modeling products filed under CAD (ChemInnovation Chem 4-D, Accelrys Insight II, ChemSW Molecular Modeling Pro, Hypercube HyperChem)",
+      "to_domain": "science",
+      "why": "molecular modeling"
+    },
+    {
+      "what": "Robot and controller programming (Robotics Academy ROBOTC, USyCaMs, ABB RobotStudio, Ladder Logic)",
+      "to_domain": "produce",
+      "why": "robot and PLC programming"
+    },
+    {
+      "what": "General programming languages and tools in Development environment software",
+      "to_domain": "computing",
+      "why": "only hardware description languages are design's"
+    }
+  ],
+  "unplaced_products": [
+    "MAHLE Powertrain",
+    "Main Injector Neutrino Oscillation Search MINOS software",
+    "WHE Term-PAK",
+    "Logitech 3D Pro",
+    "Autodesk AutoCAD Blue Sky",
+    "Floor planning software",
+    "Integrated Environmental Services 3D Master",
+    "Bioreactor Design",
+    "Failure assessment software"
+  ],
+  "open_questions": [
+    "This domain has 16 capabilities, above the 6 to 14 guidance, because the electronics sources (ACM CCS, ESD Alliance) and the contest benchmarks split IC work finely. If the editor wants 14, merge design.custom_ic with design.ic_signoff, and design.electrical_systems back into design.plant_services as the seed had it.",
+    "Semiconductor process and device simulation (TCAD) was in the existing 'ic' function but is physics; I handed it to simulate, whose seeds do not name it. Simulate should add it or the editor should return it here.",
+    "Lens and optical system design (Zemax, OSLO) is authoring a prescription but is done by ray-trace optimization; I handed it to simulate, which lists optics. Confirm.",
+    "Hardware description languages are placed in design, not computing's programming languages. Computing's author may have claimed Verilog and VHDL from the shared Development environment category.",
+    "Requirements management for hardware systems (DOORS) is left to computing; if the editor prefers a systems-engineering node near PLM, design.product_data is the natural parent.",
+    "Tolerance stack-up analysis and virtual garment fitting are analyses kept in design because they sit inside the design loop and are not general physics; simulate may disagree about the cloth solver.",
+    "see_also ids pointing into other domains are guesses at their likely node ids and need reconciling once all domain files exist."
+  ]
+}

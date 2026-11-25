@@ -1,0 +1,3152 @@
+{
+  "domain": "move",
+  "summary": "Fourteen capabilities follow the flow of goods (plan, store, move, ship, clear) and then the modes that carry goods and people (road fleets, air, sea, rail, transit, travel distribution, road networks). SCOR's plan and deliver processes and APQC category 4 drove the goods side; GS1's identify-capture-share families shaped identification and traceability; ICAO's Doc 9854 concept components, IMO e-navigation, railML and AAR, Transmodel and GTFS, and ARC-IT with the Highway Capacity Manual shaped the mode-specific capabilities. Routing and scheduling leaves are named for the public instance sets that test them.",
+  "capabilities": [
+    {
+      "id": "move.supply_chain_planning",
+      "name": "Supply chain planning",
+      "definition": "Given demand history, the network of sites and lanes, lead times and costs, decide how much to stock, make and move where and when, and where facilities should be.",
+      "crosswalk": [
+        {
+          "scheme": "ASCM SCOR 12.0",
+          "code": "sP",
+          "label": "Plan",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ASCM SCOR 12.0",
+          "code": "sP1",
+          "label": "Plan Supply Chain",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "APQC PCF cross-industry 7",
+          "code": "",
+          "label": "Plan for and align supply chain resources",
+          "basis": "fetched",
+          "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+        }
+      ],
+      "onet_categories": [
+        "Materials requirements planning logistics and supply chain software",
+        "Inventory management software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "produce.manufacturing_execution",
+        "science.optimization",
+        "operate.asset_strategy"
+      ],
+      "notes": "Was seed 'Supply chain and demand planning, inventory optimization'. Shop-floor MRP and finite-capacity scheduling are handed to produce; the solvers to science. Spare-parts provisioning added because the military logistics products in O*NET (SYSPARS, Spare Cost) do exactly this.",
+      "tasks": [
+        {
+          "id": "move.supply_chain_planning.demand_forecasting",
+          "name": "Demand forecasting for replenishment",
+          "definition": "Given sales or shipment history by item and location with calendar and promotion data, produce forecasts at the levels planners use.",
+          "inputs": "item-location demand history, hierarchy, calendar, prices and promotions",
+          "outputs": "point and quantile forecasts by item, location and period",
+          "crosswalk": [
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "sP1.1",
+              "label": "Identify, Prioritize and Aggregate Supply Chain Requirements",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "APQC PCF cross-industry 7",
+              "code": "4.1.2.1",
+              "label": "Develop baseline demand forecasts",
+              "basis": "fetched",
+              "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+            }
+          ],
+          "onet_products": [
+            "JDA Manugistics",
+            "SAP APO",
+            "SAP POS Data Management",
+            "Walmart Retail Link",
+            "Ordering software",
+            "Inventory control systems"
+          ],
+          "state_of_art": [
+            "Blue Yonder Demand Planning",
+            "SAP Integrated Business Planning",
+            "o9 Solutions",
+            "Oracle Demantra",
+            "RELEX Solutions",
+            "Blue Yonder Luminate Demand",
+            "SAP Unified Demand Forecast"
+          ],
+          "open_tools": [
+            "frePPLe"
+          ],
+          "benchmarkable": "yes: the M5 competition (Walmart hierarchical unit sales) has public data and scoring",
+          "notes": "Generic time-series methods belong to science; this task is the planning application with item-location hierarchies."
+        },
+        {
+          "id": "move.supply_chain_planning.supply_master_planning",
+          "name": "Multi-site supply planning",
+          "definition": "Given net demand, sourcing rules, site capacities and lead times across a network, decide production, transfer and purchase quantities by period.",
+          "inputs": "demand plan, bills of distribution, capacities, lead times, costs",
+          "outputs": "time-phased supply plan by site and lane; capacity and shortage exceptions",
+          "crosswalk": [
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "sP1",
+              "label": "Plan Supply Chain",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "sP4",
+              "label": "Plan Deliver",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "JDA Master Planning",
+            "Adexa Supply Chain Planning",
+            "SAP SCM",
+            "Oracle PeopleSoft Enterprise Supply Planning Multi-Site Material Planner",
+            "Supply chain capacity planning software",
+            "i2 Collaborative Supply Execution",
+            "Infor SCM",
+            "Manhattan Supply Chain Process Platform"
+          ],
+          "state_of_art": [
+            "Kinaxis RapidResponse",
+            "SAP Integrated Business Planning",
+            "Blue Yonder Supply Planning",
+            "o9 Solutions"
+          ],
+          "open_tools": [
+            "frePPLe"
+          ],
+          "benchmarkable": "partly: formulations are standard linear and mixed-integer programs, but there is no shared instance set",
+          "notes": "Single-plant MRP explosion stays with produce."
+        },
+        {
+          "id": "move.supply_chain_planning.inventory_policy_optimization",
+          "name": "Inventory policy optimization",
+          "definition": "Given demand distributions, lead times, costs and service targets for one or many echelons, set safety stocks, reorder points and order quantities.",
+          "inputs": "demand and lead-time distributions, holding and shortage costs, network structure, service targets",
+          "outputs": "safety stock, reorder point and order-up-to levels by item and location; expected service and cost",
+          "crosswalk": [
+            {
+              "scheme": "APQC PCF cross-industry 7",
+              "code": "4.1.6.2",
+              "label": "Establish inventory management constraints",
+              "basis": "fetched",
+              "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+            }
+          ],
+          "onet_products": [
+            "IBM ILOG Inventory Analyst"
+          ],
+          "state_of_art": [
+            "SAP Integrated Business Planning for Inventory",
+            "ToolsGroup SO99+",
+            "Logility"
+          ],
+          "open_tools": [
+            "stockpyl"
+          ],
+          "benchmarkable": "yes: Willems (2008) published 38 real multi-echelon supply chains for safety-stock placement, with reference solutions",
+          "notes": ""
+        },
+        {
+          "id": "move.supply_chain_planning.network_design",
+          "name": "Supply chain network design",
+          "definition": "Given candidate facility sites, demand points, flows and costs, choose which facilities to open and how to assign flows to minimize cost under capacity limits.",
+          "inputs": "customer demand, candidate sites and capacities, fixed and variable costs, transport costs",
+          "outputs": "facilities to open, flow assignment, total cost and service levels",
+          "crosswalk": [
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "",
+              "label": "Manage Supply Chain Network",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "APQC PCF cross-industry 7",
+              "code": "4.4.1.2",
+              "label": "Design logistics network",
+              "basis": "fetched",
+              "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+            }
+          ],
+          "onet_products": [
+            "IBM ILOG LogicNet Plus XE",
+            "Integrated Decision Support Corporation Netwise Supply Chain",
+            "Integrated Decision Support Netwise Enterprise",
+            "Integrated Decision Support Netwise Frontline",
+            "i2 Transportation Modeler",
+            "Location allocation decision support system LADSS"
+          ],
+          "state_of_art": [
+            "Coupa Supply Chain Modeler",
+            "AIMMS SC Navigator",
+            "anyLogistix",
+            "Optilogic Cosmic Frog"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: OR-Library capacitated warehouse location instances (Beasley) and the Holmberg capacitated facility location set",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.warehouse_inventory",
+      "name": "Warehouse and inventory control",
+      "definition": "Given stock, storage locations, orders and identification events, keep an accurate record of what is where and direct the work of storing, picking and packing it.",
+      "crosswalk": [
+        {
+          "scheme": "ASCM SCOR 12.0",
+          "code": "sD1",
+          "label": "Deliver Stocked Product",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "APQC PCF cross-industry 7",
+          "code": "",
+          "label": "Operate warehousing",
+          "basis": "fetched",
+          "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+        },
+        {
+          "scheme": "GS1 standards",
+          "code": "",
+          "label": "Identify, Capture, Share",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Materials requirements planning logistics and supply chain software",
+        "Inventory management software",
+        "Bar coding software",
+        "Label making software"
+      ],
+      "see_also": [
+        "commerce.merchandising"
+      ],
+      "notes": "Was seed 'Warehouse management and inventory control; barcoding and labeling'. Kept as one capability; the GS1 identify-capture-share families became the identification and traceability tasks. Food, menu and kitchen inventory go to commerce; laboratory chemical inventory to science; forest inventory to earth.",
+      "tasks": [
+        {
+          "id": "move.warehouse_inventory.storage_assignment",
+          "name": "Storage location assignment",
+          "definition": "Given items, their demand and dimensions, and a warehouse layout, assign items to storage locations (slotting and putaway) to reduce travel and respect constraints.",
+          "inputs": "SKU velocity and dimensions, location dimensions, layout, compatibility rules",
+          "outputs": "item-to-location assignment; expected pick travel",
+          "crosswalk": [
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "sD1.8",
+              "label": "Receive Product from Source or Make",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Warehouse management system WMS",
+            "HighJump Software Warehouse Advantage",
+            "Red Prarie Warehouse Management",
+            "Swisslog WarehouseManager",
+            "Epicor WMS",
+            "IntelliTrack Warehouse Management System (WMS)"
+          ],
+          "state_of_art": [
+            "Manhattan Active Warehouse Management",
+            "Blue Yonder Warehouse Management",
+            "SAP Extended Warehouse Management",
+            "Körber WMS"
+          ],
+          "open_tools": [
+            "Odoo Inventory"
+          ],
+          "benchmarkable": "partly: slotting is a quadratic assignment problem with QAPLIB instances, but no warehouse-specific shared set",
+          "notes": ""
+        },
+        {
+          "id": "move.warehouse_inventory.order_picking",
+          "name": "Order batching and picker routing",
+          "definition": "Given open orders, item locations and the warehouse layout, group orders into pick batches or waves and sequence each picker's route.",
+          "inputs": "order lines, item locations, aisle layout, picker and cart capacity",
+          "outputs": "batches or waves, pick lists in route sequence, travel distance",
+          "crosswalk": [
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "sD1.9",
+              "label": "Pick Product",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Manhattan Associates PkMS Pickticket",
+            "RedPrairie DLx Warehouse",
+            "Logility Voyager WarehousePRO",
+            "Radio Beacon WMS",
+            "Intelligrated InControlWare",
+            "TECSYS EliteSeries"
+          ],
+          "state_of_art": [
+            "Manhattan Active Warehouse Management",
+            "Blue Yonder Warehouse Management",
+            "SAP Extended Warehouse Management"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: picker routing in rectangular warehouses has exact algorithms (Ratliff and Rosenthal) and published batching instances, but no single standard set",
+          "notes": ""
+        },
+        {
+          "id": "move.warehouse_inventory.cartonization",
+          "name": "Cartonization and pack planning",
+          "definition": "Given the items of an order and the available box sizes, choose boxes and item placements that minimize shipped volume or cost.",
+          "inputs": "item dimensions and weights, box catalogue, carrier dimensional-weight rules",
+          "outputs": "boxes per order with item assignments and placements",
+          "crosswalk": [
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "sD1.10",
+              "label": "Pack Product",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Shipping and freight management software"
+          ],
+          "state_of_art": [
+            "Paccurate",
+            "Manhattan Active Warehouse Management"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: three-dimensional bin packing instance classes of Martello, Pisinger and Vigo",
+          "notes": ""
+        },
+        {
+          "id": "move.warehouse_inventory.stock_records",
+          "name": "Stock records and cycle counting",
+          "definition": "Given receipts, issues, transfers and counts, maintain on-hand balances by item, lot and location, and schedule counts to find and correct discrepancies.",
+          "inputs": "inventory transactions, count results, item and location master data",
+          "outputs": "on-hand balances, custody history, count schedules and variance adjustments",
+          "crosswalk": [
+            {
+              "scheme": "APQC PCF cross-industry 7",
+              "code": "4.4.3.5",
+              "label": "Track inventory accuracy",
+              "basis": "fetched",
+              "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+            }
+          ],
+          "onet_products": [
+            "Inventory tracking software",
+            "Inventory management systems",
+            "Inventory control software",
+            "Inventory control system software",
+            "Automated inventory software",
+            "Oracle Inventory",
+            "Fishbowl Warehouse",
+            "Aljex Inventory",
+            "IntelliTrack DMS Check In-Out",
+            "Profitool GearWatch",
+            "Peninsula Software Quicktrack Pro",
+            "Supply system software"
+          ],
+          "state_of_art": [
+            "SAP S/4HANA Inventory Management",
+            "NetSuite",
+            "Fishbowl"
+          ],
+          "open_tools": [
+            "Odoo Inventory",
+            "OpenBoxes"
+          ],
+          "benchmarkable": "no: record keeping is transactional; correctness is a matter of tests, not a leaderboard",
+          "notes": "Includes tool and equipment check-in and check-out."
+        },
+        {
+          "id": "move.warehouse_inventory.barcode_label_generation",
+          "name": "Barcode and logistics label generation",
+          "definition": "Given identifiers and shipment data, encode them in linear or two-dimensional symbols and lay out a compliant label for printing.",
+          "inputs": "identifiers (item number, serial shipping container code, lot, dates), label template, printer",
+          "outputs": "printable label with conformant barcode symbols",
+          "crosswalk": [
+            {
+              "scheme": "GS1 standards",
+              "code": "",
+              "label": "GS1 Logistic Label Guideline",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "GS1 standards",
+              "code": "",
+              "label": "GS1 General Specifications",
+              "basis": "fetched",
+              "url": "https://ref.gs1.org/standards/genspecs/"
+            }
+          ],
+          "onet_products": [
+            "Barcode labeling software",
+            "Label printing software",
+            "Barcode software",
+            "ABOL Manifest Systems"
+          ],
+          "state_of_art": [
+            "Seagull BarTender",
+            "Loftware NiceLabel",
+            "ZebraDesigner"
+          ],
+          "open_tools": [
+            "Zint",
+            "bwip-js",
+            "gLabels"
+          ],
+          "benchmarkable": "yes: generated symbols can be graded against ISO/IEC 15415 and 15416 and GS1 application-identifier rules",
+          "notes": ""
+        },
+        {
+          "id": "move.warehouse_inventory.barcode_decoding",
+          "name": "Barcode decoding from images",
+          "definition": "Given a camera or scanner image, locate and decode every linear and two-dimensional symbol in it.",
+          "inputs": "image or scan line",
+          "outputs": "decoded symbol data, symbology and position",
+          "crosswalk": [
+            {
+              "scheme": "GS1 standards",
+              "code": "",
+              "label": "Capture: barcodes",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Barcode reader software"
+          ],
+          "state_of_art": [
+            "Scandit",
+            "Dynamsoft Barcode Reader",
+            "Cognex"
+          ],
+          "open_tools": [
+            "ZXing",
+            "zxing-cpp",
+            "ZBar"
+          ],
+          "benchmarkable": "yes: public barcode image datasets (Muenster BarcodeDB, ArTe-Lab 1D barcode collections) give decode-rate benchmarks",
+          "notes": ""
+        },
+        {
+          "id": "move.warehouse_inventory.rfid_event_capture",
+          "name": "RFID and identification event capture",
+          "definition": "Given raw tag reads from readers and portals, filter and translate them into business events saying what was observed where, when and why.",
+          "inputs": "raw tag reads, reader and location configuration, tag data encoding",
+          "outputs": "standard visibility events (object, aggregation, transaction) in a repository",
+          "crosswalk": [
+            {
+              "scheme": "GS1 standards",
+              "code": "",
+              "label": "EPC Tag Data Standard",
+              "basis": "fetched",
+              "url": "https://ref.gs1.org/standards/tds/"
+            },
+            {
+              "scheme": "GS1 standards",
+              "code": "",
+              "label": "EPCIS and Core Business Vocabulary",
+              "basis": "fetched",
+              "url": "https://ref.gs1.org/standards/"
+            }
+          ],
+          "onet_products": [
+            "Radio frequency identification RFID software",
+            "RFID software"
+          ],
+          "state_of_art": [
+            "Zebra",
+            "Impinj ItemSense",
+            "SAP Advanced Track and Trace"
+          ],
+          "open_tools": [
+            "OpenEPCIS",
+            "Fosstrak"
+          ],
+          "benchmarkable": "partly: EPCIS conformance can be tested; read filtering lacks shared datasets",
+          "notes": ""
+        },
+        {
+          "id": "move.warehouse_inventory.lot_traceability",
+          "name": "Lot traceability",
+          "definition": "Given recorded transformation and shipment events, trace a lot forward to everyone who received it and backward to every input it came from.",
+          "inputs": "lot-level receipt, transformation and shipment events",
+          "outputs": "forward and backward trace graphs; recall lists",
+          "crosswalk": [
+            {
+              "scheme": "GS1 standards",
+              "code": "",
+              "label": "GS1 Global Traceability Standard",
+              "basis": "fetched",
+              "url": "https://ref.gs1.org/standards/"
+            }
+          ],
+          "onet_products": [
+            "Traceability software",
+            "AgInfoLink Meat Inventory Tracking System MITS"
+          ],
+          "state_of_art": [
+            "TraceLink",
+            "SAP Advanced Track and Trace",
+            "rfxcel"
+          ],
+          "open_tools": [
+            "OpenEPCIS"
+          ],
+          "benchmarkable": "partly: answers are exact given the events, so synthetic event sets can score completeness, but none are shared",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.freight_transport",
+      "name": "Freight transportation management",
+      "definition": "Given shipments to move, carriers, rates and equipment, decide how to consolidate, load, price, book and follow them to delivery.",
+      "crosswalk": [
+        {
+          "scheme": "ASCM SCOR 12.0",
+          "code": "sD",
+          "label": "Deliver",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "APQC PCF cross-industry 7",
+          "code": "",
+          "label": "Operate outbound transportation",
+          "basis": "fetched",
+          "url": "https://solutions.ifrc.org/sites/default/files/2024-10/K014750_APQC%20Process%20Classification%20Framework%20(PCF)%20-%20Cross%20Industry%20-%20PDF%20Version%207.4.pdf"
+        },
+        {
+          "scheme": "UN/CEFACT",
+          "code": "",
+          "label": "Buy-Ship-Pay reference model: Ship",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Materials requirements planning logistics and supply chain software",
+        "Mobile location based services software"
+      ],
+      "see_also": [
+        "move.parcel_mail",
+        "move.trade_compliance"
+      ],
+      "notes": "Was seed 'Transportation management, freight rating and load planning'. Parcel and mail processing split into its own capability because rate-and-label shipping and postal presort are separate product families and functions.",
+      "tasks": [
+        {
+          "id": "move.freight_transport.freight_rating",
+          "name": "Freight rating and carrier selection",
+          "definition": "Given a shipment and carriers' contracts and tariffs, compute each carrier's charges with accessorials and choose the carrier and service.",
+          "inputs": "origin, destination, freight class, weight, dimensions, service, tariffs and contracts",
+          "outputs": "rated quotes by carrier and service; selected carrier",
+          "crosswalk": [
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "sD1.7",
+              "label": "Select Carriers and Rate Shipments",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Transportation management system TMS software",
+            "Transportation management software",
+            "Cadre Technologies Cadence Transportation Management System",
+            "IBM i2 Transportation Manager",
+            "TMW Enterprise Transportation Management Systems",
+            "Creative Systems Corporation Freight-Link System"
+          ],
+          "state_of_art": [
+            "Oracle Transportation Management",
+            "Blue Yonder Transportation Management",
+            "SAP Transportation Management",
+            "MercuryGate",
+            "SMC3 CzarLite"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: rating is deterministic given tariffs, but tariffs are proprietary",
+          "notes": ""
+        },
+        {
+          "id": "move.freight_transport.carrier_procurement",
+          "name": "Freight lane procurement",
+          "definition": "Given lanes, volumes and carrier bids, including package bids, award lanes to carriers to minimize cost subject to capacity and business rules.",
+          "inputs": "lane volumes, carrier bids and package bids, capacity and award rules",
+          "outputs": "lane awards by carrier; expected cost",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Keelvar",
+            "Coupa Sourcing Optimization",
+            "Blue Yonder Transportation Procurement"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: winner determination instances from the Combinatorial Auction Test Suite include a transport-like 'paths' distribution",
+          "notes": ""
+        },
+        {
+          "id": "move.freight_transport.load_consolidation",
+          "name": "Shipment consolidation and load building",
+          "definition": "Given orders with dates, sizes and destinations, group them into truckloads, multi-stop loads or less-than-truckload shipments and choose the mode.",
+          "inputs": "orders, ship windows, equipment, rates by mode",
+          "outputs": "planned loads with stops and modes; cost",
+          "crosswalk": [
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "sD1.4",
+              "label": "Consolidate Orders",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "sD1.5",
+              "label": "Build Loads",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Oracle E-Business Suite Logistics",
+            "Cadre Technologies Accuplus Integrated Distribution Logistics System"
+          ],
+          "state_of_art": [
+            "Oracle Transportation Management",
+            "Blue Yonder Transportation Management",
+            "SAP Transportation Management"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: modeled as vehicle routing with split deliveries; no consolidation-specific instance set",
+          "notes": ""
+        },
+        {
+          "id": "move.freight_transport.container_loading",
+          "name": "Container and truck load planning",
+          "definition": "Given cargo items and a container, trailer or aircraft hold, place the items in three dimensions to maximize utilization while meeting weight, axle, stacking and stability limits.",
+          "inputs": "item dimensions, weights, orientations, stacking rules; container dimensions and weight limits",
+          "outputs": "three-dimensional placement and load sequence; utilization and weight distribution",
+          "crosswalk": [
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "sD1.11",
+              "label": "Load Vehicle and Generate Shipping Documents",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "CAPE Systems TRUCKFILL",
+            "TOPS Engineering MaxLoad Pro",
+            "MagicLogic Optimization Cube-IQ",
+            "Optimum Logistics LoadPlanner",
+            "Coptimal Logics AutoLoad Pro",
+            "Load optimization software",
+            "Softtruck CargoWiz"
+          ],
+          "state_of_art": [
+            "EasyCargo",
+            "Logen CubeMaster",
+            "TOPS Pro"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: Bischoff and Ratcliff container loading classes BR1 to BR15 in OR-Library",
+          "notes": ""
+        },
+        {
+          "id": "move.freight_transport.pallet_pattern",
+          "name": "Pallet and case pattern design",
+          "definition": "Given a case size and pallet, or a product and candidate cases, find stacking patterns that maximize cases per pallet within height and weight limits.",
+          "inputs": "product or case dimensions, pallet size, height and weight limits",
+          "outputs": "layer patterns and stack; cases per pallet",
+          "crosswalk": [],
+          "onet_products": [
+            "CAPE Systems CAPE PACK",
+            "TOPS Engineering MaxLoad Pro"
+          ],
+          "state_of_art": [
+            "CAPE PACK",
+            "TOPS Pro"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the manufacturer's pallet loading problem has standard Cover I and Cover II instance sets",
+          "notes": ""
+        },
+        {
+          "id": "move.freight_transport.shipment_visibility",
+          "name": "Shipment tracking and arrival prediction",
+          "definition": "Given carrier status messages, positions and proof-of-delivery records, keep each shipment's status current and predict its arrival time.",
+          "inputs": "status messages, positions, schedules, delivery confirmations",
+          "outputs": "shipment status, predicted arrival with uncertainty, exceptions",
+          "crosswalk": [
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "sD1.13",
+              "label": "Receive and Verify Product by Customer",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "UN/CEFACT",
+              "code": "",
+              "label": "IFTSTA transport status message",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "i2 Supply Chain Visibility",
+            "Supply chain event management software",
+            "RedPrairie E2e",
+            "Cargo tracking system software",
+            "Proof of delivery POD software",
+            "Strategic Business Systems Proof of Delivery"
+          ],
+          "state_of_art": [
+            "project44",
+            "FourKites",
+            "Descartes MacroPoint"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: arrival-time error can be scored on public vessel AIS and trip data, but no shared freight set",
+          "notes": ""
+        },
+        {
+          "id": "move.freight_transport.forwarding_booking",
+          "name": "Freight forwarding and consolidation",
+          "definition": "Given a customer's shipment, book multi-leg, multi-modal carriage, consolidate it into master shipments and produce house and master documents.",
+          "inputs": "shipment details, routings, carrier schedules and space",
+          "outputs": "bookings, house and master bills, consolidated manifests",
+          "crosswalk": [
+            {
+              "scheme": "UN/CEFACT",
+              "code": "",
+              "label": "IFTMIN instruction message",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "CargoWise ediEnterprise",
+            "Logisuite Forwarder",
+            "Logisuite Enterprise",
+            "Riege Software International Procars",
+            "Arcline ArcFreight",
+            "Tailwind Management Systems Tailwind",
+            "RedBerry Logistics",
+            "Four Soft 4S eLog",
+            "Kewill Global Trade and Logistics",
+            "3PL Central",
+            "IntelliTrack 3PL"
+          ],
+          "state_of_art": [
+            "CargoWise",
+            "Magaya",
+            "Riege Scope"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: transactional workflow without an optimization or prediction target",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.parcel_mail",
+      "name": "Parcel and mail processing",
+      "definition": "Given packages and mail pieces with addresses, validate the addresses, rate, label and presort the pieces, and read and sort them in the postal network.",
+      "crosswalk": [
+        {
+          "scheme": "ASCM SCOR 12.0",
+          "code": "sD1.12",
+          "label": "Ship Product",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "Universal Postal Union",
+          "code": "",
+          "label": "Postal operations standards",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Mailing and shipping software",
+        "Materials requirements planning logistics and supply chain software",
+        "Label making software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "move.freight_transport"
+      ],
+      "notes": "New, not a seed: split from transportation management because parcel shipping and postal processing have their own products (carrier shipping clients, postage, presort, address recognition) and their own benchmarks.",
+      "tasks": [
+        {
+          "id": "move.parcel_mail.parcel_rate_label",
+          "name": "Multi-carrier parcel rating and labeling",
+          "definition": "Given a package and destination, rate it across parcel carriers and services, then produce the carrier label, manifest and tracking number.",
+          "inputs": "package weight and dimensions, addresses, service requirements, carrier accounts",
+          "outputs": "rates by carrier, chosen service, carrier label, manifest, tracking number",
+          "crosswalk": [
+            {
+              "scheme": "ASCM SCOR 12.0",
+              "code": "sD1.7",
+              "label": "Select Carriers and Rate Shipments",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "UPS WorldShip",
+            "FedEx Ship Manager",
+            "Kewill Clippership",
+            "ShipWorks",
+            "iShip",
+            "Pitney Bowes ShipStream Manager",
+            "Universal parcel shipping software",
+            "Shipment processing software",
+            "Harvey Software CPS",
+            "Accuship Star System",
+            "Kewill Javelin Distribution Ship",
+            "Varsity ShipSoft Supply Chain Execution Suite"
+          ],
+          "state_of_art": [
+            "ShipStation",
+            "ProShip",
+            "UPS WorldShip"
+          ],
+          "open_tools": [
+            "karrio"
+          ],
+          "benchmarkable": "partly: carrier rate tables are public, so rating is checkable, but label conformance is carrier-certified",
+          "notes": ""
+        },
+        {
+          "id": "move.parcel_mail.address_validation",
+          "name": "Postal address validation",
+          "definition": "Given a free-text or fielded address, parse and standardize it and match it to the postal authority's deliverable-address file.",
+          "inputs": "address text or fields",
+          "outputs": "standardized address, delivery point code, match confidence",
+          "crosswalk": [
+            {
+              "scheme": "Universal Postal Union",
+              "code": "",
+              "label": "S42: International postal address components and templates",
+              "basis": "fetched",
+              "url": "https://www.upu.int/en/Postal-Solutions/Programmes-Services/Addressing-Solutions"
+            }
+          ],
+          "onet_products": [
+            "Address Management System AMS",
+            "Directory software"
+          ],
+          "state_of_art": [
+            "Smarty",
+            "Loqate",
+            "Melissa"
+          ],
+          "open_tools": [
+            "libpostal"
+          ],
+          "benchmarkable": "yes: USPS CASS certification test files have reference answers",
+          "notes": ""
+        },
+        {
+          "id": "move.parcel_mail.mail_presort",
+          "name": "Mail presort and postage calculation",
+          "definition": "Given a mailing list and mail class, sort pieces into the trays, sacks and pallets the postal rules define and compute the discounted postage.",
+          "inputs": "addresses, mail class and shape, postal sortation rules and rates",
+          "outputs": "presorted list, container labels, postage statement",
+          "crosswalk": [],
+          "onet_products": [
+            "Postal Explorer",
+            "Endicia Internet Postage",
+            "WindowBook Postal Package Partner",
+            "Laser Substrates PostalXport",
+            "AES MailSTAR",
+            "Dydacomp Mail Order Manager"
+          ],
+          "state_of_art": [
+            "BCC Mail Manager",
+            "Satori Bulk Mailer",
+            "Window Book DAT-MAIL"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: USPS PAVE certification checks presort output against rules, but test sets are not public",
+          "notes": ""
+        },
+        {
+          "id": "move.parcel_mail.address_recognition_sorting",
+          "name": "Address recognition and sortation",
+          "definition": "Given images of mail pieces or parcels, read the destination address and barcode and assign each piece to a sort destination.",
+          "inputs": "piece images, address directory, sort plan",
+          "outputs": "recognized address, delivery point, sort bin",
+          "crosswalk": [],
+          "onet_products": [
+            "Automated Package Processing System APPS",
+            "Automated Data Collection System ADCS",
+            "Postal tracking software"
+          ],
+          "state_of_art": [
+            "Parascript AddressScript",
+            "Siemens Logistics",
+            "Solystic"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the CEDAR handwritten address database collected for USPS is a standard recognition benchmark",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.vehicle_routing",
+      "name": "Vehicle routing and scheduling",
+      "definition": "Given stops with demands and time constraints, vehicles and a travel-time network, plan the routes and schedules that serve the stops at least cost.",
+      "crosswalk": [
+        {
+          "scheme": "ASCM SCOR 12.0",
+          "code": "sD1.6",
+          "label": "Route Shipments",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ARC-IT",
+          "code": "",
+          "label": "Carrier Operations and Fleet Management",
+          "basis": "fetched",
+          "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html"
+        }
+      ],
+      "onet_categories": [
+        "Route navigation software",
+        "Materials requirements planning logistics and supply chain software",
+        "Map creation software",
+        "Geographic information system"
+      ],
+      "see_also": [
+        "science.optimization",
+        "move.fleet_dispatch"
+      ],
+      "notes": "Was seed 'Vehicle routing, scheduling and dispatch'. Planned routing is kept here with tasks named for their standard instance sets; real-time dispatch moved to move.fleet_dispatch. General solvers go to science.",
+      "tasks": [
+        {
+          "id": "move.vehicle_routing.cvrp",
+          "name": "Capacitated vehicle routing",
+          "definition": "Given a depot, customer demands, vehicle capacity and travel costs, find routes that serve every customer once at minimum total cost.",
+          "inputs": "depot, customer locations and demands, vehicle capacity, distance matrix",
+          "outputs": "routes and total cost",
+          "crosswalk": [],
+          "onet_products": [
+            "UPS Logistics Technologies Roadnet Transportation Suite",
+            "ESRI ArcLogistics",
+            "Integrated Decision Support Corporation Route Advice",
+            "Route planning software",
+            "Automatic routing software",
+            "Routing software",
+            "GEOCOMtms A.Maze Planning",
+            "Intergraph GeoMedia Transportation Manager"
+          ],
+          "state_of_art": [
+            "ORTEC Routing",
+            "Descartes Route Planner",
+            "Omnitracs Roadnet",
+            "PTV Route Optimiser"
+          ],
+          "open_tools": [
+            "PyVRP",
+            "HGS-CVRP",
+            "LKH-3",
+            "VROOM",
+            "jsprit"
+          ],
+          "benchmarkable": "yes: CVRPLIB, especially the Uchoa et al. X instances, and the Augerat A, B and P sets have best-known solutions",
+          "notes": ""
+        },
+        {
+          "id": "move.vehicle_routing.vrptw",
+          "name": "Vehicle routing with time windows",
+          "definition": "Given customers with demands, service times and delivery windows, find capacity- and time-feasible routes minimizing vehicles and distance.",
+          "inputs": "customers, demands, time windows, service times, fleet, travel times",
+          "outputs": "routes with arrival times; vehicles used and distance",
+          "crosswalk": [],
+          "onet_products": [
+            "UPS Logistics Technologies Roadnet Transportation Suite",
+            "ESRI ArcLogistics",
+            "Route planning software"
+          ],
+          "state_of_art": [
+            "ORTEC Routing",
+            "Descartes Route Planner",
+            "Routific"
+          ],
+          "open_tools": [
+            "PyVRP",
+            "VROOM",
+            "jsprit",
+            "LKH-3"
+          ],
+          "benchmarkable": "yes: Solomon's 56 instances and the Gehring and Homberger 200 to 1000 customer sets; the DIMACS 2021 challenge used them",
+          "notes": ""
+        },
+        {
+          "id": "move.vehicle_routing.pickup_delivery",
+          "name": "Pickup and delivery routing",
+          "definition": "Given paired pickup and delivery requests with time windows, build routes that visit each pickup before its delivery within capacity.",
+          "inputs": "paired requests, time windows, loads, fleet, travel times",
+          "outputs": "routes and schedules",
+          "crosswalk": [],
+          "onet_products": [
+            "Integrated Decision Support Corporation Route Advice"
+          ],
+          "state_of_art": [
+            "ORTEC Routing",
+            "Descartes Route Planner"
+          ],
+          "open_tools": [
+            "jsprit",
+            "VROOM",
+            "PyVRP"
+          ],
+          "benchmarkable": "yes: Li and Lim pickup-and-delivery with time windows instances",
+          "notes": ""
+        },
+        {
+          "id": "move.vehicle_routing.dial_a_ride",
+          "name": "Dial-a-ride passenger routing",
+          "definition": "Given door-to-door passenger trip requests with time windows and maximum ride times, route and schedule shared vehicles.",
+          "inputs": "trip requests, time windows, ride-time limits, vehicle capacity and depots",
+          "outputs": "vehicle routes, pickup and drop-off times, ride times",
+          "crosswalk": [
+            {
+              "scheme": "ARC-IT",
+              "code": "",
+              "label": "Dynamic Transit Operations",
+              "basis": "fetched",
+              "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Trapeze PASS",
+            "Via",
+            "Spare"
+          ],
+          "open_tools": [
+            "jsprit"
+          ],
+          "benchmarkable": "yes: Cordeau (2006) dial-a-ride instances",
+          "notes": "Paratransit and demand-responsive transit."
+        },
+        {
+          "id": "move.vehicle_routing.arc_routing",
+          "name": "Capacitated arc routing",
+          "definition": "Given a street network where streets rather than points need service, such as refuse collection, plowing or meter reading, find vehicle routes covering every required street.",
+          "inputs": "street network, required edges with demands, vehicle capacity, depot",
+          "outputs": "routes over the network and total deadhead and service cost",
+          "crosswalk": [],
+          "onet_products": [
+            "Routeware software"
+          ],
+          "state_of_art": [
+            "RouteSmart",
+            "Routeware"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the gdb, val and egl capacitated arc routing instance sets",
+          "notes": ""
+        },
+        {
+          "id": "move.vehicle_routing.periodic_multidepot",
+          "name": "Multi-depot and periodic routing",
+          "definition": "Given customers needing service on some days of a planning horizon from several depots, choose visit days, depot assignment and routes.",
+          "inputs": "customers with visit frequencies and allowable patterns, depots, fleet, travel costs",
+          "outputs": "visit calendar, depot assignment, daily routes",
+          "crosswalk": [],
+          "onet_products": [
+            "bMobile Technology Route Manager",
+            "MobiTech Systems Route Sales Trakker",
+            "Computer Directions Route Sales Tracker"
+          ],
+          "state_of_art": [
+            "ORTEC Routing",
+            "Descartes Route Planner"
+          ],
+          "open_tools": [
+            "PyVRP"
+          ],
+          "benchmarkable": "yes: Cordeau, Gendreau and Laporte (1997) multi-depot and periodic routing instances",
+          "notes": ""
+        },
+        {
+          "id": "move.vehicle_routing.last_mile_sequencing",
+          "name": "Driver-preferred route sequencing",
+          "definition": "Given a route's stops and examples of how drivers actually sequenced past routes, produce the stop sequence a driver would follow.",
+          "inputs": "stops with zones and time windows, travel times, historical driven sequences",
+          "outputs": "stop sequence",
+          "crosswalk": [],
+          "onet_products": [
+            "Route mapping software"
+          ],
+          "state_of_art": [
+            "Amazon in-house routing",
+            "ORTEC Routing"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the 2021 Amazon Last Mile Routing Research Challenge released routes and a scoring function",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.fleet_dispatch",
+      "name": "Fleet dispatch and tracking",
+      "definition": "Given live requests, vehicle positions and driver status, assign work to vehicles as it arrives and keep track of where vehicles are and whether drivers are within their rules.",
+      "crosswalk": [
+        {
+          "scheme": "ARC-IT",
+          "code": "",
+          "label": "Carrier Operations and Fleet Management",
+          "basis": "fetched",
+          "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html"
+        },
+        {
+          "scheme": "ARC-IT",
+          "code": "",
+          "label": "Fleet and Freight Security",
+          "basis": "fetched",
+          "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html"
+        }
+      ],
+      "onet_categories": [
+        "Mobile location based services software",
+        "Materials requirements planning logistics and supply chain software",
+        "Data base user interface and query software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "govern.emergency_response",
+        "operate.condition_monitoring"
+      ],
+      "notes": "Merges seed 'Fleet tracking and telematics' with the dispatch part of 'Vehicle routing, scheduling and dispatch': real-time assignment depends on the tracking data and the products bundle them. Emergency computer-aided dispatch stays with govern; vehicle diagnostics with operate.",
+      "tasks": [
+        {
+          "id": "move.fleet_dispatch.ride_dispatch",
+          "name": "Taxi and ride-hail dispatch",
+          "definition": "Given ride requests arriving in real time and the positions and states of vehicles, assign requests to vehicles and reposition idle ones.",
+          "inputs": "request stream, vehicle positions and states, travel-time network",
+          "outputs": "assignments, pickup estimates, repositioning moves",
+          "crosswalk": [],
+          "onet_products": [
+            "Digital Dispatch",
+            "Easy Dispatch",
+            "EventHelix WebTaxi",
+            "GPC Autocab",
+            "Mobile Knowledge Cabmate",
+            "PC Dispatch",
+            "Piccolo Software PiccoloTaxi",
+            "TSS Wireless Fleet Management Suite",
+            "TranWare Enterprise Suite",
+            "Penchant Software dispatchOffice"
+          ],
+          "state_of_art": [
+            "Autocab",
+            "iCabbi",
+            "Via"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: replay of public NYC taxi trip records is the common testbed, but simulators and scoring differ",
+          "notes": ""
+        },
+        {
+          "id": "move.fleet_dispatch.truckload_assignment",
+          "name": "Truckload load and driver assignment",
+          "definition": "Given loads to cover and drivers and tractors with positions, hours and home domiciles, assign loads, swaps and relays to maximize coverage and profit.",
+          "inputs": "load tenders, driver and tractor states, hours available, rates",
+          "outputs": "load-driver assignments, relay and swap plans",
+          "crosswalk": [],
+          "onet_products": [
+            "Integrated Decision Support Match Advice",
+            "Integrated Decision Support Corporation Swap Advice",
+            "Dr. Dispatch",
+            "Infosite Technologies Dispatch-Mate",
+            "Accellos Real Dispatch",
+            "Web-based dispatch software"
+          ],
+          "state_of_art": [
+            "McLeod LoadMaster",
+            "Trimble TMW.Suite",
+            "Optimal Dynamics"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: dynamic assignment models are well studied but there is no public instance set",
+          "notes": ""
+        },
+        {
+          "id": "move.fleet_dispatch.dynamic_routing",
+          "name": "Dynamic vehicle routing",
+          "definition": "Given routes in progress and new requests revealed over the day, decide which requests to accept and how to re-plan routes in real time.",
+          "inputs": "current routes and positions, request stream, time windows, travel times",
+          "outputs": "updated routes and dispatch decisions at each epoch",
+          "crosswalk": [],
+          "onet_products": [
+            "Computer aided dispatching auto routing software"
+          ],
+          "state_of_art": [
+            "ORTEC Routing",
+            "Descartes Route Planner"
+          ],
+          "open_tools": [
+            "PyVRP"
+          ],
+          "benchmarkable": "yes: the EURO Meets NeurIPS 2022 Vehicle Routing Competition dynamic track has instances and a simulator",
+          "notes": ""
+        },
+        {
+          "id": "move.fleet_dispatch.haul_truck_dispatch",
+          "name": "Open-pit haul truck dispatch",
+          "definition": "Given shovels, dumps, haul trucks and their positions and states, assign each truck its next destination to meet production and blend targets.",
+          "inputs": "shovel and dump locations and rates, truck positions and states, haul road network, targets",
+          "outputs": "truck assignments, shovel utilization and production",
+          "crosswalk": [],
+          "onet_products": [
+            "Modular Mining Systems DISPATCH",
+            "Leica Geosystems FMS",
+            "Hitachi ZXLink",
+            "Fleet monitoring system software"
+          ],
+          "state_of_art": [
+            "Komatsu Modular Mining DISPATCH",
+            "Hexagon MineOperate",
+            "Wenco"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: evaluated in discrete-event mine simulators without a shared benchmark",
+          "notes": "Mine planning itself belongs to earth."
+        },
+        {
+          "id": "move.fleet_dispatch.vehicle_tracking",
+          "name": "Vehicle tracking and map matching",
+          "definition": "Given noisy positioning fixes from a vehicle, infer the road path driven, its timing and geofence entries and exits.",
+          "inputs": "positioning fixes, road network, geofences",
+          "outputs": "matched path, trip segments, stop and geofence events",
+          "crosswalk": [
+            {
+              "scheme": "ARC-IT",
+              "code": "",
+              "label": "Carrier Operations and Fleet Management",
+              "basis": "fetched",
+              "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html"
+            }
+          ],
+          "onet_products": [
+            "@Road GeoManager",
+            "Actsoft Comet Tracker",
+            "Air-Trak Cloudberry",
+            "QUALCOMM QTRACS",
+            "QUALCOMM ViaWeb",
+            "PeopleNet",
+            "XATA XATANET",
+            "Fleet management software",
+            "Fleet management systems",
+            "Summary Systems Fleet Commander",
+            "Fleetware software"
+          ],
+          "state_of_art": [
+            "Samsara",
+            "Geotab",
+            "Motive",
+            "Trimble"
+          ],
+          "open_tools": [
+            "FMM",
+            "Valhalla",
+            "OSRM"
+          ],
+          "benchmarkable": "yes: the Newson and Krumm (2009) Seattle map-matching dataset with ground truth",
+          "notes": ""
+        },
+        {
+          "id": "move.fleet_dispatch.hours_of_service",
+          "name": "Hours-of-service logging",
+          "definition": "Given a driver's duty-status changes and vehicle movement, keep the log and compute compliance and remaining available driving time under hours-of-service rules.",
+          "inputs": "duty-status events, engine and movement data, rule set",
+          "outputs": "record of duty status, violations, available hours",
+          "crosswalk": [
+            {
+              "scheme": "US 49 CFR Part 395",
+              "code": "",
+              "label": "Hours of service of drivers (Subpart B: Electronic Logging Devices)",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-49?part=395"
+            }
+          ],
+          "onet_products": [
+            "ddlsoftware.com drivers daily log program DDL",
+            "Fog Line Software Truckn Pro",
+            "TruckersHelper",
+            "XATA XATANET",
+            "PeopleNet",
+            "Commercial vehicle operations CVO software",
+            "Mileage logging software"
+          ],
+          "state_of_art": [
+            "Samsara",
+            "Motive",
+            "Omnitracs"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the rules are deterministic and FMCSA publishes electronic logging device test procedures",
+          "notes": ""
+        },
+        {
+          "id": "move.fleet_dispatch.driver_performance",
+          "name": "Driver behavior and fuel performance scoring",
+          "definition": "Given vehicle data on speed, braking, idling and fuel use, score drivers and vehicles and flag unsafe or wasteful behavior.",
+          "inputs": "vehicle bus and telematics data, trip context",
+          "outputs": "per-driver and per-trip scores and events",
+          "crosswalk": [],
+          "onet_products": [
+            "Omnitracs Performance Monitoring",
+            "Eaton Fleet Advisor"
+          ],
+          "state_of_art": [
+            "Samsara",
+            "Lytx",
+            "Geotab"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: public driving datasets exist but no agreed scoring target",
+          "notes": ""
+        },
+        {
+          "id": "move.fleet_dispatch.fuel_stop_planning",
+          "name": "Fuel purchase planning",
+          "definition": "Given a planned truck route, fuel prices at stations along it and tank and network-discount rules, choose where and how much to buy.",
+          "inputs": "route, station prices and discounts, tank size, current fuel, fuel-tax rates",
+          "outputs": "fuel stops and quantities; total fuel cost",
+          "crosswalk": [],
+          "onet_products": [
+            "Integrated Decision Support Corporation Expert Fuel"
+          ],
+          "state_of_art": [
+            "ProMiles",
+            "Trimble"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: exact dynamic-programming solutions exist for the single-route case, but no public instances",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.trade_compliance",
+      "name": "Trade compliance and shipping documents",
+      "definition": "Given goods, parties and routes, determine how the shipment is classified, controlled, taxed and declared, and produce the documents and messages that carry it.",
+      "crosswalk": [
+        {
+          "scheme": "UN/CEFACT",
+          "code": "",
+          "label": "Buy-Ship-Pay reference model",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "WCO",
+          "code": "",
+          "label": "WCO Data Model",
+          "basis": "fetched",
+          "url": "https://www.wcoomd.org/en/topics/facilitation/instrument-and-tools/tools/data-model.aspx"
+        },
+        {
+          "scheme": "ASCM SCOR 12.0",
+          "code": "",
+          "label": "Manage Supply Chain Regulatory Compliance",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Compliance software",
+        "Materials requirements planning logistics and supply chain software",
+        "Data base user interface and query software",
+        "Project management software"
+      ],
+      "see_also": [
+        "govern.compliance_financial_crime"
+      ],
+      "notes": "Was seed 'Trade compliance, customs and shipping documentation'. Customs administration by the state (risk targeting, revenue) is govern's; this capability is the trader's and broker's side.",
+      "tasks": [
+        {
+          "id": "move.trade_compliance.tariff_classification",
+          "name": "Tariff classification",
+          "definition": "Given a product description and attributes, assign its Harmonized System heading and national tariff line.",
+          "inputs": "product description, materials, function, images",
+          "outputs": "tariff code with justification",
+          "crosswalk": [
+            {
+              "scheme": "WCO",
+              "code": "",
+              "label": "Harmonized Commodity Description and Coding System",
+              "basis": "fetched",
+              "url": "https://www.wcoomd.org/en/topics/nomenclature/overview/what-is-the-harmonized-system.aspx"
+            }
+          ],
+          "onet_products": [
+            "Tariff databases",
+            "Amber Road",
+            "QuestaWeb TradeMaster QW"
+          ],
+          "state_of_art": [
+            "Thomson Reuters ONESOURCE Global Trade",
+            "E2open Global Trade Management",
+            "Descartes CustomsInfo"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: published customs rulings (US CROSS rulings, EU binding tariff information) supply labeled examples",
+          "notes": ""
+        },
+        {
+          "id": "move.trade_compliance.party_screening",
+          "name": "Restricted party screening",
+          "definition": "Given the parties to a transaction, match them against sanctions and denied-party lists and report likely hits.",
+          "inputs": "party names and addresses, screening lists",
+          "outputs": "candidate matches with scores",
+          "crosswalk": [],
+          "onet_products": [
+            "Kewill Compliance Partner",
+            "Amber Road"
+          ],
+          "state_of_art": [
+            "Descartes Visual Compliance",
+            "SAP Global Trade Services",
+            "Thomson Reuters ONESOURCE Global Trade"
+          ],
+          "open_tools": [
+            "OpenSanctions yente"
+          ],
+          "benchmarkable": "partly: lists are public, but labeled match sets for scoring are not",
+          "notes": ""
+        },
+        {
+          "id": "move.trade_compliance.customs_declaration",
+          "name": "Customs declaration filing",
+          "definition": "Given commercial invoice and shipment data, build and submit import or export declarations and handle the authority's responses.",
+          "inputs": "invoice, packing list, classification, parties, transport data",
+          "outputs": "declaration messages, filing status, release",
+          "crosswalk": [
+            {
+              "scheme": "UN/CEFACT",
+              "code": "",
+              "label": "CUSDEC customs declaration message",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "UN/CEFACT",
+              "code": "Recommendation 33",
+              "label": "Single window",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Automated system for customs data ASYCUDA",
+            "AESDirect",
+            "IES Ecellerate",
+            "SAP Customs Management",
+            "Customs records databases",
+            "Star Tec Software Hercules Export",
+            "MSR Visual Exporter",
+            "Shipping Solutions"
+          ],
+          "state_of_art": [
+            "CargoWise",
+            "Descartes",
+            "SAP Global Trade Services"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: correctness is validation against each authority's schema, not a ranking",
+          "notes": ""
+        },
+        {
+          "id": "move.trade_compliance.duty_origin",
+          "name": "Duty, landed cost and origin determination",
+          "definition": "Given a classified product, its bill of materials and the trade lane, determine preferential origin eligibility and compute duties, taxes and landed cost.",
+          "inputs": "tariff code, value, bill of materials with origins, trade agreement rules",
+          "outputs": "origin determination, duty and tax amounts, landed cost",
+          "crosswalk": [
+            {
+              "scheme": "WCO",
+              "code": "",
+              "label": "Rules of origin",
+              "basis": "fetched",
+              "url": "https://www.wcoomd.org/en/topics/origin/overview.aspx"
+            }
+          ],
+          "onet_products": [
+            "Kewill Global Trade and Logistics"
+          ],
+          "state_of_art": [
+            "Thomson Reuters ONESOURCE Global Trade",
+            "E2open Global Trade Management",
+            "Avalara Cross-Border"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: deterministic given tariff schedules and agreement texts; worked cases could be assembled",
+          "notes": ""
+        },
+        {
+          "id": "move.trade_compliance.dangerous_goods",
+          "name": "Dangerous goods classification and documentation",
+          "definition": "Given a substance or article and the mode of transport, determine its dangerous goods class, packing, marking, segregation and paperwork.",
+          "inputs": "substance data, quantity, packaging, mode",
+          "outputs": "UN number, class, packing group, label and placard requirements, shipping declaration",
+          "crosswalk": [
+            {
+              "scheme": "UN Model Regulations",
+              "code": "",
+              "label": "Recommendations on the Transport of Dangerous Goods",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Labelmaster Software REG-Trieve"
+          ],
+          "state_of_art": [
+            "Labelmaster DGIS",
+            "Hazmat T&T"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: answers are determined by the regulations, so test cases can be built, but none are shared",
+          "notes": ""
+        },
+        {
+          "id": "move.trade_compliance.shipping_documents",
+          "name": "Shipping document and message generation",
+          "definition": "Given shipment data, produce bills of lading, commercial invoices, packing lists and the equivalent electronic messages.",
+          "inputs": "shipment, parties, goods, terms",
+          "outputs": "documents and electronic messages",
+          "crosswalk": [
+            {
+              "scheme": "UN/CEFACT",
+              "code": "Recommendation 1",
+              "label": "UN Layout Key for trade documents",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "UN/CEFACT",
+              "code": "",
+              "label": "UN/EDIFACT transport messages",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Bill of lading software",
+            "Bills of lading software",
+            "ADi SmartBOL",
+            "DM2 Bills of Lading",
+            "Starre Enterprises Star Bill of Lading"
+          ],
+          "state_of_art": [
+            "CargoWise",
+            "Descartes"
+          ],
+          "open_tools": [
+            "Bots"
+          ],
+          "benchmarkable": "no: document assembly is deterministic",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.flight_operations",
+      "name": "Flight planning and airline operations",
+      "definition": "Given an aircraft, crew, payload, schedule and the weather and airspace, plan each flight and assign aircraft and crews to the schedule.",
+      "crosswalk": [
+        {
+          "scheme": "ICAO Doc 9854",
+          "code": "",
+          "label": "Airspace user operations",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ARINC 633",
+          "code": "",
+          "label": "AOC air-ground data and message exchange",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ARINC 424",
+          "code": "",
+          "label": "Navigation system database",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Route navigation software",
+        "Aviation ground support software",
+        "Data base user interface and query software",
+        "Information retrieval or search software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "move.air_traffic",
+        "operate.maintenance_management"
+      ],
+      "notes": "Was the operator half of seed 'Aviation: flight planning, performance, navigation and air traffic management'; the air navigation service provider half is move.air_traffic. Airline crew and disruption planning added here because they are flight-operations functions with strong benchmarks. Drone survey mission planning goes to earth; flight simulators to learn; aircraft maintenance tracking to operate.",
+      "tasks": [
+        {
+          "id": "move.flight_operations.flight_route_fuel",
+          "name": "Flight route and fuel planning",
+          "definition": "Given origin, destination, aircraft performance, winds and airspace constraints, choose the route, altitudes and speeds and compute trip and reserve fuel.",
+          "inputs": "aircraft performance data, payload, weather forecast, airways and restrictions",
+          "outputs": "operational flight plan with route, profile, times and fuel",
+          "crosswalk": [
+            {
+              "scheme": "ICAO",
+              "code": "",
+              "label": "Flight plan (ICAO FPL 2012)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Bornemann Associates Flight Plan",
+            "CoPilot Flight Planning & E6B",
+            "AeroPlanner",
+            "Navzilla",
+            "RMS Technology Flitesoft"
+          ],
+          "state_of_art": [
+            "Lufthansa Systems Lido Flight 4D",
+            "Jeppesen JetPlanner",
+            "ForeFlight",
+            "Garmin Pilot"
+          ],
+          "open_tools": [
+            "Little Navmap"
+          ],
+          "benchmarkable": "partly: fuel and time can be scored against recorded wind fields, but there is no standard instance set",
+          "notes": ""
+        },
+        {
+          "id": "move.flight_operations.weight_balance",
+          "name": "Weight and balance",
+          "definition": "Given an aircraft's empty weight and arm, and the loading of passengers, cargo and fuel, compute gross weight and center of gravity and check them against the envelope.",
+          "inputs": "basic empty weight and moment, load by station, fuel",
+          "outputs": "weights, center of gravity, trim setting, load sheet",
+          "crosswalk": [
+            {
+              "scheme": "FAA",
+              "code": "",
+              "label": "Aircraft Weight and Balance Handbook (FAA-H-8083-1)",
+              "basis": "fetched",
+              "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/FAA-H-8083-1.pdf"
+            }
+          ],
+          "onet_products": [
+            "Pilot Navigator Software Load Balance"
+          ],
+          "state_of_art": [
+            "Amadeus Altea Departure Control Flight Management",
+            "SITA",
+            "ForeFlight"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: deterministic; handbook worked examples give reference answers",
+          "notes": ""
+        },
+        {
+          "id": "move.flight_operations.takeoff_landing_performance",
+          "name": "Takeoff and landing performance",
+          "definition": "Given runway, weather, aircraft weight and configuration, compute takeoff and landing limits and speeds.",
+          "inputs": "runway data and obstacles, wind, temperature, pressure, weight, configuration",
+          "outputs": "maximum weights, V-speeds, flap and thrust settings, required distances",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Boeing Onboard Performance Tool",
+            "Airbus FlySmart",
+            "Aircraft Performance Group"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: answers are fixed by aircraft flight manual data, which is proprietary",
+          "notes": ""
+        },
+        {
+          "id": "move.flight_operations.preflight_briefing",
+          "name": "Preflight briefing and notice filtering",
+          "definition": "Given a route and time, gather notices to air missions, weather and aerodrome data and filter them to what matters for the flight.",
+          "inputs": "route, times, notices, weather reports and forecasts, aerodrome data",
+          "outputs": "briefing package with relevant notices ranked",
+          "crosswalk": [],
+          "onet_products": [
+            "Notam Development Group Airport Insight",
+            "Electronic aircraft information databases"
+          ],
+          "state_of_art": [
+            "ForeFlight",
+            "Lufthansa Systems Lido mPilot"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: notice relevance could be labeled from public notice archives; no shared set yet",
+          "notes": ""
+        },
+        {
+          "id": "move.flight_operations.flight_time_logging",
+          "name": "Flight time and duty logging",
+          "definition": "Given flights flown and duty periods, keep the pilot or crew logbook and check currency and flight-duty limits.",
+          "inputs": "flight records, duty start and end times, rule set",
+          "outputs": "logbook totals, currency status, limit violations",
+          "crosswalk": [
+            {
+              "scheme": "US 14 CFR Part 117",
+              "code": "",
+              "label": "Flight and duty limitations and rest requirements: flightcrew members",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-14?part=117"
+            }
+          ],
+          "onet_products": [
+            "Airline Pilots Daily Aviation Log PPC",
+            "MJICCS PilotLog",
+            "Polaris Microsystems AeroLog Pro",
+            "Polaris Microsystems CharterLog",
+            "Skylog Services Skylog Pro",
+            "doXstor Flight Level Logbook",
+            "Nimblefeet Technologies Captain's Keeper",
+            "ValtamTech Flight Crew Log",
+            "Arkitektia Flight Itinerary"
+          ],
+          "state_of_art": [
+            "ForeFlight Logbook",
+            "LogTen"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record keeping with deterministic rule checks",
+          "notes": ""
+        },
+        {
+          "id": "move.flight_operations.crew_pairing",
+          "name": "Airline crew pairing",
+          "definition": "Given a flight schedule and labor rules, build multi-day crew trips from a base that cover every flight at least cost.",
+          "inputs": "flight legs, bases, duty and rest rules, costs",
+          "outputs": "pairings covering all legs; cost",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Jeppesen Crew Pairing",
+            "Sabre Crew Manager",
+            "Lufthansa Systems NetLine/Crew"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: OR-Library set partitioning instances derived from airline crew scheduling",
+          "notes": ""
+        },
+        {
+          "id": "move.flight_operations.crew_rostering",
+          "name": "Airline crew rostering",
+          "definition": "Given pairings, crew members, their qualifications, requests and rules, assign pairings to individuals over a month.",
+          "inputs": "pairings, crew qualifications and requests, rules",
+          "outputs": "individual rosters; coverage and fairness",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Jeppesen Crew Rostering",
+            "Sabre Crew Manager",
+            "IBS iFlight Crew"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: formulations are standard but industrial instances are not public",
+          "notes": ""
+        },
+        {
+          "id": "move.flight_operations.disruption_recovery",
+          "name": "Airline disruption recovery",
+          "definition": "Given a disrupted day of operations, decide flight cancellations, delays and aircraft and passenger reassignments to restore the schedule at least cost.",
+          "inputs": "schedule, aircraft rotations, passenger itineraries, disruption events",
+          "outputs": "revised schedule, rotations and passenger reaccommodation",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Lufthansa Systems NetLine/Ops ++",
+            "Sabre Recovery Manager",
+            "Jeppesen Ops Control"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the ROADEF/EURO Challenge 2009 instances on airline disruption management",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.air_traffic",
+      "name": "Air traffic and airport operations",
+      "definition": "Given surveillance data, flight plans and airspace and runway capacity, keep aircraft separated and flowing efficiently through airspace and airports.",
+      "crosswalk": [
+        {
+          "scheme": "ICAO Doc 9854",
+          "code": "",
+          "label": "Global ATM Operational Concept",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ICAO Doc 9854",
+          "code": "",
+          "label": "Conflict management",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ICAO Doc 9854",
+          "code": "",
+          "label": "Traffic synchronization",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ICAO Doc 9854",
+          "code": "",
+          "label": "Demand and capacity balancing",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "SESAR / FAA NextGen",
+          "code": "",
+          "label": "Air traffic management functional areas",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Flight control software",
+        "Expert system software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "move.flight_operations"
+      ],
+      "notes": "Was the air navigation service provider half of seed 'Aviation: flight planning, performance, navigation and air traffic management'. Tasks follow the ICAO Doc 9854 concept components. Flight simulation software for training goes to learn.",
+      "tasks": [
+        {
+          "id": "move.air_traffic.arrival_sequencing",
+          "name": "Arrival sequencing and metering",
+          "definition": "Given inbound aircraft with estimated times and runway capacity, assign landing sequence and times and the delays each aircraft must absorb.",
+          "inputs": "inbound trajectories and estimates, runway configuration, separation minima",
+          "outputs": "landing sequence, scheduled times at meter fixes and runway, delay advisories",
+          "crosswalk": [
+            {
+              "scheme": "ICAO ASBU",
+              "code": "RSEQ",
+              "label": "Runway sequencing (AMAN/DMAN)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Traffic management advisor TMA software",
+            "Multi-center traffic management advisor McTMA",
+            "Final approach spacing tool FAST",
+            "En route descent advisor EDA",
+            "Center TRACON automation systems CTAS"
+          ],
+          "state_of_art": [
+            "FAA Time Based Flow Management",
+            "Thales TopSky-AMAN",
+            "Barco OSYRIS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: OR-Library aircraft landing problem instances (Beasley et al.)",
+          "notes": ""
+        },
+        {
+          "id": "move.air_traffic.departure_management",
+          "name": "Departure sequencing and management",
+          "definition": "Given departing aircraft, taxi times, runway and airspace constraints, sequence takeoffs and assign departure times and paths.",
+          "inputs": "departure demand, gate and taxi times, runway configuration, departure restrictions",
+          "outputs": "takeoff sequence and times, departure routes",
+          "crosswalk": [
+            {
+              "scheme": "ICAO ASBU",
+              "code": "RSEQ",
+              "label": "Runway sequencing (AMAN/DMAN)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Expedite departure path EDP software"
+          ],
+          "state_of_art": [
+            "FAA Terminal Flight Data Manager",
+            "Saab Departure Manager"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: scored in simulation on recorded surface data, without a shared instance set",
+          "notes": ""
+        },
+        {
+          "id": "move.air_traffic.conflict_detection",
+          "name": "Conflict detection and resolution",
+          "definition": "Given current and intended trajectories of aircraft in a sector, predict losses of separation and propose resolving clearances.",
+          "inputs": "surveillance tracks, flight plans and clearances, separation minima",
+          "outputs": "predicted conflicts, resolution advisories, route amendments",
+          "crosswalk": [
+            {
+              "scheme": "ICAO Doc 9854",
+              "code": "",
+              "label": "Conflict management",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Direct-to-tool software",
+            "Advanced technologies and oceanic procedures ATOP"
+          ],
+          "state_of_art": [
+            "FAA En Route Automation Modernization",
+            "Thales TopSky-ATC",
+            "Indra iTEC"
+          ],
+          "open_tools": [
+            "BlueSky"
+          ],
+          "benchmarkable": "partly: BlueSky scenario sets allow comparison but no agreed benchmark",
+          "notes": ""
+        },
+        {
+          "id": "move.air_traffic.surveillance_tracking",
+          "name": "Surveillance data processing",
+          "definition": "Given radar and broadcast position reports, decode them, associate reports to aircraft and maintain smoothed tracks.",
+          "inputs": "radar plots, ADS-B and Mode S messages, flight plans",
+          "outputs": "aircraft tracks with identity, position, altitude and velocity",
+          "crosswalk": [],
+          "onet_products": [
+            "Automated radar terminal systems ARTS"
+          ],
+          "state_of_art": [
+            "FAA STARS",
+            "Thales TopSky-ATC",
+            "Indra"
+          ],
+          "open_tools": [
+            "pyModeS",
+            "traffic"
+          ],
+          "benchmarkable": "partly: OpenSky Network archives provide raw messages, but ground truth tracks are not curated",
+          "notes": ""
+        },
+        {
+          "id": "move.air_traffic.trajectory_prediction",
+          "name": "Aircraft trajectory prediction",
+          "definition": "Given a flight plan, aircraft performance and weather, predict the four-dimensional trajectory and arrival time.",
+          "inputs": "flight plan, aircraft type and weight, winds and temperature, procedures",
+          "outputs": "predicted positions, altitudes and times; arrival time",
+          "crosswalk": [
+            {
+              "scheme": "ICAO",
+              "code": "",
+              "label": "Trajectory-based operations",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "EUROCONTROL BADA-based trajectory predictors",
+            "FAA TFMS"
+          ],
+          "open_tools": [
+            "OpenAP",
+            "traffic"
+          ],
+          "benchmarkable": "yes: arrival time and trajectory error can be scored on OpenSky recorded flights",
+          "notes": ""
+        },
+        {
+          "id": "move.air_traffic.traffic_flow_management",
+          "name": "Air traffic flow management",
+          "definition": "Given forecast demand and reduced airport or sector capacity, assign ground delays, reroutes and slots to balance demand and capacity.",
+          "inputs": "scheduled flights, capacity forecasts, constraints",
+          "outputs": "ground delay programs, slots, reroutes",
+          "crosswalk": [
+            {
+              "scheme": "ICAO Doc 9854",
+              "code": "",
+              "label": "Demand and capacity balancing",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "FAA Traffic Flow Management System",
+            "EUROCONTROL Network Manager"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: ground holding models have published test cases, but no current shared set",
+          "notes": ""
+        },
+        {
+          "id": "move.air_traffic.airport_operations",
+          "name": "Airfield operations monitoring",
+          "definition": "Given airfield inspections, aircraft noise and track data and ground vehicle access, record airport operating conditions and flag exceptions.",
+          "inputs": "inspection records, noise monitor and flight track data, vehicle identification reads",
+          "outputs": "airfield condition reports, noise events attributed to flights, access logs",
+          "crosswalk": [
+            {
+              "scheme": "ICAO Doc 9854",
+              "code": "",
+              "label": "Aerodrome operations",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Aircraft noise monitoring system software",
+            "Decision Support Technologies Propworks",
+            "Ground transportation management system",
+            "TRMI Airport AVI"
+          ],
+          "state_of_art": [
+            "Envirosuite ANOMS",
+            "Veoci"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: operational record keeping",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.maritime",
+      "name": "Maritime navigation and port operations",
+      "definition": "Given charts, weather, traffic and cargo, plan and keep a ship's passage safe and economical, and plan how ships and containers are handled in port.",
+      "crosswalk": [
+        {
+          "scheme": "IMO",
+          "code": "",
+          "label": "e-navigation",
+          "basis": "fetched",
+          "url": "https://www.imo.org/en/OurWork/Safety/Pages/eNavigation.aspx"
+        },
+        {
+          "scheme": "IMO",
+          "code": "Resolution A.893(21)",
+          "label": "Guidelines for voyage planning",
+          "basis": "fetched",
+          "url": "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.893(21).pdf"
+        },
+        {
+          "scheme": "IHO",
+          "code": "",
+          "label": "S-57 and S-100 electronic navigational charts",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "UN/CEFACT",
+          "code": "",
+          "label": "BAPLIE bayplan message",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Route navigation software",
+        "Mobile location based services software",
+        "Data base user interface and query software",
+        "Expert system software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "earth.atmosphere"
+      ],
+      "notes": "Was seed 'Maritime navigation and port operations'. Hull design and stability calculation go to design and simulate; ship weather observation reporting for meteorology is shared with earth.",
+      "tasks": [
+        {
+          "id": "move.maritime.passage_planning",
+          "name": "Passage planning and route monitoring",
+          "definition": "Given electronic charts, the ship's draft and the voyage, lay out a route of waypoints clear of hazards and monitor the ship's track against it.",
+          "inputs": "electronic navigational charts, ship particulars, waypoints, position fixes",
+          "outputs": "checked route, cross-track and hazard alarms, steering orders",
+          "crosswalk": [
+            {
+              "scheme": "IMO",
+              "code": "Resolution MSC.232(82)",
+              "label": "Adoption of the revised performance standards for Electronic Chart Display and Information Systems (ECDIS)",
+              "basis": "fetched",
+              "url": "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/MSCResolutions/MSC.232(82).pdf"
+            }
+          ],
+          "onet_products": [
+            "FURUNO navigational chart software",
+            "JRC navigation software",
+            "Jeppesen Marine Nobeltec Admiral",
+            "Maptech The CAPN",
+            "MaxSea Time Zero Navigator NOAA",
+            "Navigational chart software",
+            "Autopilot software",
+            "Echo sounder software"
+          ],
+          "state_of_art": [
+            "Kongsberg K-Bridge ECDIS",
+            "Wärtsilä Navi-Sailor",
+            "Furuno ECDIS"
+          ],
+          "open_tools": [
+            "OpenCPN"
+          ],
+          "benchmarkable": "partly: route safety can be checked against public charts, but no scored route set exists",
+          "notes": ""
+        },
+        {
+          "id": "move.maritime.weather_routing",
+          "name": "Ship weather routing",
+          "definition": "Given departure, destination, the ship's speed and fuel response to waves and wind, and a forecast, find the route and speed profile minimizing time, fuel or risk.",
+          "inputs": "forecast wind, waves and currents, ship performance model, constraints",
+          "outputs": "route and speed schedule, predicted fuel and arrival time",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "StormGeo s-Planner",
+            "DTN Ship Routing",
+            "Wärtsilä Fleet Optimisation Solution"
+          ],
+          "open_tools": [
+            "VISIR-2",
+            "OpenCPN"
+          ],
+          "benchmarkable": "partly: open forecast archives allow comparison, but there is no reference instance set",
+          "notes": ""
+        },
+        {
+          "id": "move.maritime.collision_avoidance",
+          "name": "Target tracking and collision avoidance",
+          "definition": "Given radar, AIS and camera observations of nearby vessels and obstacles, track them, compute closest approach and propose rule-compliant maneuvers.",
+          "inputs": "radar targets, AIS reports, camera images, own-ship state",
+          "outputs": "tracked targets, closest point of approach and time, collision alarms and maneuver advice",
+          "crosswalk": [
+            {
+              "scheme": "IMO",
+              "code": "",
+              "label": "International Regulations for Preventing Collisions at Sea (COLREGs)",
+              "basis": "fetched",
+              "url": "https://www.imo.org/en/About/Conventions/Pages/COLREG.aspx"
+            }
+          ],
+          "onet_products": [
+            "Radar software",
+            "SEA.AI Offshore ONE"
+          ],
+          "state_of_art": [
+            "Orca AI",
+            "SEA.AI",
+            "Furuno ARPA radar"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: public AIS archives and maritime obstacle datasets (Singapore Maritime Dataset, MODS) score detection but not maneuver decisions",
+          "notes": ""
+        },
+        {
+          "id": "move.maritime.voyage_logging",
+          "name": "Voyage logbooks and reporting",
+          "definition": "Given bridge and engine events, keep the official deck and engine logs and produce required voyage, emission and weather reports.",
+          "inputs": "navigation events, engine data, observations",
+          "outputs": "logbook entries and voyage reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Log book software",
+            "Kongsberg Maritime K-Log Deck Logbook",
+            "Kongsberg Maritime K-LOG Electronic Logbooks",
+            "KNMI TurboWin"
+          ],
+          "state_of_art": [
+            "Kongsberg K-Log",
+            "Marlink"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record keeping",
+          "notes": ""
+        },
+        {
+          "id": "move.maritime.ship_scheduling",
+          "name": "Ship routing and cargo scheduling",
+          "definition": "Given cargoes with pickup and delivery ports and windows and a fleet of ships, decide which ship carries which cargo and in what port sequence.",
+          "inputs": "cargoes, ports, time windows, fleet, sailing times and costs",
+          "outputs": "ship schedules and cargo assignments; profit",
+          "crosswalk": [],
+          "onet_products": [
+            "SHIPNEXT"
+          ],
+          "state_of_art": [
+            "Veson IMOS",
+            "Dataloy"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: Hemmati et al. (2014) benchmark suite for industrial and tramp ship routing and scheduling",
+          "notes": ""
+        },
+        {
+          "id": "move.maritime.berth_crane_allocation",
+          "name": "Berth and quay crane allocation",
+          "definition": "Given arriving ships with handling volumes and windows, and a quay with cranes, assign berthing positions, times and cranes.",
+          "inputs": "ship arrivals, lengths, workloads, quay layout, cranes",
+          "outputs": "berth plan, crane assignments and schedules",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Navis N4",
+            "Tideworks",
+            "INFORM"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: Cordeau et al. (2005) berth allocation instances and the Meisel and Bierwirth quay crane scheduling set",
+          "notes": ""
+        },
+        {
+          "id": "move.maritime.stowage_planning",
+          "name": "Container stowage planning",
+          "definition": "Given the containers to load at each port of a rotation and the ship's bay structure, assign slots that respect stability, strength, reefer and dangerous-goods rules and minimize restows.",
+          "inputs": "container list with weights and destinations, vessel profile, rotation",
+          "outputs": "bay plan and stowage message; stability and restow count",
+          "crosswalk": [
+            {
+              "scheme": "UN/CEFACT",
+              "code": "",
+              "label": "BAPLIE bayplan message",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Navis MACS3",
+            "Navis StowMan"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: published instances exist from academic work but no widely adopted set",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.rail_operations",
+      "name": "Rail operations",
+      "definition": "Given the track network, trains, cars and crews, plan and control train movements, enforce safe operation and manage yards and car supply.",
+      "crosswalk": [
+        {
+          "scheme": "railML / RailTopoModel",
+          "code": "",
+          "label": "Railway infrastructure, rolling stock, timetable and interlocking schemas",
+          "basis": "fetched",
+          "url": "https://www.railml.org/en/introduction.html"
+        },
+        {
+          "scheme": "AAR",
+          "code": "",
+          "label": "Automatic equipment identification",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Expert system software",
+        "Data base user interface and query software",
+        "Inventory management software",
+        "Materials requirements planning logistics and supply chain software",
+        "Industrial control software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "move.public_transit",
+        "operate.maintenance_management"
+      ],
+      "notes": "Was seed 'Rail operations and yard management'. Passenger timetabling sits in public transit; car and wheel repair shops go to operate.",
+      "tasks": [
+        {
+          "id": "move.rail_operations.train_dispatching",
+          "name": "Train dispatching and meet-pass planning",
+          "definition": "Given trains on a network with positions, priorities and sidings, decide meets, passes and movement authorities to minimize delay.",
+          "inputs": "track layout, train positions and schedules, priorities, maintenance windows",
+          "outputs": "movement plan with meets and passes; authorities issued",
+          "crosswalk": [],
+          "onet_products": [
+            "Rail Traffic Track Warrant Control System"
+          ],
+          "state_of_art": [
+            "Wabtec Movement Planner",
+            "Hitachi Rail TMS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: INFORMS Railway Applications Section competition instances exist for train dispatching",
+          "notes": ""
+        },
+        {
+          "id": "move.rail_operations.train_control_enforcement",
+          "name": "Train control enforcement",
+          "definition": "Given a train's consist, position and speed and the track's limits and authorities, predict its braking curve and enforce stops and speed limits.",
+          "inputs": "consist and braking data, track profile, speed restrictions, authorities, position",
+          "outputs": "braking predictions, warnings, enforcement commands",
+          "crosswalk": [
+            {
+              "scheme": "US 49 CFR Part 236 Subpart I",
+              "code": "",
+              "label": "Positive train control systems",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-49?part=236&subpart=I"
+            }
+          ],
+          "onet_products": [
+            "Positive train control PTC systems",
+            "Electronic train management systems ETMS",
+            "Electronic train management system software"
+          ],
+          "state_of_art": [
+            "Wabtec I-ETMS",
+            "Siemens Trainguard",
+            "Alstom Atlas ETCS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: braking curve models (ETCS braking curves) are specified and can be tested, but not ranked",
+          "notes": ""
+        },
+        {
+          "id": "move.rail_operations.running_time_calculation",
+          "name": "Train running time calculation",
+          "definition": "Given a train's consist and the line's gradients, curves and speed limits, compute the speed profile, running time and energy.",
+          "inputs": "locomotive and car data, track profile, speed limits, stops",
+          "outputs": "speed-distance profile, running time, energy use",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "OpenTrack",
+            "RailSys",
+            "SNCF OSRD"
+          ],
+          "open_tools": [
+            "OSRD"
+          ],
+          "benchmarkable": "partly: physics is well defined and results can be checked against measured runs, without a shared set",
+          "notes": ""
+        },
+        {
+          "id": "move.rail_operations.yard_management",
+          "name": "Rail yard inventory and switching",
+          "definition": "Given cars arriving, departing trains and equipment reads, track each car's location and build the switching and classification plan.",
+          "inputs": "car inventory, equipment identification reads, train consists, yard tracks",
+          "outputs": "car locations by track, switch lists, classification sequence",
+          "crosswalk": [
+            {
+              "scheme": "AAR",
+              "code": "",
+              "label": "Automatic equipment identification",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Bourque Data Systems YardMaster",
+            "Railyard management software RMS",
+            "Railyard inventory software",
+            "RailComm DocYard",
+            "Softrail AEI Rail & Road Manager",
+            "Softrail AEI Automatic Yard Tracking System"
+          ],
+          "state_of_art": [
+            "Wabtec Yard Planner",
+            "RailComm DOC"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: hump yard sorting has published models and instances, but no shared benchmark",
+          "notes": ""
+        },
+        {
+          "id": "move.rail_operations.car_distribution",
+          "name": "Freight car ordering and distribution",
+          "definition": "Given customer car orders and empty car supply, allocate and route empty cars to loading points.",
+          "inputs": "car orders, empty car locations, car types, transit times",
+          "outputs": "car assignments and empty movements",
+          "crosswalk": [],
+          "onet_products": [
+            "Freight reservation software"
+          ],
+          "state_of_art": [
+            "Railinc",
+            "Wabtec"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: formulated as a transportation problem; no public instances",
+          "notes": ""
+        },
+        {
+          "id": "move.rail_operations.train_crew_assignment",
+          "name": "Train crew assignment",
+          "definition": "Given trains to operate, crew pools, rest rules and crew positions, assign crews to trains and plan deadheads.",
+          "inputs": "train schedule, crew pools and positions, labor rules",
+          "outputs": "crew assignments and deadheads; cost",
+          "crosswalk": [],
+          "onet_products": [
+            "Freight Rail Crew Optimization Scheduling FRCOS software"
+          ],
+          "state_of_art": [
+            "DELMIA Quintiq",
+            "IVU.rail"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: set-covering formulations as in airline crew scheduling, without public rail instances",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.public_transit",
+      "name": "Public transit planning and information",
+      "definition": "Given a city's travel demand, streets and operating resources, design transit routes and timetables, schedule vehicles and crews, and tell riders how and when to travel.",
+      "crosswalk": [
+        {
+          "scheme": "Transmodel",
+          "code": "EN 12896-2",
+          "label": "Public transport network",
+          "basis": "fetched",
+          "url": "https://www.transmodel-cen.eu/"
+        },
+        {
+          "scheme": "Transmodel",
+          "code": "EN 12896-3",
+          "label": "Timing information and vehicle scheduling",
+          "basis": "fetched",
+          "url": "https://www.transmodel-cen.eu/"
+        },
+        {
+          "scheme": "Transmodel",
+          "code": "EN 12896-6",
+          "label": "Passenger information",
+          "basis": "fetched",
+          "url": "https://www.transmodel-cen.eu/"
+        },
+        {
+          "scheme": "GTFS",
+          "code": "",
+          "label": "General Transit Feed Specification (Schedule and Realtime)",
+          "basis": "fetched",
+          "url": "https://gtfs.org/documentation/overview/"
+        }
+      ],
+      "onet_categories": [],
+      "see_also": [
+        "move.rail_operations",
+        "move.vehicle_routing.dial_a_ride"
+      ],
+      "notes": "Was seed 'Public transit scheduling and passenger information'. O*NET lists almost no transit products, so task examples are empty; the capability is kept because its functions are distinct and well benchmarked. Paratransit routing is move.vehicle_routing.dial_a_ride.",
+      "tasks": [
+        {
+          "id": "move.public_transit.route_network_design",
+          "name": "Transit route network design",
+          "definition": "Given a street network and an origin-destination demand matrix, choose a set of transit routes and frequencies that balances rider travel time and operating cost.",
+          "inputs": "street network, demand matrix, fleet size, route constraints",
+          "outputs": "route set and frequencies; rider and operator costs",
+          "crosswalk": [
+            {
+              "scheme": "Transmodel",
+              "code": "EN 12896-2",
+              "label": "Public transport network",
+              "basis": "fetched",
+              "url": "https://www.transmodel-cen.eu/"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "PTV Visum",
+            "Remix",
+            "Optibus"
+          ],
+          "open_tools": [
+            "LinTim"
+          ],
+          "benchmarkable": "yes: Mandl's Swiss network and Mumford's instance set for transit route network design",
+          "notes": ""
+        },
+        {
+          "id": "move.public_transit.timetabling",
+          "name": "Periodic timetabling",
+          "definition": "Given lines, frequencies and transfer and headway requirements, set departure times that minimize passenger travel and waiting time.",
+          "inputs": "lines, frequencies, running and dwell times, transfers, headway constraints",
+          "outputs": "periodic timetable",
+          "crosswalk": [
+            {
+              "scheme": "Transmodel",
+              "code": "EN 12896-3",
+              "label": "Timing information and vehicle scheduling",
+              "basis": "fetched",
+              "url": "https://www.transmodel-cen.eu/"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "HASTUS",
+            "Trapeze",
+            "IVU.suite",
+            "Optibus"
+          ],
+          "open_tools": [
+            "LinTim"
+          ],
+          "benchmarkable": "yes: PESPlib periodic event scheduling instances with best-known values",
+          "notes": ""
+        },
+        {
+          "id": "move.public_transit.vehicle_scheduling",
+          "name": "Transit vehicle scheduling",
+          "definition": "Given timetabled trips and depots, chain trips into vehicle blocks that cover every trip with the fewest vehicles and least deadheading.",
+          "inputs": "trips with times and terminals, depots, deadhead times, vehicle types",
+          "outputs": "vehicle blocks; fleet size and deadhead cost",
+          "crosswalk": [
+            {
+              "scheme": "Transmodel",
+              "code": "EN 12896-3",
+              "label": "Timing information and vehicle scheduling",
+              "basis": "fetched",
+              "url": "https://www.transmodel-cen.eu/"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "HASTUS",
+            "Optibus",
+            "Trapeze"
+          ],
+          "open_tools": [
+            "LinTim"
+          ],
+          "benchmarkable": "partly: multiple-depot vehicle scheduling instance generators are published, but no fixed standard set",
+          "notes": ""
+        },
+        {
+          "id": "move.public_transit.crew_scheduling",
+          "name": "Transit crew scheduling",
+          "definition": "Given vehicle blocks and labor rules, cut blocks into driver runs and assign runs to operators.",
+          "inputs": "vehicle blocks, relief points, labor rules",
+          "outputs": "runs and rosters; paid hours",
+          "crosswalk": [
+            {
+              "scheme": "Transmodel",
+              "code": "EN 12896-7",
+              "label": "Driver management",
+              "basis": "fetched",
+              "url": "https://www.transmodel-cen.eu/"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "HASTUS",
+            "Optibus",
+            "Trapeze"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: set-covering formulations; few public instances",
+          "notes": ""
+        },
+        {
+          "id": "move.public_transit.journey_planning",
+          "name": "Transit journey planning",
+          "definition": "Given a timetable, real-time updates and a traveler's origin, destination and time, find the fastest or Pareto-optimal itineraries including walking and transfers.",
+          "inputs": "timetable feed, real-time updates, street network, query",
+          "outputs": "itineraries with legs, times and transfers",
+          "crosswalk": [
+            {
+              "scheme": "Transmodel",
+              "code": "EN 12896-6",
+              "label": "Passenger information",
+              "basis": "fetched",
+              "url": "https://www.transmodel-cen.eu/"
+            },
+            {
+              "scheme": "ARC-IT",
+              "code": "",
+              "label": "Personalized Traveler Information",
+              "basis": "fetched",
+              "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Google Maps",
+            "HAFAS",
+            "Transit app",
+            "Moovit"
+          ],
+          "open_tools": [
+            "OpenTripPlanner",
+            "MOTIS",
+            "R5"
+          ],
+          "benchmarkable": "yes: public timetable feeds (London, Switzerland, Germany) with random query sets are the standard benchmark for RAPTOR-family algorithms",
+          "notes": ""
+        },
+        {
+          "id": "move.public_transit.arrival_prediction",
+          "name": "Real-time arrival prediction",
+          "definition": "Given vehicle positions and the schedule, predict when each vehicle will reach each downstream stop.",
+          "inputs": "vehicle positions, schedule, historical running times",
+          "outputs": "predicted arrival times by stop",
+          "crosswalk": [
+            {
+              "scheme": "GTFS",
+              "code": "",
+              "label": "GTFS Realtime trip updates",
+              "basis": "fetched",
+              "url": "https://gtfs.org/documentation/realtime/feed-entities/trip-updates/"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Swiftly",
+            "Clever Devices",
+            "Trapeze"
+          ],
+          "open_tools": [
+            "TheTransitClock"
+          ],
+          "benchmarkable": "partly: open vehicle-position archives allow scoring, but no shared split",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.travel_reservation",
+      "name": "Travel reservation and distribution",
+      "definition": "Given carriers' schedules, fares and seat inventory, find, price, book and ticket travel, and set how much inventory to sell at each fare.",
+      "crosswalk": [
+        {
+          "scheme": "IATA",
+          "code": "",
+          "label": "New Distribution Capability",
+          "basis": "fetched",
+          "url": "https://www.iata.org/en/programs/airline-distribution/ndc/"
+        },
+        {
+          "scheme": "ATPCO",
+          "code": "",
+          "label": "Fare and rule filing",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software",
+        "Aviation ground support software",
+        "Customer relationship management CRM software"
+      ],
+      "see_also": [
+        "commerce.hospitality"
+      ],
+      "notes": "Was seed 'Travel reservation and distribution systems'. Restricted to carrier inventory, fares and distribution; hotel and restaurant reservations belong to commerce.",
+      "tasks": [
+        {
+          "id": "move.travel_reservation.fare_shopping",
+          "name": "Availability and fare shopping",
+          "definition": "Given an origin, destination and dates, search schedules, seat availability and fares to return priced itineraries.",
+          "inputs": "schedules, availability, fares and rules, query",
+          "outputs": "priced itinerary options",
+          "crosswalk": [
+            {
+              "scheme": "IATA",
+              "code": "",
+              "label": "New Distribution Capability",
+              "basis": "fetched",
+              "url": "https://www.iata.org/en/programs/airline-distribution/ndc/"
+            }
+          ],
+          "onet_products": [
+            "Global distribution system GDS software",
+            "Airline global distribution systems GDS software",
+            "Amadeus CRS",
+            "Worldspan Go!",
+            "Galileo 360 Fares",
+            "Sabre travel agent software",
+            "Orbitz Worldwide Orbitz for Agents"
+          ],
+          "state_of_art": [
+            "Amadeus",
+            "Sabre",
+            "Travelport",
+            "Google ITA Matrix"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: fare construction is deterministic given filed fares and rules, which are licensed",
+          "notes": ""
+        },
+        {
+          "id": "move.travel_reservation.booking_ticketing",
+          "name": "Reservation and ticketing",
+          "definition": "Given a chosen itinerary and passengers, hold seats in carrier inventory, create the passenger record and issue tickets and documents.",
+          "inputs": "itinerary, passenger data, payment, inventory",
+          "outputs": "passenger name record, tickets, seat assignments",
+          "crosswalk": [
+            {
+              "scheme": "IATA",
+              "code": "",
+              "label": "Electronic ticketing standards",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Amadeus Altea Reservation",
+            "Sabre Airline Solutions SabreSonic Ticket",
+            "Computer reservation system CRS software",
+            "Sabre Airline Solutions SabreSonic Customer Sales & Service"
+          ],
+          "state_of_art": [
+            "Amadeus Altea",
+            "Sabre SabreSonic",
+            "Navitaire"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: transactional",
+          "notes": ""
+        },
+        {
+          "id": "move.travel_reservation.revenue_management",
+          "name": "Seat inventory revenue management",
+          "definition": "Given demand forecasts by fare class and itinerary, set booking limits or bid prices that maximize expected revenue.",
+          "inputs": "demand forecasts by fare and itinerary, capacity, fares",
+          "outputs": "booking limits or bid prices; expected revenue",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "PROS Revenue Management",
+            "Sabre AirVision Revenue Optimizer",
+            "Amadeus Altea Revenue Management"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: textbook network revenue management instances exist (for example Topaloglu's), but no industry standard set",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "move.road_traffic",
+      "name": "Road navigation and traffic engineering",
+      "definition": "Given a road network, traffic and travel demand, find routes for drivers, and analyse, time and forecast traffic on the network.",
+      "crosswalk": [
+        {
+          "scheme": "ARC-IT",
+          "code": "",
+          "label": "Traffic Management (service package group)",
+          "basis": "fetched",
+          "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html"
+        },
+        {
+          "scheme": "TRB",
+          "code": "",
+          "label": "Highway Capacity Manual",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "AASHTO",
+          "code": "",
+          "label": "Highway Safety Manual",
+          "basis": "fetched",
+          "url": "https://www.highwaysafetymanual.org/"
+        },
+        {
+          "scheme": "FHWA",
+          "code": "",
+          "label": "Traffic Signal Timing Manual",
+          "basis": "fetched",
+          "url": "https://ops.fhwa.dot.gov/publications/fhwahop08024/fhwa_hop_08_024.pdf"
+        }
+      ],
+      "onet_categories": [
+        "Route navigation software",
+        "Analytical or scientific software",
+        "Industrial control software",
+        "Map creation software"
+      ],
+      "see_also": [
+        "design.civil_site",
+        "earth.gis"
+      ],
+      "notes": "Was seed 'Road navigation and traffic management'. Traffic engineering analysis and travel demand forecasting added here: they model how people and vehicles move on roads, and no other domain's boundary names them. Road geometric design stays with design.",
+      "tasks": [
+        {
+          "id": "move.road_traffic.shortest_path_routing",
+          "name": "Road shortest path routing",
+          "definition": "Given a road graph with travel times and an origin and destination, compute the fastest route, possibly at continental scale and with live travel times.",
+          "inputs": "road graph, edge travel times, origin, destination, departure time",
+          "outputs": "route geometry, travel time and distance",
+          "crosswalk": [],
+          "onet_products": [
+            "Route mapping software",
+            "Navigation software",
+            "Garmin City Select",
+            "MarcoSoft Quo Vadis"
+          ],
+          "state_of_art": [
+            "Google Maps",
+            "HERE Routing",
+            "TomTom Routing"
+          ],
+          "open_tools": [
+            "OSRM",
+            "Valhalla",
+            "GraphHopper"
+          ],
+          "benchmarkable": "yes: the 9th DIMACS Implementation Challenge road networks are the standard shortest-path benchmark",
+          "notes": ""
+        },
+        {
+          "id": "move.road_traffic.truck_routing_mileage",
+          "name": "Truck routing and mileage",
+          "definition": "Given vehicle dimensions, weight and hazardous load, and a road network with legal restrictions, find a legal route and compute billing mileage by jurisdiction.",
+          "inputs": "vehicle profile, origin, stops, restriction data",
+          "outputs": "legal route, distance by state or country, tolls",
+          "crosswalk": [],
+          "onet_products": [
+            "ALK Technologies PC*Miler",
+            "CoPilot Truck",
+            "ALK Technologies FleetSuite"
+          ],
+          "state_of_art": [
+            "Trimble PC*MILER",
+            "Trimble CoPilot",
+            "HERE Truck Routing"
+          ],
+          "open_tools": [
+            "GraphHopper",
+            "Valhalla"
+          ],
+          "benchmarkable": "partly: legality is checkable against restriction data, which is mostly proprietary",
+          "notes": ""
+        },
+        {
+          "id": "move.road_traffic.signal_timing",
+          "name": "Traffic signal timing optimization",
+          "definition": "Given intersection geometry, turning volumes and phasing, compute cycle lengths, splits and offsets that minimize delay along a corridor or network.",
+          "inputs": "intersection lanes, turning movement counts, phasing, pedestrian needs",
+          "outputs": "signal timing plans; delay, stops and progression measures",
+          "crosswalk": [
+            {
+              "scheme": "ARC-IT",
+              "code": "",
+              "label": "Traffic Signal Control",
+              "basis": "fetched",
+              "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html"
+            },
+            {
+              "scheme": "FHWA",
+              "code": "",
+              "label": "Traffic Signal Timing Manual",
+              "basis": "fetched",
+              "url": "https://ops.fhwa.dot.gov/publications/fhwahop08024/fhwa_hop_08_024.pdf"
+            }
+          ],
+          "onet_products": [
+            "Cubic Synchro Studio",
+            "McTrans TRANSYT-7F",
+            "TRL Software TRANSYT",
+            "Texas Transportation Institute TTI Progression Analysis and Signal System Evaluation Routine PASSER",
+            "Strong Concepts TEAPAC",
+            "Trafficware SynchroGreen",
+            "Traffic signal software",
+            "Traffic control software"
+          ],
+          "state_of_art": [
+            "Synchro",
+            "TRANSYT",
+            "PTV Vistro"
+          ],
+          "open_tools": [
+            "SUMO"
+          ],
+          "benchmarkable": "partly: scored by delay in simulation; open scenario sets exist for reinforcement-learning signal control but none is standard",
+          "notes": ""
+        },
+        {
+          "id": "move.road_traffic.capacity_analysis",
+          "name": "Highway and intersection capacity analysis",
+          "definition": "Given a road facility's geometry, control and traffic volumes, compute capacity, delay and level of service by the Highway Capacity Manual or equivalent methods.",
+          "inputs": "facility geometry, control, volumes, heavy vehicles, peak factors",
+          "outputs": "capacity, delay, queue and level of service",
+          "crosswalk": [
+            {
+              "scheme": "TRB",
+              "code": "",
+              "label": "Highway Capacity Manual",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "McTrans HCS+",
+            "SIDRA INTERSECTION",
+            "Roundabout Delay RODEL",
+            "Dowling Associates TRAFFIX",
+            "JAMAR Technologies PETRAPro"
+          ],
+          "state_of_art": [
+            "McTrans HCS",
+            "SIDRA Intersection",
+            "Synchro"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the Highway Capacity Manual's example problems have published reference answers",
+          "notes": ""
+        },
+        {
+          "id": "move.road_traffic.traffic_microsimulation",
+          "name": "Traffic microsimulation",
+          "definition": "Given a road network, control and demand, simulate individual vehicles' movements to estimate travel times, queues and emissions.",
+          "inputs": "network, signal control, origin-destination demand, driver behavior parameters",
+          "outputs": "vehicle trajectories, travel times, queues, performance measures",
+          "crosswalk": [],
+          "onet_products": [
+            "PTV Vissim",
+            "Quadstone Paramics",
+            "McTrans Center TSIS-CORSIM"
+          ],
+          "state_of_art": [
+            "PTV Vissim",
+            "Aimsun Next",
+            "Paramics"
+          ],
+          "open_tools": [
+            "SUMO"
+          ],
+          "benchmarkable": "partly: calibration against the public NGSIM vehicle trajectory datasets is common, but there is no ranked benchmark",
+          "notes": ""
+        },
+        {
+          "id": "move.road_traffic.road_safety_analysis",
+          "name": "Road safety analysis",
+          "definition": "Given crash records and road and traffic data, locate high-crash sites, diagnose patterns and predict crash frequency for alternatives.",
+          "inputs": "crash records, road inventory, traffic volumes",
+          "outputs": "hot-spot rankings, collision diagrams, predicted crash frequencies",
+          "crosswalk": [
+            {
+              "scheme": "AASHTO",
+              "code": "",
+              "label": "Highway Safety Manual",
+              "basis": "fetched",
+              "url": "https://www.highwaysafetymanual.org/"
+            }
+          ],
+          "onet_products": [
+            "Pd' Programming Intersection Magic",
+            "Crash Mapping Analysis Tool CMAT"
+          ],
+          "state_of_art": [
+            "AASHTOWare Safety",
+            "FHWA Interactive Highway Safety Design Model"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: Highway Safety Manual predictive models give reference values for worked examples",
+          "notes": ""
+        },
+        {
+          "id": "move.road_traffic.travel_demand_forecasting",
+          "name": "Travel demand forecasting and assignment",
+          "definition": "Given zones, land use, networks and behavior models, forecast trips by origin, destination and mode and assign them to the network to equilibrium.",
+          "inputs": "zone data, highway and transit networks, behavior model parameters",
+          "outputs": "trip tables, mode shares, link volumes and travel times",
+          "crosswalk": [],
+          "onet_products": [
+            "Citilabs Cube",
+            "PTV VISUM",
+            "Transportation planning software"
+          ],
+          "state_of_art": [
+            "PTV Visum",
+            "TransCAD",
+            "Bentley Cube",
+            "Bentley Emme"
+          ],
+          "open_tools": [
+            "AequilibraE",
+            "MATSim",
+            "SUMO"
+          ],
+          "benchmarkable": "yes: the Transportation Networks for Research repository (Sioux Falls, Chicago and others) has best-known equilibrium assignments",
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "existing_function_map": [
+    {
+      "function": "logistics",
+      "nodes": [
+        "move.vehicle_routing",
+        "move.supply_chain_planning",
+        "move.warehouse_inventory",
+        "move.freight_transport",
+        "move.fleet_dispatch"
+      ],
+      "note": "Split. The applied problems are here: routing to move.vehicle_routing (and real-time dispatch to move.fleet_dispatch), inventory and supply-chain planning to move.supply_chain_planning, warehouse management to move.warehouse_inventory, transportation management and load planning to move.freight_transport. Mathematical programming solvers and modeling languages (CPLEX, LINDO, LINGO, AMPL, GAMS, MINOS, SNOPT, OPL) go to science's optimization capability; production scheduling, APS and shop-floor MRP (Preactor, Asprova, finite capacity scheduling) go to produce."
+    }
+  ],
+  "handoffs": [
+    {
+      "what": "Mathematical programming solvers and modeling languages (IBM ILOG CPLEX Optimization Studio, Optimization software, LINDO, AMPL)",
+      "to_domain": "science",
+      "why": "general optimization solvers, used by but not specific to logistics"
+    },
+    {
+      "what": "Production scheduling, APS and MRP (Preactor APS, Preactor Finite Capacity Scheduling, Asprova, Oracle Manufacturing Scheduling, Production scheduling and planning software, Materials requirement planning MRP software, Factory Edge MRP, PMC KanbanSIM, LSA Visual DBR, JobPack MES Scheduler)",
+      "to_domain": "produce",
+      "why": "shop-floor planning and scheduling"
+    },
+    {
+      "what": "Bill of materials software",
+      "to_domain": "design",
+      "why": "product structure is design data (PDM/PLM)"
+    },
+    {
+      "what": "Distributed control system DCS (loading terminals)",
+      "to_domain": "produce",
+      "why": "plant-floor control"
+    },
+    {
+      "what": "Drone mission planning and image capture (ArduPilot Mission Planner, UgCS, Litchi, Pix4D Pix4Dcapture)",
+      "to_domain": "earth",
+      "why": "earth's seed includes drone mission planning for survey"
+    },
+    {
+      "what": "Flight simulation software",
+      "to_domain": "learn",
+      "why": "simulation-based training"
+    },
+    {
+      "what": "Leica AEROPLAN LiDAR, NOAA Shoreline Data Explorer, Teledyne Odom Hydrographic ODOM eChart",
+      "to_domain": "earth",
+      "why": "survey and hydrographic mapping"
+    },
+    {
+      "what": "Vehicle and aircraft maintenance and diagnostics (Vehicle management software, Mxi Technologies Maintenix, Computerized aircraft log manager CALM, Pentagon 2000SQL, Engine diagnostic software, Cummins INSITE, Railcar inspection management software, WheelShop Automation.com Wheel Shop Management Suite, RailTech Software Solutions Rail 21 Management System)",
+      "to_domain": "operate",
+      "why": "maintenance and diagnostics"
+    },
+    {
+      "what": "Logistics support analysis and RAM tools (Logistics management information LMI database software, Logistics Support Analysts SmartLogic, LOGSA COMPASS, ITEM Software ITEM ToolKit, Relex FMEA, ReliaSoft RCM++)",
+      "to_domain": "operate",
+      "why": "reliability and maintainability engineering; only spares provisioning stays in move"
+    },
+    {
+      "what": "Pyxis MedStation software, hospital bed management (Computerized bed control system software, Bed Management Suite, TeleTracking PreAdmit-Tracking), specimen and pharmacy labels",
+      "to_domain": "health",
+      "why": "patient care"
+    },
+    {
+      "what": "Food, menu and kitchen inventory (Food Service Solutions FoodCo, CBORD Group Menu Management System, Enggist & Grandjean EGS F&B Control, Recipe cost control software, SweetWARE stockCoster)",
+      "to_domain": "commerce",
+      "why": "restaurant and food-service management"
+    },
+    {
+      "what": "Laboratory chemical and sample inventory (ChemSW Chemical Inventory System CIS, ItemTracker, UBI Biotracker)",
+      "to_domain": "science",
+      "why": "laboratory informatics"
+    },
+    {
+      "what": "Forest and log inventory (Assisi Inventory, Haglof Sweden AB TCruise Forest Inventory, Forest Metrix, Fountains Forestry TwoDog, Atterbury Consultants SuperACE/FLIPS, TradeTec TallyWorks Logs)",
+      "to_domain": "earth",
+      "why": "forestry; these are timber cruises and scaling, not stock control"
+    },
+    {
+      "what": "Proteus Engineering FastShip, Seasafe Marine Software Seasafe",
+      "to_domain": "design",
+      "why": "hull design and ship stability are naval architecture"
+    },
+    {
+      "what": "Iteris Turbo Architecture",
+      "to_domain": "computing",
+      "why": "systems-engineering architecture tool for ITS projects"
+    },
+    {
+      "what": "Intergraph GeoMedia Transportation Manager, Bentley Transportation Data Manager (road inventory and linear referencing)",
+      "to_domain": "earth",
+      "why": "GIS data management; GeoMedia also listed as a routing example here"
+    },
+    {
+      "what": "Situation resource tracking software, Computer-aided dispatch for emergencies",
+      "to_domain": "govern",
+      "why": "public safety dispatch and incident command"
+    },
+    {
+      "what": "Inspection marking systems",
+      "to_domain": "produce",
+      "why": "part marking at inspection is quality control"
+    },
+    {
+      "what": "Wide Area Workflow WAWF system",
+      "to_domain": "enterprise",
+      "why": "government invoicing and receiving reports"
+    },
+    {
+      "what": "Visual Solutions VisSIM",
+      "to_domain": "simulate",
+      "why": "general block-diagram simulation, used by transportation engineers but not traffic-specific"
+    },
+    {
+      "what": "Analytical Graphics STK Expert Edition",
+      "to_domain": "simulate",
+      "why": "space and air mission dynamics"
+    },
+    {
+      "what": "Aircraft regulation databases, Commercial driver's license information system CDLIS, Vehicle inspection databases, Inspection Selection System ISS",
+      "to_domain": "govern",
+      "why": "regulatory enforcement records"
+    },
+    {
+      "what": "Parking access revenue control system, Hotel property management",
+      "to_domain": "commerce",
+      "why": "customer-facing hospitality and parking revenue"
+    }
+  ],
+  "unplaced_products": [
+    "Waterloo Hydrogeologic TACTIC",
+    "Geometrix",
+    "Lamar Info Net",
+    "IFT-Pro",
+    "Symphony GOLD"
+  ],
+  "open_questions": [
+    "Traffic engineering (signal timing, capacity, microsimulation) and travel demand forecasting are placed in move under 'road navigation and traffic'. They could instead sit in simulate as network analysis, like water and power networks; the boundary table names neither.",
+    "Drone mission planning is handed to earth per its seed, but uncrewed aircraft operations generally (not only survey) fit move.flight_operations. Decide whether to split by purpose.",
+    "Travel revenue management and fare shopping could be viewed as commerce pricing. They are kept here because carrier seat inventory is transport-specific.",
+    "Crew scheduling appears three times (airline, rail, transit) by mode. A single cross-modal 'crew scheduling' capability would be more function-pure, but the instance sets and labor rules differ by mode.",
+    "The 'Materials requirements planning logistics and supply chain software' category mixes shop-floor MRP with logistics; the boundary between move.supply_chain_planning.supply_master_planning (multi-site) and produce's MRP (single-site explosion) should be confirmed with produce.",
+    "Fourteen capabilities with 90 tasks is at the top of the brief's range; parcel and mail could merge back into freight transportation if fewer capabilities are wanted."
+  ]
+}

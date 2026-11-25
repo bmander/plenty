@@ -1,0 +1,3381 @@
+{
+  "domain": "govern",
+  "summary": "Fourteen capabilities in four groups: money (banking and payments, lending, securities analysis and pricing, investment and wealth management, financial risk and actuarial modeling, insurance, compliance and financial crime), law (legal research, legal practice and litigation support), public safety and justice (emergency dispatch, law enforcement and forensics, courts and corrections) and government services (social services, public revenue, registries and permits). BIAN service domains, ISO 20022 business areas and FIBO drove the finance breakdown; ACORD the insurance tasks; UTBMS and the EDRM model the legal tasks; NENA, NIMS, FBI CJIS services and NIEM domains the justice and emergency tasks; and UN COFOG the government split.",
+  "capabilities": [
+    {
+      "id": "govern.banking_payments",
+      "name": "Banking operations and payments",
+      "definition": "Given customer, account and payment instructions, maintain deposit accounts and their ledgers and move money between accounts and institutions.",
+      "crosswalk": [
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Current Account",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        },
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Payment Execution",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        },
+        {
+          "scheme": "ISO 20022 business areas",
+          "code": "pacs",
+          "label": "Payments Clearing and Settlement",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 20022 business areas",
+          "code": "pain",
+          "label": "Payments Initiation",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 20022 business areas",
+          "code": "camt",
+          "label": "Cash Management",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "EDM Council FIBO",
+          "code": "FBC",
+          "label": "Financial Business and Commerce",
+          "basis": "fetched",
+          "url": "https://github.com/edmcouncil/fibo/tree/master"
+        }
+      ],
+      "onet_categories": [
+        "Financial analysis software",
+        "Data base user interface and query software",
+        "Enterprise resource planning ERP software",
+        "Accounting software"
+      ],
+      "see_also": [
+        "govern.compliance_financial_crime",
+        "enterprise.accounting"
+      ],
+      "notes": "Seed kept. Card and payment fraud detection moved to govern.compliance_financial_crime so that all fraud and money-laundering screening sits together. Cash forecasting (CashFlow Guardian) left to enterprise.financial_planning, which models treasury cash forecasting.",
+      "tasks": [
+        {
+          "id": "govern.banking_payments.core_deposit_accounts",
+          "name": "Deposit account processing",
+          "definition": "Given account agreements and posted transactions, maintain balances, accrue interest and fees, and produce statements for demand and savings accounts.",
+          "inputs": "account agreements, product terms, transaction postings",
+          "outputs": "account balances, accrued interest and fees, statements",
+          "crosswalk": [
+            {
+              "scheme": "BIAN Service Landscape",
+              "code": "",
+              "label": "Current Account",
+              "basis": "fetched",
+              "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+            },
+            {
+              "scheme": "BIAN Service Landscape",
+              "code": "",
+              "label": "Savings Account",
+              "basis": "fetched",
+              "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+            },
+            {
+              "scheme": "ISO 20022 business areas",
+              "code": "acmt",
+              "label": "Account Management",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Jack Henry & Associates Vertex",
+            "Fiserv financial services software",
+            "Harland Financial Solutions DepositPro",
+            "DCI iCore",
+            "Corporate Information Factory CIF"
+          ],
+          "state_of_art": [
+            "Temenos Transact",
+            "Fiserv DNA",
+            "Jack Henry SilverLake",
+            "Finastra Fusion Essence"
+          ],
+          "open_tools": [
+            "Apache Fineract"
+          ],
+          "benchmarkable": "partly: interest and fee accrual can be checked against hand-computed cases, but there is no public test suite",
+          "notes": ""
+        },
+        {
+          "id": "govern.banking_payments.teller_transactions",
+          "name": "Teller and branch transactions",
+          "definition": "Given an in-person deposit, withdrawal, check cashing or cash order, validate it against the account and post it while balancing the teller drawer.",
+          "inputs": "transaction slip or check image, account status, cash drawer state",
+          "outputs": "posted transaction, receipt, drawer balance",
+          "crosswalk": [
+            {
+              "scheme": "BIAN Service Landscape",
+              "code": "",
+              "label": "Branch Currency Management",
+              "basis": "fetched",
+              "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+            }
+          ],
+          "onet_products": [
+            "Information Technology Incorporated Premier Teller",
+            "Southern Data Systems TellerPro",
+            "Total Turnkey Solutions E-Vision"
+          ],
+          "state_of_art": [],
+          "open_tools": [],
+          "benchmarkable": "no: correctness is procedural and institution-specific",
+          "notes": ""
+        },
+        {
+          "id": "govern.banking_payments.payment_clearing",
+          "name": "Payment clearing and settlement",
+          "definition": "Given payment instructions (wire, automated clearing house, check image, instant payment), validate, route, net and settle them between institutions and report status.",
+          "inputs": "payment initiation messages, routing directories, settlement accounts",
+          "outputs": "cleared and settled payments, status reports, settlement positions",
+          "crosswalk": [
+            {
+              "scheme": "ISO 20022 business areas",
+              "code": "pacs",
+              "label": "Payments Clearing and Settlement",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO 20022 business areas",
+              "code": "pain",
+              "label": "Payments Initiation",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "BIAN Service Landscape",
+              "code": "",
+              "label": "Payment Execution",
+              "basis": "fetched",
+              "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+            }
+          ],
+          "onet_products": [
+            "IBM Check Processing Control System CPSC",
+            "Accuity EPICWare",
+            "Fiserv PEP+ reACH"
+          ],
+          "state_of_art": [
+            "Volante",
+            "FIS Payments Hub",
+            "ACI Enterprise Payments Platform"
+          ],
+          "open_tools": [
+            "Mojaloop",
+            "Moov ACH library"
+          ],
+          "benchmarkable": "partly: ISO 20022 and NACHA file conformance can be tested against published message rules",
+          "notes": ""
+        },
+        {
+          "id": "govern.banking_payments.positive_pay",
+          "name": "Check issue matching (positive pay)",
+          "definition": "Given an issuer's list of written checks and the checks presented for payment, flag presented items that do not match for a pay-or-return decision.",
+          "inputs": "issued-check file, presented check images and MICR data",
+          "outputs": "exception list, pay or return decisions",
+          "crosswalk": [],
+          "onet_products": [
+            "Positive pay software"
+          ],
+          "state_of_art": [],
+          "open_tools": [],
+          "benchmarkable": "partly: matching accuracy on synthetic issue and presentment files is measurable",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "govern.lending",
+      "name": "Credit scoring, lending and servicing",
+      "definition": "Given a borrower's application, credit history and financial statements, decide whether and on what terms to lend, then service and collect the loan.",
+      "crosswalk": [
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Consumer Loan",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        },
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Mortgage Loan",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        },
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Customer Credit Rating",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        },
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Collections",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        },
+        {
+          "scheme": "EDM Council FIBO",
+          "code": "LOAN",
+          "label": "Loans",
+          "basis": "fetched",
+          "url": "https://github.com/edmcouncil/fibo/tree/master"
+        }
+      ],
+      "onet_categories": [
+        "Financial analysis software",
+        "Data base user interface and query software",
+        "Content workflow software"
+      ],
+      "see_also": [
+        "govern.risk_actuarial",
+        "govern.compliance_financial_crime"
+      ],
+      "notes": "Seed 'Credit scoring, lending and loan servicing' kept; collections and consumer debt counseling added because O*NET lists many products for collectors and credit counselors. Portfolio-level credit risk moved to govern.risk_actuarial.",
+      "tasks": [
+        {
+          "id": "govern.lending.scorecard_development",
+          "name": "Credit scorecard development",
+          "definition": "Given historical applications and repayment outcomes, fit and validate a model that ranks applicants by probability of default.",
+          "inputs": "applicant attributes, bureau data, performance outcomes",
+          "outputs": "scorecard or model, cut-offs, validation statistics",
+          "crosswalk": [
+            {
+              "scheme": "BIAN Service Landscape",
+              "code": "",
+              "label": "Credit Risk Models",
+              "basis": "fetched",
+              "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+            }
+          ],
+          "onet_products": [
+            "Fair Isaac Application Risk Model Software",
+            "Credit and risk analysis software",
+            "Experian Credinomics"
+          ],
+          "state_of_art": [
+            "FICO Model Builder",
+            "SAS Credit Scoring",
+            "Experian PowerCurve"
+          ],
+          "open_tools": [
+            "OptBinning",
+            "scorecardpy"
+          ],
+          "benchmarkable": "yes: public credit datasets (for example Home Credit, German Credit) allow scored comparisons of discrimination and calibration",
+          "notes": ""
+        },
+        {
+          "id": "govern.lending.credit_report_retrieval",
+          "name": "Credit bureau report retrieval",
+          "definition": "Given a borrower's identity and permissible purpose, retrieve and merge credit bureau files into a single report with scores and attributes.",
+          "inputs": "borrower identity, permissible purpose, bureau credentials",
+          "outputs": "merged credit report, scores, derived attributes",
+          "crosswalk": [],
+          "onet_products": [
+            "Equifax software",
+            "Experian software",
+            "Credit reporting software",
+            "CGI-AMS BureauLink Enterprise",
+            "TCI XML Credit Interface"
+          ],
+          "state_of_art": [
+            "Equifax InterConnect",
+            "Experian Connect",
+            "MeridianLink"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: depends on proprietary bureau data access",
+          "notes": ""
+        },
+        {
+          "id": "govern.lending.application_decisioning",
+          "name": "Application decisioning and automated underwriting",
+          "definition": "Given a loan application, bureau data and policy rules, return an approve, refer or decline decision with terms and conditions.",
+          "inputs": "application data, credit report, collateral data, policy rules",
+          "outputs": "decision, pricing and terms, conditions list",
+          "crosswalk": [],
+          "onet_products": [
+            "Fannie Mae Desktop Underwriter",
+            "Freddie Mac Loan Prospector",
+            "Fair Isaac Capstone Decision Manager",
+            "Equifax Advanced Decisioning",
+            "Equifax InterConnect",
+            "Experian Transact SM",
+            "Automated underwriting software",
+            "Credit underwriting software",
+            "White Clarke North America Credit Adjudication and Lending Management",
+            "Credit adjudication and lending management system CALMS",
+            "Software AG Underwriting Solution"
+          ],
+          "state_of_art": [
+            "Fannie Mae Desktop Underwriter",
+            "Freddie Mac Loan Product Advisor",
+            "FICO Blaze Advisor",
+            "Provenir"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: rule execution can be tested against published agency guidelines; decision quality needs outcome data",
+          "notes": ""
+        },
+        {
+          "id": "govern.lending.commercial_credit_analysis",
+          "name": "Commercial credit analysis and spreading",
+          "definition": "Given a business borrower's financial statements and market data, spread the statements into a standard form and estimate default probability and a risk rating.",
+          "inputs": "financial statements, industry and market data",
+          "outputs": "spread statements, ratios, probability of default, risk grade",
+          "crosswalk": [],
+          "onet_products": [
+            "Moody's KMV Financial Analyst",
+            "Moody's KMV Risk Analyst",
+            "Moody's RiskCalc",
+            "Moody's KMV FAMAS",
+            "Dun and Bradstreet Global DecisionMaker",
+            "eCredit Enterprise",
+            "Harland Financial Solutions DecisionPro",
+            "Moody's KMV Decisions"
+          ],
+          "state_of_art": [
+            "Moody's CreditLens",
+            "S&P Global Credit Analytics",
+            "nCino"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: default prediction can be scored on public company bankruptcy datasets; statement spreading accuracy on filed statements",
+          "notes": ""
+        },
+        {
+          "id": "govern.lending.loan_origination",
+          "name": "Loan origination",
+          "definition": "Given a borrower's application and supporting documents, assemble the loan file, order verifications, track conditions and produce closing documents.",
+          "inputs": "application (for example the Uniform Residential Loan Application), documents, verifications",
+          "outputs": "complete loan file, disclosures, closing package",
+          "crosswalk": [
+            {
+              "scheme": "BIAN Service Landscape",
+              "code": "",
+              "label": "Consumer Loan",
+              "basis": "fetched",
+              "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+            },
+            {
+              "scheme": "BIAN Service Landscape",
+              "code": "",
+              "label": "Mortgage Loan",
+              "basis": "fetched",
+              "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+            }
+          ],
+          "onet_products": [
+            "Encompass software",
+            "Calyx Point",
+            "Ellie Mae Contour",
+            "Ellie Mae Genesis",
+            "Harland Interlinq MortgageWare",
+            "Loan origination software",
+            "1003 Uniform Residential Loan Application",
+            "Click1003 Online Mortgage Application",
+            "Integra Destiny Loan Origination",
+            "The Mortgage Office Loan Origination",
+            "Bankers Systems Rembrandt Lending System",
+            "Financial Industry Computer Systems Loan Originator"
+          ],
+          "state_of_art": [
+            "ICE Encompass",
+            "nCino",
+            "MeridianLink Consumer",
+            "Blend"
+          ],
+          "open_tools": [
+            "Apache Fineract"
+          ],
+          "benchmarkable": "no: workflow and disclosure correctness are jurisdiction-specific and procedural",
+          "notes": ""
+        },
+        {
+          "id": "govern.lending.loan_servicing",
+          "name": "Loan servicing and amortization",
+          "definition": "Given booked loans and payments received, compute amortization schedules, apply payments, manage escrow and produce borrower statements.",
+          "inputs": "loan terms, payment receipts, escrow items",
+          "outputs": "amortization schedules, balances, escrow analyses, statements",
+          "crosswalk": [],
+          "onet_products": [
+            "The Mortgage Office Loan Servicing",
+            "Bottom Line LoanMaster Loan Servicing",
+            "FAS Loan Service Plus",
+            "LA PRO Loan Administrator Pro",
+            "Amortization loan software",
+            "RealBenefits Amortization Loan",
+            "Dynamic Loanledger",
+            "QuikDraw Loan Management System",
+            "Financial Industry Computer Systems Loan Accountant"
+          ],
+          "state_of_art": [
+            "Black Knight MSP",
+            "Sagent",
+            "Fiserv LoanServ"
+          ],
+          "open_tools": [
+            "Apache Fineract"
+          ],
+          "benchmarkable": "yes: amortization, interest and escrow calculations have exact answers that can be checked",
+          "notes": ""
+        },
+        {
+          "id": "govern.lending.collections",
+          "name": "Collections and recovery",
+          "definition": "Given delinquent accounts, prioritize them, schedule contact strategies, locate debtors and record promises and recoveries.",
+          "inputs": "delinquent account data, contact history, skip-trace sources",
+          "outputs": "prioritized work queues, contact strategy, recovery records",
+          "crosswalk": [
+            {
+              "scheme": "BIAN Service Landscape",
+              "code": "",
+              "label": "Collections",
+              "basis": "fetched",
+              "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+            }
+          ],
+          "onet_products": [
+            "CGI-AMS CACS Enterprise",
+            "CGI-AMS Strata",
+            "Columbia Ultimate RPCS",
+            "Ontario Systems FACS",
+            "Debt account management and collection software",
+            "Quantrax Intelec",
+            "Collection Data Systems CollectOne-Tiger",
+            "LexisNexis Banko",
+            "CoreLogic DebtorTrace"
+          ],
+          "state_of_art": [
+            "Experian PowerCurve Collections",
+            "C&R Software Debt Manager"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: roll-rate and cure prediction can be scored on historical delinquency data",
+          "notes": ""
+        },
+        {
+          "id": "govern.lending.debt_management",
+          "name": "Consumer debt management plans",
+          "definition": "Given a consumer's debts, income and expenses, build a repayment or settlement plan and administer payments to creditors.",
+          "inputs": "creditor list, balances and rates, household budget",
+          "outputs": "debt management plan, disbursement schedule, progress reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Integrant DebtLogic",
+            "Cooperative Processing Resources DMS Professional Suite",
+            "ICCO CreditSoft",
+            "Prime Debt Soft Debt Settlement",
+            "Prime Debt Software Credit Repair",
+            "Paragon Financial Services Paragon Financial System"
+          ],
+          "state_of_art": [],
+          "open_tools": [],
+          "benchmarkable": "partly: payoff schedules are exactly computable; plan quality is a judgment",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "govern.securities_analysis",
+      "name": "Securities analysis and pricing",
+      "definition": "Given market and company data, value securities and companies, price derivatives and fixed income instruments, and forecast prices.",
+      "crosswalk": [
+        {
+          "scheme": "EDM Council FIBO",
+          "code": "SEC",
+          "label": "Securities",
+          "basis": "fetched",
+          "url": "https://github.com/edmcouncil/fibo/tree/master"
+        },
+        {
+          "scheme": "EDM Council FIBO",
+          "code": "DER",
+          "label": "Derivatives",
+          "basis": "fetched",
+          "url": "https://github.com/edmcouncil/fibo/tree/master"
+        },
+        {
+          "scheme": "EDM Council FIBO",
+          "code": "MD",
+          "label": "Market Data",
+          "basis": "fetched",
+          "url": "https://github.com/edmcouncil/fibo/tree/master"
+        },
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Financial Instrument Valuation",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        },
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Financial Market Analysis",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        }
+      ],
+      "onet_categories": [
+        "Financial analysis software",
+        "Information retrieval or search software",
+        "Expert system software",
+        "Charting software"
+      ],
+      "see_also": [
+        "govern.investment_management",
+        "govern.risk_actuarial",
+        "science.statistics"
+      ],
+      "notes": "Seed 'Investment analysis, portfolio management and trading' split in two: analysis and pricing of instruments here, portfolios, trading and client planning in govern.investment_management. Instrument pricing kept with analysis rather than risk because the pricing models are the same whether used for trading or for valuation.",
+      "tasks": [
+        {
+          "id": "govern.securities_analysis.market_data_retrieval",
+          "name": "Market data and financial information retrieval",
+          "definition": "Given instruments, companies or indicators of interest, retrieve current and historical prices, fundamentals, filings and news.",
+          "inputs": "instrument and entity identifiers, query",
+          "outputs": "price histories, fundamentals, filings, news",
+          "crosswalk": [
+            {
+              "scheme": "EDM Council FIBO",
+              "code": "MD",
+              "label": "Market Data",
+              "basis": "fetched",
+              "url": "https://github.com/edmcouncil/fibo/tree/master"
+            },
+            {
+              "scheme": "ISO 20022 business areas",
+              "code": "reda",
+              "label": "Reference Data",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Bloomberg Professional",
+            "Telvent DTN ProphetX",
+            "CQG Integrated Client",
+            "S&P Capital IQ",
+            "Standard & Poor's Capital IQ Compustat",
+            "Factiva",
+            "TradeTools Financial Market Databases",
+            "TradeTools Monthly U.S. Economic Database",
+            "Thomson ONE Advisor"
+          ],
+          "state_of_art": [
+            "Bloomberg Terminal",
+            "LSEG Workspace",
+            "FactSet",
+            "S&P Capital IQ Pro"
+          ],
+          "open_tools": [
+            "OpenBB"
+          ],
+          "benchmarkable": "no: value is coverage and timeliness of licensed data",
+          "notes": ""
+        },
+        {
+          "id": "govern.securities_analysis.company_valuation",
+          "name": "Company valuation and deal modeling",
+          "definition": "Given a company's financials, comparable companies and transactions, estimate enterprise and equity value and the accretion or dilution of a proposed deal.",
+          "inputs": "financial statements, projections, comparable company and transaction data",
+          "outputs": "valuation range, discounted cash flow model, accretion or dilution analysis",
+          "crosswalk": [],
+          "onet_products": [
+            "DealMaven Comparable Company Valuation Analysis",
+            "DealMaven M&A Accretion/Dilution One-Pager",
+            "MoneySoft Corporate Valuation",
+            "Spreadware Business Valuator",
+            "ValuSource BIZCOMPS",
+            "MergerStat Control Premiums",
+            "MergerStat Price to Earnings Ratios",
+            "Express Business Valuations",
+            "BizBench",
+            "BizPricer",
+            "Quantifying marketability discount QMD modeling software",
+            "Unlimited Learning Resources Valusource Pro"
+          ],
+          "state_of_art": [
+            "Capital IQ",
+            "PitchBook",
+            "ValuAdder"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: model mechanics are checkable, but valuation has no ground truth beyond later transaction prices",
+          "notes": ""
+        },
+        {
+          "id": "govern.securities_analysis.technical_analysis",
+          "name": "Technical analysis and charting",
+          "definition": "Given price and volume histories, compute indicators and chart patterns and generate rule-based trading signals.",
+          "inputs": "price and volume time series, indicator definitions",
+          "outputs": "indicator series, charts, signals",
+          "crosswalk": [],
+          "onet_products": [
+            "Aspen Graphics Technical Analysis Software",
+            "Leading Market Technologies EXPO",
+            "AIQ Systems TradingExpert Pro",
+            "AnalyzerXL",
+            "TickQuest NeoTicker",
+            "Trendsetter Software ProAnalyst"
+          ],
+          "state_of_art": [
+            "MetaStock",
+            "TradingView",
+            "TradeStation"
+          ],
+          "open_tools": [
+            "TA-Lib",
+            "pandas-ta"
+          ],
+          "benchmarkable": "yes: indicator values are deterministic and can be checked against reference implementations",
+          "notes": ""
+        },
+        {
+          "id": "govern.securities_analysis.price_forecasting",
+          "name": "Market price and return forecasting",
+          "definition": "Given price histories and explanatory variables, fit a model that forecasts returns, prices or volatility and evaluate it out of sample.",
+          "inputs": "price series, economic and fundamental variables",
+          "outputs": "forecasts with error statistics",
+          "crosswalk": [],
+          "onet_products": [
+            "Ward Systems Group NeuroShell Trader",
+            "NeuroSolutions Trading Solutions",
+            "Ivorix Neurostrategy Finance",
+            "Matheny Pattern Forecaster Plus",
+            "Tetrahex Fractal Finance",
+            "Market forecast software",
+            "Economic forecasting software",
+            "Fractal pattern analysis software"
+          ],
+          "state_of_art": [
+            "Bloomberg BQuant"
+          ],
+          "open_tools": [
+            "Qlib"
+          ],
+          "benchmarkable": "yes: out-of-sample forecast error on public price histories is measurable, as Numerai and the M6 competition do",
+          "notes": "General machine-learning and forecasting methods belong to science; this task is the application to market prices."
+        },
+        {
+          "id": "govern.securities_analysis.fund_analysis",
+          "name": "Fund research and screening",
+          "definition": "Given a universe of mutual funds, exchange-traded funds or annuities, screen and compare them on returns, risk, fees and holdings.",
+          "inputs": "fund returns, holdings, fees, ratings",
+          "outputs": "screens, comparison reports, risk-adjusted return measures",
+          "crosswalk": [],
+          "onet_products": [
+            "Morningstar Principia",
+            "Mutual fund analysis software",
+            "Steele Mutual Fund and Variable Annuity Expert",
+            "Ibbotson Analyst"
+          ],
+          "state_of_art": [
+            "Morningstar Direct",
+            "YCharts"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: risk-adjusted return measures are exactly computable from public return series",
+          "notes": ""
+        },
+        {
+          "id": "govern.securities_analysis.derivative_pricing",
+          "name": "Option and derivative pricing",
+          "definition": "Given an option, swap or exotic contract and market inputs, compute its fair value and sensitivities with an analytic, lattice or Monte Carlo model.",
+          "inputs": "contract terms, underlying prices, volatility surface, rate curves",
+          "outputs": "fair value, sensitivities (Greeks)",
+          "crosswalk": [
+            {
+              "scheme": "EDM Council FIBO",
+              "code": "DER",
+              "label": "Derivatives",
+              "basis": "fetched",
+              "url": "https://github.com/edmcouncil/fibo/tree/master"
+            }
+          ],
+          "onet_products": [
+            "Derivicom FinOptions XL",
+            "Montgomery Investment Technology Options XL",
+            "Montgomery Investment Technology Exotics XL",
+            "OptionVue Options Analysis",
+            "Innova Financial Solutions Derivatives Expert",
+            "Wolfram Research Derivatives",
+            "Wolfram Research Mathematica UnRisk Pricing Engine",
+            "TechHackers Exotic @nalyst",
+            "TechHackers Swap @nalyst",
+            "Pricing software",
+            "Brentmark Stock Option Risk Analyzer"
+          ],
+          "state_of_art": [
+            "Numerix",
+            "FINCAD",
+            "Bloomberg DLIB"
+          ],
+          "open_tools": [
+            "QuantLib",
+            "Open Source Risk Engine"
+          ],
+          "benchmarkable": "yes: closed-form cases and published reference prices (for example in Hull's text and QuantLib's test suite) give exact targets",
+          "notes": ""
+        },
+        {
+          "id": "govern.securities_analysis.fixed_income_analytics",
+          "name": "Fixed income and structured product analytics",
+          "definition": "Given a bond, mortgage-backed security or convertible and market curves, compute price, yield, duration, convexity and projected cash flows.",
+          "inputs": "security terms, yield curves, prepayment and default assumptions",
+          "outputs": "price and yield, duration and convexity, cash-flow projections",
+          "crosswalk": [
+            {
+              "scheme": "EDM Council FIBO",
+              "code": "SEC",
+              "label": "Securities",
+              "basis": "fetched",
+              "url": "https://github.com/edmcouncil/fibo/tree/master"
+            }
+          ],
+          "onet_products": [
+            "Montgomery Investment Technology Bonds XL",
+            "Palisade Bond @nalyst",
+            "Citi The Yield Book Calculator",
+            "Tips Standard Securities Calculation Bond Analytics Module",
+            "Tips Standard Securities Calculation Mortgage-Backed Analytics Module",
+            "TechHackers MBS @nalyst",
+            "TechHackers Convertible Bond @nalyst",
+            "TechHackers IRO @nalyst"
+          ],
+          "state_of_art": [
+            "Yield Book",
+            "Intex",
+            "Bloomberg YAS"
+          ],
+          "open_tools": [
+            "QuantLib"
+          ],
+          "benchmarkable": "yes: yield and accrued-interest conventions have exact answers (SIFMA standard formulas)",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "govern.investment_management",
+      "name": "Investment, trading and wealth management",
+      "definition": "Given investors' goals and holdings, construct and account for portfolios, execute trades, and plan individuals' long-term finances.",
+      "crosswalk": [
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Investment Portfolio Management",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        },
+        {
+          "scheme": "ISO 20022 business areas",
+          "code": "setr",
+          "label": "Securities Trade",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 20022 business areas",
+          "code": "sese",
+          "label": "Securities Settlement",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Financial analysis software",
+        "Desktop communications software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "govern.securities_analysis",
+        "govern.compliance_financial_crime"
+      ],
+      "notes": "Second half of seed 'Investment analysis, portfolio management and trading'. Personal financial planning added here because O*NET's Personal Financial Advisors list some 40 planning products and the function is portfolio and cash-flow projection for a household.",
+      "tasks": [
+        {
+          "id": "govern.investment_management.asset_allocation",
+          "name": "Portfolio construction and asset allocation",
+          "definition": "Given expected returns, risks, correlations and constraints, choose portfolio weights that optimize a risk-return objective.",
+          "inputs": "capital market assumptions, covariance estimates, constraints",
+          "outputs": "target weights, efficient frontier, rebalancing trades",
+          "crosswalk": [],
+          "onet_products": [
+            "Ibbotson Portfolio Strategist",
+            "WealthTec AllocationPro",
+            "Financeware AASim",
+            "Asset allocation software",
+            "Portfolio management software",
+            "PlanScan Portfolio Pathfinder",
+            "Advanced Portfolio Technologies Simulator"
+          ],
+          "state_of_art": [
+            "MSCI Barra Optimizer",
+            "Axioma Portfolio Optimizer",
+            "Morningstar Direct"
+          ],
+          "open_tools": [
+            "PyPortfolioOpt",
+            "Riskfolio-Lib"
+          ],
+          "benchmarkable": "yes: optimization problems with known optima and out-of-sample portfolio performance are both measurable",
+          "notes": ""
+        },
+        {
+          "id": "govern.investment_management.performance_attribution",
+          "name": "Performance measurement and attribution",
+          "definition": "Given holdings, transactions and benchmark data, compute time-weighted returns and attribute them to allocation, selection and factor effects.",
+          "inputs": "holdings, transactions, prices, benchmarks",
+          "outputs": "returns by period, attribution reports, risk-adjusted measures",
+          "crosswalk": [],
+          "onet_products": [
+            "I-flex Solutions Reveleus Investment Performance Measurement",
+            "dailyVest Investment Personalization Platform",
+            "Portfolio analysis software"
+          ],
+          "state_of_art": [
+            "FactSet Portfolio Analysis",
+            "Bloomberg PORT",
+            "SS&C Sylvan"
+          ],
+          "open_tools": [
+            "pyfolio"
+          ],
+          "benchmarkable": "yes: GIPS return calculations and Brinson attribution have exact answers",
+          "notes": ""
+        },
+        {
+          "id": "govern.investment_management.portfolio_accounting",
+          "name": "Portfolio accounting and investment book of record",
+          "definition": "Given trades, corporate actions and prices, maintain positions, cost basis, accruals and valuations for each portfolio.",
+          "inputs": "trades, corporate actions, prices, cash movements",
+          "outputs": "positions, cost basis, realized and unrealized gains, statements",
+          "crosswalk": [
+            {
+              "scheme": "ISO 20022 business areas",
+              "code": "seev",
+              "label": "Securities Events",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Advent Axys",
+            "SunGard Financial Systems AddVantage",
+            "FundCount Web",
+            "Calypso Technology Calypso Asset Management",
+            "Investment tracking software",
+            "OSI TrustWise",
+            "Sync Essentials Trade Accountant"
+          ],
+          "state_of_art": [
+            "SS&C Advent Geneva",
+            "SS&C APX",
+            "Clearwater Analytics"
+          ],
+          "open_tools": [
+            "Ghostfolio"
+          ],
+          "benchmarkable": "yes: positions and cost basis after a scripted series of trades and corporate actions are exactly checkable",
+          "notes": ""
+        },
+        {
+          "id": "govern.investment_management.order_execution",
+          "name": "Order management and electronic trade execution",
+          "definition": "Given investment decisions, create, route and execute orders on trading venues and record fills and allocations.",
+          "inputs": "orders, venue connectivity, market data",
+          "outputs": "executions, fills, allocations",
+          "crosswalk": [
+            {
+              "scheme": "ISO 20022 business areas",
+              "code": "setr",
+              "label": "Securities Trade",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Charles River Development Charles River Investment Management System",
+            "Thomson Reuters Tradeweb",
+            "Knight BondPoint",
+            "BondDesk Group Trader WorkStation",
+            "Fixed income alternative trading systems ATS",
+            "Web-based trading systems",
+            "Multiple trading transaction systems",
+            "Online trading software",
+            "Imagine Software Imagine Trading System",
+            "Redi Enterprise Development Redi ERM",
+            "CableSoft LiveWire Trader",
+            "SunGard MicroHedge"
+          ],
+          "state_of_art": [
+            "Charles River IMS",
+            "Bloomberg AIM",
+            "FlexTrade",
+            "Tradeweb"
+          ],
+          "open_tools": [
+            "QuickFIX"
+          ],
+          "benchmarkable": "partly: execution cost against arrival price can be measured in simulation; venue connectivity cannot",
+          "notes": ""
+        },
+        {
+          "id": "govern.investment_management.strategy_backtesting",
+          "name": "Trading strategy backtesting",
+          "definition": "Given a trading rule and historical market data, simulate its trades with costs and report returns, drawdowns and risk.",
+          "inputs": "strategy rules, historical prices, cost model",
+          "outputs": "simulated trades, equity curve, performance statistics",
+          "crosswalk": [],
+          "onet_products": [
+            "Trading Blox"
+          ],
+          "state_of_art": [
+            "QuantConnect",
+            "TradeStation"
+          ],
+          "open_tools": [
+            "LEAN",
+            "Backtrader",
+            "Zipline"
+          ],
+          "benchmarkable": "yes: deterministic replays on public price data give checkable results",
+          "notes": ""
+        },
+        {
+          "id": "govern.investment_management.financial_planning",
+          "name": "Personal financial and retirement planning",
+          "definition": "Given a household's assets, income, spending and goals, project its finances to and through retirement and test the plan's probability of success.",
+          "inputs": "assets and liabilities, income and spending, goals, assumptions",
+          "outputs": "cash-flow projection, probability of success, recommendations",
+          "crosswalk": [],
+          "onet_products": [
+            "PIE Technologies MoneyGuidePro",
+            "EISI NaviPlan",
+            "PlanPlus Pro",
+            "Financial Profiles Profiles+ Professional",
+            "Financeware WealthSimulator",
+            "Retirement planning software",
+            "Torrid Retirement Planner",
+            "ScenarioNow RetireNow",
+            "Finance Logix Retirement Planner",
+            "Cheshire Financial Planning Suite",
+            "RiskMetrics Group WealthBench"
+          ],
+          "state_of_art": [
+            "MoneyGuidePro",
+            "eMoney Advisor",
+            "RightCapital"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: projections are reproducible given assumptions, but there is no outcome ground truth",
+          "notes": ""
+        },
+        {
+          "id": "govern.investment_management.needs_analysis",
+          "name": "Estate, education and insurance needs analysis",
+          "definition": "Given a household's situation and a goal or contingency, compute the amount needed to fund it and the effect of estate transfers and taxes.",
+          "inputs": "family data, assets, goal or contingency, tax rules",
+          "outputs": "funding need, estate tax and transfer projections",
+          "crosswalk": [],
+          "onet_products": [
+            "Brentmark Estate Planning Quickview",
+            "Estate planning software",
+            "Needs analysis software",
+            "Estate Capitol Needs Analysis",
+            "Finance Logix Insurance Planner",
+            "Finance Logix Education Planner",
+            "Education planning software",
+            "Financial needs analysis software"
+          ],
+          "state_of_art": [
+            "NumberCruncher",
+            "Brentmark Estate Planning Quickview"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: estate tax computations are exact under stated law; needs are judgments",
+          "notes": ""
+        },
+        {
+          "id": "govern.investment_management.household_money",
+          "name": "Household money management",
+          "definition": "Given a household's account transactions, categorize spending, track budgets and net worth over time.",
+          "inputs": "account transactions, categories, budgets",
+          "outputs": "categorized spending, budget variance, net worth",
+          "crosswalk": [],
+          "onet_products": [
+            "Quicken",
+            "Microsoft Money"
+          ],
+          "state_of_art": [
+            "Quicken",
+            "Monarch Money",
+            "YNAB"
+          ],
+          "open_tools": [
+            "GnuCash",
+            "Firefly III",
+            "Actual Budget"
+          ],
+          "benchmarkable": "partly: transaction categorization accuracy is measurable on labeled data",
+          "notes": "Kept here as the household side of money management; business bookkeeping is enterprise."
+        }
+      ]
+    },
+    {
+      "id": "govern.risk_actuarial",
+      "name": "Financial risk and actuarial modeling",
+      "definition": "Given portfolios, balance sheets or insurance and pension liabilities, quantify the distribution of losses and the reserves and capital needed to cover them.",
+      "crosswalk": [
+        {
+          "scheme": "Basel Committee framework",
+          "code": "",
+          "label": "Market risk",
+          "basis": "fetched",
+          "url": "https://www.bis.org/basel_framework/"
+        },
+        {
+          "scheme": "Basel Committee framework",
+          "code": "",
+          "label": "Credit risk",
+          "basis": "fetched",
+          "url": "https://www.bis.org/basel_framework/"
+        },
+        {
+          "scheme": "Basel Committee framework",
+          "code": "",
+          "label": "Interest rate risk in the banking book",
+          "basis": "fetched",
+          "url": "https://www.bis.org/basel_framework/"
+        },
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Credit Risk Models",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        }
+      ],
+      "onet_categories": [
+        "Financial analysis software",
+        "Human resources software"
+      ],
+      "see_also": [
+        "govern.securities_analysis",
+        "govern.insurance",
+        "science.statistics"
+      ],
+      "notes": "Seed kept. General Monte Carlo spreadsheet add-ins (Palisade @Risk, Crystal Ball) are general simulation tools and are handed to science rather than listed here. Pension plan valuation added because it is actuarial work O*NET lists under benefits software.",
+      "tasks": [
+        {
+          "id": "govern.risk_actuarial.market_risk",
+          "name": "Market risk measurement",
+          "definition": "Given positions and market factor histories or scenarios, compute value at risk, expected shortfall and stress losses.",
+          "inputs": "positions, pricing models, factor histories or scenarios",
+          "outputs": "value at risk, expected shortfall, stress test results",
+          "crosswalk": [
+            {
+              "scheme": "Basel Committee framework",
+              "code": "",
+              "label": "Market risk",
+              "basis": "fetched",
+              "url": "https://www.bis.org/basel_framework/"
+            }
+          ],
+          "onet_products": [
+            "Montgomery Investment Technology Risk XL",
+            "SunGard Kiodex Risk Workbench"
+          ],
+          "state_of_art": [
+            "MSCI RiskMetrics",
+            "Murex MX.3",
+            "Bloomberg MARS"
+          ],
+          "open_tools": [
+            "Open Source Risk Engine"
+          ],
+          "benchmarkable": "yes: value at risk on a fixed portfolio and scenario set is exactly computable; backtests against realized losses are standard",
+          "notes": ""
+        },
+        {
+          "id": "govern.risk_actuarial.credit_portfolio_risk",
+          "name": "Credit portfolio risk",
+          "definition": "Given exposures, default probabilities and correlations, estimate the portfolio loss distribution and economic or regulatory capital.",
+          "inputs": "exposures, default probabilities, recovery rates, correlation model",
+          "outputs": "expected and unexpected loss, capital, concentration reports",
+          "crosswalk": [
+            {
+              "scheme": "Basel Committee framework",
+              "code": "",
+              "label": "Credit risk",
+              "basis": "fetched",
+              "url": "https://www.bis.org/basel_framework/"
+            }
+          ],
+          "onet_products": [
+            "Moody's KMV CreditEdge",
+            "Moody's KMV Risk Advisor",
+            "TechHackers Credit @nalyst"
+          ],
+          "state_of_art": [
+            "Moody's RiskFrontier",
+            "S&P Credit Analytics"
+          ],
+          "open_tools": [
+            "Open Source Risk Engine"
+          ],
+          "benchmarkable": "partly: capital formulas under the Basel internal-ratings approach are exact; model choice is not",
+          "notes": ""
+        },
+        {
+          "id": "govern.risk_actuarial.asset_liability",
+          "name": "Asset-liability and interest rate risk",
+          "definition": "Given a bank's balance sheet and rate scenarios, project net interest income and economic value of equity and measure repricing gaps.",
+          "inputs": "balance sheet by repricing bucket, behavioral assumptions, rate scenarios",
+          "outputs": "net interest income and economic value projections, gap reports",
+          "crosswalk": [
+            {
+              "scheme": "Basel Committee framework",
+              "code": "",
+              "label": "Interest rate risk in the banking book",
+              "basis": "fetched",
+              "url": "https://www.bis.org/basel_framework/"
+            }
+          ],
+          "onet_products": [
+            "SunGard BancWare",
+            "IPS-Sendero Relationship Profitability Manager Catalyst"
+          ],
+          "state_of_art": [
+            "QRM",
+            "FIS BancWare"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: standardized rate-shock calculations are exact; behavioral assumptions are not",
+          "notes": ""
+        },
+        {
+          "id": "govern.risk_actuarial.life_projection",
+          "name": "Life, annuity and health liability projection",
+          "definition": "Given policies in force, mortality, lapse and economic assumptions, project liability cash flows and compute reserves and embedded value.",
+          "inputs": "policy data, assumption tables, economic scenarios",
+          "outputs": "projected cash flows, reserves, embedded value",
+          "crosswalk": [],
+          "onet_products": [
+            "GGY AXIS",
+            "Towers Perrin MoSes",
+            "Milliman Corporate Affinity",
+            "ARMON Technologies XLActuary",
+            "Lewis & Ellis LEAPPS",
+            "Oak Mountain Software AnnuityValue",
+            "Annuities analysis software",
+            "Cash flow software"
+          ],
+          "state_of_art": [
+            "Moody's AXIS",
+            "WTW RiskAgility FM",
+            "FIS Prophet",
+            "Milliman MG-ALFA"
+          ],
+          "open_tools": [
+            "lifelib"
+          ],
+          "benchmarkable": "yes: reserve calculations on published model points and tables (for example Society of Actuaries mortality tables) have exact answers",
+          "notes": ""
+        },
+        {
+          "id": "govern.risk_actuarial.loss_reserving",
+          "name": "Property and casualty loss reserving",
+          "definition": "Given paid and incurred claim triangles, estimate ultimate losses and unpaid claim reserves with their uncertainty.",
+          "inputs": "loss development triangles, exposures",
+          "outputs": "ultimate loss estimates, reserves, reserve ranges",
+          "crosswalk": [],
+          "onet_products": [
+            "Milliman ReservePro",
+            "Insureware ICRFS-ELRF",
+            "Tropics Claims Reserve Management"
+          ],
+          "state_of_art": [
+            "WTW ResQ",
+            "Milliman Arius"
+          ],
+          "open_tools": [
+            "chainladder",
+            "ChainLadder (R)"
+          ],
+          "benchmarkable": "yes: Casualty Actuarial Society loss reserving data sets allow scoring of reserve estimates against later developed values",
+          "notes": ""
+        },
+        {
+          "id": "govern.risk_actuarial.pension_valuation",
+          "name": "Pension and benefit plan valuation",
+          "definition": "Given plan provisions, participant data and assumptions, compute plan liabilities, funding requirements and nondiscrimination test results.",
+          "inputs": "plan provisions, census data, actuarial assumptions",
+          "outputs": "liabilities, required contributions, test results",
+          "crosswalk": [],
+          "onet_products": [
+            "Actuarial Systems Corporation Defined Benefit System",
+            "Datair Employee Benefits Systems",
+            "Sungard Relius",
+            "Actuarial Systems Corporation Compliance Testing System",
+            "Compliance testing software"
+          ],
+          "state_of_art": [
+            "ProAdmin",
+            "FIS Relius"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: funding and liability calculations under published rules have exact answers for given data",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "govern.insurance",
+      "name": "Insurance underwriting and claims",
+      "definition": "Given risks to be insured and losses reported, rate and underwrite policies, administer them, and adjust, value and pay claims.",
+      "crosswalk": [
+        {
+          "scheme": "ACORD Capability Model",
+          "code": "",
+          "label": "Underwriting",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ACORD Capability Model",
+          "code": "",
+          "label": "Policy Administration",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ACORD Capability Model",
+          "code": "",
+          "label": "Claims Management",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "EDM Council FIBO",
+          "code": "FBC",
+          "label": "Financial Business and Commerce",
+          "basis": "fetched",
+          "url": "https://github.com/edmcouncil/fibo/tree/master"
+        }
+      ],
+      "onet_categories": [
+        "Financial analysis software",
+        "Expert system software",
+        "Data base user interface and query software",
+        "Document management software",
+        "Enterprise resource planning ERP software"
+      ],
+      "see_also": [
+        "govern.risk_actuarial",
+        "commerce.customer_relationship"
+      ],
+      "notes": "Seed 'Insurance: underwriting, claims and estimating' kept. Reserving moved to govern.risk_actuarial. Agency management and insurance sales tools are commerce.",
+      "tasks": [
+        {
+          "id": "govern.insurance.rating_quoting",
+          "name": "Insurance rating and quoting",
+          "definition": "Given a risk's characteristics and a filed rating plan, compute the premium and produce a quote.",
+          "inputs": "risk characteristics, rating tables and rules",
+          "outputs": "premium, quote",
+          "crosswalk": [],
+          "onet_products": [
+            "Insurance rating software",
+            "Skywire Software InsBridge",
+            "Insurance analysis software"
+          ],
+          "state_of_art": [
+            "Guidewire PolicyCenter",
+            "Duck Creek Rating",
+            "Majesco"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: premium for a given risk under a published filed rating plan is exact",
+          "notes": ""
+        },
+        {
+          "id": "govern.insurance.underwriting_decision",
+          "name": "Underwriting risk assessment",
+          "definition": "Given an application and evidence (medical, motor, property, loss history), classify the risk and decide acceptance, class and exclusions.",
+          "inputs": "application, evidence, underwriting guidelines",
+          "outputs": "risk class, decision, exclusions and loadings",
+          "crosswalk": [
+            {
+              "scheme": "ACORD Capability Model",
+              "code": "",
+              "label": "Underwriting",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Fiserv Advanced Underwriting",
+            "RGA AURA",
+            "RGA Facultative Application Console",
+            "Valen Technologies Risk Manager",
+            "NIIT Technologies WinRisk",
+            "LabOne NET",
+            "Underwriting software",
+            "CSC nbAccelerator",
+            "Fair Isaac Enterprise Decision Management for Insurance"
+          ],
+          "state_of_art": [
+            "Swiss Re Magnum",
+            "Munich Re ALLFINANZ",
+            "RGA AURA"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: rule execution is checkable; risk selection quality needs claims outcomes",
+          "notes": ""
+        },
+        {
+          "id": "govern.insurance.policy_administration",
+          "name": "Policy administration and issuance",
+          "definition": "Given bound coverage, issue the policy, produce documents, and process endorsements, renewals and cancellations.",
+          "inputs": "bound coverage, forms library, policy changes",
+          "outputs": "issued policy, documents, billing records",
+          "crosswalk": [
+            {
+              "scheme": "ACORD Capability Model",
+              "code": "",
+              "label": "Policy Administration",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Policy issuance system software",
+            "Consilience Software Maven Insurance Automation Suite",
+            "Vulcan Solutions Vulcan Insurance",
+            "Insurance Technologies Corporation InsurancePro",
+            "G2X Agility:Insurance",
+            "Tritech Financial Systems General Insurance Management System GIMS",
+            "QualCorp FormsPlus"
+          ],
+          "state_of_art": [
+            "Guidewire PolicyCenter",
+            "Duck Creek Policy",
+            "Sapiens"
+          ],
+          "open_tools": [
+            "openIMIS"
+          ],
+          "benchmarkable": "no: procedural, product-specific",
+          "notes": ""
+        },
+        {
+          "id": "govern.insurance.claims_adjudication",
+          "name": "Claims intake and adjudication",
+          "definition": "Given a first notice of loss and supporting evidence, verify coverage, set reserves, manage the investigation and decide payment.",
+          "inputs": "loss notice, policy, evidence, adjuster notes",
+          "outputs": "coverage decision, reserve, payment, claim file",
+          "crosswalk": [
+            {
+              "scheme": "ACORD Capability Model",
+              "code": "",
+              "label": "Claims Management",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "First Notice Systems ClaimCapture",
+            "Claim processing system software",
+            "Claims processing administration and management software",
+            "Fair Isaac Claims Advisor",
+            "CCC GuidePost Decision Support",
+            "Bridium Claims 3",
+            "Castek Insure3 Claims",
+            "Datanex ClaimTrac",
+            "Corporate Systems ClaimsPro",
+            "Brightwork Alyce Claims Systems",
+            "Bramerhill ClaimsTech",
+            "Covansys ClaimConnect"
+          ],
+          "state_of_art": [
+            "Guidewire ClaimCenter",
+            "Duck Creek Claims",
+            "Snapsheet"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: coverage decisions on synthetic claims against policy wording can be scored",
+          "notes": ""
+        },
+        {
+          "id": "govern.insurance.injury_liability_evaluation",
+          "name": "Bodily injury and liability evaluation",
+          "definition": "Given injury, treatment and accident facts, estimate the value of a bodily injury claim and the apportionment of fault.",
+          "inputs": "injury and treatment records, accident facts, jurisdiction",
+          "outputs": "claim value range, fault apportionment",
+          "crosswalk": [],
+          "onet_products": [
+            "CSC Colossus",
+            "CSC Fault Evaluator",
+            "Property damage, bodily injury, and liability estimation software",
+            "StrataCare StrataWare eReview",
+            "Bill review software"
+          ],
+          "state_of_art": [
+            "DXC Colossus",
+            "Mitchell Decision Point"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: medical bill review against fee schedules is exact; injury valuation is judgment",
+          "notes": ""
+        },
+        {
+          "id": "govern.insurance.damage_estimating",
+          "name": "Property and vehicle damage estimating",
+          "definition": "Given photos, measurements or a damage inspection, itemize repair operations, parts and labor and price the repair.",
+          "inputs": "damage photos or inspection, structure or vehicle data, regional price databases",
+          "outputs": "itemized repair estimate, total loss decision",
+          "crosswalk": [],
+          "onet_products": [
+            "Xactware Xactimate",
+            "Information Services Inc. CCC Pathways Appraisal Solution",
+            "Solera Audatex Estimating",
+            "Mitchell International Mitchell WorkCenter",
+            "Automatic Data Processing Estimating",
+            "Simsol for Adjusters",
+            "Web-Est estimating software",
+            "Swan River Software Estimiser Pro",
+            "CCC Pathways Appraisal Quality Solution",
+            "Meridian Technologies SurePoint",
+            "A-T Solutions Easy Street Draw",
+            "CAD Zone Insurance"
+          ],
+          "state_of_art": [
+            "Xactimate",
+            "CCC ONE",
+            "Audatex",
+            "Tractable"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: image-based damage detection can be scored on labeled vehicle-damage datasets; full estimates need price data",
+          "notes": ""
+        },
+        {
+          "id": "govern.insurance.claims_fraud",
+          "name": "Insurance claims fraud detection",
+          "definition": "Given claims and related parties, score claims for fraud likelihood and surface linked networks for investigation.",
+          "inputs": "claim data, party and provider networks, industry claim databases",
+          "outputs": "fraud scores, referral lists, link charts",
+          "crosswalk": [],
+          "onet_products": [
+            "Insurance claims fraud detection software",
+            "ISO ClaimSearch",
+            "ISO NetMap for Claims",
+            "Axonwave Fraud and Abuse Management System",
+            "IBM Fraud and Abuse Management System",
+            "Magnify Predictive Targeting System",
+            "Fair Isaac SmartAdvisor",
+            "LexisNexis RiskWise"
+          ],
+          "state_of_art": [
+            "Verisk ClaimSearch",
+            "Shift Technology",
+            "FRISS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: detection accuracy can be scored on public synthetic and anonymized claim datasets",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "govern.compliance_financial_crime",
+      "name": "Regulatory compliance and financial crime",
+      "definition": "Given regulations, an organization's activities and its transactions, keep controls mapped to obligations, file required reports, and detect fraud and money laundering.",
+      "crosswalk": [
+        {
+          "scheme": "OCEG GRC Capability Model",
+          "code": "",
+          "label": "GRC Capability Model",
+          "basis": "fetched",
+          "url": "https://www.oceg.org/about/what-is-grc/"
+        },
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Regulatory Compliance",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        },
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Regulatory Reporting",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        },
+        {
+          "scheme": "BIAN Service Landscape",
+          "code": "",
+          "label": "Fraud Diagnosis",
+          "basis": "fetched",
+          "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+        },
+        {
+          "scheme": "ISO 20022 business areas",
+          "code": "auth",
+          "label": "Authorities",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Compliance software",
+        "Financial analysis software",
+        "Document management software"
+      ],
+      "see_also": [
+        "enterprise.audit_risk",
+        "operate.environmental_compliance",
+        "health.clinical_research",
+        "computing.security_operations"
+      ],
+      "notes": "Seed 'Regulatory compliance and filings' broadened to include fraud and anti-money-laundering detection; no seed covered it, and O*NET lists card-fraud, transaction-analysis and brokerage-surveillance products. Quality management systems (MasterControl, EtQ, QUMAS) and environmental compliance are handed off; insurance claims fraud stays with govern.insurance. The controls task here is mapping external regulatory obligations to controls; internal audit and enterprise risk registers are enterprise.audit_risk.",
+      "tasks": [
+        {
+          "id": "govern.compliance_financial_crime.controls_management",
+          "name": "Compliance obligations and controls management",
+          "definition": "Given applicable obligations and the organization's processes, map controls to obligations, schedule tests, and track issues and remediation.",
+          "inputs": "obligation library, process and control inventory, test results",
+          "outputs": "control matrix, test schedule, issue log, attestation reports",
+          "crosswalk": [
+            {
+              "scheme": "OCEG GRC Capability Model",
+              "code": "",
+              "label": "GRC Capability Model",
+              "basis": "fetched",
+              "url": "https://www.oceg.org/about/what-is-grc/"
+            }
+          ],
+          "onet_products": [
+            "Governance, risk, and compliance GRC software",
+            "Archer Compliance Management",
+            "MetricStream Compliance Management",
+            "BWise Compliance Management",
+            "Paisley Focus Control Assurance",
+            "Paisley Cardmap",
+            "Oracle Enterprise Governance, Risk, and Compliance Manager",
+            "Compliance 360",
+            "Thomson Reuters Paisley Enterprise GRC",
+            "policyIQ",
+            "Axentis Compliance Management",
+            "Neohapsis Certus GRC"
+          ],
+          "state_of_art": [
+            "Archer",
+            "MetricStream",
+            "ServiceNow GRC",
+            "AuditBoard"
+          ],
+          "open_tools": [
+            "Eramba"
+          ],
+          "benchmarkable": "no: procedural workflow with no reference answer",
+          "notes": ""
+        },
+        {
+          "id": "govern.compliance_financial_crime.regulatory_change",
+          "name": "Regulatory change monitoring",
+          "definition": "Given jurisdictions and business lines, track new and amended rules and map each change to affected obligations and controls.",
+          "inputs": "regulatory publications, obligation library",
+          "outputs": "change alerts, impact assessments, updated obligations",
+          "crosswalk": [],
+          "onet_products": [
+            "MediRegs E-dition Compliance Monitor",
+            "ODEN Insurance Services State Rules & Regulations",
+            "Resolve Legislative Compliance Management",
+            "NILS INSource",
+            "MediRegs Regulation and Reimbursement Suite"
+          ],
+          "state_of_art": [
+            "Wolters Kluwer OneSumX",
+            "Thomson Reuters Regulatory Intelligence",
+            "CUBE"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: mapping rule text to obligations can be scored on labeled corpora",
+          "notes": ""
+        },
+        {
+          "id": "govern.compliance_financial_crime.regulatory_reporting",
+          "name": "Regulatory reporting and filing",
+          "definition": "Given an institution's books and a regulator's taxonomy and rules, compute required returns, validate them and file them in the prescribed format.",
+          "inputs": "general ledger and risk data, report templates and validation rules",
+          "outputs": "validated regulatory returns, filed submissions",
+          "crosswalk": [
+            {
+              "scheme": "ISO 20022 business areas",
+              "code": "auth",
+              "label": "Authorities",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "MetricStream Regulatory Reporting",
+            "FRSGlobal RegPro",
+            "System for Electronic Rate and Form Filing SERFF",
+            "eXtensible Business Reporting Language XBRL",
+            "Regulatory agency compliance software",
+            "Wolters Kluwer Financial Services ComplianceOne"
+          ],
+          "state_of_art": [
+            "Wolters Kluwer OneSumX",
+            "Workiva",
+            "AxiomSL ControllerView"
+          ],
+          "open_tools": [
+            "Arelle"
+          ],
+          "benchmarkable": "yes: XBRL conformance suites and regulator validation rules give exact pass or fail",
+          "notes": ""
+        },
+        {
+          "id": "govern.compliance_financial_crime.product_submissions",
+          "name": "Regulated product submissions",
+          "definition": "Given a product's dossier of studies and documents, assemble, validate and publish a submission in the regulator's structure (for example electronic Common Technical Document).",
+          "inputs": "documents, metadata, regulator specification",
+          "outputs": "validated submission package, submission tracking",
+          "crosswalk": [],
+          "onet_products": [
+            "Thomson Reuters Liquent InSight Suite",
+            "Thomson Reuters Liquent CoreDossier Submission Accelerator for eCTD",
+            "Pilgrim Regulatory Submission",
+            "Samarind RMS",
+            "Aris Global Register"
+          ],
+          "state_of_art": [
+            "Veeva Vault RIM",
+            "Extedo eCTDmanager",
+            "Lorenz docuBridge"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: regulator technical validation criteria for eCTD give exact pass or fail",
+          "notes": "Function is regulatory submission; the products are mostly pharmaceutical, so see_also health."
+        },
+        {
+          "id": "govern.compliance_financial_crime.supervisory_examination",
+          "name": "Supervisory examination",
+          "definition": "Given a supervised institution's records and an examination program, analyze transactions and records and document findings and ratings.",
+          "inputs": "institution data extracts, examination procedures",
+          "outputs": "workpapers, findings, supervisory ratings",
+          "crosswalk": [],
+          "onet_products": [
+            "General Examination System GENESYS",
+            "Oversight Insights On Demand",
+            "Financial transaction analysis software",
+            "Investigation management software"
+          ],
+          "state_of_art": [],
+          "open_tools": [],
+          "benchmarkable": "no: findings are judgments without reference answers",
+          "notes": ""
+        },
+        {
+          "id": "govern.compliance_financial_crime.trade_surveillance",
+          "name": "Trading and conduct surveillance",
+          "definition": "Given orders, trades and communications, detect market abuse, rule breaches and personal trading conflicts and manage the resulting alerts.",
+          "inputs": "order and trade records, employee holdings, communications",
+          "outputs": "alerts, case files, attestations",
+          "crosswalk": [],
+          "onet_products": [
+            "Actimize Brokerage Compliance Solutions",
+            "Fidessa Compliance Manager",
+            "Compliance11 Supervisory Suite",
+            "MyComplianceOffice Compliance Operations Management System",
+            "ComplianceMAX"
+          ],
+          "state_of_art": [
+            "NICE Actimize SURVEIL-X",
+            "Nasdaq Trade Surveillance",
+            "Eventus"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: detection on synthetic order books with injected manipulation patterns is scorable",
+          "notes": ""
+        },
+        {
+          "id": "govern.compliance_financial_crime.aml_screening",
+          "name": "Anti-money-laundering monitoring and sanctions screening",
+          "definition": "Given customers, counterparties and transactions, screen names against sanctions and watch lists and flag transaction patterns indicative of laundering.",
+          "inputs": "customer and counterparty data, transactions, sanctions and watch lists",
+          "outputs": "screening hits, alerts, suspicious activity reports",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "NICE Actimize",
+            "Oracle Financial Crime and Compliance Management",
+            "LSEG World-Check",
+            "Feedzai"
+          ],
+          "open_tools": [
+            "OpenSanctions",
+            "Marble"
+          ],
+          "benchmarkable": "yes: name-matching accuracy on labeled watch-list pairs and detection on synthetic transaction sets (for example IBM's AML synthetic data) are measurable",
+          "notes": "No O*NET product names this function directly; included because it is a core regulated function of banks."
+        },
+        {
+          "id": "govern.compliance_financial_crime.payment_fraud",
+          "name": "Card and payment fraud detection",
+          "definition": "Given authorization and payment events with account history, score each event for fraud in real time and decide to approve, decline or challenge.",
+          "inputs": "transaction stream, account and device history",
+          "outputs": "fraud scores, decisions, case queue",
+          "crosswalk": [
+            {
+              "scheme": "BIAN Service Landscape",
+              "code": "",
+              "label": "Fraud Diagnosis",
+              "basis": "fetched",
+              "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3"
+            }
+          ],
+          "onet_products": [
+            "Fair Isaac Falcon ID",
+            "Experian FraudShield",
+            "Experian Detect",
+            "Credit fraud detection software",
+            "Guardian Analytics FraudMAP"
+          ],
+          "state_of_art": [
+            "FICO Falcon Fraud Manager",
+            "Featurespace ARIC",
+            "Feedzai",
+            "Stripe Radar",
+            "Signifyd",
+            "Riskified"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: public labeled datasets (for example the IEEE-CIS fraud data) support scored comparison",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "govern.legal_research",
+      "name": "Legal research and analytics",
+      "definition": "Given a legal question, find, verify and analyze the authorities, court records and public records that bear on it.",
+      "crosswalk": [
+        {
+          "scheme": "SALI Legal Matter Standard Specification",
+          "code": "",
+          "label": "Legal services: research",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "LEDES UTBMS code sets",
+          "code": "A102",
+          "label": "Research",
+          "basis": "fetched",
+          "url": "https://utbms.com/aba-activity-codes/"
+        }
+      ],
+      "onet_categories": [
+        "Information retrieval or search software",
+        "Data base user interface and query software",
+        "Legal management software"
+      ],
+      "see_also": [
+        "govern.legal_practice",
+        "learn.library_management"
+      ],
+      "notes": "Seed kept. Public records and person search added: paralegals, collectors and investigators use the same products for locating parties.",
+      "tasks": [
+        {
+          "id": "govern.legal_research.authority_search",
+          "name": "Case law and statute search",
+          "definition": "Given a legal question or citation, retrieve the relevant cases, statutes and regulations ranked by relevance.",
+          "inputs": "natural-language question, citation or Boolean query, jurisdiction",
+          "outputs": "ranked authorities with excerpts",
+          "crosswalk": [],
+          "onet_products": [
+            "Thomson Reuters Westlaw",
+            "LexisNexis",
+            "LexisNexis Lexis Advance",
+            "Thomson Reuters WestlawNext",
+            "Thomson Reuters Westlaw Edge",
+            "Fastcase legal software",
+            "Wolters Kluwer Loislaw",
+            "Thomson West FindLaw",
+            "FindLaw Code of Federal Regulations CFR",
+            "Legal research software"
+          ],
+          "state_of_art": [
+            "Westlaw",
+            "Lexis+",
+            "vLex Vincent"
+          ],
+          "open_tools": [
+            "CourtListener"
+          ],
+          "benchmarkable": "yes: legal retrieval benchmarks (COLIEE, LegalBench retrieval tasks) give scored comparisons",
+          "notes": ""
+        },
+        {
+          "id": "govern.legal_research.citation_validation",
+          "name": "Citation validation",
+          "definition": "Given an authority or a brief, determine whether each cited authority is still good law and how later decisions treated it.",
+          "inputs": "case citation or document with citations",
+          "outputs": "treatment flags, citing references",
+          "crosswalk": [],
+          "onet_products": [
+            "LexisNexis Shepard's Citations Service"
+          ],
+          "state_of_art": [
+            "Shepard's",
+            "KeyCite"
+          ],
+          "open_tools": [
+            "eyecite"
+          ],
+          "benchmarkable": "partly: citation extraction is scorable on labeled briefs; negative-treatment labels are proprietary",
+          "notes": ""
+        },
+        {
+          "id": "govern.legal_research.court_records_retrieval",
+          "name": "Court docket and filing retrieval",
+          "definition": "Given a party, case number or court, retrieve docket entries and filed documents.",
+          "inputs": "party name, case number, court",
+          "outputs": "docket sheets, filed documents",
+          "crosswalk": [],
+          "onet_products": [
+            "Public Access to Court Electronic Records (PACER)",
+            "Public access to electronic court records PACER",
+            "Court records databases"
+          ],
+          "state_of_art": [
+            "PACER",
+            "Bloomberg Law Dockets",
+            "Docket Navigator"
+          ],
+          "open_tools": [
+            "RECAP",
+            "Juriscraper"
+          ],
+          "benchmarkable": "no: an access problem rather than a computation",
+          "notes": ""
+        },
+        {
+          "id": "govern.legal_research.litigation_analytics",
+          "name": "Litigation analytics",
+          "definition": "Given courts, judges, parties or counsel, summarize historical case outcomes, timings and motion results.",
+          "inputs": "docket and outcome data, entity of interest",
+          "outputs": "outcome rates, time-to-ruling statistics, profiles",
+          "crosswalk": [],
+          "onet_products": [
+            "LexisNexis CourtLink Strategic Profiles",
+            "LexisNexis Company Analyzer"
+          ],
+          "state_of_art": [
+            "Lex Machina",
+            "Westlaw Litigation Analytics",
+            "Trellis"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: outcome prediction can be scored on public docket data such as CourtListener's",
+          "notes": ""
+        },
+        {
+          "id": "govern.legal_research.trademark_search",
+          "name": "Trademark clearance search",
+          "definition": "Given a proposed mark and classes, find registered and common-law marks likely to conflict.",
+          "inputs": "proposed mark, goods and services classes",
+          "outputs": "ranked conflicting marks, clearance report",
+          "crosswalk": [],
+          "onet_products": [
+            "Thomson CompuMark SAEGIS"
+          ],
+          "state_of_art": [
+            "Clarivate CompuMark",
+            "Corsearch"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: retrieval of known conflicting marks from public registers can be scored",
+          "notes": ""
+        },
+        {
+          "id": "govern.legal_research.legal_forms_retrieval",
+          "name": "Court and legal forms retrieval",
+          "definition": "Given a jurisdiction and filing type, retrieve the current official form and its filing rules.",
+          "inputs": "jurisdiction, filing type",
+          "outputs": "current official forms, filing instructions",
+          "crosswalk": [],
+          "onet_products": [
+            "American LegalNet USCourtForms",
+            "FindForms"
+          ],
+          "state_of_art": [
+            "American LegalNet Forms Workflow"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: currency of a forms library, not a computation",
+          "notes": ""
+        },
+        {
+          "id": "govern.legal_research.public_records_search",
+          "name": "Public records and party search",
+          "definition": "Given identifying details about a person or business, retrieve and link public records such as addresses, assets, filings and relatives.",
+          "inputs": "name and identifiers",
+          "outputs": "linked person or business report",
+          "crosswalk": [],
+          "onet_products": [
+            "LexisNexis Accurint",
+            "Thomson Reuters CLEAR",
+            "Merlin Information Services databases",
+            "Online public records search software",
+            "W3 Data BatchAppend411"
+          ],
+          "state_of_art": [
+            "LexisNexis Accurint",
+            "Thomson Reuters CLEAR",
+            "TLOxp"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: record linkage accuracy is measurable on labeled public datasets",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "govern.legal_practice",
+      "name": "Legal matter management and litigation support",
+      "definition": "Given a firm's or legal department's matters, manage their records, deadlines, documents, time and bills, and process and present evidence in litigation.",
+      "crosswalk": [
+        {
+          "scheme": "SALI Legal Matter Standard Specification",
+          "code": "",
+          "label": "Matter",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "LEDES UTBMS code sets",
+          "code": "",
+          "label": "Litigation code set",
+          "basis": "fetched",
+          "url": "https://utbms.com/aba-litigation-codes/"
+        },
+        {
+          "scheme": "EDRM reference model",
+          "code": "",
+          "label": "Electronic Discovery Reference Model",
+          "basis": "fetched",
+          "url": "https://edrm.net/resources/frameworks-and-standards/edrm-model/"
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software",
+        "Calendar and scheduling software",
+        "Document management software",
+        "Accounting software"
+      ],
+      "see_also": [
+        "govern.legal_research",
+        "enterprise.documents",
+        "enterprise.receivables_payables"
+      ],
+      "notes": "Seed 'Legal practice, case and matter management; e-discovery; docketing' kept as one capability with e-discovery split into two tasks along the EDRM stages. Legal time and billing kept here (not enterprise) because LEDES and UTBMS make it a legal-specific function.",
+      "tasks": [
+        {
+          "id": "govern.legal_practice.matter_management",
+          "name": "Matter and case management",
+          "definition": "Given a legal matter, keep its parties, contacts, events, documents, notes and conflicts in one record and check new matters for conflicts of interest.",
+          "inputs": "matter intake, parties, documents, events",
+          "outputs": "matter record, conflict check results, task lists",
+          "crosswalk": [
+            {
+              "scheme": "SALI Legal Matter Standard Specification",
+              "code": "",
+              "label": "Matter",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Gavel & Gown Software Amicus Attorney",
+            "Abacus Data Systems AbacusLaw",
+            "LexisNexis Time Matters",
+            "Thomson Reuters Elite ProLaw",
+            "Orion Law Management Systems Orion",
+            "Tabs3 PracticeMaster",
+            "Synaptec LawBase Case Management",
+            "Legal Files software",
+            "Bridgeway eCounsel",
+            "ADERANT Expert Matter Center",
+            "PerfectLaw All-in-One Suite"
+          ],
+          "state_of_art": [
+            "Clio",
+            "Aderant",
+            "Intapp",
+            "Filevine"
+          ],
+          "open_tools": [
+            "ArkCase"
+          ],
+          "benchmarkable": "no: procedural records management",
+          "notes": ""
+        },
+        {
+          "id": "govern.legal_practice.docketing",
+          "name": "Court-rule docketing and deadline calculation",
+          "definition": "Given a triggering event in a case and the governing court rules, compute every resulting deadline and calendar it.",
+          "inputs": "trigger event and date, court and case type, rule sets, court holidays",
+          "outputs": "calculated deadlines with rule citations",
+          "crosswalk": [],
+          "onet_products": [
+            "Aderant CompuLaw",
+            "CompuLaw Vision",
+            "American Legalnet Smart Dockets",
+            "American Legalnet eDockets",
+            "Levare Center Court",
+            "Diarymaster"
+          ],
+          "state_of_art": [
+            "Aderant CompuLaw",
+            "LawToolBox",
+            "CalendarRules"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: deadlines under published court rules have exact answers for a given trigger",
+          "notes": ""
+        },
+        {
+          "id": "govern.legal_practice.contract_management",
+          "name": "Contract review and clause analysis",
+          "definition": "Given contracts, extract key terms and obligations, flag deviations from standard positions and track renewals and obligations.",
+          "inputs": "contract documents, playbook positions",
+          "outputs": "extracted clauses and terms, deviation flags, obligation calendar",
+          "crosswalk": [],
+          "onet_products": [
+            "Cobblestone Systems Contract Insight",
+            "Upside Software UpsideContract",
+            "Selectica Contract Performance Management",
+            "I-many Contract Management",
+            "Corporatek EnAct Platinum"
+          ],
+          "state_of_art": [
+            "Ironclad",
+            "Icertis",
+            "Kira",
+            "Luminance"
+          ],
+          "open_tools": [
+            "Accord Project"
+          ],
+          "benchmarkable": "yes: clause extraction is scored on public datasets such as CUAD and ContractNLI",
+          "notes": "Editor: renamed from 'Contract review and lifecycle management'; lifecycle management is enterprise.procurement."
+        },
+        {
+          "id": "govern.legal_practice.ediscovery_processing",
+          "name": "Electronic discovery collection and processing",
+          "definition": "Given custodians' data sources, collect, de-duplicate, extract text and metadata, and index documents for review.",
+          "inputs": "mailboxes, file shares, device images, custodian list",
+          "outputs": "processed, de-duplicated and indexed document set; chain of custody",
+          "crosswalk": [
+            {
+              "scheme": "EDRM reference model",
+              "code": "",
+              "label": "Collection; Processing",
+              "basis": "fetched",
+              "url": "https://edrm.net/resources/frameworks-and-standards/edrm-model/"
+            }
+          ],
+          "onet_products": [
+            "Electronic discovery software",
+            "LexisNexis Applied Discovery",
+            "dtSearch"
+          ],
+          "state_of_art": [
+            "Relativity Processing",
+            "Nuix",
+            "Reveal"
+          ],
+          "open_tools": [
+            "FreeEed"
+          ],
+          "benchmarkable": "partly: de-duplication and extraction accuracy on public corpora (for example the Enron email set) is measurable",
+          "notes": ""
+        },
+        {
+          "id": "govern.legal_practice.document_review",
+          "name": "Document review and technology-assisted review",
+          "definition": "Given a processed document set and review criteria, classify documents for responsiveness and privilege, prioritize review and produce the result set.",
+          "inputs": "indexed documents, review protocol, seed judgments",
+          "outputs": "coded documents, privilege log, production set",
+          "crosswalk": [
+            {
+              "scheme": "EDRM reference model",
+              "code": "",
+              "label": "Review; Analysis; Production",
+              "basis": "fetched",
+              "url": "https://edrm.net/resources/frameworks-and-standards/edrm-model/"
+            },
+            {
+              "scheme": "LEDES UTBMS code sets",
+              "code": "L300",
+              "label": "L300 Discovery",
+              "basis": "fetched",
+              "url": "https://utbms.com/aba-litigation-codes/"
+            }
+          ],
+          "onet_products": [
+            "Relativity e-Discovery",
+            "LexisNexis Concordance",
+            "FTI Ringtail Legal",
+            "Summation Blaze",
+            "CT Summation iBlaze",
+            "Litigation support software"
+          ],
+          "state_of_art": [
+            "RelativityOne",
+            "Everlaw",
+            "DISCO",
+            "Reveal Brainspace"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: TREC Legal Track and TREC Total Recall collections give recall and precision benchmarks",
+          "notes": ""
+        },
+        {
+          "id": "govern.legal_practice.trial_preparation",
+          "name": "Case analysis and trial presentation",
+          "definition": "Given the facts, issues, witnesses and transcripts of a case, organize them into chronologies and issue outlines and present exhibits at trial.",
+          "inputs": "evidence, transcripts, witness and issue lists",
+          "outputs": "chronologies, issue outlines, annotated transcripts, exhibit presentations",
+          "crosswalk": [
+            {
+              "scheme": "EDRM reference model",
+              "code": "",
+              "label": "Presentation",
+              "basis": "fetched",
+              "url": "https://edrm.net/resources/frameworks-and-standards/edrm-model/"
+            },
+            {
+              "scheme": "LEDES UTBMS code sets",
+              "code": "L400",
+              "label": "L400 Trial Preparation and Trial",
+              "basis": "fetched",
+              "url": "https://utbms.com/aba-litigation-codes/"
+            }
+          ],
+          "onet_products": [
+            "LexisNexis CaseMap",
+            "Thomson Reuters LiveNote Stream",
+            "Visionary Legal Technologies Visionary Professional",
+            "Convex FactLogic",
+            "Case analysis software",
+            "TrialWorks",
+            "Lawex TrialWorks",
+            "Litigation management software"
+          ],
+          "state_of_art": [
+            "CaseMap",
+            "TrialDirector",
+            "Everlaw Storybuilder"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: organization and presentation without a reference answer",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "govern.emergency_response",
+      "name": "Emergency dispatch and incident command",
+      "definition": "Given emergency calls and incidents, locate callers, dispatch responders, coordinate multi-agency operations and record what happened.",
+      "crosswalk": [
+        {
+          "scheme": "NENA / APCO standards",
+          "code": "",
+          "label": "NENA i3 Next Generation 9-1-1",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "FEMA NIMS / ICS",
+          "code": "",
+          "label": "Incident Command System",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "NIEM domains",
+          "code": "",
+          "label": "Emergency Management",
+          "basis": "fetched",
+          "url": "https://niem.github.io/reference/content/"
+        },
+        {
+          "scheme": "UN COFOG",
+          "code": "03.2",
+          "label": "Fire-protection services",
+          "basis": "fetched",
+          "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt"
+        }
+      ],
+      "onet_categories": [
+        "Helpdesk or call center software",
+        "Project management software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "move.fleet_dispatch",
+        "earth.forestry"
+      ],
+      "notes": "Seed kept. Fire and emergency medical incident reporting added because O*NET lists several such systems. Commercial dispatch of taxis and freight goes to move; wildfire behavior and plume modeling go to earth; clinical references for paramedics go to health.",
+      "tasks": [
+        {
+          "id": "govern.emergency_response.call_handling",
+          "name": "Emergency call handling and caller location",
+          "definition": "Given an incoming emergency call, text or alarm, determine the caller's location, classify the emergency and route it to the right answering point.",
+          "inputs": "call or message with location data, routing rules, address points",
+          "outputs": "located and classified call, routing decision",
+          "crosswalk": [
+            {
+              "scheme": "NENA / APCO standards",
+              "code": "",
+              "label": "NENA i3 Next Generation 9-1-1",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Intrado VIPER",
+            "Motorola Solutions VESTA",
+            "RapidSOS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: location validation and routing against address data can be tested against NENA test cases",
+          "notes": "No O*NET product names this directly; included because it is the front end of every dispatch system."
+        },
+        {
+          "id": "govern.emergency_response.computer_aided_dispatch",
+          "name": "Computer-aided dispatch and unit recommendation",
+          "definition": "Given an incident's type and location and the status and position of units, recommend and track the units to send.",
+          "inputs": "incident type and location, unit status and positions, response plans, road network",
+          "outputs": "unit recommendations, assignments, incident timeline",
+          "crosswalk": [
+            {
+              "scheme": "NENA / APCO standards",
+              "code": "",
+              "label": "APCO/NENA CAD standards",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Computer aided dispatch software",
+            "Spillman Technologies Spillman Computer-Aided Dispatch",
+            "Computer aided dispatching auto routing software"
+          ],
+          "state_of_art": [
+            "Hexagon HxGN OnCall Dispatch",
+            "Motorola Solutions PremierOne CAD",
+            "CentralSquare CAD",
+            "Tyler New World CAD"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: unit recommendation and coverage can be scored in simulation on historical incident data",
+          "notes": ""
+        },
+        {
+          "id": "govern.emergency_response.incident_command",
+          "name": "Incident command and emergency operations",
+          "definition": "Given a major incident or disaster, maintain the common operating picture, resource requests, action plans and situation reports across agencies.",
+          "inputs": "incident reports, resource inventories, organization charts, maps",
+          "outputs": "incident action plans, resource tracking, situation reports",
+          "crosswalk": [
+            {
+              "scheme": "FEMA NIMS / ICS",
+              "code": "",
+              "label": "Incident Command System: Command, Operations, Planning, Logistics, Finance/Administration",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Incident command system ICS software",
+            "Emergency Services Integrators ESi WebEOC",
+            "National Center for Crisis and Continuity Coordination NC4 E Team",
+            "Alert Technologies OpsCenter",
+            "Federal Emergency Management Information System FEMIS",
+            "Coordinated incident management system CIMS software",
+            "SoftRisk Technologies SoftRisk SQL"
+          ],
+          "state_of_art": [
+            "Juvare WebEOC",
+            "Veoci"
+          ],
+          "open_tools": [
+            "Sahana Eden"
+          ],
+          "benchmarkable": "no: coordination workflow without a reference answer",
+          "notes": ""
+        },
+        {
+          "id": "govern.emergency_response.mass_notification",
+          "name": "Emergency mass notification",
+          "definition": "Given an alert, its audience and its area, deliver it over voice, text, broadcast and sirens and track acknowledgment.",
+          "inputs": "alert content, target area or groups, contact lists",
+          "outputs": "delivered alerts, delivery and acknowledgment reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Emergency notification system software",
+            "Emergency Managers Weather Information Network EMWIN"
+          ],
+          "state_of_art": [
+            "Everbridge",
+            "Genasys",
+            "OnSolve"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: delivery reliability, not a computation",
+          "notes": ""
+        },
+        {
+          "id": "govern.emergency_response.fire_incident_records",
+          "name": "Fire and rescue incident records",
+          "definition": "Given completed incidents, record the response, cause, losses and casualties in the national reporting schema and analyze trends.",
+          "inputs": "incident and response details, NFIRS data dictionary",
+          "outputs": "NFIRS-coded incident records, statistics",
+          "crosswalk": [
+            {
+              "scheme": "US Fire Administration NFIRS",
+              "code": "",
+              "label": "National Fire Incident Reporting System",
+              "basis": "fetched",
+              "url": "https://www.usfa.fema.gov/nfirs/"
+            }
+          ],
+          "onet_products": [
+            "National Fire Incident Reporting System NFIRS",
+            "Fire incident reporting systems",
+            "Affiliated Computer Services ACS FIREHOUSE",
+            "Xerox Government systems FIREHOUSE Software",
+            "BIO-key FireRMS"
+          ],
+          "state_of_art": [
+            "ESO Fire",
+            "ImageTrend Elite",
+            "Tyler New World Fire"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: coding of narrative reports into NFIRS fields can be scored on labeled data",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "govern.law_enforcement",
+      "name": "Law-enforcement records and forensics",
+      "definition": "Given incidents, persons and evidence, keep police records, query criminal-justice databases, identify people and evidence, and analyze crimes.",
+      "crosswalk": [
+        {
+          "scheme": "NIEM domains",
+          "code": "",
+          "label": "Justice",
+          "basis": "fetched",
+          "url": "https://niem.github.io/reference/content/"
+        },
+        {
+          "scheme": "FBI CJIS services",
+          "code": "",
+          "label": "National Crime Information Center",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "FBI CJIS services",
+          "code": "",
+          "label": "Next Generation Identification",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "UN COFOG",
+          "code": "03.1",
+          "label": "Police services",
+          "basis": "fetched",
+          "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt"
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software",
+        "Graphics or photo imaging software",
+        "Map creation software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "computing.security_operations",
+        "earth.gis",
+        "govern.courts_corrections"
+      ],
+      "notes": "Seed 'Law-enforcement records, criminal-justice databases and forensics' kept. Digital evidence examination kept here with a see_also to computing security, because its inputs and outputs are evidentiary. Border and immigration records queries are included with criminal-justice queries.",
+      "tasks": [
+        {
+          "id": "govern.law_enforcement.records_management",
+          "name": "Police records management and incident reporting",
+          "definition": "Given field reports, arrests and property, keep incident, person, vehicle and evidence records and produce national crime statistics.",
+          "inputs": "incident and arrest reports, property and evidence items",
+          "outputs": "records, case files, NIBRS submissions",
+          "crosswalk": [
+            {
+              "scheme": "FBI CJIS services",
+              "code": "",
+              "label": "National Incident-Based Reporting System",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Spillman Technologies Records Management",
+            "Law enforcement information databases",
+            "Case management system software",
+            "Enforcement Case Tracking System ENFORCE",
+            "Ticket issuing software",
+            "Integrated Parking Solutions MApp",
+            "Complus Data Innovations FastTrack"
+          ],
+          "state_of_art": [
+            "Mark43 RMS",
+            "Axon Records",
+            "Motorola Solutions PremierOne Records",
+            "Tyler New World RMS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: coding narratives into NIBRS offense codes can be scored on labeled reports",
+          "notes": ""
+        },
+        {
+          "id": "govern.law_enforcement.criminal_justice_query",
+          "name": "Criminal-justice and border records query",
+          "definition": "Given a person, vehicle, firearm or document identifier, query national and state criminal, immigration and border databases and return hits.",
+          "inputs": "identifiers, query authorization",
+          "outputs": "warrants, criminal histories, stolen-property and immigration hits",
+          "crosswalk": [
+            {
+              "scheme": "FBI CJIS services",
+              "code": "",
+              "label": "National Crime Information Center",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "NIEM domains",
+              "code": "",
+              "label": "Immigration",
+              "basis": "fetched",
+              "url": "https://niem.github.io/reference/content/"
+            }
+          ],
+          "onet_products": [
+            "National Crime Information Center (NCIC) database",
+            "State crime information databases",
+            "Treasury Enforcement Communications System TECS",
+            "Arrival Departure Information System ADIS",
+            "Automated Targeting System ATS",
+            "Consular Consolidated Database CCD",
+            "Refugee, Asylum and Parole System RAPS",
+            "Student and Exchange Visitor Information System SEVIS"
+          ],
+          "state_of_art": [
+            "NCIC",
+            "Nlets"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: an access problem rather than a computation",
+          "notes": ""
+        },
+        {
+          "id": "govern.law_enforcement.biometric_identification",
+          "name": "Fingerprint and face identification",
+          "definition": "Given a probe fingerprint, palm print or face image, search a gallery and return ranked candidate identities with match scores.",
+          "inputs": "probe biometric images, enrolled gallery",
+          "outputs": "ranked candidates, match scores",
+          "crosswalk": [
+            {
+              "scheme": "FBI CJIS services",
+              "code": "",
+              "label": "Next Generation Identification",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "NIEM domains",
+              "code": "",
+              "label": "Biometrics",
+              "basis": "fetched",
+              "url": "https://niem.github.io/reference/content/"
+            }
+          ],
+          "onet_products": [
+            "Integrated Automated Fingerprint Identification System IAFIS",
+            "Automated Biometric Identification System ABIS",
+            "Biometric Storage System BSS"
+          ],
+          "state_of_art": [
+            "IDEMIA MBIS",
+            "NEC NeoFace",
+            "Thales Cogent ABIS"
+          ],
+          "open_tools": [
+            "SourceAFIS",
+            "NIST Biometric Image Software",
+            "InsightFace"
+          ],
+          "benchmarkable": "yes: NIST FpVTE, ELFT and FRTE evaluations rank algorithms on fixed datasets",
+          "notes": ""
+        },
+        {
+          "id": "govern.law_enforcement.forensic_database_matching",
+          "name": "DNA and firearm evidence matching",
+          "definition": "Given a DNA profile or a cartridge-case image, search the forensic database and return candidate matches with likelihood or correlation scores.",
+          "inputs": "DNA profile or mixture, or cartridge-case images; reference database",
+          "outputs": "candidate matches, likelihood ratios or correlation scores",
+          "crosswalk": [
+            {
+              "scheme": "FBI CJIS services",
+              "code": "",
+              "label": "Combined DNA Index System",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Combined DNA Index System CODIS",
+            "National Integrated Ballistics Information Network NIBIN"
+          ],
+          "state_of_art": [
+            "CODIS",
+            "STRmix",
+            "Ultra Electronics IBIS"
+          ],
+          "open_tools": [
+            "EuroForMix",
+            "LRmix Studio"
+          ],
+          "benchmarkable": "yes: published DNA mixture interpretation studies and NIST ballistics reference data give ground-truth matches",
+          "notes": ""
+        },
+        {
+          "id": "govern.law_enforcement.crime_analysis",
+          "name": "Crime analysis and mapping",
+          "definition": "Given incident records over space and time, map hot spots, detect series and patterns and forecast where crime will concentrate.",
+          "inputs": "geocoded incidents, calls for service, base maps",
+          "outputs": "hot-spot maps, series identifications, forecasts",
+          "crosswalk": [],
+          "onet_products": [
+            "Crime mapping software"
+          ],
+          "state_of_art": [
+            "Esri ArcGIS for crime analysis",
+            "LexisNexis Community Crime Map"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: hot-spot forecasting is scored on public incident data, as in the US National Institute of Justice Real-Time Crime Forecasting Challenge",
+          "notes": ""
+        },
+        {
+          "id": "govern.law_enforcement.link_analysis",
+          "name": "Investigative link analysis",
+          "definition": "Given records of people, organizations, phones, accounts and events, build and analyze a network and timeline that reveals connections.",
+          "inputs": "records, call detail records, financial transactions",
+          "outputs": "link charts, timelines, network metrics",
+          "crosswalk": [],
+          "onet_products": [
+            "IBM i2 Analyst's Notebook",
+            "Palantir Intelligence",
+            "Link analysis software",
+            "Telephone analysis software",
+            "Telephone records software",
+            "Timeline software"
+          ],
+          "state_of_art": [
+            "i2 Analyst's Notebook",
+            "Palantir Gotham",
+            "Maltego"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: entity resolution and link prediction are scorable on labeled synthetic case data",
+          "notes": ""
+        },
+        {
+          "id": "govern.law_enforcement.scene_reconstruction",
+          "name": "Crime scene and collision diagramming",
+          "definition": "Given measurements, photographs and vehicle data from a scene, produce scaled diagrams and reconstruct the sequence and speeds of events.",
+          "inputs": "scene measurements, photographs, event data recorder downloads",
+          "outputs": "scaled 2D or 3D diagrams, reconstruction of motion and speeds",
+          "crosswalk": [],
+          "onet_products": [
+            "The CAD Zone The Crime Zone",
+            "SmartDraw Legal",
+            "Trancite Logic Systems ScenePD",
+            "Visual Statement Vista FX3 CSI",
+            "Eos Systems PhotoModeler",
+            "DeChant Consulting Services iWitness",
+            "DataWorks Plus Digital CrimeScene",
+            "Injury Sciences EDR InSight",
+            "MapScenes Evidence Recorder",
+            "Visual Statement Investigator Suite",
+            "4n6xprt Systems StiffCalcs",
+            "Computer aided composite drawing software"
+          ],
+          "state_of_art": [
+            "FARO Zone 3D",
+            "Leica Map360",
+            "PC-Crash",
+            "Bosch CDR"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: photogrammetric measurement and staged crash tests give ground truth for reconstruction accuracy",
+          "notes": "Editor: renamed from 'Crime scene and collision diagramming and reconstruction'; reconstruction physics is simulate.vehicle_vessel."
+        }
+      ]
+    },
+    {
+      "id": "govern.courts_corrections",
+      "name": "Courts and corrections management",
+      "definition": "Given cases filed and people sentenced, manage court cases, calendars and records, and the custody and supervision of offenders.",
+      "crosswalk": [
+        {
+          "scheme": "NIEM domains",
+          "code": "",
+          "label": "Justice",
+          "basis": "fetched",
+          "url": "https://niem.github.io/reference/content/"
+        },
+        {
+          "scheme": "UN COFOG",
+          "code": "03.3",
+          "label": "Law courts",
+          "basis": "fetched",
+          "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt"
+        },
+        {
+          "scheme": "UN COFOG",
+          "code": "03.4",
+          "label": "Prisons",
+          "basis": "fetched",
+          "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt"
+        }
+      ],
+      "onet_categories": [
+        "Project management software",
+        "Data base user interface and query software",
+        "Legal management software",
+        "Calendar and scheduling software"
+      ],
+      "see_also": [
+        "govern.law_enforcement",
+        "govern.legal_practice"
+      ],
+      "notes": "Seed kept. Court reporting added because O*NET lists several products for court reporters and their transcripts are the court's record. Pretrial and recidivism risk assessment added: no O*NET product, but it is a defined, much-studied function.",
+      "tasks": [
+        {
+          "id": "govern.courts_corrections.court_case_management",
+          "name": "Court case management and electronic filing",
+          "definition": "Given filings in a case, docket them, maintain the case record, parties and judgments, and accept and serve electronic filings.",
+          "inputs": "filings, case events, judgments, fees",
+          "outputs": "docket and case record, notices, statistics",
+          "crosswalk": [
+            {
+              "scheme": "NIEM domains",
+              "code": "",
+              "label": "Justice",
+              "basis": "fetched",
+              "url": "https://niem.github.io/reference/content/"
+            }
+          ],
+          "onet_products": [
+            "Tyler Technologies Odyssey Case Manager",
+            "New Dawn Technologies JustWare Court",
+            "Justice Systems FullCourt Enterprise",
+            "Constellation Justice Systems CourtView",
+            "Syscon Court Clerk",
+            "IBM Judicial Enforcement Management System JEMS",
+            "PTS Solutions WinJuris Court Solutions",
+            "Electronic adjudication management systems EAM",
+            "Data Technologies Summit",
+            "CrimeCog Technologies E*Justice",
+            "SUSTAIN Justice Edition"
+          ],
+          "state_of_art": [
+            "Tyler Odyssey",
+            "Thomson Reuters C-Track",
+            "Journal Technologies eCourt"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: records workflow without a reference answer",
+          "notes": ""
+        },
+        {
+          "id": "govern.courts_corrections.court_calendaring",
+          "name": "Court calendaring and hearing scheduling",
+          "definition": "Given pending cases, judges, courtrooms and participants' availability, schedule hearings and trials and publish calendars.",
+          "inputs": "pending case events, judge and courtroom availability, participant conflicts",
+          "outputs": "hearing schedule, calendars, notices",
+          "crosswalk": [],
+          "onet_products": [
+            "Courtroom scheduling software",
+            "Court docket management software"
+          ],
+          "state_of_art": [
+            "Tyler Odyssey",
+            "Equivant JWorks"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: as a constrained scheduling problem, conflicts and delay can be scored on synthetic dockets",
+          "notes": ""
+        },
+        {
+          "id": "govern.courts_corrections.court_reporting",
+          "name": "Court reporting and transcript production",
+          "definition": "Given stenographic or audio record of a proceeding, produce a certified verbatim transcript and manage its orders and delivery.",
+          "inputs": "steno notes or audio, speaker list, case caption",
+          "outputs": "certified transcript, realtime feed, transcript orders",
+          "crosswalk": [],
+          "onet_products": [
+            "Chase Software Solutions Court Reporting Software",
+            "Courtroom Data Solutions Techlennium",
+            "OMTI ReporterBase",
+            "Acclaim Legal Acclaim DepoManage",
+            "Acculaw Court Reporters Billing Scheduling Job Management System ABSMS",
+            "Courtpages"
+          ],
+          "state_of_art": [
+            "Stenograph Case CATalyst",
+            "Eclipse CAT",
+            "Verbit"
+          ],
+          "open_tools": [
+            "Plover"
+          ],
+          "benchmarkable": "yes: word error rate against certified transcripts is measurable",
+          "notes": ""
+        },
+        {
+          "id": "govern.courts_corrections.sentencing_calculation",
+          "name": "Sentencing and collateral consequence calculation",
+          "definition": "Given a conviction record and the governing statutes and guidelines, compute the sentence range, credits and release dates, and the legal consequences that follow.",
+          "inputs": "conviction charges, criminal history, guidelines and statutes",
+          "outputs": "guideline range, release dates, list of collateral consequences",
+          "crosswalk": [],
+          "onet_products": [
+            "Collateral Consequences Calculator"
+          ],
+          "state_of_art": [],
+          "open_tools": [],
+          "benchmarkable": "yes: guideline calculations have exact answers for given facts",
+          "notes": ""
+        },
+        {
+          "id": "govern.courts_corrections.risk_assessment",
+          "name": "Pretrial and recidivism risk assessment",
+          "definition": "Given a defendant's or offender's record and interview answers, score the risk of failure to appear or reoffending with a validated instrument.",
+          "inputs": "criminal history, demographics, interview items",
+          "outputs": "risk score, supervision level recommendation",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Equivant COMPAS",
+            "Public Safety Assessment"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: public recidivism datasets (for example the Broward County data) allow comparison of accuracy and fairness",
+          "notes": "No O*NET product names this; included because it is a defined, contested function with public data."
+        },
+        {
+          "id": "govern.courts_corrections.jail_management",
+          "name": "Jail and inmate management",
+          "definition": "Given bookings, classifications and movements, keep inmate records, assign housing, track headcounts and schedule releases.",
+          "inputs": "booking data, classification instrument, facility layout, movements",
+          "outputs": "inmate records, housing assignments, headcounts, release lists",
+          "crosswalk": [],
+          "onet_products": [
+            "Jail management software",
+            "Corrections housing software",
+            "Guardian RFID"
+          ],
+          "state_of_art": [
+            "Tyler New World Jail",
+            "CentralSquare Jail",
+            "GUARDIAN RFID"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: classification and housing assignment rules can be tested on synthetic populations",
+          "notes": ""
+        },
+        {
+          "id": "govern.courts_corrections.community_supervision",
+          "name": "Probation, parole and electronic monitoring",
+          "definition": "Given offenders under community supervision, track conditions, contacts, drug tests and location and raise violations.",
+          "inputs": "supervision conditions, contact logs, test results, location feeds",
+          "outputs": "caseload records, violation alerts, compliance reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Abilis CORIS Offender Management System",
+            "3M Electronic Monitoring",
+            "Electronic tracking device software"
+          ],
+          "state_of_art": [
+            "Equivant Supervision",
+            "BI Incorporated TotalAccess",
+            "SuperCom"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: location-zone violation detection is checkable against synthetic tracks",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "govern.social_services",
+      "name": "Social services and benefits",
+      "definition": "Given people seeking help, determine eligibility and benefit amounts, manage their cases and services, and measure program outcomes.",
+      "crosswalk": [
+        {
+          "scheme": "NIEM domains",
+          "code": "",
+          "label": "Human Services",
+          "basis": "fetched",
+          "url": "https://niem.github.io/reference/content/"
+        },
+        {
+          "scheme": "UN COFOG",
+          "code": "10",
+          "label": "Social protection",
+          "basis": "fetched",
+          "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt"
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software",
+        "Medical software"
+      ],
+      "see_also": [
+        "health.orders_coordination",
+        "learn.career_guidance"
+      ],
+      "notes": "Seed 'Social-services case management and benefits eligibility' kept. Vocational transferable-skills analysis added because disability and rehabilitation adjudication depends on it. Medicaid claims systems go to health.",
+      "tasks": [
+        {
+          "id": "govern.social_services.eligibility_determination",
+          "name": "Eligibility and benefit determination",
+          "definition": "Given an applicant household's circumstances and a program's rules, decide eligibility and compute the benefit amount.",
+          "inputs": "household composition, income and assets, program rules",
+          "outputs": "eligibility decision, benefit amount, notices",
+          "crosswalk": [
+            {
+              "scheme": "UN COFOG",
+              "code": "10",
+              "label": "Social protection",
+              "basis": "fetched",
+              "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt"
+            }
+          ],
+          "onet_products": [
+            "Client assessment software"
+          ],
+          "state_of_art": [
+            "Salesforce Public Sector Solutions"
+          ],
+          "open_tools": [
+            "PolicyEngine",
+            "OpenFisca",
+            "OpenSPP"
+          ],
+          "benchmarkable": "yes: benefit amounts under published program rules have exact answers, and rules-as-code test suites exist",
+          "notes": ""
+        },
+        {
+          "id": "govern.social_services.case_management",
+          "name": "Human services case management",
+          "definition": "Given a client's needs and history, plan services, record contacts and referrals, and coordinate providers.",
+          "inputs": "intake assessment, service catalog, contacts",
+          "outputs": "service plan, case notes, referrals",
+          "crosswalk": [
+            {
+              "scheme": "NIEM domains",
+              "code": "",
+              "label": "Human Services",
+              "basis": "fetched",
+              "url": "https://niem.github.io/reference/content/"
+            }
+          ],
+          "onet_products": [
+            "Command Systems ComServe",
+            "Social Work Software ClientTouch",
+            "Client information databases",
+            "Client databases",
+            "James Frazier Associates DataStart"
+          ],
+          "state_of_art": [
+            "Salesforce Public Sector Solutions",
+            "Northwoods Traverse",
+            "Bonterra Apricot"
+          ],
+          "open_tools": [
+            "Primero"
+          ],
+          "benchmarkable": "no: workflow without a reference answer",
+          "notes": ""
+        },
+        {
+          "id": "govern.social_services.outcome_measurement",
+          "name": "Program outcome measurement",
+          "definition": "Given service records and client outcomes, compute program performance and outcome indicators for funders and managers.",
+          "inputs": "service and outcome records, indicator definitions",
+          "outputs": "outcome reports, performance indicators",
+          "crosswalk": [],
+          "onet_products": [
+            "Social Solutions ETO"
+          ],
+          "state_of_art": [
+            "Bonterra Apricot",
+            "Social Solutions ETO"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: indicator computation is exact given definitions",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "govern.public_administration",
+      "name": "Public revenue, registries and permits",
+      "definition": "Given citizens, businesses, property and goods, assess and collect taxes and duties, keep official registries, issue permits and licenses, and run elections and lawmaking.",
+      "crosswalk": [
+        {
+          "scheme": "UN COFOG",
+          "code": "01.1",
+          "label": "Executive and legislative organs, financial and fiscal affairs, external affairs",
+          "basis": "fetched",
+          "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt"
+        },
+        {
+          "scheme": "UN COFOG",
+          "code": "01.1.1",
+          "label": "Executive and legislative organs",
+          "basis": "fetched",
+          "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt"
+        },
+        {
+          "scheme": "NIEM domains",
+          "code": "",
+          "label": "Immigration",
+          "basis": "fetched",
+          "url": "https://niem.github.io/reference/content/"
+        }
+      ],
+      "onet_categories": [
+        "Accounting software",
+        "Analytical or scientific software",
+        "Data base user interface and query software",
+        "Compliance software",
+        "Calendar and scheduling software"
+      ],
+      "see_also": [
+        "earth.gis",
+        "move.trade_compliance",
+        "enterprise.tax"
+      ],
+      "notes": "Seed 'Public finance, tax administration, permitting and elections' kept and broadened to registries (land, vehicle, driver). Public budgeting and government accounting are enterprise. Customs declaration placed here because assessing duty is the government's revenue function; brokers' logistics side is move.",
+      "tasks": [
+        {
+          "id": "govern.public_administration.tax_return_processing",
+          "name": "Tax return processing and audit selection",
+          "definition": "Given filed returns and third-party information, validate and assess them, match information returns, and select returns for audit.",
+          "inputs": "tax returns, information returns, tax rules",
+          "outputs": "assessments, notices, audit selection scores",
+          "crosswalk": [
+            {
+              "scheme": "UN COFOG",
+              "code": "01.1.2",
+              "label": "Financial and fiscal affairs",
+              "basis": "fetched",
+              "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt"
+            }
+          ],
+          "onet_products": [
+            "Automated tax system software"
+          ],
+          "state_of_art": [
+            "FAST Enterprises GenTax"
+          ],
+          "open_tools": [
+            "OpenFisca",
+            "Tax-Calculator"
+          ],
+          "benchmarkable": "yes: tax liability under published rules has exact answers; audit-selection accuracy needs confidential data",
+          "notes": ""
+        },
+        {
+          "id": "govern.public_administration.mass_appraisal",
+          "name": "Property mass appraisal and tax roll",
+          "definition": "Given parcel characteristics and sales, estimate market values for all properties, equalize them and produce the assessment and tax rolls.",
+          "inputs": "parcel and building characteristics, sales, cost tables, tax rates",
+          "outputs": "assessed values, ratio statistics, tax roll and bills",
+          "crosswalk": [
+            {
+              "scheme": "IAAO Standard on Mass Appraisal of Real Property",
+              "code": "",
+              "label": "Mass appraisal",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Computer assisted mass appraisal CAMA software",
+            "Manatron ProVal Plus",
+            "Hansen CAMA",
+            "MicroSolve CAMA",
+            "Compass Municipal Services CAMAlot",
+            "Manatron CustomCAMA",
+            "Mass appraisal records system MARS",
+            "Ascend Property Assessment",
+            "GCS Property Assessment and Tax Billing",
+            "Manatron MVP Tax"
+          ],
+          "state_of_art": [
+            "Tyler iasWorld",
+            "Patriot Properties",
+            "Vision Government Solutions"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: IAAO ratio statistics (coefficient of dispersion, price-related differential) score value estimates against sales",
+          "notes": ""
+        },
+        {
+          "id": "govern.public_administration.customs_declaration",
+          "name": "Customs declaration processing and risk targeting",
+          "definition": "Given an import or export shipment's goods and documents, classify the goods, compute duties and taxes, and lodge and clear the declaration.",
+          "inputs": "commercial invoice, goods descriptions, origin, tariff schedule",
+          "outputs": "tariff codes, duty and tax assessment, filed declaration, release",
+          "crosswalk": [
+            {
+              "scheme": "WCO Harmonized System",
+              "code": "",
+              "label": "Harmonized Commodity Description and Coding System",
+              "basis": "fetched",
+              "url": "https://www.wcoomd.org/en/topics/nomenclature/overview/what-is-the-harmonized-system.aspx"
+            }
+          ],
+          "onet_products": [
+            "Automated system for customs data ASYCUDA",
+            "Automated commercial environment software ACE",
+            "Tariff databases",
+            "SAP Customs Management",
+            "Kewill Compliance Partner",
+            "Customs records databases",
+            "Automated manifest system software",
+            "Parts classification databases"
+          ],
+          "state_of_art": [
+            "ASYCUDA World",
+            "Thomson Reuters ONESOURCE Global Trade"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: tariff classification accuracy can be scored against published binding rulings",
+          "notes": "Editor: renamed from 'Customs declaration and tariff classification'; the trader's side is move.trade_compliance."
+        },
+        {
+          "id": "govern.public_administration.land_records",
+          "name": "Land records and title search",
+          "definition": "Given a parcel or owner, search recorded deeds, liens and plats to establish the chain of title and encumbrances.",
+          "inputs": "parcel identifier or owner name, recorded documents index",
+          "outputs": "chain of title, encumbrance list, title report",
+          "crosswalk": [
+            {
+              "scheme": "ISO 19152 Land Administration Domain Model",
+              "code": "",
+              "label": "Land administration",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Data Trace Title IQ",
+            "First American Data Tree Parcel IQ",
+            "Property Insight TitlePoint",
+            "Landtitle USA",
+            "Online title search and property report software",
+            "GATORS ANYWHERE",
+            "Geographic information system GIS databases"
+          ],
+          "state_of_art": [
+            "First American DataTree",
+            "Tyler Eagle Recorder"
+          ],
+          "open_tools": [
+            "SOLA"
+          ],
+          "benchmarkable": "partly: chain-of-title extraction from recorded documents can be scored on labeled sets",
+          "notes": ""
+        },
+        {
+          "id": "govern.public_administration.permits_licensing",
+          "name": "Permits, licenses and inspections",
+          "definition": "Given an application for a permit or license, check it against codes and fees, route reviews, schedule inspections and issue or deny.",
+          "inputs": "application, plans, code requirements, fee schedule",
+          "outputs": "review comments, inspection results, permit or license",
+          "crosswalk": [],
+          "onet_products": [
+            "Govern Software Land and Permits Management System",
+            "Permit administration software",
+            "Code database software",
+            "ConEst Permit Trac"
+          ],
+          "state_of_art": [
+            "Tyler EnerGov",
+            "Accela",
+            "OpenGov Permitting"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: workflow; automated plan-review against codes is a design task",
+          "notes": ""
+        },
+        {
+          "id": "govern.public_administration.vehicle_driver_records",
+          "name": "Vehicle and driver records",
+          "definition": "Given a driver or vehicle identifier, maintain and query licensing, registration, violation and carrier safety records.",
+          "inputs": "license and registration data, convictions, inspections",
+          "outputs": "driver and vehicle records, safety ratings",
+          "crosswalk": [],
+          "onet_products": [
+            "Commercial driver's license information system CDLIS",
+            "National Driver Register NDR",
+            "Traffic record databases",
+            "Safety Status Measurement System SafeStat",
+            "Vehicle information databases"
+          ],
+          "state_of_art": [
+            "FAST Enterprises FastDS-VS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: records access rather than a computation",
+          "notes": ""
+        },
+        {
+          "id": "govern.public_administration.elections",
+          "name": "Election administration",
+          "definition": "Given voter registrations and cast ballots, maintain the voter roll, define ballots, tabulate votes and audit the result.",
+          "inputs": "registrations, contests and candidates, cast ballots",
+          "outputs": "voter rolls, ballot definitions, tabulated results, audit outcomes",
+          "crosswalk": [
+            {
+              "scheme": "US EAC Voluntary Voting System Guidelines",
+              "code": "",
+              "label": "Voluntary Voting System Guidelines",
+              "basis": "fetched",
+              "url": "https://www.eac.gov/voting-equipment/voluntary-voting-system-guidelines"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "ES&S",
+            "Hart InterCivic Verity",
+            "Dominion Democracy Suite"
+          ],
+          "open_tools": [
+            "VotingWorks VxSuite",
+            "ElectionGuard",
+            "Arlo"
+          ],
+          "benchmarkable": "yes: tabulation and risk-limiting audit results are exact for given ballots",
+          "notes": "No O*NET product names this; included because elections are in the domain's scope."
+        },
+        {
+          "id": "govern.public_administration.legislative_drafting",
+          "name": "Legislative drafting and bill tracking",
+          "definition": "Given proposed amendments to law, draft bills in the jurisdiction's structure, track them through the legislative process and consolidate enacted text.",
+          "inputs": "draft text, existing code, amendments, legislative actions",
+          "outputs": "structured bills, status history, consolidated statutes",
+          "crosswalk": [
+            {
+              "scheme": "Akoma Ntoso (OASIS LegalDocML)",
+              "code": "",
+              "label": "LegalDocumentML (Akoma Ntoso)",
+              "basis": "fetched",
+              "url": "https://www.oasis-open.org/committees/legaldocml/"
+            }
+          ],
+          "onet_products": [
+            "Legislative Automative Workflow System LAWS",
+            "Rocket/Folio NXT"
+          ],
+          "state_of_art": [
+            "Propylon",
+            "Xcential LegisPro"
+          ],
+          "open_tools": [
+            "LEOS",
+            "Indigo"
+          ],
+          "benchmarkable": "partly: amendment consolidation is checkable against official consolidated texts",
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "existing_function_map": [],
+  "handoffs": [
+    {
+      "what": "Financial accounting, consolidation, budgeting and planning (Oracle E-Business Suite Financials, Delphi Technology, Microsoft FRx, Oracle Hyperion Planning, Oracle Hyperion Financial Management, Longview Consolidation, Longview Solutions Khalix, Satori Group proCube, Budget monitoring systems, Fixed-assets depreciation software)",
+      "to_domain": "enterprise",
+      "why": "accounting and planning of an organization's own money, not money as a product; agreed with enterprise (enterprise.financial_planning, enterprise.accounting.fixed_assets), which also takes CashFlow Guardian, SRC Cash Flow Analyzer Pro, Host Analytics Host Budget and ExpenseWatch"
+    },
+    {
+      "what": "Audit management and audit analytics (CaseWare International IDEA, ACL Analytics, PricewaterhouseCoopers TeamMate, Paisley AutoAudit, CaseWare Working Papers, Pentana audit work system PAWS, Digital analysis tests and statistics DATAS for Excel, Bi3 Financial Statement Fraud Analysis, Accounting fraud detection software)",
+      "to_domain": "enterprise",
+      "why": "internal and external audit of accounts; forensic accounting tools ride with audit analytics; agreed with enterprise (enterprise.audit_risk), which also takes Paisley RiskNavigator"
+    },
+    {
+      "what": "Tax preparation and corporate tax compliance (Intuit TurboTax, Thomson Reuters UltraTax CS, BNA Income Tax Planning Solutions, Sales Tax Tools Sales Tax Researcher, Tax compliance property tax management software, Sage EDP Payroll Tax)",
+      "to_domain": "enterprise",
+      "why": "taxpayer-side tax is enterprise per the boundary table; government-side tax administration stays in govern.public_administration"
+    },
+    {
+      "what": "Cost estimating and cost models (Softstar Costar COCOMO II, PRICE Sytems TruePlanning, IBM Costimater, WinEstimator WinEst, Construction Management Software ProEst, Primavera Cost Management, Cost estimating software)",
+      "to_domain": "enterprise",
+      "why": "project cost estimating; takeoff-based estimating is design"
+    },
+    {
+      "what": "Private real estate appraisal, comparative market analysis and investment analysis (a la mode WinTOTAL, WinGap, Wilson's Computer Applications RealEasy Appraisals, Realm Business Solutions INSIGHT for ARGUS, RealData Comparative Lease Analysis, Howard and Friends Computer CMA Plus, SoftPro real estate closing and title software, RamQuest Total Solution)",
+      "to_domain": "commerce",
+      "why": "real estate belongs to commerce; government mass appraisal and land records stay here"
+    },
+    {
+      "what": "Insurance agency management and sales (Agency Management Systems AMS 360, Insurance Technologies ForeSight Enterprise, Tangle S Creations Your Insurance Office)",
+      "to_domain": "commerce",
+      "why": "sales and customer relationship management"
+    },
+    {
+      "what": "Collections dialers and contact strategies at the call level (Austin Logistics CallSelect)",
+      "to_domain": "commerce",
+      "why": "contact center function"
+    },
+    {
+      "what": "General statistics, simulation and machine-learning tools used by financial analysts (SAS, IBM SPSS Statistics, Palisade @Risk, Decisioneering Crystal Ball, Monte Carlo simulation software, Neural network modeling software, Ward Systems Group GeneHunter, Palisade Evolver, Genetic algorithm optimization software)",
+      "to_domain": "science",
+      "why": "general methods live in their general home"
+    },
+    {
+      "what": "General databases and query tools (Microsoft Access, Structured query language SQL, Oracle Database, Oracle Essbase, IBM Lotus Approach)",
+      "to_domain": "computing",
+      "why": "general tools"
+    },
+    {
+      "what": "Security event management and security compliance (ArcSight Enterprise Threat and Risk Management, McAfee Enterprise Security Manager, eMASS, ControlCase Compliance Manager)",
+      "to_domain": "computing",
+      "why": "information security"
+    },
+    {
+      "what": "Quality management and EHS compliance (MasterControl software, EtQ Environmental Health and Safety Software, EtQ FDA cGxP Compliance Software for Life Sciences, QUMAS quality management solution software, AssurX CATSWeb, SAP EHS Management)",
+      "to_domain": "produce",
+      "why": "quality systems and EHS are produce and operate per the boundary table"
+    },
+    {
+      "what": "Environmental site assessment and remediation tools used by compliance inspectors (DQO-PRO, Spatial Analysis and Decision Assistance SADA, Monitoring and Remediation Optimization System MAROS, Fully Integrated Environmental Location Decision Support FIELDS, Sustainable Management Approaches and Revitalization Tools SMARTe, HRS Quickscore, Mass Flux Toolkit)",
+      "to_domain": "earth",
+      "why": "subsurface and contamination analysis"
+    },
+    {
+      "what": "Wildfire behavior and spread (FARSITE, FlamMap, BehavePlus, Wildland Fire Assessment System WFAS) and hazardous plume dispersion (Plume modeling software)",
+      "to_domain": "earth",
+      "why": "natural fire and atmosphere modeling"
+    },
+    {
+      "what": "Compartment fire modeling for fire investigation (Fire Dynamics Software FDS, Consolidated Model of Fire and Smoke Transport CFAST)",
+      "to_domain": "simulate",
+      "why": "physics solvers"
+    },
+    {
+      "what": "Clinical references for paramedics (Epocrates, Informed EMS Field Guide, PEPID EMS) and Medicaid management information system MMIS",
+      "to_domain": "health",
+      "why": "anything about a patient, and medical claims"
+    },
+    {
+      "what": "Student financial aid (Sungard Higher Education PowerFAIDS, SunGard Higher Education Banner Financial Aid, EDExpress, ELM Resources ELM)",
+      "to_domain": "learn",
+      "why": "school administration"
+    },
+    {
+      "what": "Non-emergency dispatch of taxis, freight and service fleets (Dr. Dispatch, Digital Dispatch, Web-based dispatch software) and postal tracking (Postal tracking software, Web Box Activity Tracing System WebBATS)",
+      "to_domain": "move",
+      "why": "applied routing and fleet operations"
+    },
+    {
+      "what": "Customs brokers' logistics documents and electronic data interchange",
+      "to_domain": "move",
+      "why": "freight documentation; duty assessment itself stays in govern.public_administration.customs_declaration"
+    },
+    {
+      "what": "Legislative and legal document publishing and XML authoring (PTC Arbortext, Antenna House, XMetaL Author)",
+      "to_domain": "media",
+      "why": "general structured publishing tools"
+    },
+    {
+      "what": "Process modeling (iGrafx) and enterprise risk registers (Enterprise risk management software ERMS)",
+      "to_domain": "enterprise",
+      "why": "general business process and risk-register tools"
+    }
+  ],
+  "unplaced_products": [
+    "Multiple Options Animal Shelter Management System",
+    "Animal Shelter Manager",
+    "ARK Software Ark Shelter Software",
+    "RoseRush Services Shelter Pro",
+    "TRAX Animal Control and Dog Warden Officer Software",
+    "CISCO Software ACS Animal Control System",
+    "RescueConnection Software ShelterConntection",
+    "iView Systems",
+    "Delphi Discovery",
+    "Xerox ProfitQuick",
+    "Moss Adams Profit Mentor",
+    "Peer-to-Peer Financial Analysis",
+    "St. Paul Travelers e-CARMA",
+    "Computerized voice stress analyzer CVSA software"
+  ],
+  "open_questions": [
+    "Customs: duty assessment and tariff classification are placed in govern.public_administration; move may also claim them. Decide one owner.",
+    "Fraud: payment and anti-money-laundering detection are in govern.compliance_financial_crime, claims fraud in govern.insurance, and forensic accounting handed to enterprise audit. Should all fraud detection be one capability?",
+    "Digital evidence examination is in govern.law_enforcement with a see_also to computing security; computing may model the same tools under incident response.",
+    "Pension plan valuation sits in govern.risk_actuarial while benefits administration is enterprise HR; confirm the split.",
+    "Household money management (Quicken) is placed under govern.investment_management; enterprise could claim it as accounting.",
+    "Regulated product submissions (eCTD) are in govern.compliance_financial_crime; health may want them alongside clinical trials.",
+    "Animal control and shelter software has no obvious owner; it is listed as unplaced.",
+    "Fifteen capabilities would have kept public revenue apart from registries and permits; they are merged here to stay within fourteen."
+  ]
+}

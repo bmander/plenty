@@ -1,0 +1,1287 @@
+{
+ "domain": "move",
+ "sources": [
+  {
+   "scheme": "ARC-IT",
+   "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html",
+   "status": "read",
+   "note": "full service package table read"
+  },
+  {
+   "scheme": "Transmodel",
+   "url": "https://www.transmodel-cen.eu/",
+   "status": "read",
+   "note": "part list 1-10 read on transmodel-cen.eu; EN 12896 catalogue pages not read"
+  },
+  {
+   "scheme": "GTFS",
+   "url": "https://gtfs.org/documentation/overview/",
+   "status": "read",
+   "note": "overview and Trip Updates page read"
+  },
+  {
+   "scheme": "US CFR (49 CFR 395, 14 CFR 117, 49 CFR 236 Subpart I)",
+   "url": "https://www.ecfr.gov/",
+   "status": "read",
+   "note": "part titles read via eCFR API"
+  },
+  {
+   "scheme": "WCO",
+   "url": "https://www.wcoomd.org/",
+   "status": "read",
+   "note": "HS, Data Model and Origin topic pages read"
+  },
+  {
+   "scheme": "Universal Postal Union",
+   "url": "https://www.upu.int/en/Postal-Solutions/Programmes-Services/Addressing-Solutions",
+   "status": "partly_read",
+   "note": "S42 read; generic \"Postal operations standards\" not an item"
+  },
+  {
+   "scheme": "IMO",
+   "url": "https://www.imo.org/",
+   "status": "read",
+   "note": "e-navigation, COLREGs pages; A.893(21) and MSC.232(82) PDFs read"
+  },
+  {
+   "scheme": "IATA",
+   "url": "https://www.iata.org/en/programs/airline-distribution/ndc/",
+   "status": "partly_read",
+   "note": "NDC read; e-ticketing page had no matching text"
+  },
+  {
+   "scheme": "FAA / FHWA / AASHTO",
+   "url": "https://ops.fhwa.dot.gov/publications/fhwahop08024/fhwa_hop_08_024.pdf",
+   "status": "partly_read",
+   "note": "FAA handbook and FHWA TSMM PDFs read; AASHTO HSM home read; TRB HCM not loaded"
+  },
+  {
+   "scheme": "railML",
+   "url": "https://www.railml.org/en/introduction.html",
+   "status": "read",
+   "note": "subschemas listed"
+  },
+  {
+   "scheme": "GS1 standards",
+   "url": "https://ref.gs1.org/standards/",
+   "status": "partly_read",
+   "note": "ref.gs1.org index and specs read; gs1.org blocked, no Logistic Label Guideline or Identify-Capture-Share seen"
+  },
+  {
+   "scheme": "ASCM SCOR 12.0",
+   "url": "https://www.ascm.org/",
+   "status": "blocked",
+   "note": "ascm.org returned Incapsula block"
+  },
+  {
+   "scheme": "APQC PCF cross-industry 7",
+   "url": "https://www.apqc.org/process-frameworks",
+   "status": "blocked",
+   "note": "Cloudflare challenge"
+  },
+  {
+   "scheme": "UN/CEFACT, UN Model Regulations (unece.org)",
+   "url": "https://unece.org/",
+   "status": "blocked",
+   "note": "unece.org and service.unece.org returned Cloudflare block"
+  },
+  {
+   "scheme": "ICAO Doc 9854 / ASBU / FPL",
+   "url": "https://www.icao.int/",
+   "status": "not_found",
+   "note": "pages fetched were 404 or lacked the items"
+  },
+  {
+   "scheme": "ATPCO",
+   "url": "https://www.atpco.net/",
+   "status": "blocked",
+   "note": "maintenance page"
+  },
+  {
+   "scheme": "IHO",
+   "url": "https://iho.int/",
+   "status": "blocked",
+   "note": "requires JavaScript"
+  },
+  {
+   "scheme": "ARINC 633/424",
+   "url": "https://www.aviation-ia.com/",
+   "status": "blocked",
+   "note": "403"
+  },
+  {
+   "scheme": "AAR AEI",
+   "url": "https://www.aar.org/standard/aei/",
+   "status": "partly_read",
+   "note": "page read, no AEI text found"
+  }
+ ],
+ "entries": [
+  {
+   "node": "move.supply_chain_planning",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sP",
+   "label": "Plan",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.supply_chain_planning",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sP1",
+   "label": "Plan Supply Chain",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.supply_chain_planning",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Plan for and align supply chain resources",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.supply_chain_planning.demand_forecasting",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sP1.1",
+   "label": "Identify, Prioritize and Aggregate Supply Chain Requirements",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.supply_chain_planning.demand_forecasting",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Develop baseline forecasts",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.supply_chain_planning.supply_master_planning",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sP1",
+   "label": "Plan Supply Chain",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.supply_chain_planning.supply_master_planning",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sP4",
+   "label": "Plan Deliver",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.supply_chain_planning.inventory_policy_optimization",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Manage inventory",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.supply_chain_planning.network_design",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "",
+   "label": "Manage Supply Chain Network",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.supply_chain_planning.network_design",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Design supply chain network",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.warehouse_inventory",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD1",
+   "label": "Deliver Stocked Product",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.warehouse_inventory",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Operate warehousing",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.warehouse_inventory",
+   "scheme": "GS1 standards",
+   "code": "",
+   "label": "Identify, Capture, Share",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.warehouse_inventory.storage_assignment",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD1.8",
+   "label": "Receive Product from Source or Make",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.warehouse_inventory.order_picking",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD1.9",
+   "label": "Pick Product",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.warehouse_inventory.cartonization",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD1.10",
+   "label": "Pack Product",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.warehouse_inventory.stock_records",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Manage inventory",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.warehouse_inventory.barcode_label_generation",
+   "scheme": "GS1 standards",
+   "code": "",
+   "label": "GS1 Logistic Label Guideline",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.warehouse_inventory.barcode_label_generation",
+   "scheme": "GS1 standards",
+   "code": "",
+   "label": "GS1 General Specifications",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://ref.gs1.org/standards/genspecs/",
+   "evidence": "GS1 General Specifications Standard"
+  },
+  {
+   "node": "move.warehouse_inventory.barcode_decoding",
+   "scheme": "GS1 standards",
+   "code": "",
+   "label": "Capture: barcodes",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.warehouse_inventory.rfid_event_capture",
+   "scheme": "GS1 standards",
+   "code": "",
+   "label": "EPC Tag Data Standard",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://ref.gs1.org/standards/tds/",
+   "evidence": "EPC Tag Data Standard TDS 2.3"
+  },
+  {
+   "node": "move.warehouse_inventory.rfid_event_capture",
+   "scheme": "GS1 standards",
+   "code": "",
+   "label": "EPCIS and Core Business Vocabulary",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://ref.gs1.org/standards/",
+   "evidence": "EPCIS & CBV; Core Business Vocabulary (CBV)"
+  },
+  {
+   "node": "move.warehouse_inventory.lot_traceability",
+   "scheme": "GS1 standards",
+   "code": "",
+   "label": "GS1 Global Traceability Standard",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://ref.gs1.org/standards/",
+   "evidence": "GS1 Global Traceability Standard"
+  },
+  {
+   "node": "move.freight_transport",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD",
+   "label": "Deliver",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.freight_transport",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Operate outbound transportation",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.freight_transport",
+   "scheme": "UN/CEFACT",
+   "code": "",
+   "label": "Buy-Ship-Pay reference model: Ship",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.freight_transport.freight_rating",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD1.7",
+   "label": "Select Carriers and Rate Shipments",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.freight_transport.carrier_procurement",
+   "scheme": "APQC PCF cross-industry 7",
+   "code": "",
+   "label": "Procure transportation services",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.freight_transport.load_consolidation",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD1.4",
+   "label": "Consolidate Orders",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.freight_transport.load_consolidation",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD1.5",
+   "label": "Build Loads",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.freight_transport.container_loading",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD1.11",
+   "label": "Load Vehicle and Generate Shipping Documents",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.freight_transport.shipment_visibility",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD1.13",
+   "label": "Receive and Verify Product by Customer",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.freight_transport.shipment_visibility",
+   "scheme": "UN/CEFACT",
+   "code": "",
+   "label": "IFTSTA transport status message",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.freight_transport.forwarding_booking",
+   "scheme": "UN/CEFACT",
+   "code": "",
+   "label": "IFTMIN instruction message",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.parcel_mail",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD1.12",
+   "label": "Ship Product",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.parcel_mail",
+   "scheme": "Universal Postal Union",
+   "code": "",
+   "label": "Postal operations standards",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.parcel_mail.parcel_rate_label",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD1.7",
+   "label": "Select Carriers and Rate Shipments",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.parcel_mail.address_validation",
+   "scheme": "Universal Postal Union",
+   "code": "",
+   "label": "S42 international postal address components",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "S42: International postal address components and templates",
+   "url": "https://www.upu.int/en/Postal-Solutions/Programmes-Services/Addressing-Solutions",
+   "evidence": "Standard S42: International postal address components and templates"
+  },
+  {
+   "node": "move.vehicle_routing",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "sD1.6",
+   "label": "Route Shipments",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.vehicle_routing",
+   "scheme": "ARC-IT",
+   "code": "",
+   "label": "Carrier Operations and Fleet Management",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html",
+   "evidence": "CF01 Carrier Operations and Fleet Management"
+  },
+  {
+   "node": "move.vehicle_routing.dial_a_ride",
+   "scheme": "ARC-IT",
+   "code": "",
+   "label": "Dynamic Transit Operations",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html",
+   "evidence": "PT03 Dynamic Transit Operations"
+  },
+  {
+   "node": "move.fleet_dispatch",
+   "scheme": "ARC-IT",
+   "code": "",
+   "label": "Carrier Operations and Fleet Management",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html",
+   "evidence": "CF01 Carrier Operations and Fleet Management"
+  },
+  {
+   "node": "move.fleet_dispatch",
+   "scheme": "ARC-IT",
+   "code": "",
+   "label": "Fleet and Freight Security",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html",
+   "evidence": "CF15 Fleet and Freight Security"
+  },
+  {
+   "node": "move.fleet_dispatch.vehicle_tracking",
+   "scheme": "ARC-IT",
+   "code": "",
+   "label": "Carrier Operations and Fleet Management",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html",
+   "evidence": "CF01 Carrier Operations and Fleet Management"
+  },
+  {
+   "node": "move.fleet_dispatch.hours_of_service",
+   "scheme": "US 49 CFR Part 395",
+   "code": "",
+   "label": "Hours of service of drivers; electronic logging devices",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "Hours of service of drivers (Subpart B: Electronic Logging Devices)",
+   "url": "https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-49?part=395",
+   "evidence": "PART 395-HOURS OF SERVICE OF DRIVERS; Subpart B-Electronic Logging Devices (ELDs)"
+  },
+  {
+   "node": "move.trade_compliance",
+   "scheme": "UN/CEFACT",
+   "code": "",
+   "label": "Buy-Ship-Pay reference model",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.trade_compliance",
+   "scheme": "WCO",
+   "code": "",
+   "label": "WCO Data Model",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.wcoomd.org/en/topics/facilitation/instrument-and-tools/tools/data-model.aspx",
+   "evidence": "Tools: WCO Data Model"
+  },
+  {
+   "node": "move.trade_compliance",
+   "scheme": "ASCM SCOR 12.0",
+   "code": "",
+   "label": "Manage Supply Chain Regulatory Compliance",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.trade_compliance.tariff_classification",
+   "scheme": "WCO",
+   "code": "",
+   "label": "Harmonized Commodity Description and Coding System",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.wcoomd.org/en/topics/nomenclature/overview/what-is-the-harmonized-system.aspx",
+   "evidence": "Harmonized Commodity Description and Coding System ... \"Harmonized System\" or \"HS\""
+  },
+  {
+   "node": "move.trade_compliance.customs_declaration",
+   "scheme": "UN/CEFACT",
+   "code": "",
+   "label": "CUSDEC customs declaration message",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.trade_compliance.customs_declaration",
+   "scheme": "UN/CEFACT",
+   "code": "Recommendation 33",
+   "label": "Single window",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.trade_compliance.duty_origin",
+   "scheme": "WCO",
+   "code": "",
+   "label": "Rules of origin",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.wcoomd.org/en/topics/origin/overview.aspx",
+   "evidence": "WCO topic Origin: Agreement on Rules of Origin; Origin Compendium"
+  },
+  {
+   "node": "move.trade_compliance.dangerous_goods",
+   "scheme": "UN Model Regulations",
+   "code": "",
+   "label": "Recommendations on the Transport of Dangerous Goods",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.trade_compliance.shipping_documents",
+   "scheme": "UN/CEFACT",
+   "code": "Recommendation 1",
+   "label": "UN Layout Key for trade documents",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.trade_compliance.shipping_documents",
+   "scheme": "UN/CEFACT",
+   "code": "",
+   "label": "UN/EDIFACT transport messages",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.flight_operations",
+   "scheme": "ICAO Doc 9854",
+   "code": "",
+   "label": "Airspace user operations",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.flight_operations",
+   "scheme": "ARINC 633",
+   "code": "",
+   "label": "AOC air-ground data and message exchange",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.flight_operations",
+   "scheme": "ARINC 424",
+   "code": "",
+   "label": "Navigation system database",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.flight_operations.flight_route_fuel",
+   "scheme": "ICAO",
+   "code": "",
+   "label": "Flight plan (ICAO FPL 2012)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.flight_operations.weight_balance",
+   "scheme": "FAA",
+   "code": "",
+   "label": "Aircraft Weight and Balance Handbook (FAA-H-8083-1)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.faa.gov/sites/faa.gov/files/regulations_policies/handbooks_manuals/aviation/FAA-H-8083-1.pdf",
+   "evidence": "Aircraft Weight and Balance Handbook 2016, FAA Flight Standards (file FAA-H-8083-1)"
+  },
+  {
+   "node": "move.flight_operations.flight_time_logging",
+   "scheme": "US 14 CFR Part 117",
+   "code": "",
+   "label": "Flight and duty limitations",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "Flight and duty limitations and rest requirements: flightcrew members",
+   "url": "https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-14?part=117",
+   "evidence": "PART 117-FLIGHT AND DUTY LIMITATIONS AND REST REQUIREMENTS: FLIGHTCREW MEMBERS"
+  },
+  {
+   "node": "move.air_traffic",
+   "scheme": "ICAO Doc 9854",
+   "code": "",
+   "label": "Global ATM Operational Concept",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.air_traffic",
+   "scheme": "ICAO Doc 9854",
+   "code": "",
+   "label": "Conflict management",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.air_traffic",
+   "scheme": "ICAO Doc 9854",
+   "code": "",
+   "label": "Traffic synchronization",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.air_traffic",
+   "scheme": "ICAO Doc 9854",
+   "code": "",
+   "label": "Demand and capacity balancing",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.air_traffic",
+   "scheme": "SESAR / FAA NextGen",
+   "code": "",
+   "label": "Air traffic management functional areas",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.air_traffic.arrival_sequencing",
+   "scheme": "ICAO ASBU",
+   "code": "RSEQ",
+   "label": "Runway sequencing (AMAN/DMAN)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.air_traffic.departure_management",
+   "scheme": "ICAO ASBU",
+   "code": "RSEQ",
+   "label": "Runway sequencing (AMAN/DMAN)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.air_traffic.conflict_detection",
+   "scheme": "ICAO Doc 9854",
+   "code": "",
+   "label": "Conflict management",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.air_traffic.trajectory_prediction",
+   "scheme": "ICAO",
+   "code": "",
+   "label": "Trajectory-based operations",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.air_traffic.traffic_flow_management",
+   "scheme": "ICAO Doc 9854",
+   "code": "",
+   "label": "Demand and capacity balancing",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.air_traffic.airport_operations",
+   "scheme": "ICAO Doc 9854",
+   "code": "",
+   "label": "Aerodrome operations",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.maritime",
+   "scheme": "IMO",
+   "code": "",
+   "label": "e-navigation",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.imo.org/en/OurWork/Safety/Pages/eNavigation.aspx",
+   "evidence": "E-navigation page under Maritime Safety"
+  },
+  {
+   "node": "move.maritime",
+   "scheme": "IMO",
+   "code": "Resolution A.893(21)",
+   "label": "Guidelines for voyage planning",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/AssemblyDocuments/A.893(21).pdf",
+   "evidence": "RESOLUTION A.893(21) adopted on 25 November 1999 GUIDELINES FOR VOYAGE PLANNING"
+  },
+  {
+   "node": "move.maritime",
+   "scheme": "IHO",
+   "code": "",
+   "label": "S-57 and S-100 electronic navigational charts",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.maritime",
+   "scheme": "UN/CEFACT",
+   "code": "",
+   "label": "BAPLIE bayplan message",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.maritime.passage_planning",
+   "scheme": "IMO",
+   "code": "Resolution MSC.232(82)",
+   "label": "ECDIS performance standards",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "Adoption of the revised performance standards for Electronic Chart Display and Information Systems (ECDIS)",
+   "url": "https://wwwcdn.imo.org/localresources/en/KnowledgeCentre/IndexofIMOResolutions/MSCResolutions/MSC.232(82).pdf",
+   "evidence": "RESOLUTION MSC.232(82) ADOPTION OF THE REVISED PERFORMANCE STANDARDS FOR ... ECDIS"
+  },
+  {
+   "node": "move.maritime.collision_avoidance",
+   "scheme": "IMO",
+   "code": "",
+   "label": "International Regulations for Preventing Collisions at Sea (COLREGs)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.imo.org/en/About/Conventions/Pages/COLREG.aspx",
+   "evidence": "Convention on the International Regulations for Preventing Collisions at Sea, 1972 (COLREGs)"
+  },
+  {
+   "node": "move.maritime.stowage_planning",
+   "scheme": "UN/CEFACT",
+   "code": "",
+   "label": "BAPLIE bayplan message",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.rail_operations",
+   "scheme": "railML / RailTopoModel",
+   "code": "",
+   "label": "Railway infrastructure, rolling stock, timetable and interlocking schemas",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.railml.org/en/introduction.html",
+   "evidence": "Subschemas: Infrastructure, Interlocking, Rollingstock, Timetable (RailTopoModel not seen)"
+  },
+  {
+   "node": "move.rail_operations",
+   "scheme": "AAR",
+   "code": "",
+   "label": "Automatic equipment identification",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.rail_operations.train_control_enforcement",
+   "scheme": "US 49 CFR Part 236 Subpart I",
+   "code": "",
+   "label": "Positive train control systems",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.ecfr.gov/api/renderer/v1/content/enhanced/current/title-49?part=236&subpart=I",
+   "evidence": "Subpart I-Positive Train Control Systems"
+  },
+  {
+   "node": "move.rail_operations.yard_management",
+   "scheme": "AAR",
+   "code": "",
+   "label": "Automatic equipment identification",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.public_transit",
+   "scheme": "Transmodel",
+   "code": "EN 12896-2",
+   "label": "Public transport network",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.transmodel-cen.eu/",
+   "evidence": "2 Public Transport Network (part list; site omits \"EN 12896-\" prefix)"
+  },
+  {
+   "node": "move.public_transit",
+   "scheme": "Transmodel",
+   "code": "EN 12896-3",
+   "label": "Timing information and vehicle scheduling",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.transmodel-cen.eu/",
+   "evidence": "3 Timing Information and Vehicle Scheduling"
+  },
+  {
+   "node": "move.public_transit",
+   "scheme": "Transmodel",
+   "code": "EN 12896-6",
+   "label": "Passenger information",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.transmodel-cen.eu/",
+   "evidence": "6 Passenger Information"
+  },
+  {
+   "node": "move.public_transit",
+   "scheme": "GTFS",
+   "code": "",
+   "label": "General Transit Feed Specification (Schedule and Realtime)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://gtfs.org/documentation/overview/",
+   "evidence": "Technical documentation lists GTFS Schedule and GTFS Realtime"
+  },
+  {
+   "node": "move.public_transit.route_network_design",
+   "scheme": "Transmodel",
+   "code": "EN 12896-2",
+   "label": "Public transport network",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.transmodel-cen.eu/",
+   "evidence": "2 Public Transport Network (part list; site omits \"EN 12896-\" prefix)"
+  },
+  {
+   "node": "move.public_transit.timetabling",
+   "scheme": "Transmodel",
+   "code": "EN 12896-3",
+   "label": "Timing information and vehicle scheduling",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.transmodel-cen.eu/",
+   "evidence": "3 Timing Information and Vehicle Scheduling"
+  },
+  {
+   "node": "move.public_transit.vehicle_scheduling",
+   "scheme": "Transmodel",
+   "code": "EN 12896-3",
+   "label": "Timing information and vehicle scheduling",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.transmodel-cen.eu/",
+   "evidence": "3 Timing Information and Vehicle Scheduling"
+  },
+  {
+   "node": "move.public_transit.crew_scheduling",
+   "scheme": "Transmodel",
+   "code": "EN 12896-7",
+   "label": "Driver management",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.transmodel-cen.eu/",
+   "evidence": "7 Driver Management"
+  },
+  {
+   "node": "move.public_transit.journey_planning",
+   "scheme": "Transmodel",
+   "code": "EN 12896-6",
+   "label": "Passenger information",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.transmodel-cen.eu/",
+   "evidence": "6 Passenger Information"
+  },
+  {
+   "node": "move.public_transit.journey_planning",
+   "scheme": "ARC-IT",
+   "code": "",
+   "label": "Personalized Traveler Information",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html",
+   "evidence": "TI02 Personalized Traveler Information"
+  },
+  {
+   "node": "move.public_transit.arrival_prediction",
+   "scheme": "GTFS",
+   "code": "",
+   "label": "GTFS Realtime trip updates",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://gtfs.org/documentation/realtime/feed-entities/trip-updates/",
+   "evidence": "Trip Updates page under GTFS Realtime Feed Entities"
+  },
+  {
+   "node": "move.travel_reservation",
+   "scheme": "IATA",
+   "code": "",
+   "label": "New Distribution Capability",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.iata.org/en/programs/airline-distribution/ndc/",
+   "evidence": "New Distribution Capability (NDC) is a data exchange format"
+  },
+  {
+   "node": "move.travel_reservation",
+   "scheme": "ATPCO",
+   "code": "",
+   "label": "Fare and rule filing",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.travel_reservation.fare_shopping",
+   "scheme": "IATA",
+   "code": "",
+   "label": "New Distribution Capability",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.iata.org/en/programs/airline-distribution/ndc/",
+   "evidence": "New Distribution Capability (NDC) is a data exchange format"
+  },
+  {
+   "node": "move.travel_reservation.booking_ticketing",
+   "scheme": "IATA",
+   "code": "",
+   "label": "Electronic ticketing standards",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.road_traffic",
+   "scheme": "ARC-IT",
+   "code": "",
+   "label": "Traffic management service packages",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "Traffic Management (service package group)",
+   "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html",
+   "evidence": "Table groups packages under \"Traffic Management\"; e.g. TM03 Traffic Signal Control"
+  },
+  {
+   "node": "move.road_traffic",
+   "scheme": "TRB",
+   "code": "",
+   "label": "Highway Capacity Manual",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.road_traffic",
+   "scheme": "AASHTO",
+   "code": "",
+   "label": "Highway Safety Manual",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.highwaysafetymanual.org/",
+   "evidence": "AASHTO - Highway Safety Manual - Home"
+  },
+  {
+   "node": "move.road_traffic",
+   "scheme": "FHWA",
+   "code": "",
+   "label": "Traffic Signal Timing Manual",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://ops.fhwa.dot.gov/publications/fhwahop08024/fhwa_hop_08_024.pdf",
+   "evidence": "TRAFFIC SIGNAL TIMING MANUAL Publication Number: FHWA-HOP-08-024"
+  },
+  {
+   "node": "move.road_traffic.signal_timing",
+   "scheme": "ARC-IT",
+   "code": "",
+   "label": "Traffic Signal Control",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.arc-it.net/html/servicepackages/servicepackages.html",
+   "evidence": "TM03 Traffic Signal Control"
+  },
+  {
+   "node": "move.road_traffic.signal_timing",
+   "scheme": "FHWA",
+   "code": "",
+   "label": "Traffic Signal Timing Manual",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://ops.fhwa.dot.gov/publications/fhwahop08024/fhwa_hop_08_024.pdf",
+   "evidence": "TRAFFIC SIGNAL TIMING MANUAL Publication Number: FHWA-HOP-08-024"
+  },
+  {
+   "node": "move.road_traffic.capacity_analysis",
+   "scheme": "TRB",
+   "code": "",
+   "label": "Highway Capacity Manual",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "move.road_traffic.road_safety_analysis",
+   "scheme": "AASHTO",
+   "code": "",
+   "label": "Highway Safety Manual",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.highwaysafetymanual.org/",
+   "evidence": "AASHTO - Highway Safety Manual - Home"
+  }
+ ]
+}

@@ -1,0 +1,4232 @@
+{
+  "domain": "produce",
+  "summary": "The domain follows the ISA-95 functional hierarchy. Levels 1 and 2 (controller, robot, supervisory and process control) use IEC 61131-3, ISA-101, ISA-18.2 and ISA-88. Level 3 operations (execution, scheduling, quality, metrology) follow the IEC 62264-3 activity model, MESA-11 and the APICS planning functions. Before these sit manufacturing engineering (process planning, factory design) and machine-program preparation, which is split the way CAM modules and post-processors are sold: milling by axis count, turning and mill-turn, sheet and profile cutting with nesting (cutting-and-packing typology), NC post-processing and verification, and additive build preparation by ISO/ASTM 52900 process category.",
+  "capabilities": [
+    {
+      "id": "produce.process_planning",
+      "name": "Manufacturing process planning",
+      "definition": "Given a product design and the plant's resources, decide how it will be made: operations and their order, machines, setups, tooling, routing and expected cost.",
+      "crosswalk": [
+        {
+          "scheme": "IEC 62264-3 activity model",
+          "code": "",
+          "label": "Management of product definitions",
+          "basis": "fetched",
+          "url": "https://en.wikipedia.org/wiki/Manufacturing_execution_system"
+        },
+        {
+          "scheme": "NIST smart manufacturing ecosystem (NISTIR 8107)",
+          "code": "",
+          "label": "Production system lifecycle: process planning",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "CIMdata digital manufacturing segment",
+          "code": "",
+          "label": "Digital manufacturing: process planning",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 10303-224",
+          "code": "ISO 10303-224",
+          "label": "Mechanical product definition for process planning using machining features",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Computer aided manufacturing CAM software"
+      ],
+      "see_also": [
+        "design.product_data",
+        "produce.manufacturing_execution",
+        "design.product_definition"
+      ],
+      "notes": "New capability, not a seed. Split out of the CAM and MES seeds because planning how to make a part (operations, setups, routing, cost) comes before and is independent of toolpath generation and of execution; ISA-95 treats it as product definition management.",
+      "tasks": [
+        {
+          "id": "produce.process_planning.machining_process_plans",
+          "name": "Machining process plan generation",
+          "definition": "Given a part model with features and tolerances, stock and available machines, produce setups, operation sequence and machine, fixture and tool assignments.",
+          "inputs": "part model with machining features and tolerances, stock, machine and tooling catalogue",
+          "outputs": "process plan: setups, ordered operations, resource assignments",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10303-224",
+              "code": "ISO 10303-224",
+              "label": "Machining features for process planning",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO 14649 (STEP-NC)",
+              "code": "",
+              "label": "Workingsteps and manufacturing features",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Siemens Teamcenter Manufacturing Process Planner",
+            "DELMIA Process Engineer"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: setup count, tool changes and estimated machining time can be scored on shared test parts, but no standard suite exists",
+          "notes": "Computer-aided process planning (CAPP)."
+        },
+        {
+          "id": "produce.process_planning.manufacturing_bom_routing",
+          "name": "Manufacturing bill and routing authoring",
+          "definition": "Given an engineering bill of materials and plant layout, produce a manufacturing bill of materials grouped by station and a routing of operations with work centres and standard times.",
+          "inputs": "engineering bill of materials, plant work centres, standard times",
+          "outputs": "manufacturing bill of materials, routing (bill of process)",
+          "crosswalk": [
+            {
+              "scheme": "ASCM (APICS) Dictionary",
+              "code": "",
+              "label": "Routing",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ASCM (APICS) Dictionary",
+              "code": "",
+              "label": "Bill of material",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "IEC 62264-3 activity model",
+              "code": "",
+              "label": "Management of product definitions",
+              "basis": "fetched",
+              "url": "https://en.wikipedia.org/wiki/Manufacturing_execution_system"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Siemens Teamcenter Manufacturing",
+            "PTC Windchill MPMLink",
+            "DELMIA Process Engineer"
+          ],
+          "open_tools": [
+            "ERPNext"
+          ],
+          "benchmarkable": "no: correct structure depends on plant conventions and there is no reference data",
+          "notes": ""
+        },
+        {
+          "id": "produce.process_planning.work_instruction_authoring",
+          "name": "Work instruction authoring",
+          "definition": "Given a process plan, 3D models and quality requirements, produce step-by-step operator instructions with visuals, parameters and checks.",
+          "inputs": "process plan, product models, quality checks",
+          "outputs": "illustrated work instructions per station",
+          "crosswalk": [
+            {
+              "scheme": "MESA-11 MES functions",
+              "code": "",
+              "label": "Document control",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Dozuki",
+            "VKS",
+            "Tulip"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: quality is judged by operators and there is no benchmark",
+          "notes": "Delivery of instructions at the station is under produce.manufacturing_execution.execution_guidance."
+        },
+        {
+          "id": "produce.process_planning.cost_estimation",
+          "name": "Manufacturing cost estimation",
+          "definition": "Given a part model or drawing, material, process route and shop rates, estimate cycle time, piece cost and tooling cost.",
+          "inputs": "part model or drawing, material, process route, machine and labour rates",
+          "outputs": "cycle-time and cost estimate, quote",
+          "crosswalk": [],
+          "onet_products": [
+            "MTI Systems Costimator JS",
+            "Micro Estimating FabPlan",
+            "Manufacturing Technology Costimater",
+            "PRICE Sytems TruePlanning",
+            "Galorath SEER",
+            "CPR International GeneralCOST Estimator"
+          ],
+          "state_of_art": [
+            "aPriori",
+            "Costimator",
+            "Paperless Parts",
+            "PRICE TruePlanning",
+            "Galorath SEER",
+            "Aspen Capital Cost Estimator"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: estimates can be scored against actual costed jobs, but such data are private",
+          "notes": ""
+        },
+        {
+          "id": "produce.process_planning.cutting_tool_data",
+          "name": "Cutting tool and cutting data management",
+          "definition": "Given tool assemblies, workpiece materials and machines, maintain the tool library and compute recommended speeds, feeds and tool life.",
+          "inputs": "tool components and assemblies, workpiece material, machine limits",
+          "outputs": "tool library records, cutting parameters, expected tool life",
+          "crosswalk": [
+            {
+              "scheme": "ISO 13399",
+              "code": "ISO 13399",
+              "label": "Cutting tool data representation and exchange",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "CNC Consulting Machinists' Calculator",
+            "Armchair Machinist software",
+            "Kentech Kipware Trig Kalculator",
+            "Kentech machine shop software"
+          ],
+          "state_of_art": [
+            "Sandvik Coromant CoroPlus ToolGuide",
+            "ZOLLER TMS Tool Management Solutions",
+            "TDM Systems",
+            "HSMAdvisor",
+            "MachiningCloud"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: recommended cutting data can be checked against measured tool life and force data, which are scarce",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "produce.milling_cam",
+      "name": "Milling toolpath programming",
+      "definition": "Given part and stock geometry, fixtures, cutting tools and the machine's axis configuration, generate collision-free milling toolpaths that bring the stock to the part within tolerance.",
+      "crosswalk": [
+        {
+          "scheme": "ISO 14649 (STEP-NC)",
+          "code": "ISO 14649-11",
+          "label": "Process data for milling",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 6983-1",
+          "code": "ISO 6983-1",
+          "label": "Numerical control program format (G-code)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "CIMdata digital manufacturing segment",
+          "code": "",
+          "label": "Computer-aided manufacturing",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided manufacturing CAM software",
+        "Computer aided design CAD and computer aided manufacturing CAM system"
+      ],
+      "see_also": [
+        "produce.nc_programs",
+        "design.solid_modeling"
+      ],
+      "notes": "Was part of seed 'CNC toolpath planning and post-processing (CAM), nesting'. CAM is split by process the way CAM modules and post-processors are sold (mill, lathe/mill-turn, wire and profile, router); milling is further split by axis count (2.5, 3, 3+2, 4, 5) because each step changes the geometry problem and the post-processor.",
+      "tasks": [
+        {
+          "id": "produce.milling_cam.two_and_half_axis",
+          "name": "2.5-axis milling",
+          "definition": "Given 2D profiles or prismatic features with depths, generate contouring, pocketing, facing, slotting, chamfering and engraving paths at discrete Z levels.",
+          "inputs": "2D profiles or prismatic features, depths, tools, stock, fixture",
+          "outputs": "cutter location path or controller code",
+          "crosswalk": [
+            {
+              "scheme": "ISO 14649 (STEP-NC)",
+              "code": "ISO 14649-11",
+              "label": "Planar face, pocket, slot and profile features",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Vero Software ALPHACAM Milling",
+            "HOMAG WoodWOP",
+            "Planit Alphacam",
+            "BobCAD-CAM",
+            "SmartCAMcnc SmartCAM",
+            "EZ-CAM",
+            "SharpCam Ltd. SharpCam",
+            "OneCNC CAD/CAM",
+            "MecSoft Corporation VisualMILL",
+            "Intelitek spectraCAM Milling",
+            "Gravograph GravoStyle",
+            "Computer aided design and computer aided manufacturing CAD/CAM engraving software"
+          ],
+          "state_of_art": [
+            "Mastercam Mill",
+            "Autodesk Fusion",
+            "SolidCAM"
+          ],
+          "open_tools": [
+            "FreeCAD CAM workbench",
+            "Kiri:Moto"
+          ],
+          "benchmarkable": "yes: machining time, air-cutting fraction and gouge-free coverage are computable by stock simulation on shared prismatic parts; config/capabilities.csv already lists cam-bench for CAM",
+          "notes": "Includes panel routing for woodworking and sign engraving, which are 2.5-axis milling with process-specific tooling."
+        },
+        {
+          "id": "produce.milling_cam.hole_making",
+          "name": "Hole-making cycles",
+          "definition": "Given hole features (diameter, depth, thread, tolerance), choose drilling, peck, tapping, boring, reaming or thread-milling cycles and an efficient visiting order.",
+          "inputs": "hole features, tools, machine canned-cycle set",
+          "outputs": "ordered hole operations with canned cycles",
+          "crosswalk": [
+            {
+              "scheme": "ISO 6983-1",
+              "code": "ISO 6983-1",
+              "label": "Canned cycles",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO 14649 (STEP-NC)",
+              "code": "ISO 14649-11",
+              "label": "Drilling-type operations",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Kentech Kipware M CNC"
+          ],
+          "state_of_art": [
+            "Mastercam Mill",
+            "Siemens NX CAM",
+            "ESPRIT"
+          ],
+          "open_tools": [
+            "FreeCAD CAM workbench"
+          ],
+          "benchmarkable": "yes: cycle choice can be checked against thread and depth specifications and the visiting order is a travelling-salesman instance",
+          "notes": ""
+        },
+        {
+          "id": "produce.milling_cam.three_axis_roughing",
+          "name": "Three-axis surface roughing",
+          "definition": "Given 3D part and stock, remove bulk material with constant-engagement (adaptive, trochoidal) or Z-level clearing, leaving uniform stock for finishing.",
+          "inputs": "part surfaces, stock model, tools and holders, engagement limits",
+          "outputs": "roughing toolpath, remaining stock model",
+          "crosswalk": [],
+          "onet_products": [
+            "Celeritive Technologies VoluMill",
+            "SolidCAM iMachining",
+            "Delcam PowerMILL",
+            "Autodesk PowerMill",
+            "Vero Software WorkNC",
+            "GRZ Software MeshCAM",
+            "Autodesk HSMWorks",
+            "Autodesk Fusion 360"
+          ],
+          "state_of_art": [
+            "Autodesk PowerMill",
+            "Mastercam Dynamic Motion",
+            "hyperMILL"
+          ],
+          "open_tools": [
+            "FreeCAD CAM workbench",
+            "OpenCAMLib",
+            "BlenderCAM"
+          ],
+          "benchmarkable": "yes: removal rate, engagement violations and remaining stock are computable by stock simulation on reference parts",
+          "notes": ""
+        },
+        {
+          "id": "produce.milling_cam.three_axis_finishing",
+          "name": "Three-axis surface finishing",
+          "definition": "Given freeform surfaces and remaining stock, generate parallel, waterline, scallop, pencil and rest-machining passes that meet a scallop-height and surface tolerance.",
+          "inputs": "part surfaces, remaining stock, ball or bull-nose tools, tolerance, scallop height",
+          "outputs": "finishing toolpaths",
+          "crosswalk": [],
+          "onet_products": [
+            "Vero Software machining STRATEGIST",
+            "Tebis computer aided design software",
+            "Cimatron CimatronE",
+            "Vero Software VISI",
+            "Vero Software SURFCAM",
+            "MecSoft Corporation RhinoCAM",
+            "Delcam ArtCAM Express",
+            "Autodesk PowerMill"
+          ],
+          "state_of_art": [
+            "Autodesk PowerMill",
+            "Tebis",
+            "WorkNC",
+            "Cimatron"
+          ],
+          "open_tools": [
+            "OpenCAMLib",
+            "BlenderCAM"
+          ],
+          "benchmarkable": "yes: scallop height, gouges and deviation from the design surface are computable from simulated stock",
+          "notes": ""
+        },
+        {
+          "id": "produce.milling_cam.indexed_five_axis",
+          "name": "Indexed five-axis (3+2) milling",
+          "definition": "Given a part on a rotary-tilting machine, choose fixed tool orientations that reach all features in few setups, and generate three-axis paths in each tilted work plane.",
+          "inputs": "part model, machine rotary limits, fixture, tools",
+          "outputs": "set of tool orientations and per-plane toolpaths",
+          "crosswalk": [],
+          "onet_products": [
+            "OPEN MIND Technologies hyperMILL",
+            "Vero Software Edgecam",
+            "Geometric CAMWorks",
+            "GibbsCAM"
+          ],
+          "state_of_art": [
+            "hyperMILL",
+            "Mastercam Multiaxis",
+            "Siemens NX CAM"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: number of orientations and feature accessibility are scoreable; tilted-plane output must be checked by machine simulation",
+          "notes": ""
+        },
+        {
+          "id": "produce.milling_cam.simultaneous_four_axis",
+          "name": "Simultaneous four-axis rotary milling",
+          "definition": "Given a part machined around one rotary axis, generate wrapped and rotary-contouring paths that move the rotary axis during cutting.",
+          "inputs": "part model, rotary axis definition, tools",
+          "outputs": "four-axis toolpath",
+          "crosswalk": [],
+          "onet_products": [
+            "Vero Software Edgecam",
+            "BobCAD-CAM"
+          ],
+          "state_of_art": [
+            "Mastercam Multiaxis",
+            "Autodesk Fusion",
+            "ESPRIT"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: wrap accuracy is checkable by simulation but few reference parts exist",
+          "notes": ""
+        },
+        {
+          "id": "produce.milling_cam.simultaneous_five_axis",
+          "name": "Simultaneous five-axis milling",
+          "definition": "Given freeform or ruled surfaces, generate paths with a continuously varying tool axis (swarf, flowline, impeller, port) that avoid holder and spindle collisions and keep the axis smooth.",
+          "inputs": "part surfaces, tools and holders, machine kinematics and limits",
+          "outputs": "five-axis toolpath with tool-axis vectors",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10791-7",
+              "code": "ISO 10791-7",
+              "label": "Machining test pieces including the cone frustum for five-axis machines",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Open Mind hyperMILL",
+            "Delcam PowerMILL",
+            "Siemens NX",
+            "Dassault Systemes CATIA",
+            "Tebis computer aided design software",
+            "Sprut Technology SprutCAM",
+            "Vero Software WorkNC",
+            "1CadCam Unigraphics"
+          ],
+          "state_of_art": [
+            "hyperMILL",
+            "Siemens NX CAM",
+            "Autodesk PowerMill",
+            "Mastercam Multiaxis"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the ISO 10791-7 cone frustum and similar test pieces give reference geometry; gouges, collisions and axis reversals are measurable in simulation",
+          "notes": ""
+        },
+        {
+          "id": "produce.milling_cam.feature_based_automation",
+          "name": "Feature-based automatic programming",
+          "definition": "Given a solid model, recognize machining features and apply stored strategies to produce a complete program with little manual input.",
+          "inputs": "solid model, feature-strategy knowledge base, tools, machine",
+          "outputs": "recognized features and complete toolpath set",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10303-224",
+              "code": "ISO 10303-224",
+              "label": "Machining features",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Geometric CAMWorks",
+            "TekSoft CAMWorks",
+            "Geometric Technologies CAMWorks",
+            "Delcam FeatureCAM",
+            "EGS FeatureCAM",
+            "Dental product manufacturing software"
+          ],
+          "state_of_art": [
+            "CAMWorks",
+            "Autodesk FeatureCAM",
+            "Siemens NX CAM"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: feature recognition is scoreable on labelled CAD sets (MFCAD, MFCAD++) and the resulting programs by stock simulation",
+          "notes": "Dental restoration CAM sits here: it is automated strategy selection on a fixed part family."
+        }
+      ]
+    },
+    {
+      "id": "produce.turning_cam",
+      "name": "Turning, mill-turn and grinding programming",
+      "definition": "Given a rotational part, bar or blank stock and a lathe, multitasking or grinding machine configuration, generate synchronized programs for its spindles, turrets and axes.",
+      "crosswalk": [
+        {
+          "scheme": "ISO 14649 (STEP-NC)",
+          "code": "ISO 14649-12",
+          "label": "Process data for turning",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 6983-1",
+          "code": "ISO 6983-1",
+          "label": "Numerical control program format (G-code)",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided manufacturing CAM software"
+      ],
+      "see_also": [
+        "produce.nc_programs"
+      ],
+      "notes": "Split from the CAM seed. Lathe, mill-turn and Swiss machines are separate CAM modules and separate post-processors because channel synchronization and live tooling change the problem. Tool grinding is placed here as the other rotational-part process with its own programming software.",
+      "tasks": [
+        {
+          "id": "produce.turning_cam.two_axis_turning",
+          "name": "Two-axis turning",
+          "definition": "Given a turned profile and stock, generate facing, OD and ID roughing and finishing, grooving, threading and parting with tool-nose compensation.",
+          "inputs": "rotational profile, stock, turning tools",
+          "outputs": "lathe program",
+          "crosswalk": [
+            {
+              "scheme": "ISO 14649 (STEP-NC)",
+              "code": "ISO 14649-12",
+              "label": "Turning operations",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Vero Software ALPHACAM Turning",
+            "Intelitek spectraCAM Turning",
+            "MecSoft Corporation VisualTURN",
+            "Cadem CAPSTurn",
+            "Kentech Kipware T CNC"
+          ],
+          "state_of_art": [
+            "Mastercam Lathe",
+            "ESPRIT",
+            "GibbsCAM",
+            "Autodesk Fusion"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: cycle time and profile deviation after simulated cutting are scoreable on reference turned parts",
+          "notes": ""
+        },
+        {
+          "id": "produce.turning_cam.live_tool_turning",
+          "name": "Live-tool C and Y-axis milling",
+          "definition": "Given a turned part with flats, cross holes and slots, generate milling on a lathe using polar or cylindrical interpolation with the C axis and optional Y axis.",
+          "inputs": "part model, lathe with live tools, C and Y axis limits",
+          "outputs": "combined turning and milling program",
+          "crosswalk": [],
+          "onet_products": [
+            "GibbsCAM",
+            "3D Systems GibbsCAM",
+            "Vero Software Edgecam"
+          ],
+          "state_of_art": [
+            "ESPRIT",
+            "GibbsCAM",
+            "Mastercam Mill-Turn"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: verifiable only by machine simulation with the specific turret and spindle model",
+          "notes": ""
+        },
+        {
+          "id": "produce.turning_cam.b_axis_multitasking",
+          "name": "B-axis mill-turn multitasking",
+          "definition": "Given a complex part on a machine with a tilting milling head, main and sub-spindles, order turning and multi-axis milling operations and spindle transfers.",
+          "inputs": "part model, multitasking machine model, tools",
+          "outputs": "multitasking program with transfers",
+          "crosswalk": [],
+          "onet_products": [
+            "DP Technology ESPRIT",
+            "GibbsCAM",
+            "Siemens NX"
+          ],
+          "state_of_art": [
+            "ESPRIT",
+            "Mastercam Mill-Turn",
+            "Siemens NX CAM",
+            "hyperMILL MILL-TURN"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: needs full machine kinematic models; cycle time and collisions are measurable in simulation",
+          "notes": ""
+        },
+        {
+          "id": "produce.turning_cam.multichannel_swiss",
+          "name": "Multi-channel and Swiss-type synchronization",
+          "definition": "Given operations for a sliding-headstock or twin-turret lathe, assign them to channels, insert wait and sync codes and balance the cycle.",
+          "inputs": "operation list, machine channels, turrets and spindles",
+          "outputs": "synchronized multi-channel program and timing chart",
+          "crosswalk": [],
+          "onet_products": [
+            "PartMaker SwissCAM",
+            "Autodesk PartMaker",
+            "Delcam PartMaker"
+          ],
+          "state_of_art": [
+            "ESPRIT",
+            "GibbsCAM",
+            "Autodesk PartMaker"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: channel balancing is a scheduling problem and sync validity is checkable in simulation, but machine models are proprietary",
+          "notes": ""
+        },
+        {
+          "id": "produce.turning_cam.tool_grinding",
+          "name": "Tool and cutter grinding programming",
+          "definition": "Given a cutter specification (flutes, helix, rake, relief, point), generate wheel paths for a multi-axis tool grinder.",
+          "inputs": "cutter geometry, wheel set, grinder kinematics",
+          "outputs": "grinding program and simulated tool geometry",
+          "crosswalk": [],
+          "onet_products": [
+            "ANCA ToolRoom"
+          ],
+          "state_of_art": [
+            "ANCA ToolRoom",
+            "Walter Helitronic Tool Studio",
+            "NUMROTOplus"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: the simulated ground geometry can be compared with the specification, but grinder models are machine-specific",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "produce.profile_cutting_cam",
+      "name": "Sheet and profile cutting programming",
+      "definition": "Given flat, linear or tubular stock and part outlines or sheet-metal models, lay parts out on the stock and generate cutting, punching, bending or wire-erosion programs.",
+      "crosswalk": [
+        {
+          "scheme": "Waescher et al. 2007 cutting and packing typology",
+          "code": "",
+          "label": "Cutting and packing problems (cutting stock, knapsack, open dimension; one- and two-dimensional, regular and irregular)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "CIMdata digital manufacturing segment",
+          "code": "",
+          "label": "Computer-aided manufacturing",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided manufacturing CAM software"
+      ],
+      "see_also": [
+        "produce.nc_programs",
+        "produce.process_specific_prep"
+      ],
+      "notes": "Holds the 'nesting' part of the CAM seed. Nesting tasks follow the Waescher typology (dimension and shape of items), which is also how the benchmark literature is organized; cutting, punching and bending follow the machine types that sheet-metal CAM is sold for.",
+      "tasks": [
+        {
+          "id": "produce.profile_cutting_cam.profile_cutting",
+          "name": "Two-dimensional profile cutting paths",
+          "definition": "Given nested part outlines and a laser, plasma, oxyfuel, waterjet or knife cutter, generate cut paths with lead-ins, kerf compensation, pierce points, micro-joints and a cut order that limits heat and tip-up.",
+          "inputs": "nested layout, cutting process and machine parameters",
+          "outputs": "cutting program",
+          "crosswalk": [],
+          "onet_products": [
+            "Striker Systems SS-Profile",
+            "FastCAM",
+            "Hypertherm ProNest",
+            "SigmaTEK SigmaNEST",
+            "Vero Software PEPS"
+          ],
+          "state_of_art": [
+            "SigmaNEST",
+            "ProNest",
+            "Lantek Expert",
+            "TRUMPF TruTops Boost"
+          ],
+          "open_tools": [
+            "LaserWeb",
+            "dxf2gcode"
+          ],
+          "benchmarkable": "partly: cut length, pierce count and rapid travel are scoreable; cut quality is not",
+          "notes": ""
+        },
+        {
+          "id": "produce.profile_cutting_cam.irregular_nesting",
+          "name": "Irregular nesting on sheet and plate",
+          "definition": "Given irregular part shapes, quantities and sheets or plates, place parts with allowed rotations to maximize utilization, using common-line cutting and part-in-part where possible.",
+          "inputs": "part outlines, quantities, rotation rules, sheet sizes and remnants",
+          "outputs": "nested layouts, utilization, remnant definitions",
+          "crosswalk": [
+            {
+              "scheme": "Waescher et al. 2007 cutting and packing typology",
+              "code": "",
+              "label": "Two-dimensional irregular cutting stock and open dimension problems",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "SigmaTEK SigmaNEST",
+            "Hypertherm ProNest",
+            "JETCAM Expert",
+            "JETCAM",
+            "Technos Astra S-Nesting",
+            "WiCAM PN4000",
+            "Metamation MetaCAM",
+            "Applied Production ProFab",
+            "Vero Software RADAN"
+          ],
+          "state_of_art": [
+            "SigmaNEST",
+            "ProNest",
+            "Lantek Expert",
+            "TRUMPF TruTops Boost"
+          ],
+          "open_tools": [
+            "Deepnest",
+            "SVGnest",
+            "libnest2d"
+          ],
+          "benchmarkable": "yes: ESICUP irregular nesting instances (albano, dagli, jakobs, shapes, swim) have best-known utilizations",
+          "notes": ""
+        },
+        {
+          "id": "produce.profile_cutting_cam.rectangular_panel_cutting",
+          "name": "Rectangular and guillotine panel cutting",
+          "definition": "Given rectangular parts and boards or glass sheets, generate cutting patterns that respect guillotine stages and saw constraints with minimum waste.",
+          "inputs": "rectangular part list, board sizes, kerf, guillotine stage limits",
+          "outputs": "cutting patterns and saw programs",
+          "crosswalk": [
+            {
+              "scheme": "Waescher et al. 2007 cutting and packing typology",
+              "code": "",
+              "label": "Two-dimensional rectangular cutting stock problem",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Technos Astra R-Nesting",
+            "XY Soft Sheet Cutting Suite"
+          ],
+          "state_of_art": [
+            "HOMAG Cut Rite"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the ROADEF/EURO 2018 glass-cutting challenge and classical guillotine instances give reference solutions",
+          "notes": ""
+        },
+        {
+          "id": "produce.profile_cutting_cam.linear_cutting_stock",
+          "name": "Linear cutting stock optimization",
+          "definition": "Given required lengths of bars, tubes, extrusions or lumber and the stock lengths available, choose cutting patterns that minimize waste.",
+          "inputs": "required lengths and quantities, stock lengths, kerf",
+          "outputs": "cutting patterns and cut lists",
+          "crosswalk": [
+            {
+              "scheme": "Waescher et al. 2007 cutting and packing typology",
+              "code": "",
+              "label": "One-dimensional cutting stock problem",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "SigmaNEST",
+            "Lantek Expert"
+          ],
+          "open_tools": [
+            "VPSolver"
+          ],
+          "benchmarkable": "yes: BPPLIB and classic one-dimensional instances (Falkenauer, Scholl) have proven optima",
+          "notes": ""
+        },
+        {
+          "id": "produce.profile_cutting_cam.turret_punch",
+          "name": "Turret punch programming",
+          "definition": "Given nested sheet parts and a punch press tool turret, assign tools to stations and sequence hits, nibbling and repositioning to avoid clamps.",
+          "inputs": "nested layout, punch tool library, turret configuration, clamp positions",
+          "outputs": "punch program with tool setup",
+          "crosswalk": [],
+          "onet_products": [
+            "Striker Systems SS-Punch",
+            "Metalix CAD/CAM System cncKad",
+            "JETCAM",
+            "Vero Software RADAN",
+            "Applied Production ProFab"
+          ],
+          "state_of_art": [
+            "TRUMPF TruTops Punch",
+            "Vero RADAN",
+            "JETCAM Expert"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: hit count, tool changes and travel are scoreable, but machine constraints vary by vendor",
+          "notes": ""
+        },
+        {
+          "id": "produce.profile_cutting_cam.press_brake_bending",
+          "name": "Press brake bend programming",
+          "definition": "Given a sheet-metal part, unfold it, choose bend sequence and tooling, set backgauge positions and check part-tool-machine collisions.",
+          "inputs": "sheet-metal model, material, press brake and tool library",
+          "outputs": "flat pattern, bend sequence, tool setup, press brake program",
+          "crosswalk": [],
+          "onet_products": [
+            "RADAN Radbend",
+            "Applied Production ProFold",
+            "Metalix CAD/CAM System cncKad"
+          ],
+          "state_of_art": [
+            "AMADA Dr. ABE_Bend",
+            "TRUMPF TruTops Bend",
+            "Bystronic BySoft",
+            "LVD CADMAN"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: bend-sequence feasibility is checkable by collision simulation, but no public part set exists",
+          "notes": ""
+        },
+        {
+          "id": "produce.profile_cutting_cam.tube_cutting",
+          "name": "Tube and profile cutting programming",
+          "definition": "Given tubes or structural shapes with cut features, generate rotary laser or plasma cutting paths with bevels and nest parts along the stock length.",
+          "inputs": "tube or profile part models, stock lengths, rotary cutter model",
+          "outputs": "tube cutting program and length nest",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Lantek Flex3d",
+            "BLM Artube",
+            "TRUMPF TruTops Boost"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: path validity and stock use are computable in simulation, but machine models are proprietary",
+          "notes": ""
+        },
+        {
+          "id": "produce.profile_cutting_cam.wire_edm",
+          "name": "Wire electrical discharge machining programming",
+          "definition": "Given 2D contours or ruled upper and lower profiles, generate two-axis and four-axis taper wire paths with skim cuts, tabs and threading points.",
+          "inputs": "part contours or ruled surfaces, wire and machine technology tables",
+          "outputs": "wire erosion program",
+          "crosswalk": [],
+          "onet_products": [
+            "Vero Software PEPS",
+            "Metalcam Fikus Visualcam",
+            "Vero Software VISI"
+          ],
+          "state_of_art": [
+            "Mastercam Wire",
+            "ESPRIT",
+            "PEPS",
+            "FIKUS Visualcam"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: contour offsets and taper geometry are checkable by simulation; technology tables are vendor-specific",
+          "notes": ""
+        },
+        {
+          "id": "produce.profile_cutting_cam.fabric_marker_making",
+          "name": "Fabric marker making",
+          "definition": "Given graded garment pattern pieces, fabric width and rules for grain, nap and pattern matching, nest pieces into a marker and generate the cutter program.",
+          "inputs": "graded pattern pieces, size ratios, fabric width and properties, matching rules",
+          "outputs": "marker layout, efficiency, knife-cutter program",
+          "crosswalk": [
+            {
+              "scheme": "Waescher et al. 2007 cutting and packing typology",
+              "code": "",
+              "label": "Two-dimensional irregular strip packing",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Gerber Technology AccuMark",
+            "Gerber Technology CutWorks",
+            "HAISEN SoftWare System"
+          ],
+          "state_of_art": [
+            "Gerber AccuMark",
+            "Lectra Diamino"
+          ],
+          "open_tools": [
+            "Deepnest"
+          ],
+          "benchmarkable": "yes: ESICUP apparel instances (shirts, trousers) are standard irregular strip-packing benchmarks",
+          "notes": "Pattern drafting and grading belong to design; nesting the graded pieces is production preparation."
+        }
+      ]
+    },
+    {
+      "id": "produce.nc_programs",
+      "name": "NC post-processing and verification",
+      "definition": "Given toolpaths or NC programs and a model of the machine and controller, produce controller-specific code, verify it by simulation, optimize it, and deliver it to the machine.",
+      "crosswalk": [
+        {
+          "scheme": "ISO 6983-1",
+          "code": "ISO 6983-1",
+          "label": "Numerical control program format (G-code)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 3592",
+          "code": "ISO 3592",
+          "label": "NC processor output: file structure and language format (CLDATA)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 14649 (STEP-NC)",
+          "code": "",
+          "label": "Data model for computerized numerical controllers",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 841",
+          "code": "ISO 841",
+          "label": "Coordinate system and motion nomenclature",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided manufacturing CAM software",
+        "Industrial control software"
+      ],
+      "see_also": [
+        "produce.milling_cam",
+        "produce.turning_cam"
+      ],
+      "notes": "Was the post-processing half of the CAM seed. Post-processing is split by kinematics (two/three-axis versus five-axis transformation) because that is where post-processors differ in difficulty; multi-channel posting is covered in produce.turning_cam.multichannel_swiss.",
+      "tasks": [
+        {
+          "id": "produce.nc_programs.post_processor_development",
+          "name": "Post-processor development",
+          "definition": "Given a machine's kinematics, controller dialect and cycles, build and configure a post-processor that turns neutral toolpath data into that machine's code.",
+          "inputs": "machine kinematic chain and limits, controller manual, sample programs",
+          "outputs": "post-processor configuration or script",
+          "crosswalk": [
+            {
+              "scheme": "ISO 841",
+              "code": "ISO 841",
+              "label": "Axis nomenclature",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO 3592",
+              "code": "ISO 3592",
+              "label": "CLDATA input",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "ICAM CAM-POST",
+            "Post-processor software"
+          ],
+          "state_of_art": [
+            "ICAM CAM-POST",
+            "IMSpost",
+            "Siemens NX Post Configurator"
+          ],
+          "open_tools": [
+            "FreeCAD CAM post-processors"
+          ],
+          "benchmarkable": "partly: a post can be scored by round-tripping reference toolpaths through a machine simulator",
+          "notes": ""
+        },
+        {
+          "id": "produce.nc_programs.three_axis_code_generation",
+          "name": "Two and three-axis code generation",
+          "definition": "Given toolpaths for a lathe or three-axis mill, emit controller code with correct arcs, canned cycles, compensation, tool changes and safe starts.",
+          "inputs": "cutter location data, post-processor, controller dialect",
+          "outputs": "controller program",
+          "crosswalk": [
+            {
+              "scheme": "ISO 6983-1",
+              "code": "ISO 6983-1",
+              "label": "Program format and preparatory functions",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Post-processor software",
+            "ICAM CAM-POST",
+            "G-code"
+          ],
+          "state_of_art": [
+            "Autodesk post processors",
+            "Mastercam post processors",
+            "IMSpost"
+          ],
+          "open_tools": [
+            "FreeCAD CAM post-processors",
+            "LinuxCNC"
+          ],
+          "benchmarkable": "yes: output can be executed in an open controller interpreter and the resulting path compared with the source toolpath",
+          "notes": ""
+        },
+        {
+          "id": "produce.nc_programs.five_axis_transformation",
+          "name": "Five-axis kinematic transformation",
+          "definition": "Given tool positions and axis vectors, compute rotary and linear axis values for a table-table, head-head or head-table machine, choosing solutions, handling singularities and wrap, and linearizing large rotary moves.",
+          "inputs": "tool position and orientation sequence, machine kinematics and limits",
+          "outputs": "axis-space program with feed rates (including inverse-time)",
+          "crosswalk": [
+            {
+              "scheme": "ISO 841",
+              "code": "ISO 841",
+              "label": "Rotary axis nomenclature",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO 10791-7",
+              "code": "ISO 10791-7",
+              "label": "Cone frustum test piece",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "ICAM CAM-POST"
+          ],
+          "state_of_art": [
+            "ICAM CAM-POST",
+            "IMSpost",
+            "Siemens NX Post Configurator"
+          ],
+          "open_tools": [
+            "LinuxCNC"
+          ],
+          "benchmarkable": "yes: axis solutions are exactly checkable from the kinematics, and singularity and wrap handling are scoreable on standard test paths",
+          "notes": ""
+        },
+        {
+          "id": "produce.nc_programs.stock_removal_verification",
+          "name": "NC program verification by material removal",
+          "definition": "Given an NC program, stock, tools and design model, simulate material removal and report gouges, excess stock and program errors.",
+          "inputs": "NC program, stock, tool assemblies, design model",
+          "outputs": "simulated in-process stock, deviation map, error list",
+          "crosswalk": [],
+          "onet_products": [
+            "CGTech Vericut CNC",
+            "NC verification software",
+            "MachineWorks Ltd. MachineWorks",
+            "Cadem seeNC Mill"
+          ],
+          "state_of_art": [
+            "VERICUT",
+            "NCSIMUL",
+            "CIMCO Machine Simulation"
+          ],
+          "open_tools": [
+            "CAMotics"
+          ],
+          "benchmarkable": "yes: deviation between simulated stock and the design model is computable, and programs with seeded errors make a test set",
+          "notes": ""
+        },
+        {
+          "id": "produce.nc_programs.machine_collision_simulation",
+          "name": "Machine collision simulation",
+          "definition": "Given an NC program and a full machine model with fixtures and holders, simulate controller-level motion and report collisions, near misses and overtravel.",
+          "inputs": "NC program, machine model, fixtures, tool assemblies",
+          "outputs": "collision and overtravel report",
+          "crosswalk": [],
+          "onet_products": [
+            "CGTech Vericut CNC"
+          ],
+          "state_of_art": [
+            "VERICUT",
+            "NCSIMUL"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: collisions and overtravel on seeded test programs are exact pass or fail checks",
+          "notes": ""
+        },
+        {
+          "id": "produce.nc_programs.feedrate_optimization",
+          "name": "Physics-based feed-rate optimization",
+          "definition": "Given an NC program, tools and material, adjust feed per segment so that chip load or cutting force stays within limits while minimizing cycle time.",
+          "inputs": "NC program, stock simulation, tool and material cutting model",
+          "outputs": "optimized NC program, predicted cycle time and forces",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "VERICUT Force",
+            "NCSIMUL Optitool"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: cycle-time reduction is computable, but force limits need cutting-force models calibrated per material",
+          "notes": ""
+        },
+        {
+          "id": "produce.nc_programs.shop_floor_programming",
+          "name": "Shop-floor and conversational programming",
+          "definition": "Given a drawing at the machine, write or edit NC code by hand or through a controller's conversational dialogs, with backplot and checks.",
+          "inputs": "part drawing, controller dialect or conversational cycles",
+          "outputs": "edited or conversational NC program",
+          "crosswalk": [],
+          "onet_products": [
+            "EditCNC",
+            "Computer numerical control CNC editor software",
+            "Mazak Mazatrol SMART CNC",
+            "FANUC CNC",
+            "Siemens SINUMERIK CNC",
+            "Kentech Kipware X CNC",
+            "G-code",
+            "Fanuc CNC software",
+            "Computerized numerical control CNC programming software",
+            "Computerized numerical control CNC software",
+            "FlashCut CNC",
+            "MDSI OpenCNC"
+          ],
+          "state_of_art": [
+            "CIMCO Edit",
+            "NCPlot",
+            "FANUC MANUAL GUIDE i"
+          ],
+          "open_tools": [
+            "LinuxCNC",
+            "bCNC"
+          ],
+          "benchmarkable": "partly: hand or machine-written G-code can be scored by simulation against a target part; conversational dialects are vendor-specific",
+          "notes": ""
+        },
+        {
+          "id": "produce.nc_programs.dnc_program_management",
+          "name": "NC program transfer and management",
+          "definition": "Given approved NC programs and networked machines, deliver programs by DNC or file transfer, drip-feed large programs, and keep revisions and comparisons.",
+          "inputs": "NC programs, machine connections, approval state",
+          "outputs": "transferred programs, revision history",
+          "crosswalk": [
+            {
+              "scheme": "MESA-11 MES functions",
+              "code": "",
+              "label": "Document control",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Predator DNC",
+            "Cadem NCnet"
+          ],
+          "state_of_art": [
+            "CIMCO NC-Base",
+            "Predator DNC"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: a transfer and revision-control function whose only metric is correctness",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "produce.additive_prep",
+      "name": "Additive manufacturing build preparation",
+      "definition": "Given 3D part models, an additive process and a machine, produce a validated build: repaired meshes, orientation, supports, layout and machine-specific layer or scan data.",
+      "crosswalk": [
+        {
+          "scheme": "ISO/ASTM 52900",
+          "code": "ISO/ASTM 52900",
+          "label": "Additive manufacturing process categories",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO/ASTM 52915",
+          "code": "ISO/ASTM 52915",
+          "label": "Additive manufacturing file format (AMF)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "3MF Consortium",
+          "code": "",
+          "label": "3D Manufacturing Format specification",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided manufacturing CAM software",
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "simulate.manufacturing_process",
+        "design.solid_modeling",
+        "design.geometry_exchange"
+      ],
+      "notes": "Seed kept. Slicing tasks are split by the ISO/ASTM 52900 process categories that need different layer data (MEX, VPP, PBF, DED, jetting); sheet lamination has no distinct software in the inputs. Build-process distortion simulation is handed to simulate.",
+      "tasks": [
+        {
+          "id": "produce.additive_prep.orientation_and_packing",
+          "name": "Build orientation and part packing",
+          "definition": "Given parts and a build volume, choose each part's orientation (support volume, surface quality, height) and arrange them on the plate or in the powder volume.",
+          "inputs": "part meshes, machine build volume, orientation criteria",
+          "outputs": "oriented parts, build layout, packing density",
+          "crosswalk": [],
+          "onet_products": [
+            "Materilise Magics",
+            "3D Printing software"
+          ],
+          "state_of_art": [
+            "Materialise Magics",
+            "Autodesk Netfabb"
+          ],
+          "open_tools": [
+            "PrusaSlicer",
+            "Ultimaker Cura"
+          ],
+          "benchmarkable": "yes: packing density, build height and support volume are computable on shared part sets",
+          "notes": ""
+        },
+        {
+          "id": "produce.additive_prep.support_generation",
+          "name": "Support structure generation",
+          "definition": "Given an oriented part and process rules, detect overhangs and generate block, tree or lattice supports.",
+          "inputs": "oriented mesh, overhang angle and process rules",
+          "outputs": "support geometry",
+          "crosswalk": [],
+          "onet_products": [
+            "Materilise Magics",
+            "Stereolithography SLA rapid prototyping systems"
+          ],
+          "state_of_art": [
+            "Materialise Magics",
+            "Autodesk Netfabb",
+            "Formlabs PreForm"
+          ],
+          "open_tools": [
+            "PrusaSlicer",
+            "Ultimaker Cura"
+          ],
+          "benchmarkable": "partly: support volume and contact area are computable, but printability needs physical trials",
+          "notes": ""
+        },
+        {
+          "id": "produce.additive_prep.extrusion_slicing",
+          "name": "Material extrusion slicing",
+          "definition": "Given a mesh and printer and material profile, slice into layers and generate perimeters, infill, travel and temperatures as printer code.",
+          "inputs": "mesh, printer profile, material profile",
+          "outputs": "printer G-code, time and material estimate",
+          "crosswalk": [
+            {
+              "scheme": "ISO/ASTM 52900",
+              "code": "MEX",
+              "label": "Material extrusion (MEX)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Fused deposition modeling FDM rapid prototyping systems",
+            "3D Printing software",
+            "Stratasys FDM MedModeler"
+          ],
+          "state_of_art": [
+            "Ultimaker Cura",
+            "PrusaSlicer",
+            "Bambu Studio",
+            "Simplify3D",
+            "Stratasys GrabCAD Print"
+          ],
+          "open_tools": [
+            "Ultimaker Cura",
+            "PrusaSlicer",
+            "OrcaSlicer",
+            "Slic3r"
+          ],
+          "benchmarkable": "yes: print time, material use and geometric fidelity of the toolpath are computable without printing",
+          "notes": ""
+        },
+        {
+          "id": "produce.additive_prep.vat_slicing",
+          "name": "Vat photopolymerization slicing",
+          "definition": "Given a supported mesh and resin profile, produce layer images or laser paths with exposure settings, hollowing and drain holes.",
+          "inputs": "supported mesh, resin and printer profile",
+          "outputs": "layer image stack or laser scan file",
+          "crosswalk": [
+            {
+              "scheme": "ISO/ASTM 52900",
+              "code": "VPP",
+              "label": "Vat photopolymerization (VPP)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Stereolithography SLA rapid prototyping systems"
+          ],
+          "state_of_art": [
+            "Formlabs PreForm",
+            "CHITUBOX",
+            "Lychee Slicer"
+          ],
+          "open_tools": [
+            "PrusaSlicer",
+            "UVtools"
+          ],
+          "benchmarkable": "partly: layer images are checkable against the mesh, but cure behaviour needs physical calibration",
+          "notes": ""
+        },
+        {
+          "id": "produce.additive_prep.powder_bed_scan_preparation",
+          "name": "Powder bed fusion scan preparation",
+          "definition": "Given a packed build, generate contour and hatch vectors, scan strategy (stripes, islands, rotation) and region parameters as a machine build file.",
+          "inputs": "build layout, material parameter sets, machine specification",
+          "outputs": "layer scan vectors and build file",
+          "crosswalk": [
+            {
+              "scheme": "ISO/ASTM 52900",
+              "code": "PBF",
+              "label": "Powder bed fusion (PBF)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Materilise Magics"
+          ],
+          "state_of_art": [
+            "EOSPRINT",
+            "Materialise Magics",
+            "Autodesk Netfabb",
+            "3D Systems 3DXpert",
+            "Renishaw QuantAM"
+          ],
+          "open_tools": [
+            "PySLM"
+          ],
+          "benchmarkable": "partly: vector coverage and scan time are computable; melt-pool quality needs simulation or trials",
+          "notes": ""
+        },
+        {
+          "id": "produce.additive_prep.deposition_path_planning",
+          "name": "Directed energy deposition path planning",
+          "definition": "Given a part or repair region, plan bead paths and deposition-head orientation for multi-axis wire or powder deposition, including non-planar layers.",
+          "inputs": "part or repair geometry, bead model, multi-axis machine or robot",
+          "outputs": "deposition toolpath",
+          "crosswalk": [
+            {
+              "scheme": "ISO/ASTM 52900",
+              "code": "DED",
+              "label": "Directed energy deposition (DED)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Siemens NX Additive Manufacturing",
+            "ADAXIS AdaOne",
+            "Autodesk PowerMill"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: coverage and bead overlap are computable, but deposited geometry needs process models",
+          "notes": ""
+        },
+        {
+          "id": "produce.additive_prep.jetting_preparation",
+          "name": "Jetting build preparation",
+          "definition": "Given multi-material or coloured models, assign materials and colours per voxel and produce halftoned layer images for material or binder jetting.",
+          "inputs": "coloured or multi-material models, printer material set",
+          "outputs": "per-layer droplet or binder images",
+          "crosswalk": [
+            {
+              "scheme": "ISO/ASTM 52900",
+              "code": "MJT",
+              "label": "Material jetting (MJT)",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO/ASTM 52900",
+              "code": "BJT",
+              "label": "Binder jetting (BJT)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Stratasys GrabCAD Print",
+            "HP SmartStream 3D Build Manager"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: colour and material placement are checkable against the model, but appearance needs printing",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "produce.robot_programming",
+      "name": "Industrial robot programming",
+      "definition": "Given a work cell (robots, tools, fixtures, parts) and a process, produce executable robot programs with validated reach, collision-free motion, calibrated frames and acceptable cycle time.",
+      "crosswalk": [
+        {
+          "scheme": "ISO 8373",
+          "code": "ISO 8373",
+          "label": "Robot programming: teach programming and off-line programming",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 9283",
+          "code": "ISO 9283",
+          "label": "Manipulating industrial robots: performance criteria",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISA-95 / IEC 62264-1 functional hierarchy",
+          "code": "",
+          "label": "Level 1-2: sensing, manipulating and automated control",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Industrial control software",
+        "Analytical or scientific software",
+        "Development environment software"
+      ],
+      "see_also": [
+        "operate.failure_hazard_analysis",
+        "science.machine_learning"
+      ],
+      "notes": "Seed 'Robot programming and offline simulation' kept and expanded. Tasks follow the steps a robot integrator performs (program, simulate, plan, sequence, calibrate, sense, safeguard). General mobile robotics has no owner in the brief; only industrial cells are modelled here.",
+      "tasks": [
+        {
+          "id": "produce.robot_programming.program_authoring",
+          "name": "Robot program authoring",
+          "definition": "Given a cell and task description, write the robot program in the vendor language with frames, I/O handshakes and error recovery.",
+          "inputs": "cell layout, task description, I/O list, frames",
+          "outputs": "robot program (vendor language)",
+          "crosswalk": [
+            {
+              "scheme": "ISO 8373",
+              "code": "ISO 8373",
+              "label": "Teach programming",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "FANUC Robotics HandlingTool",
+            "Robotic control software",
+            "Robotic workstation software",
+            "RobotWare DieCast"
+          ],
+          "state_of_art": [
+            "ABB RobotStudio",
+            "FANUC ROBOGUIDE",
+            "KUKA.WorkVisual",
+            "Universal Robots PolyScope"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: programs can run in vendor virtual controllers, but the languages are proprietary and benchmarks are only emerging",
+          "notes": ""
+        },
+        {
+          "id": "produce.robot_programming.offline_cell_simulation",
+          "name": "Offline programming and cell simulation",
+          "definition": "Given 3D models of robots, tools, fixtures and parts, program and simulate the cell with a virtual controller to check reach, collisions and cycle time before download.",
+          "inputs": "cell CAD, robot models, virtual controller, program",
+          "outputs": "validated program, reach and cycle-time report",
+          "crosswalk": [
+            {
+              "scheme": "ISO 8373",
+              "code": "ISO 8373",
+              "label": "Off-line programming",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "ABB RobotStudio",
+            "Robotic simulation software",
+            "Workcell simulation software",
+            "Logic Design RoboLogix"
+          ],
+          "state_of_art": [
+            "ABB RobotStudio",
+            "FANUC ROBOGUIDE",
+            "Siemens Process Simulate",
+            "DELMIA Robotics",
+            "RoboDK",
+            "Visual Components",
+            "KUKA.Sim"
+          ],
+          "open_tools": [
+            "Gazebo"
+          ],
+          "benchmarkable": "partly: reach and cycle time are computable in simulation, but accuracy on the real cell depends on calibration",
+          "notes": ""
+        },
+        {
+          "id": "produce.robot_programming.motion_planning",
+          "name": "Collision-free motion planning",
+          "definition": "Given robot kinematics, start and goal poses and the cell's obstacles, compute a collision-free, time-parameterized joint trajectory.",
+          "inputs": "robot model, obstacle geometry, start and goal",
+          "outputs": "joint trajectory",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Realtime Robotics RapidPlan",
+            "Siemens Process Simulate"
+          ],
+          "open_tools": [
+            "MoveIt",
+            "OMPL",
+            "Tesseract"
+          ],
+          "benchmarkable": "yes: MotionBenchMaker and OMPL benchmarking score success rate, path quality and planning time",
+          "notes": ""
+        },
+        {
+          "id": "produce.robot_programming.process_path_generation",
+          "name": "Process path generation",
+          "definition": "Given part geometry and a process (arc or spot welding, painting, dispensing, deburring, machining), generate tool paths, orientations and process parameters for the robot.",
+          "inputs": "part CAD with seams or surfaces, process tool, robot and positioner",
+          "outputs": "robot process paths with parameters",
+          "crosswalk": [],
+          "onet_products": [
+            "FANUC Robotics ArcTool",
+            "FANUC Robotics SpotTool+",
+            "Robotic painting software",
+            "FANUC Robotics Through Arc Seam Tracking TAST"
+          ],
+          "state_of_art": [
+            "Octopuz",
+            "RoboDK",
+            "DELMIA Robotics",
+            "ABB RobotStudio"
+          ],
+          "open_tools": [
+            "ROS-Industrial Noether"
+          ],
+          "benchmarkable": "partly: coverage uniformity and seam-following error are computable in simulation; process quality needs trials",
+          "notes": ""
+        },
+        {
+          "id": "produce.robot_programming.task_sequencing",
+          "name": "Robot task sequencing and coordination",
+          "definition": "Given many operations (welds, picks) and one or more robots with shared zones, allocate and order them to minimize cycle time without interference.",
+          "inputs": "operation list with poses, robots, interference zones",
+          "outputs": "per-robot sequences and interlocks, cycle time",
+          "crosswalk": [],
+          "onet_products": [
+            "FANUC Robotics MultiARM Systems"
+          ],
+          "state_of_art": [
+            "Siemens Process Simulate",
+            "DELMIA Robotics"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: the core is a generalized travelling-salesman problem with public instances, but cell interference constraints are not standardized",
+          "notes": ""
+        },
+        {
+          "id": "produce.robot_programming.robot_calibration",
+          "name": "Robot and tool calibration",
+          "definition": "Given measurements of the robot and tool, identify tool centre point, user frames, camera-to-robot transform and kinematic parameter corrections.",
+          "inputs": "measured poses or images, nominal kinematics",
+          "outputs": "calibrated tool, frames and kinematic parameters",
+          "crosswalk": [
+            {
+              "scheme": "ISO 9283",
+              "code": "ISO 9283",
+              "label": "Pose accuracy and repeatability",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Tool center point TCP setting software",
+            "FANUC Robotics iRCalibration Vision Suite"
+          ],
+          "state_of_art": [
+            "ABB Absolute Accuracy",
+            "Dynalog DynaCal",
+            "RoboDK"
+          ],
+          "open_tools": [
+            "ROS-Industrial robot_cal_tools"
+          ],
+          "benchmarkable": "yes: residual pose error after calibration can be scored on simulated or published measurement sets against ISO 9283 criteria",
+          "notes": ""
+        },
+        {
+          "id": "produce.robot_programming.vision_guided_picking",
+          "name": "Vision-guided picking",
+          "definition": "Given 2D or 3D sensor data of parts in a tray or bin, estimate part poses, choose grasps and plan the approach.",
+          "inputs": "images or point clouds, part models, gripper model",
+          "outputs": "part poses, ranked grasps, pick trajectories",
+          "crosswalk": [],
+          "onet_products": [
+            "FANUC Robotics iRVision",
+            "GRASPIT!"
+          ],
+          "state_of_art": [
+            "FANUC iRVision",
+            "Cognex VisionPro",
+            "Photoneo Bin Picking Studio",
+            "Pickit"
+          ],
+          "open_tools": [
+            "GraspIt!",
+            "Dex-Net"
+          ],
+          "benchmarkable": "yes: the BOP 6D pose benchmark and GraspNet-1Billion score pose estimation and grasp quality",
+          "notes": ""
+        },
+        {
+          "id": "produce.robot_programming.safety_configuration",
+          "name": "Robot safety configuration",
+          "definition": "Given a risk assessment and cell layout, configure safe zones, tool and speed limits, and speed-and-separation or collaborative force limits in the robot safety controller.",
+          "inputs": "risk assessment, cell layout, collaborative limits",
+          "outputs": "safety controller configuration and validation report",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10218",
+              "code": "ISO 10218",
+              "label": "Robots and robotic devices: safety requirements",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO/TS 15066",
+              "code": "ISO/TS 15066",
+              "label": "Collaborative robots",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "FANUC Robotics Dual Check Safety DCS Position and Speed Check"
+          ],
+          "state_of_art": [
+            "ABB SafeMove",
+            "FANUC Dual Check Safety",
+            "KUKA.SafeOperation"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: zone coverage against the risk assessment is geometrically checkable; validation is by certified testing",
+          "notes": "Risk assessment itself belongs to operate."
+        }
+      ]
+    },
+    {
+      "id": "produce.plc_programming",
+      "name": "Programmable controller programming",
+      "definition": "Given a control specification and I/O list for a machine or process, author, test and deploy controller logic in the IEC 61131-3 or IEC 61499 languages.",
+      "crosswalk": [
+        {
+          "scheme": "IEC 61131-3",
+          "code": "IEC 61131-3",
+          "label": "Programmable controllers: programming languages",
+          "basis": "fetched",
+          "url": "https://www.plcopen.org/iec-61131-3"
+        },
+        {
+          "scheme": "IEC 61499",
+          "code": "IEC 61499",
+          "label": "Function blocks for distributed control",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISA-95 / IEC 62264-1 functional hierarchy",
+          "code": "",
+          "label": "Level 1-2: sensing, manipulating and automated control",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Industrial control software",
+        "Development environment software",
+        "Program testing software"
+      ],
+      "see_also": [
+        "computing.embedded",
+        "design.electrical_systems",
+        "simulate.system_dynamics"
+      ],
+      "notes": "Seed 'PLC and controller programming (IEC 61131-3)' kept. Tasks follow the IEC 61131-3 languages (IL is deprecated in the third edition and omitted), then motion, safety and verification, which practitioners treat as distinct work.",
+      "tasks": [
+        {
+          "id": "produce.plc_programming.ladder_diagram",
+          "name": "Ladder diagram programming",
+          "definition": "Given interlock and sequence requirements, write relay-style ladder logic for a programmable controller.",
+          "inputs": "control narrative, I/O list, interlock matrix",
+          "outputs": "ladder program",
+          "crosswalk": [
+            {
+              "scheme": "IEC 61131-3",
+              "code": "LD",
+              "label": "Ladder diagram",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Ladder Logic",
+            "KEYENCE PLC Ladder Logic",
+            "Soft Servo Systems LadderWorks PLC",
+            "Rockwell RSLogix",
+            "Programmable logic controller PLC software",
+            "BIT Corp ProMACS PLC",
+            "GE Fanuc Automation VersaPro"
+          ],
+          "state_of_art": [
+            "Rockwell Studio 5000 Logix Designer",
+            "Siemens TIA Portal",
+            "Mitsubishi GX Works3"
+          ],
+          "open_tools": [
+            "OpenPLC Editor",
+            "Beremiz"
+          ],
+          "benchmarkable": "yes: programs run on open runtimes against I/O test vectors and can be model-checked",
+          "notes": ""
+        },
+        {
+          "id": "produce.plc_programming.structured_text",
+          "name": "Structured text programming",
+          "definition": "Given a control specification, write textual IEC 61131-3 code for calculations, state machines and data handling.",
+          "inputs": "control specification, data types, I/O list",
+          "outputs": "structured text program",
+          "crosswalk": [
+            {
+              "scheme": "IEC 61131-3",
+              "code": "ST",
+              "label": "Structured text",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "CODESYS",
+            "Siemens SIMATIC STEP 7",
+            "Keb Combivis Studio",
+            "Programmable logic controller PLC code generation software"
+          ],
+          "state_of_art": [
+            "CODESYS",
+            "Siemens TIA Portal",
+            "Beckhoff TwinCAT 3"
+          ],
+          "open_tools": [
+            "Beremiz",
+            "OpenPLC Editor",
+            "RuSTy"
+          ],
+          "benchmarkable": "yes: LLM4PLC and Agents4PLC score generated structured text by compilation, simulation and model checking",
+          "notes": "Code generated from block-diagram models lands here."
+        },
+        {
+          "id": "produce.plc_programming.function_block_diagram",
+          "name": "Function block diagram programming",
+          "definition": "Given a control specification, wire standard and user function blocks graphically for continuous and logic control.",
+          "inputs": "control specification, block library",
+          "outputs": "function block diagram program",
+          "crosswalk": [
+            {
+              "scheme": "IEC 61131-3",
+              "code": "FBD",
+              "label": "Function block diagram",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "GE Fanuc Proficy Machine Edition",
+            "Rockwell Automation software"
+          ],
+          "state_of_art": [
+            "Siemens TIA Portal",
+            "CODESYS",
+            "Rockwell Studio 5000 Logix Designer"
+          ],
+          "open_tools": [
+            "Beremiz",
+            "OpenPLC Editor"
+          ],
+          "benchmarkable": "partly: programs execute on runtimes, but graphical sources are hard to exchange outside PLCopen XML",
+          "notes": ""
+        },
+        {
+          "id": "produce.plc_programming.sequential_function_chart",
+          "name": "Sequential function chart programming",
+          "definition": "Given a machine cycle, express it as steps, transitions and actions with parallel and alternative branches.",
+          "inputs": "machine sequence description, I/O list",
+          "outputs": "sequential function chart",
+          "crosswalk": [
+            {
+              "scheme": "IEC 61131-3",
+              "code": "SFC",
+              "label": "Sequential function chart",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Programmable logic controller PLC software"
+          ],
+          "state_of_art": [
+            "Siemens S7-GRAPH",
+            "CODESYS",
+            "Rockwell Studio 5000 Logix Designer"
+          ],
+          "open_tools": [
+            "Beremiz"
+          ],
+          "benchmarkable": "yes: sequence behaviour is checkable by model checking or simulation against the specified cycle",
+          "notes": ""
+        },
+        {
+          "id": "produce.plc_programming.distributed_function_blocks",
+          "name": "Distributed function block applications",
+          "definition": "Given a control application spanning several devices, model it as event-driven IEC 61499 function block networks and map them to devices.",
+          "inputs": "application specification, device topology",
+          "outputs": "IEC 61499 application and device mapping",
+          "crosswalk": [
+            {
+              "scheme": "IEC 61499",
+              "code": "IEC 61499",
+              "label": "Function blocks",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Schneider Electric EcoStruxure Automation Expert",
+            "nxtControl nxtSTUDIO"
+          ],
+          "open_tools": [
+            "Eclipse 4diac"
+          ],
+          "benchmarkable": "partly: applications run on open runtimes, but few reference applications exist",
+          "notes": ""
+        },
+        {
+          "id": "produce.plc_programming.motion_and_drives",
+          "name": "Motion control and drive configuration",
+          "definition": "Given axis mechanics and motion requirements, configure servo and frequency drives, program PLCopen motion blocks, cams and electronic gearing, and tune axes.",
+          "inputs": "axis mechanics, motor and drive data, motion profile",
+          "outputs": "drive parameters, motion program, tuning",
+          "crosswalk": [
+            {
+              "scheme": "PLCopen Motion Control",
+              "code": "",
+              "label": "Function blocks for motion control",
+              "basis": "fetched",
+              "url": "https://www.plcopen.org/standards/motion-control"
+            }
+          ],
+          "onet_products": [
+            "Motion control software",
+            "National Instruments NI Motion Assistant",
+            "Variable frequency drive VFD software",
+            "Machine control software",
+            "Machine Control Specialists CoilPro"
+          ],
+          "state_of_art": [
+            "Siemens SINAMICS Startdrive",
+            "Beckhoff TwinCAT 3",
+            "Bosch Rexroth IndraWorks"
+          ],
+          "open_tools": [
+            "LinuxCNC"
+          ],
+          "benchmarkable": "partly: cam profiles and gearing are checkable in simulation; axis tuning needs the physical axis",
+          "notes": ""
+        },
+        {
+          "id": "produce.plc_programming.safety_logic",
+          "name": "Safety interlock logic programming",
+          "definition": "Given a cause-and-effect matrix and safety requirements, program safety controller or instrumented-system logic with voting, bypass and reset handling.",
+          "inputs": "cause-and-effect matrix, safety requirements specification",
+          "outputs": "safety logic program and test records",
+          "crosswalk": [
+            {
+              "scheme": "IEC 61511",
+              "code": "IEC 61511",
+              "label": "Safety instrumented systems for the process industry",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Interlock shutdown systems",
+            "Safety instrumented system SIS software"
+          ],
+          "state_of_art": [
+            "Schneider Electric Triconex TriStation 1131",
+            "Rockwell GuardLogix (Studio 5000)",
+            "HIMA SILworX"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: logic can be checked against the cause-and-effect matrix by model checking; certification is not benchmarkable",
+          "notes": "Safety integrity level determination and verification belong to operate."
+        },
+        {
+          "id": "produce.plc_programming.logic_verification",
+          "name": "Control logic verification and virtual commissioning",
+          "definition": "Given controller code and a simulated machine or plant, test and formally verify the logic before startup.",
+          "inputs": "controller program, plant or machine emulation, requirements",
+          "outputs": "test results, counterexamples, commissioning report",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Siemens S7-PLCSIM Advanced",
+            "Siemens SIMIT",
+            "Rockwell Emulate3D",
+            "Factory I/O"
+          ],
+          "open_tools": [
+            "PLCverif",
+            "OpenPLC Runtime"
+          ],
+          "benchmarkable": "yes: seeded-fault detection on reference programs and plant models gives a score",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "produce.supervisory_control",
+      "name": "Supervisory and process control",
+      "definition": "Given a running plant with field instruments and controllers, show its state to operators, acquire and archive data, raise alarms, and compute regulatory and advanced control actions.",
+      "crosswalk": [
+        {
+          "scheme": "ISA-95 / IEC 62264-1 functional hierarchy",
+          "code": "",
+          "label": "Level 2: monitoring, supervisory control and automated control",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "NIST smart manufacturing ecosystem (NISTIR 8107)",
+          "code": "",
+          "label": "Production system: supervisory control",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISA-101",
+          "code": "ISA-101.01-2015",
+          "label": "Human Machine Interfaces for Process Automation Systems",
+          "basis": "fetched",
+          "url": "https://www.isa.org/standards-and-publications/isa-standards/isa-101-standards-committee"
+        },
+        {
+          "scheme": "ISA-18.2 / IEC 62682",
+          "code": "IEC 62682",
+          "label": "Management of alarm systems",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Industrial control software"
+      ],
+      "see_also": [
+        "simulate.system_dynamics",
+        "operate.grid_operations",
+        "operate.building_automation"
+      ],
+      "notes": "Seed 'SCADA, HMI and distributed process control on the plant floor' kept as one capability: ISA-95 Level 2. Utility-network SCADA (EMS, DMS, OMS) and building automation go to operate per the brief. Control-law design is simulate's; tuning and deploying controllers on a running plant is here.",
+      "tasks": [
+        {
+          "id": "produce.supervisory_control.operator_displays",
+          "name": "Operator display design",
+          "definition": "Given a process and its tags, build overview and detail displays, faceplates and navigation following high-performance HMI practice.",
+          "inputs": "process diagrams, tag list, display standards",
+          "outputs": "HMI screens and faceplates",
+          "crosswalk": [
+            {
+              "scheme": "ISA-101",
+              "code": "ANSI/ISA-101.01",
+              "label": "HMI design",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Human machine interface HMI software",
+            "AVEVA InTouch HMI",
+            "Siemens SIMATIC WinCC",
+            "Siemens SIMATIC HMI",
+            "Allen Bradley PanelView",
+            "Rockwell RSView",
+            "GE Intelligent Platforms Proficy HMI/SCADA iFIX"
+          ],
+          "state_of_art": [
+            "AVEVA InTouch",
+            "Inductive Automation Ignition",
+            "Rockwell FactoryTalk View",
+            "Siemens WinCC Unified"
+          ],
+          "open_tools": [
+            "FUXA",
+            "Rapid SCADA"
+          ],
+          "benchmarkable": "no: display quality is judged in operator studies and has no reference answer",
+          "notes": ""
+        },
+        {
+          "id": "produce.supervisory_control.supervisory_acquisition",
+          "name": "Supervisory data acquisition and telemetry",
+          "definition": "Given controllers and remote terminal units, poll them over industrial protocols, keep a real-time tag database, and issue supervisory setpoints and commands.",
+          "inputs": "device list, protocols, tag definitions",
+          "outputs": "real-time tag values, events, commands",
+          "crosswalk": [
+            {
+              "scheme": "IEC 62541",
+              "code": "IEC 62541",
+              "label": "OPC Unified Architecture",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Supervisory control and data acquisition SCADA software",
+            "Wonderware software",
+            "Schneider Electric CitectSCADA",
+            "MASS Group FactoryLink SCADA HMI",
+            "Yokogawa FAST/TOOLS",
+            "PLC Automation Intellution iFIX",
+            "Prosys Open Platform Communications unified architecture software"
+          ],
+          "state_of_art": [
+            "Inductive Automation Ignition",
+            "AVEVA System Platform",
+            "Siemens WinCC OA",
+            "GE Proficy iFIX"
+          ],
+          "open_tools": [
+            "Rapid SCADA",
+            "ScadaBR",
+            "OpenSCADA",
+            "open62541"
+          ],
+          "benchmarkable": "partly: protocol conformance and tag throughput are testable, supervisory quality is not",
+          "notes": ""
+        },
+        {
+          "id": "produce.supervisory_control.alarm_management",
+          "name": "Alarm management and rationalization",
+          "definition": "Given alarm configurations and alarm and event logs, rationalize limits and priorities and find floods, chattering and standing alarms.",
+          "inputs": "alarm database, alarm and event history, operating envelope",
+          "outputs": "rationalized alarm database, alarm performance metrics",
+          "crosswalk": [
+            {
+              "scheme": "ISA-18.2 / IEC 62682",
+              "code": "IEC 62682",
+              "label": "Alarm management lifecycle",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Alarm management system software"
+          ],
+          "state_of_art": [
+            "Hexagon PAS PlantState Suite",
+            "Honeywell DynAMo Alarm Suite"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: ISA-18.2 alarm metrics are computable from logs, but public logs are rare",
+          "notes": ""
+        },
+        {
+          "id": "produce.supervisory_control.process_historian",
+          "name": "Process data historian",
+          "definition": "Given high-rate tag streams, compress, store and serve plant time series with interpolation, aggregation and event frames.",
+          "inputs": "tag streams, compression settings, asset hierarchy",
+          "outputs": "archived time series, aggregates, event frames",
+          "crosswalk": [],
+          "onet_products": [
+            "Teknik Segala OSI Plant Information PI System",
+            "AspenTech Aspen InfoPlus",
+            "Citect IIM",
+            "CitectSCADA Reports"
+          ],
+          "state_of_art": [
+            "AVEVA PI System",
+            "AspenTech InfoPlus.21",
+            "Canary Historian",
+            "Honeywell Uniformance PHD"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: compression ratio against reconstruction error and query speed are measurable on shared plant data",
+          "notes": "General time-series databases belong to computing."
+        },
+        {
+          "id": "produce.supervisory_control.control_strategy_configuration",
+          "name": "Distributed control strategy configuration",
+          "definition": "Given process and instrument diagrams and control narratives, configure PID, cascade, ratio, feed-forward, override and split-range strategies in a distributed control system.",
+          "inputs": "process and instrument diagrams, control narratives, I/O assignments",
+          "outputs": "configured control modules",
+          "crosswalk": [
+            {
+              "scheme": "ISA-95 / IEC 62264-1 functional hierarchy",
+              "code": "",
+              "label": "Level 2 automated control",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Distributed control system DCS",
+            "Digital control systems DCS",
+            "Emerson Ovation",
+            "General Electric Mark VI Distributed Control System DCS",
+            "General Electric Mark VI Integrated Control System ICS",
+            "Siemens Teleperm",
+            "Siemens Power Plant Automation SPPA",
+            "Process control software",
+            "Control system software",
+            "Industrial control systems software"
+          ],
+          "state_of_art": [
+            "Emerson DeltaV",
+            "Honeywell Experion PKS",
+            "Yokogawa CENTUM VP",
+            "ABB Ability System 800xA",
+            "Siemens SIMATIC PCS 7"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: strategies can be scored on standard process simulations (Tennessee Eastman) for tracking and disturbance rejection",
+          "notes": ""
+        },
+        {
+          "id": "produce.supervisory_control.loop_tuning_monitoring",
+          "name": "Control loop performance monitoring",
+          "definition": "Given bump tests or routine operating data, identify loop dynamics, compute PID tunings, and detect oscillation, valve stiction and poorly performing loops.",
+          "inputs": "loop process variable, setpoint and output histories",
+          "outputs": "process models, PID tunings, loop performance and diagnosis report",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Control Station LOOP-PRO",
+            "Honeywell Control Performance Monitor",
+            "ExperTune PlantTriage"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: tuning rules are scoreable on standard test-plant batches and stiction detection on the International Stiction Database",
+          "notes": "Editor: renamed from 'Control loop tuning and performance monitoring'; tuning design is simulate.system_dynamics."
+        },
+        {
+          "id": "produce.supervisory_control.advanced_process_control",
+          "name": "Advanced process control",
+          "definition": "Given plant step-test data and operating constraints, identify multivariable models and configure a model predictive or rule-based supervisory controller over the base control layer.",
+          "inputs": "step-test data, constraints, economic objectives",
+          "outputs": "controller models and configuration, predicted benefits",
+          "crosswalk": [],
+          "onet_products": [
+            "Wastewater expert control systems"
+          ],
+          "state_of_art": [
+            "AspenTech DMC3",
+            "Honeywell Profit Controller",
+            "Emerson DeltaV PredictPro"
+          ],
+          "open_tools": [
+            "do-mpc"
+          ],
+          "benchmarkable": "yes: the Tennessee Eastman process and the Shell standard control problem score constraint handling and economic performance",
+          "notes": ""
+        },
+        {
+          "id": "produce.supervisory_control.operator_training_simulation",
+          "name": "Operator training simulation",
+          "definition": "Given a dynamic plant model and an emulated control system, run training scenarios (start-up, upsets, trips) and record trainee performance.",
+          "inputs": "dynamic plant model, emulated controls, scenarios",
+          "outputs": "training sessions and trainee assessments",
+          "crosswalk": [],
+          "onet_products": [
+            "AspenTech HYSYS"
+          ],
+          "state_of_art": [
+            "AVEVA Dynamic Simulation",
+            "Honeywell UniSim Competency Suite",
+            "Yokogawa OmegaLand"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: effectiveness is measured on people, and model fidelity belongs to simulation benchmarks",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "produce.batch_control",
+      "name": "Batch control and recipe management",
+      "definition": "Given products made in batches and a plant described by the ISA-88 physical model, define recipes and formulas, execute batches on units, and record what happened.",
+      "crosswalk": [
+        {
+          "scheme": "ISA-88 / IEC 61512-1 batch control",
+          "code": "IEC 61512-1",
+          "label": "Batch control models and terminology",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISA-88 / IEC 61512-1 batch control",
+          "code": "",
+          "label": "Control activities: recipe management, process management, unit supervision, process control",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Industrial control software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "produce.supervisory_control",
+        "produce.manufacturing_execution",
+        "design.product_data"
+      ],
+      "notes": "Seed kept. Tasks follow the ISA-88 control activities; colour-match formulation is placed here because it computes a batch formula.",
+      "tasks": [
+        {
+          "id": "produce.batch_control.recipe_authoring",
+          "name": "Master recipe authoring",
+          "definition": "Given a product's general recipe and the plant's equipment model, build a master recipe: procedure, unit procedures, operations, phases, formula and equipment requirements.",
+          "inputs": "general or site recipe, ISA-88 equipment model, phase library",
+          "outputs": "master recipe",
+          "crosswalk": [
+            {
+              "scheme": "ISA-88 / IEC 61512-1 batch control",
+              "code": "IEC 61512-1",
+              "label": "Recipe management; general, site, master and control recipes",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Rockwell FactoryTalk Batch",
+            "Emerson DeltaV Batch",
+            "Siemens SIMATIC BATCH",
+            "AVEVA Batch Management"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: recipes can be validated against the equipment model and simulated, but no public set exists",
+          "notes": ""
+        },
+        {
+          "id": "produce.batch_control.batch_execution",
+          "name": "Batch execution and unit arbitration",
+          "definition": "Given scheduled batches and control recipes, allocate units, coordinate phases and handle holds, aborts and restarts.",
+          "inputs": "control recipes, batch schedule, unit states",
+          "outputs": "executed batches, event journal",
+          "crosswalk": [
+            {
+              "scheme": "ISA-88 / IEC 61512-1 batch control",
+              "code": "IEC 61512-1",
+              "label": "Process management and unit supervision",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Rockwell FactoryTalk Batch",
+            "Emerson DeltaV Batch",
+            "Siemens SIMATIC BATCH"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: throughput and allocation conflicts are measurable in plant simulation",
+          "notes": ""
+        },
+        {
+          "id": "produce.batch_control.phase_state_programming",
+          "name": "Equipment phase and machine state programming",
+          "definition": "Given equipment capabilities, implement phase logic or machine logic that follows the ISA-88 state model or the PackML machine state model.",
+          "inputs": "equipment capabilities, state model, I/O",
+          "outputs": "phase or machine-state logic",
+          "crosswalk": [
+            {
+              "scheme": "ISA-88 / IEC 61512-1 batch control",
+              "code": "IEC 61512-1",
+              "label": "Procedural control: phases",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISA-TR88.00.02 (PackML)",
+              "code": "ISA-TR88.00.02",
+              "label": "Machine and unit states",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Rockwell Studio 5000 Logix Designer",
+            "Beckhoff TwinCAT 3"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: conformance to the state model's transitions is model-checkable",
+          "notes": ""
+        },
+        {
+          "id": "produce.batch_control.electronic_batch_records",
+          "name": "Electronic batch records and review",
+          "definition": "Given batch execution data, signatures and deviations, compile the batch record and an exception report for release review.",
+          "inputs": "batch events, material use, signatures, deviations",
+          "outputs": "electronic batch record, review-by-exception report",
+          "crosswalk": [
+            {
+              "scheme": "ISA-88 Part 4",
+              "code": "ISA-88.00.04",
+              "label": "Batch production records",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "21 CFR 211",
+              "code": "211.188",
+              "label": "Batch production and control records",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Werum PAS-X",
+            "Emerson Syncade",
+            "Siemens Opcenter Execution Pharma",
+            "Rockwell PharmaSuite"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: correctness is judged by regulatory audit, not by a score",
+          "notes": ""
+        },
+        {
+          "id": "produce.batch_control.formula_management",
+          "name": "Formula and specification management",
+          "definition": "Given ingredient specifications and product targets, maintain formulas, scale them, apply substitutions and compute composition and cost.",
+          "inputs": "ingredients and their specifications, target composition, batch size",
+          "outputs": "approved formula, scaled batch tickets, composition",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Infor Optiva",
+            "Siemens Opcenter RD&L"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: scaling and composition are exactly checkable; least-cost formulation is a linear program with reference cases",
+          "notes": ""
+        },
+        {
+          "id": "produce.batch_control.color_match_formulation",
+          "name": "Colour match formulation",
+          "definition": "Given a measured target colour and a colorant set, compute a recipe of pigments or dyes that reproduces the colour under stated illuminants.",
+          "inputs": "spectral measurement of target, colorant database, substrate",
+          "outputs": "colorant recipe, predicted colour difference",
+          "crosswalk": [],
+          "onet_products": [
+            "Paint mixing and matching software"
+          ],
+          "state_of_art": [
+            "Datacolor MATCH",
+            "X-Rite Color iMatch"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: predicted recipes can be scored by CIEDE2000 colour difference against measured targets",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "produce.manufacturing_execution",
+      "name": "Manufacturing execution",
+      "definition": "Given released production orders, routings and the plant's real-time state, dispatch work, guide and record its execution, collect equipment data, track material and report performance.",
+      "crosswalk": [
+        {
+          "scheme": "ISA-95 / IEC 62264-1 functional hierarchy",
+          "code": "",
+          "label": "Level 3: manufacturing operations management",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "IEC 62264-3 activity model",
+          "code": "",
+          "label": "Production operations management",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "MESA-11 MES functions",
+          "code": "",
+          "label": "MESA-11 functions",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "NIST smart manufacturing ecosystem (NISTIR 8107)",
+          "code": "",
+          "label": "Manufacturing operations management",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Industrial control software",
+        "Inventory management software",
+        "Computer aided manufacturing CAM software"
+      ],
+      "see_also": [
+        "produce.production_scheduling"
+      ],
+      "notes": "Was the MES part of seed 'Manufacturing execution and production scheduling'. Scheduling is split out because it is an optimization problem with its own benchmarks; the remaining tasks are the IEC 62264-3 production activities (dispatching, execution management, data collection, tracking, performance analysis, resource management).",
+      "tasks": [
+        {
+          "id": "produce.manufacturing_execution.dispatching",
+          "name": "Production dispatching",
+          "definition": "Given a schedule or order pool and live work-centre status, release work and order dispatch lists by priority rules in real time.",
+          "inputs": "released orders, schedule, work-centre and WIP status",
+          "outputs": "dispatch lists, released jobs",
+          "crosswalk": [
+            {
+              "scheme": "IEC 62264-3 activity model",
+              "code": "",
+              "label": "Dispatching production orders",
+              "basis": "fetched",
+              "url": "https://en.wikipedia.org/wiki/Manufacturing_execution_system"
+            },
+            {
+              "scheme": "MESA-11 MES functions",
+              "code": "",
+              "label": "Dispatching production units",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Production control software",
+            "Computer integrated manufacturing CIM software",
+            "Exact Software JobBOSS",
+            "JobBOSS"
+          ],
+          "state_of_art": [
+            "Siemens Opcenter Execution",
+            "Applied Materials APF Real Time Dispatcher",
+            "Critical Manufacturing MES"
+          ],
+          "open_tools": [
+            "qcadoo MES"
+          ],
+          "benchmarkable": "yes: the SMT2020 semiconductor testbed and similar simulated plants score dispatching rules on cycle time and tardiness",
+          "notes": ""
+        },
+        {
+          "id": "produce.manufacturing_execution.execution_guidance",
+          "name": "Work order execution and operator guidance",
+          "definition": "Given a work order and its routing, present instructions, drawings and parameters at each station and record step completion, consumption and sign-offs.",
+          "inputs": "work order, routing, work instructions, bill of materials",
+          "outputs": "executed operations, consumption, electronic traveller",
+          "crosswalk": [
+            {
+              "scheme": "IEC 62264-3 activity model",
+              "code": "",
+              "label": "Execution of production orders",
+              "basis": "fetched",
+              "url": "https://en.wikipedia.org/wiki/Manufacturing_execution_system"
+            },
+            {
+              "scheme": "MESA-11 MES functions",
+              "code": "",
+              "label": "Document control",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Manufacturing execution system MES",
+            "Camstar Manufacturing Execution System MES",
+            "Eyelit Manufacturing",
+            "Plex Systems Plex Manufacturing Cloud",
+            "Marel production system MPS",
+            "Blueprint display software"
+          ],
+          "state_of_art": [
+            "Siemens Opcenter Execution",
+            "DELMIA Apriso",
+            "Tulip",
+            "Critical Manufacturing MES"
+          ],
+          "open_tools": [
+            "qcadoo MES"
+          ],
+          "benchmarkable": "no: a transactional function judged by usability and compliance",
+          "notes": ""
+        },
+        {
+          "id": "produce.manufacturing_execution.machine_data_collection",
+          "name": "Machine and production data collection",
+          "definition": "Given connected machines and lines, capture states, counts, cycle times and process parameters through equipment interfaces.",
+          "inputs": "machine signals over MTConnect, OPC UA, SECS/GEM or I/O",
+          "outputs": "equipment states, counts, process data records",
+          "crosswalk": [
+            {
+              "scheme": "IEC 62264-3 activity model",
+              "code": "",
+              "label": "Collection of production data",
+              "basis": "fetched",
+              "url": "https://en.wikipedia.org/wiki/Manufacturing_execution_system"
+            },
+            {
+              "scheme": "MESA-11 MES functions",
+              "code": "",
+              "label": "Data collection/acquisition",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "SEMI E30",
+              "code": "SEMI E30",
+              "label": "Generic model for communications and control of manufacturing equipment (GEM)",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "MTConnect",
+              "code": "",
+              "label": "MTConnect standard",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Machine monitoring software",
+            "Husky Injection Molding Systems Shotscope NX",
+            "Visi-Trak True-Trak 20/20",
+            "HotFlo! Die-Shot Monitor"
+          ],
+          "state_of_art": [
+            "MachineMetrics",
+            "FORCAM FORCE",
+            "Kepware KEPServerEX",
+            "Cimetrix CIMConnect"
+          ],
+          "open_tools": [
+            "MTConnect cppagent",
+            "open62541",
+            "secsgem"
+          ],
+          "benchmarkable": "partly: state classification and cycle detection can be scored on labelled machine logs, which are rarely public",
+          "notes": "Includes process-specific shot and cycle monitors for die casting and injection moulding."
+        },
+        {
+          "id": "produce.manufacturing_execution.tracking_genealogy",
+          "name": "Production tracking and genealogy",
+          "definition": "Given production events, track lots, serials and WIP location and build as-built genealogy for forward and backward trace.",
+          "inputs": "material movements, consumption and production events",
+          "outputs": "WIP status, as-built genealogy, trace reports",
+          "crosswalk": [
+            {
+              "scheme": "IEC 62264-3 activity model",
+              "code": "",
+              "label": "Production track and trace",
+              "basis": "fetched",
+              "url": "https://en.wikipedia.org/wiki/Manufacturing_execution_system"
+            },
+            {
+              "scheme": "MESA-11 MES functions",
+              "code": "",
+              "label": "Product tracking and genealogy",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Production tracking system software",
+            "Traceability software",
+            "Camstar Systems Camstar Semiconductor Suite",
+            "Eyelit Manufacturing",
+            "Industrial production manager and stock control software",
+            "Manufacturing reporting system"
+          ],
+          "state_of_art": [
+            "Siemens Opcenter Execution",
+            "Critical Manufacturing MES",
+            "Aegis FactoryLogix"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: trace queries are exact checks on synthetic genealogies; no public plant data exist",
+          "notes": ""
+        },
+        {
+          "id": "produce.manufacturing_execution.performance_analysis",
+          "name": "Production performance analysis",
+          "definition": "Given equipment states and production counts, compute overall equipment effectiveness, loss categories and other operations key performance indicators.",
+          "inputs": "equipment state history, counts, planned time, quality results",
+          "outputs": "KPI values, loss Pareto",
+          "crosswalk": [
+            {
+              "scheme": "IEC 62264-3 activity model",
+              "code": "",
+              "label": "Production performance analysis",
+              "basis": "fetched",
+              "url": "https://en.wikipedia.org/wiki/Manufacturing_execution_system"
+            },
+            {
+              "scheme": "ISO 22400-2",
+              "code": "ISO 22400-2",
+              "label": "Key performance indicators for manufacturing operations management",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "MESA-11 MES functions",
+              "code": "",
+              "label": "Performance analysis",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Manufacturing reporting system",
+            "Computer integrated manufacturing CIM software"
+          ],
+          "state_of_art": [
+            "Vorne XL",
+            "Siemens Opcenter Intelligence",
+            "Evocon"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: ISO 22400-2 defines KPI formulas exactly, so computations are checkable on reference event logs",
+          "notes": ""
+        },
+        {
+          "id": "produce.manufacturing_execution.labor_tracking",
+          "name": "Labour and resource tracking",
+          "definition": "Given operators clocking onto jobs and their qualifications, record labour against orders, check certifications and compare with standards.",
+          "inputs": "operator clock events, qualifications, standards",
+          "outputs": "labour records, efficiency reports",
+          "crosswalk": [
+            {
+              "scheme": "IEC 62264-3 activity model",
+              "code": "",
+              "label": "Management of resources",
+              "basis": "fetched",
+              "url": "https://en.wikipedia.org/wiki/Manufacturing_execution_system"
+            },
+            {
+              "scheme": "MESA-11 MES functions",
+              "code": "",
+              "label": "Labor management",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Computer integrated manufacturing CIM time manager software"
+          ],
+          "state_of_art": [
+            "Siemens Opcenter Execution",
+            "Plex MES"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: transactional record-keeping",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "produce.production_scheduling",
+      "name": "Production planning and scheduling",
+      "definition": "Given demand, bills of material, routings, capacities and inventory, decide what to make, in what quantities, when and on which resources.",
+      "crosswalk": [
+        {
+          "scheme": "ASCM (APICS) Dictionary",
+          "code": "",
+          "label": "Manufacturing planning and control",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "IEC 62264-3 activity model",
+          "code": "",
+          "label": "Scheduling (production processes)",
+          "basis": "fetched",
+          "url": "https://en.wikipedia.org/wiki/Manufacturing_execution_system"
+        },
+        {
+          "scheme": "MESA-11 MES functions",
+          "code": "",
+          "label": "Operations/detail scheduling",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISA-95 / IEC 62264-1 functional hierarchy",
+          "code": "",
+          "label": "Level 4: basic plant production scheduling",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Materials requirements planning logistics and supply chain software",
+        "Enterprise resource planning ERP software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "move.supply_chain_planning",
+        "science.optimization",
+        "produce.manufacturing_execution"
+      ],
+      "notes": "Was the scheduling and MRP part of seed 'Manufacturing execution and production scheduling'. Plant-level planning (MPS, MRP, lot sizing) and shop-floor scheduling are kept together because they share inputs and are sold as one advanced planning and scheduling function; multi-site supply-chain planning goes to move. Tasks follow the problem classes of the scheduling literature, each with its own benchmark set.",
+      "tasks": [
+        {
+          "id": "produce.production_scheduling.master_scheduling",
+          "name": "Master production scheduling",
+          "definition": "Given demand forecasts, orders and aggregate capacity, set the quantities of end items to build by period and check them against critical resources.",
+          "inputs": "forecasts and orders, inventory, aggregate capacities",
+          "outputs": "master production schedule, rough-cut capacity load, available-to-promise",
+          "crosswalk": [
+            {
+              "scheme": "ASCM (APICS) Dictionary",
+              "code": "",
+              "label": "Master production schedule",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ASCM (APICS) Dictionary",
+              "code": "",
+              "label": "Rough-cut capacity planning",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Master scheduling software",
+            "ABB Production Planning",
+            "Production planning software",
+            "Ingenious ProPlan",
+            "Geac MPC Production"
+          ],
+          "state_of_art": [
+            "SAP S/4HANA Production Planning",
+            "Infor CloudSuite Industrial",
+            "Epicor Kinetic"
+          ],
+          "open_tools": [
+            "frePPLe",
+            "ERPNext"
+          ],
+          "benchmarkable": "partly: plan cost and feasibility are scoreable on synthetic instances, but no standard set exists",
+          "notes": ""
+        },
+        {
+          "id": "produce.production_scheduling.material_requirements",
+          "name": "Material requirements planning",
+          "definition": "Given the master schedule, bills of material, lead times and inventory, explode, net and offset requirements into planned orders, and load them on work centres.",
+          "inputs": "master schedule, bills of material, inventory, lead times, routings",
+          "outputs": "planned orders, exception messages, capacity requirements",
+          "crosswalk": [
+            {
+              "scheme": "ASCM (APICS) Dictionary",
+              "code": "",
+              "label": "Material requirements planning",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ASCM (APICS) Dictionary",
+              "code": "",
+              "label": "Capacity requirements planning",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Materials requirement planning MRP software",
+            "Materials resource planning MRP software",
+            "Manufacturing resource planning MRP software",
+            "Factory Edge MRP",
+            "Horizon Software MRP Plus",
+            "IBS MRP",
+            "InteProc Material Requirements Planning",
+            "Stratford Group INMASS/MRP",
+            "ERP INDUSTRIOS Material Planning"
+          ],
+          "state_of_art": [
+            "SAP S/4HANA MRP Live",
+            "Epicor Kinetic",
+            "Infor CloudSuite Industrial"
+          ],
+          "open_tools": [
+            "frePPLe",
+            "ERPNext",
+            "Odoo Community"
+          ],
+          "benchmarkable": "yes: netting and offsetting are deterministic and exactly verifiable on generated product structures",
+          "notes": ""
+        },
+        {
+          "id": "produce.production_scheduling.lot_sizing",
+          "name": "Production lot sizing",
+          "definition": "Given time-phased demand, setup and holding costs and capacities, choose production quantities per period and level to minimize cost.",
+          "inputs": "demand by period, setup and holding costs, capacities, product structure",
+          "outputs": "lot sizes per item and period",
+          "crosswalk": [
+            {
+              "scheme": "ASCM (APICS) Dictionary",
+              "code": "",
+              "label": "Lot sizing",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "SAP S/4HANA PP/DS",
+            "Siemens Opcenter APS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: LOTSIZELIB and the Trigeiro and Tempelmeier-Derstroff capacitated lot-sizing instances have best-known solutions",
+          "notes": ""
+        },
+        {
+          "id": "produce.production_scheduling.job_shop_scheduling",
+          "name": "Finite-capacity job shop scheduling",
+          "definition": "Given operations with routings, machine capacities, setups and calendars, assign start times and machines that respect constraints and minimize makespan or tardiness.",
+          "inputs": "orders, routings, resources and calendars, setup matrices",
+          "outputs": "detailed schedule, Gantt chart, due-date performance",
+          "crosswalk": [
+            {
+              "scheme": "IEC 62264-3 activity model",
+              "code": "",
+              "label": "Scheduling (production processes)",
+              "basis": "fetched",
+              "url": "https://en.wikipedia.org/wiki/Manufacturing_execution_system"
+            },
+            {
+              "scheme": "MESA-11 MES functions",
+              "code": "",
+              "label": "Operations/detail scheduling",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Preactor Finite Capacity Scheduling",
+            "Preactor APS",
+            "Asprova",
+            "Oracle Manufacturing Scheduling",
+            "Production scheduling software",
+            "Production scheduling and planning software",
+            "Ingenious ProSched",
+            "Interwave Technology RS Bizware Scheduler",
+            "Pivotal Z Prestige Scheduler",
+            "Giraffe Production Systems Giraffe Schedule System",
+            "JobPack MES Scheduler"
+          ],
+          "state_of_art": [
+            "Siemens Opcenter APS",
+            "Asprova",
+            "DELMIA Ortems",
+            "PlanetTogether"
+          ],
+          "open_tools": [
+            "frePPLe"
+          ],
+          "benchmarkable": "yes: Taillard and OR-Library job shop instances have best-known makespans",
+          "notes": ""
+        },
+        {
+          "id": "produce.production_scheduling.flow_shop_sequencing",
+          "name": "Flow shop and changeover sequencing",
+          "definition": "Given jobs that follow the same route and sequence-dependent changeovers, order them to minimize makespan, changeover time or tardiness.",
+          "inputs": "jobs, processing times, changeover matrix, due dates",
+          "outputs": "job sequence and schedule",
+          "crosswalk": [],
+          "onet_products": [
+            "ABB CPM4Metals"
+          ],
+          "state_of_art": [
+            "Asprova",
+            "Siemens Opcenter APS",
+            "AspenTech Aspen Plant Scheduler"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: Taillard and VRF flow shop instances have best-known makespans",
+          "notes": ""
+        },
+        {
+          "id": "produce.production_scheduling.batch_process_scheduling",
+          "name": "Batch process scheduling",
+          "definition": "Given a multipurpose batch plant with shared units, intermediate storage and campaign rules, schedule batches to meet demand.",
+          "inputs": "state-task or resource-task network, unit capacities, storage, demand",
+          "outputs": "batch schedule and campaign plan",
+          "crosswalk": [
+            {
+              "scheme": "ISA-88 / IEC 61512-1 batch control",
+              "code": "",
+              "label": "Production planning and scheduling activity",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "AspenTech Aspen Plant Scheduler",
+            "Siemens Opcenter APS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: state-task network examples from the literature (Kondili et al. and successors) are standard test problems",
+          "notes": ""
+        },
+        {
+          "id": "produce.production_scheduling.mixed_model_sequencing",
+          "name": "Mixed-model assembly sequencing",
+          "definition": "Given a day's variants for a paced assembly line, sequence them so that option spacing rules hold and part usage is level.",
+          "inputs": "variant orders, option spacing rules, line takt",
+          "outputs": "build sequence",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "DELMIA Quintiq"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: car sequencing (CSPLib problem 1) and the ROADEF 2005 Renault challenge instances",
+          "notes": ""
+        },
+        {
+          "id": "produce.production_scheduling.pull_system_sizing",
+          "name": "Pull system and buffer sizing",
+          "definition": "Given demand variability, lead times and replenishment rules, size kanban loops, work-in-process caps, drum-buffer-rope buffers or demand-driven buffers.",
+          "inputs": "demand history, lead times, replenishment policy",
+          "outputs": "card counts, buffer positions and sizes",
+          "crosswalk": [
+            {
+              "scheme": "ASCM (APICS) Dictionary",
+              "code": "",
+              "label": "Kanban",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ASCM (APICS) Dictionary",
+              "code": "",
+              "label": "Drum-buffer-rope",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "PMC KanbanSIM",
+            "LSA Visual DBR",
+            "LSA Visual Easy Lean",
+            "Oracle Flow Manufacturing"
+          ],
+          "state_of_art": [
+            "Intuiflow"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: buffer settings can be scored by simulated service level and inventory on shared demand streams",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "produce.factory_design",
+      "name": "Factory design and simulation",
+      "definition": "Given products, volumes, routings and candidate resources, design the production system (layout, lines, cells, work content) and evaluate its dynamic performance.",
+      "crosswalk": [
+        {
+          "scheme": "VDI 3633",
+          "code": "VDI 3633",
+          "label": "Simulation of systems in materials handling, logistics and production",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "NIST smart manufacturing ecosystem (NISTIR 8107)",
+          "code": "",
+          "label": "Production system lifecycle: design and engineering",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "CIMdata digital manufacturing segment",
+          "code": "",
+          "label": "Digital manufacturing: plant and line design",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Process mapping and design software",
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "operate.occupational_safety",
+        "move.warehouse_inventory"
+      ],
+      "notes": "Seed 'Factory layout and discrete-event production simulation' kept and broadened with line balancing, cell formation, value-stream mapping and work measurement, which industrial engineers do with the same inputs. Ergonomic assessment with digital humans is handed to operate (EHS).",
+      "tasks": [
+        {
+          "id": "produce.factory_design.discrete_event_simulation",
+          "name": "Production discrete-event simulation",
+          "definition": "Given machines, buffers, transport, operators, failures and an order mix, simulate the system to estimate throughput, WIP, utilization and bottlenecks.",
+          "inputs": "resources, routings, processing and failure distributions, order mix",
+          "outputs": "throughput, lead time, WIP and utilization statistics",
+          "crosswalk": [
+            {
+              "scheme": "VDI 3633",
+              "code": "VDI 3633",
+              "label": "Simulation methodology",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Rockwell Automation Arena",
+            "ProModel",
+            "Discrete event simulation software",
+            "Imagine That Extend OR"
+          ],
+          "state_of_art": [
+            "Siemens Plant Simulation",
+            "FlexSim",
+            "Simio",
+            "AnyLogic",
+            "Rockwell Arena",
+            "AutoMod",
+            "WITNESS"
+          ],
+          "open_tools": [
+            "SimPy",
+            "JaamSim",
+            "salabim"
+          ],
+          "benchmarkable": "partly: models are checkable against queueing results and published case models, but no shared suite of factory models exists",
+          "notes": ""
+        },
+        {
+          "id": "produce.factory_design.layout_planning",
+          "name": "Facility layout planning",
+          "definition": "Given departments or machines, their areas and material flows, arrange them in the building to minimize handling cost within space constraints.",
+          "inputs": "from-to flow matrix, areas, building outline, adjacency rules",
+          "outputs": "block or detailed layout, handling cost",
+          "crosswalk": [
+            {
+              "scheme": "Systematic layout planning (Muther)",
+              "code": "",
+              "label": "Systematic layout planning",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Facilities planning software",
+            "Facilities design software"
+          ],
+          "state_of_art": [
+            "Siemens FactoryCAD",
+            "visTABLE",
+            "Autodesk Factory Design Utilities"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: layout as quadratic assignment (QAPLIB) and unequal-area layout instances have best-known costs",
+          "notes": ""
+        },
+        {
+          "id": "produce.factory_design.line_balancing",
+          "name": "Assembly line balancing",
+          "definition": "Given tasks with times and precedence and a cycle time or station count, assign tasks to stations to minimize stations or cycle time.",
+          "inputs": "task times, precedence graph, cycle time or station count",
+          "outputs": "task-to-station assignment, balance efficiency",
+          "crosswalk": [],
+          "onet_products": [
+            "Assembly line balancing software"
+          ],
+          "state_of_art": [
+            "Siemens Tecnomatix Process Designer",
+            "Proplanner"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: SALBP data sets (Scholl; Otto, Otto and Scholl 2013) have proven optima",
+          "notes": ""
+        },
+        {
+          "id": "produce.factory_design.cell_formation",
+          "name": "Manufacturing cell formation",
+          "definition": "Given which parts visit which machines, group machines into cells and parts into families to minimize inter-cell moves.",
+          "inputs": "part-machine incidence matrix, volumes",
+          "outputs": "machine cells and part families, grouping efficacy",
+          "crosswalk": [
+            {
+              "scheme": "Production flow analysis (Burbidge)",
+              "code": "",
+              "label": "Production flow analysis",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Production Flow Analysis and Simplification Toolkit PFAST",
+            "Production flow analysis software"
+          ],
+          "state_of_art": [],
+          "open_tools": [],
+          "benchmarkable": "yes: the standard set of part-machine incidence problems from the group-technology literature is scored by grouping efficacy",
+          "notes": ""
+        },
+        {
+          "id": "produce.factory_design.value_stream_mapping",
+          "name": "Value stream mapping",
+          "definition": "Given a product family's process steps, inventories and information flows, map the current state, compute lead time and value-added ratio, and design a future state.",
+          "inputs": "process steps, cycle times, inventories, schedules",
+          "outputs": "current and future-state maps, lead-time ladder",
+          "crosswalk": [],
+          "onet_products": [
+            "LSA Visual Easy Lean"
+          ],
+          "state_of_art": [
+            "eVSM"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: maps are judgment aids without a reference answer",
+          "notes": ""
+        },
+        {
+          "id": "produce.factory_design.work_measurement",
+          "name": "Work measurement and time standards",
+          "definition": "Given a described or recorded manual method, compute a standard time using a predetermined motion-time system or time study.",
+          "inputs": "method description or video, motion-time system tables, allowances",
+          "outputs": "standard time and method analysis",
+          "crosswalk": [
+            {
+              "scheme": "Methods-Time Measurement",
+              "code": "",
+              "label": "MTM systems",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "MODAPTS",
+              "code": "",
+              "label": "Modular arrangement of predetermined time standards",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Modular arrangement of predetermined time standards software MODAPTS",
+            "Time and motion analysis software"
+          ],
+          "state_of_art": [
+            "MTM TiCon"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: automatic analyses from video can be scored against analyses by certified practitioners, but public sets are few",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "produce.quality_control",
+      "name": "Quality control and management",
+      "definition": "Given quality requirements and production measurements, monitor process stability and capability, decide acceptance, and manage nonconformances and corrective actions.",
+      "crosswalk": [
+        {
+          "scheme": "IEC 62264-3 activity model",
+          "code": "",
+          "label": "Quality operations management",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "MESA-11 MES functions",
+          "code": "",
+          "label": "Quality management",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 9001",
+          "code": "ISO 9001",
+          "label": "Quality management systems requirements",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "AIAG quality core tools",
+          "code": "",
+          "label": "SPC, MSA, APQP and PPAP manuals",
+          "basis": "fetched",
+          "url": "https://www.aiag.org/quality/automotive-core-tools"
+        }
+      ],
+      "onet_categories": [
+        "Industrial control software",
+        "Analytical or scientific software",
+        "Compliance software"
+      ],
+      "see_also": [
+        "science.statistics",
+        "operate.reliability_analysis",
+        "produce.metrology"
+      ],
+      "notes": "Seed 'Statistical process control and quality management' kept. Statistical tasks follow ISO 7870, ISO 22514 and the AIAG core tools; management tasks follow ISO 9001. General statistics packages (Minitab, JMP, Statgraphics) stay in science; only SPC-specific products are examples here. FMEA is handed to operate; laboratory information management to science.",
+      "tasks": [
+        {
+          "id": "produce.quality_control.control_charting",
+          "name": "Control charting",
+          "definition": "Given subgrouped measurements or counts over time, build Shewhart, CUSUM or EWMA charts, set limits and flag out-of-control signals.",
+          "inputs": "measurement or attribute data with time order and subgroups",
+          "outputs": "control charts, limits, signal list",
+          "crosswalk": [
+            {
+              "scheme": "ISO 7870-2",
+              "code": "ISO 7870-2",
+              "label": "Shewhart control charts",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "AIAG quality core tools",
+              "code": "",
+              "label": "Statistical process control",
+              "basis": "fetched",
+              "url": "https://www.aiag.org/quality/automotive-core-tools"
+            }
+          ],
+          "onet_products": [
+            "Statistical process control SPC software",
+            "Statistical process control SPC data collection devices",
+            "PQ Systems SQCpack",
+            "PQ Systems CHARTrunner Lean",
+            "Infinity QS ProFicient",
+            "ASI DATAMYTE QDA",
+            "ASIDATAMYTE DataMetrics",
+            "PQ Systems MEASUREspy"
+          ],
+          "state_of_art": [
+            "InfinityQS ProFicient",
+            "Hexagon Q-DAS procella",
+            "PQ Systems SQCpack"
+          ],
+          "open_tools": [
+            "qcc"
+          ],
+          "benchmarkable": "yes: average run length to detect a known shift is computable exactly by simulation",
+          "notes": ""
+        },
+        {
+          "id": "produce.quality_control.process_capability",
+          "name": "Process capability analysis",
+          "definition": "Given measurements of a characteristic and its specification limits, estimate capability and performance indices, including for non-normal and multivariate data.",
+          "inputs": "measurements, specification limits, distribution choice",
+          "outputs": "Cp, Cpk, Pp, Ppk and related indices with confidence intervals",
+          "crosswalk": [
+            {
+              "scheme": "ISO 22514",
+              "code": "ISO 22514",
+              "label": "Process capability and performance",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Statistical process control SPC software",
+            "PQ Systems SQCpack",
+            "Infinity QS ProFicient"
+          ],
+          "state_of_art": [
+            "Hexagon Q-DAS qs-STAT",
+            "InfinityQS ProFicient"
+          ],
+          "open_tools": [
+            "qcc"
+          ],
+          "benchmarkable": "yes: indices are exactly computable and reference values exist for standard and simulated data sets",
+          "notes": ""
+        },
+        {
+          "id": "produce.quality_control.measurement_system_analysis",
+          "name": "Measurement system analysis",
+          "definition": "Given repeated measurements of parts by operators and gauges, estimate repeatability, reproducibility, bias, linearity and attribute agreement.",
+          "inputs": "crossed or nested study measurements",
+          "outputs": "variance components, percent study variation, number of distinct categories",
+          "crosswalk": [
+            {
+              "scheme": "AIAG quality core tools",
+              "code": "",
+              "label": "Measurement systems analysis",
+              "basis": "fetched",
+              "url": "https://www.aiag.org/quality/automotive-core-tools"
+            },
+            {
+              "scheme": "ISO 22514-7",
+              "code": "ISO 22514-7",
+              "label": "Capability of measurement processes",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "PQ Systems GAGEpack",
+            "ASI DATAMYTE GageMetrics"
+          ],
+          "state_of_art": [
+            "Hexagon Q-DAS solara.MP",
+            "PQ Systems GAGEpack"
+          ],
+          "open_tools": [
+            "SixSigma (R package)"
+          ],
+          "benchmarkable": "yes: worked studies in the AIAG manual give reference variance components",
+          "notes": ""
+        },
+        {
+          "id": "produce.quality_control.acceptance_sampling",
+          "name": "Acceptance sampling plan design",
+          "definition": "Given lot size, acceptable quality level and inspection level, choose sample sizes and acceptance numbers and evaluate the operating characteristic.",
+          "inputs": "lot size, AQL or LTPD, inspection level, attribute or variable data",
+          "outputs": "sampling plan, operating characteristic curve, lot decision",
+          "crosswalk": [
+            {
+              "scheme": "ISO 2859-1",
+              "code": "ISO 2859-1",
+              "label": "Sampling by attributes",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO 3951-1",
+              "code": "ISO 3951-1",
+              "label": "Sampling by variables",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Quality control software"
+          ],
+          "state_of_art": [],
+          "open_tools": [
+            "AcceptanceSampling (R package)"
+          ],
+          "benchmarkable": "yes: plan risks are exactly computable and checkable against the ISO 2859 tables",
+          "notes": ""
+        },
+        {
+          "id": "produce.quality_control.multivariate_monitoring",
+          "name": "Multivariate process monitoring",
+          "definition": "Given many correlated process variables from continuous or batch production, build latent-variable models and detect and isolate abnormal operation.",
+          "inputs": "historical normal-operation data, live process data, batch trajectories",
+          "outputs": "T-squared and residual statistics, fault alarms, contribution plots",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Sartorius SIMCA-online",
+            "AspenTech ProMV"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: Tennessee Eastman process fault data sets are the standard benchmark for detection rate and delay",
+          "notes": ""
+        },
+        {
+          "id": "produce.quality_control.wafer_yield_analysis",
+          "name": "Wafer and yield analysis",
+          "definition": "Given wafer maps, test and inline metrology data, classify defect patterns, attribute yield loss and detect excursions.",
+          "inputs": "wafer bin maps, parametric test data, process history",
+          "outputs": "pattern classes, yield-loss Pareto, excursion alerts",
+          "crosswalk": [
+            {
+              "scheme": "SEMI E142",
+              "code": "SEMI E142",
+              "label": "Substrate mapping",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "yieldWerx"
+          ],
+          "state_of_art": [
+            "PDF Solutions Exensio",
+            "KLA Klarity",
+            "yieldWerx"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the WM-811K wafer map data set scores defect-pattern classification",
+          "notes": ""
+        },
+        {
+          "id": "produce.quality_control.nonconformance_capa",
+          "name": "Nonconformance and corrective action",
+          "definition": "Given a detected nonconformity, record it, route disposition, investigate root cause, and track corrective and preventive actions to verified closure, including supplier actions.",
+          "inputs": "nonconformance reports, disposition rules, investigation records",
+          "outputs": "dispositions, root-cause analyses, corrective actions and effectiveness checks",
+          "crosswalk": [
+            {
+              "scheme": "ISO 9001",
+              "code": "8.7",
+              "label": "Control of nonconforming outputs",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO 9001",
+              "code": "10.2",
+              "label": "Nonconformity and corrective action",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Sparta Systems TrackWise",
+            "EtQ Reliance",
+            "MasterControl software",
+            "Pilgrim Quality Solutions SmartSolve",
+            "CEBOS MQ1 software",
+            "Harrington Group HQMS",
+            "Harrington Group caWeb",
+            "Vivaldi Software Vivaldi Quality Management",
+            "QUMAS quality management solution software",
+            "Total quality management TQM software",
+            "Microsoft Total Quality Control Management"
+          ],
+          "state_of_art": [
+            "Honeywell TrackWise",
+            "ETQ Reliance",
+            "MasterControl",
+            "Veeva Vault QMS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: workflow and record-keeping whose outcomes depend on the organization",
+          "notes": ""
+        },
+        {
+          "id": "produce.quality_control.quality_planning",
+          "name": "Advanced quality planning and control plans",
+          "definition": "Given a new product and its process flow, produce the quality plan: characteristics to control, control methods, reaction plans and production part approval evidence.",
+          "inputs": "process flow, special characteristics, process risk analysis",
+          "outputs": "control plan, approval submission package",
+          "crosswalk": [
+            {
+              "scheme": "AIAG quality core tools",
+              "code": "",
+              "label": "Advanced product quality planning and control plan",
+              "basis": "fetched",
+              "url": "https://www.aiag.org/quality/automotive-core-tools"
+            },
+            {
+              "scheme": "AIAG quality core tools",
+              "code": "",
+              "label": "Production part approval process",
+              "basis": "fetched",
+              "url": "https://www.aiag.org/quality/automotive-core-tools"
+            }
+          ],
+          "onet_products": [
+            "CAMA Software Quality Collaboration By Design QCBD"
+          ],
+          "state_of_art": [
+            "Omnex AQuA Pro",
+            "PLATO e1ns",
+            "APIS IQ-RM"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: documents are judged by customers and auditors",
+          "notes": ""
+        },
+        {
+          "id": "produce.quality_control.first_article_inspection",
+          "name": "First article inspection reporting",
+          "definition": "Given a drawing and first-part measurements, extract and number every characteristic, record results against each, and produce first article reports.",
+          "inputs": "drawing or model with tolerances, measurement results",
+          "outputs": "ballooned drawing, characteristic accountability, first article report",
+          "crosswalk": [
+            {
+              "scheme": "AS9102",
+              "code": "AS9102",
+              "label": "Aerospace first article inspection requirement",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "InspectionXpert",
+            "DISCUS Software",
+            "Net-Inspect",
+            "High QA"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: characteristic extraction from drawings can be scored against hand-labelled drawings",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "produce.metrology",
+      "name": "Dimensional metrology and inspection",
+      "definition": "Given a physical part and its design with tolerances, plan and run measurements or inspections, evaluate conformance, and quantify measurement capability.",
+      "crosswalk": [
+        {
+          "scheme": "ASME Y14.5",
+          "code": "ASME Y14.5",
+          "label": "Dimensioning and tolerancing",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 1101",
+          "code": "ISO 1101",
+          "label": "Geometrical tolerancing",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 10360",
+          "code": "ISO 10360",
+          "label": "Acceptance and reverification tests for coordinate measuring systems",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "IEC 62264-3 activity model",
+          "code": "",
+          "label": "Quality test execution",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "Quality Information Framework (QIF)",
+          "code": "",
+          "label": "Measurement plans and results",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "Dimensional Measuring Interface Standard (DMIS)",
+          "code": "",
+          "label": "Measurement program language",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Industrial control software",
+        "Analytical or scientific software",
+        "Procedure management software",
+        "Computer aided design CAD software"
+      ],
+      "see_also": [
+        "produce.quality_control",
+        "design.solid_modeling",
+        "operate.condition_monitoring",
+        "design.product_definition"
+      ],
+      "notes": "Seed 'Dimensional metrology and inspection (CMM, scanning, GD&T verification)' kept and broadened to automated visual inspection and CT of manufactured parts. In-service inspection of assets belongs to operate.",
+      "tasks": [
+        {
+          "id": "produce.metrology.cmm_programming",
+          "name": "Coordinate measuring machine programming",
+          "definition": "Given a model with tolerances and a measuring machine, plan alignments, probe paths and the measurement sequence without collisions.",
+          "inputs": "part model with product manufacturing information, CMM and probe configuration, fixture",
+          "outputs": "measurement program (DMIS or native) and plan",
+          "crosswalk": [
+            {
+              "scheme": "Dimensional Measuring Interface Standard (DMIS)",
+              "code": "",
+              "label": "Measurement program",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "Quality Information Framework (QIF)",
+              "code": "",
+              "label": "Measurement plan",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Coordinate measuring machine software",
+            "Wilcox Associates PC-DMIS",
+            "Hexagon Metrology PC-DMIS",
+            "Wilcox Associates PC-DMIS Inspection Planner",
+            "Metrologic Group Metrolog XG",
+            "Verisurf Metrology",
+            "Computer-aided inspection software",
+            "Work inspection software"
+          ],
+          "state_of_art": [
+            "Hexagon PC-DMIS",
+            "ZEISS CALYPSO",
+            "Nikon CAMIO",
+            "Metrologic X4"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: plans can be checked for coverage and collisions in simulation, and QIF lets plans and results be compared",
+          "notes": ""
+        },
+        {
+          "id": "produce.metrology.tolerance_evaluation",
+          "name": "Geometric tolerance evaluation",
+          "definition": "Given measured points and the tolerance specification, fit features, establish datum reference frames and decide conformance of each geometric tolerance.",
+          "inputs": "measured points, nominal features, tolerance specification",
+          "outputs": "fitted features, deviations, conformance decisions",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10360",
+              "code": "ISO 10360-6",
+              "label": "Estimation of errors in computing Gaussian associated features",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ASME Y14.5",
+              "code": "ASME Y14.5",
+              "label": "Geometric tolerances",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Geometric dimensioning and tolerancing software",
+            "Wilcox Associates PC-DMIS"
+          ],
+          "state_of_art": [
+            "Hexagon PC-DMIS",
+            "ZEISS CALYPSO",
+            "PolyWorks Inspector"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: ISO 10360-6 and the NIST algorithm testing service supply reference point sets with certified fitted results",
+          "notes": ""
+        },
+        {
+          "id": "produce.metrology.scan_to_cad_comparison",
+          "name": "Point cloud to design comparison",
+          "definition": "Given scanned point clouds or meshes of a part, align them to the design model and report deviations, features and sections.",
+          "inputs": "scan data, design model, alignment scheme",
+          "outputs": "deviation maps, extracted features, inspection report",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10360",
+              "code": "ISO 10360-8",
+              "label": "Coordinate measuring machines with optical distance sensors",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "InnovMetric PolyWorks",
+            "Verisurf Metrology",
+            "Metrologic Group Metrolog XG"
+          ],
+          "state_of_art": [
+            "PolyWorks Inspector",
+            "ZEISS INSPECT",
+            "Geomagic Control X"
+          ],
+          "open_tools": [
+            "CloudCompare"
+          ],
+          "benchmarkable": "yes: registration and deviation are scoreable on synthetic scans with known deformations",
+          "notes": ""
+        },
+        {
+          "id": "produce.metrology.gauge_calibration_management",
+          "name": "Gauge and instrument calibration management",
+          "definition": "Given an inventory of gauges and instruments, schedule calibrations, record results, recall overdue items and assess the impact of out-of-tolerance findings.",
+          "inputs": "gauge inventory, calibration procedures and intervals, results",
+          "outputs": "calibration schedule, certificates, recall and impact reports",
+          "crosswalk": [
+            {
+              "scheme": "ISO 10012",
+              "code": "ISO 10012",
+              "label": "Measurement management systems",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Cybermetrics GAGETrak",
+            "IndySoft Gage InSite Enterprise",
+            "PQ Systems GAGEpack",
+            "Calibration software"
+          ],
+          "state_of_art": [
+            "CyberMetrics GAGEtrak",
+            "IndySoft",
+            "Fluke MET/TEAM",
+            "Beamex CMX",
+            "Fluke DPCTrack2"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record-keeping without a quality metric",
+          "notes": "Editor: renamed from 'Gauge and calibration management'; now also holds field instrument calibration."
+        },
+        {
+          "id": "produce.metrology.measurement_uncertainty",
+          "name": "Measurement uncertainty evaluation",
+          "definition": "Given a measurement model and the uncertainties of its inputs, compute the combined and expanded uncertainty analytically or by Monte Carlo, including task-specific uncertainty for coordinate measurements.",
+          "inputs": "measurement model, input quantities and distributions",
+          "outputs": "uncertainty budget, expanded uncertainty, coverage interval",
+          "crosswalk": [
+            {
+              "scheme": "JCGM 100 (GUM)",
+              "code": "JCGM 100",
+              "label": "Guide to the expression of uncertainty in measurement",
+              "basis": "fetched",
+              "url": "https://www.bipm.org/en/committees/jc/jcgm/publications"
+            },
+            {
+              "scheme": "JCGM 101",
+              "code": "JCGM 101",
+              "label": "Propagation of distributions using a Monte Carlo method",
+              "basis": "fetched",
+              "url": "https://www.bipm.org/en/committees/jc/jcgm/publications"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "GUM Workbench"
+          ],
+          "open_tools": [
+            "Sandia PSL Uncertainty Calculator"
+          ],
+          "benchmarkable": "yes: the worked examples in JCGM 100 and 101 give reference uncertainties",
+          "notes": ""
+        },
+        {
+          "id": "produce.metrology.automated_visual_inspection",
+          "name": "Automated visual inspection",
+          "definition": "Given camera images of parts or assemblies, check presence, position, dimensions, print and labels, and detect surface defects.",
+          "inputs": "images, golden samples or defect examples, inspection criteria",
+          "outputs": "pass or fail decisions, defect locations, measurements",
+          "crosswalk": [],
+          "onet_products": [
+            "National Instruments NI Vision Builder for Automated Inspection AI",
+            "Label inspection systems"
+          ],
+          "state_of_art": [
+            "Cognex In-Sight",
+            "MVTec HALCON",
+            "Keyence CV-X",
+            "NI Vision Builder for Automated Inspection"
+          ],
+          "open_tools": [
+            "Anomalib"
+          ],
+          "benchmarkable": "yes: MVTec AD and VisA score defect detection and localization",
+          "notes": "Includes automated optical inspection of circuit assemblies. General computer-vision methods belong to science."
+        },
+        {
+          "id": "produce.metrology.ct_nde_evaluation",
+          "name": "Computed tomography and nondestructive evaluation of parts",
+          "definition": "Given CT volumes or ultrasonic scans of manufactured parts, reconstruct and analyze them for porosity, inclusions, wall thickness and dimensions.",
+          "inputs": "projections or volumes, ultrasonic scans, design model, acceptance criteria",
+          "outputs": "defect lists, porosity statistics, dimensional results",
+          "crosswalk": [],
+          "onet_products": [
+            "Visualization Sciences Group VSG Avizo Fire",
+            "GE Sensing & Inspection Technologies Rhythm UT"
+          ],
+          "state_of_art": [
+            "Volume Graphics VGSTUDIO MAX",
+            "Avizo"
+          ],
+          "open_tools": [
+            "ASTRA Toolbox",
+            "TIGRE"
+          ],
+          "benchmarkable": "partly: results can be compared with reference phantoms, but public industrial data sets are few",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "produce.process_specific_prep",
+      "name": "Process-specific production preparation",
+      "definition": "Given a design for an electronic assembly, printed product or textile item, prepare the tooling data, machine programs and test programs specific to that production process.",
+      "crosswalk": [
+        {
+          "scheme": "IPC-2581",
+          "code": "IPC-2581",
+          "label": "Generic requirements for printed board assembly products manufacturing description data",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "IEEE 1149.1",
+          "code": "IEEE 1149.1",
+          "label": "Boundary-scan test access port",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 15930",
+          "code": "ISO 15930",
+          "label": "PDF/X prepress digital data exchange",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ISO 12647",
+          "code": "ISO 12647",
+          "label": "Process control for halftone colour separations, proof and production prints",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "CIP4 Job Definition Format",
+          "code": "",
+          "label": "Print production job ticket",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer aided manufacturing CAM software",
+        "Desktop publishing software",
+        "Document management software",
+        "Computer aided design CAD software",
+        "Development environment software"
+      ],
+      "see_also": [
+        "design.pcb",
+        "media.page_layout",
+        "produce.profile_cutting_cam"
+      ],
+      "notes": "Seed 'Process-specific production software (printing prepress, textiles, food, semiconductor fab)'. Each task is a function that exists only for its process, which the brief allows. Food production is covered by batch control and formulation; semiconductor yield analysis is in quality control and fab dispatching in manufacturing execution; fabric marker making is with the other nesting tasks. The editor may prefer to split electronics from print and textiles.",
+      "tasks": [
+        {
+          "id": "produce.process_specific_prep.pcb_fabrication_data",
+          "name": "Circuit board fabrication data preparation",
+          "definition": "Given board design output, check fabrication rules, compensate artwork, panelize, and produce photoplotting, drilling and routing data.",
+          "inputs": "Gerber, ODB++ or IPC-2581 files, drill data, fabrication capabilities",
+          "outputs": "fabrication-ready artwork, panel, drill and rout programs, rule report",
+          "crosswalk": [
+            {
+              "scheme": "IPC-2581",
+              "code": "IPC-2581",
+              "label": "Manufacturing description data",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Uncamco Ucam"
+          ],
+          "state_of_art": [
+            "Frontline InCAM Pro",
+            "Ucamco UcamX",
+            "Siemens Valor NPI"
+          ],
+          "open_tools": [
+            "FlatCAM",
+            "pcb2gcode"
+          ],
+          "benchmarkable": "partly: seeded rule violations are scoreable and panel utilization is computable",
+          "notes": ""
+        },
+        {
+          "id": "produce.process_specific_prep.smt_assembly_programming",
+          "name": "Surface-mount assembly programming",
+          "definition": "Given placement data and a bill of materials, generate placement programs, feeder setups and the balance of components across placement machines.",
+          "inputs": "centroid data, bill of materials, line and feeder configuration",
+          "outputs": "placement programs, feeder setups, line balance",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Siemens Valor Process Preparation",
+            "ASMPT SIPLACE Pro",
+            "Aegis FactoryLogix"
+          ],
+          "open_tools": [
+            "OpenPnP"
+          ],
+          "benchmarkable": "partly: placement sequence and feeder assignment are optimization problems scoreable with machine cycle-time models",
+          "notes": ""
+        },
+        {
+          "id": "produce.process_specific_prep.production_test_programs",
+          "name": "Production test program generation",
+          "definition": "Given a netlist and product test requirements, generate in-circuit, flying-probe, boundary-scan or functional test programs and test sequences.",
+          "inputs": "netlist, component models, test access, product specification",
+          "outputs": "test programs and sequences, fault coverage report",
+          "crosswalk": [
+            {
+              "scheme": "IEEE 1149.1",
+              "code": "IEEE 1149.1",
+              "label": "Boundary-scan",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "National Instruments TestStand",
+            "ASSET JTAG ScanWorks",
+            "Electronic Systems of Wisconsin Motor Test System software"
+          ],
+          "state_of_art": [
+            "Keysight i3070",
+            "Teradyne TestStation",
+            "XJTAG",
+            "NI TestStand"
+          ],
+          "open_tools": [
+            "UrJTAG",
+            "OpenHTF"
+          ],
+          "benchmarkable": "partly: fault coverage is computable against netlists with seeded faults",
+          "notes": ""
+        },
+        {
+          "id": "produce.process_specific_prep.imposition",
+          "name": "Imposition",
+          "definition": "Given pages or labels, a press sheet and finishing method, arrange them with marks, creep and bleed into press-sheet layouts.",
+          "inputs": "page files, press sheet size, folding and binding scheme",
+          "outputs": "imposed press sheets, job ticket",
+          "crosswalk": [
+            {
+              "scheme": "CIP4 Job Definition Format",
+              "code": "",
+              "label": "Imposition and layout",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Creo Synapse Upfront",
+            "Esko ArtPro"
+          ],
+          "state_of_art": [
+            "Kodak Preps",
+            "Esko Automation Engine",
+            "Heidelberg Prinect"
+          ],
+          "open_tools": [
+            "pdfjam"
+          ],
+          "benchmarkable": "partly: sheet utilization and correct page order after folding are checkable; finishing rules vary",
+          "notes": ""
+        },
+        {
+          "id": "produce.process_specific_prep.raster_image_processing",
+          "name": "Raster image processing and screening",
+          "definition": "Given PDF or PostScript pages and an output device, interpret, colour-convert, trap and screen them into device bitmaps.",
+          "inputs": "PDF or PostScript, device characterization, screening settings",
+          "outputs": "halftoned separations or device rasters",
+          "crosswalk": [
+            {
+              "scheme": "ISO 15930",
+              "code": "ISO 15930",
+              "label": "PDF/X output",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Global Graphics Software Harlequin",
+            "Xerox FreeFlow Print Server"
+          ],
+          "state_of_art": [
+            "Global Graphics Harlequin RIP",
+            "Adobe PDF Print Engine",
+            "EFI Fiery"
+          ],
+          "open_tools": [
+            "Ghostscript"
+          ],
+          "benchmarkable": "yes: the Ghent Output Suite and Altona test suite have reference renderings for RIP conformance",
+          "notes": ""
+        },
+        {
+          "id": "produce.process_specific_prep.print_color_management",
+          "name": "Print colour profiling and control",
+          "definition": "Given measured test charts from a press or printer, build colour profiles and adjust the process to a printing standard.",
+          "inputs": "measured test-chart data, target characterization, ink set",
+          "outputs": "ICC profiles, conformance report, curves",
+          "crosswalk": [
+            {
+              "scheme": "ISO 15076-1",
+              "code": "ISO 15076-1",
+              "label": "ICC colour profiles",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO 12647",
+              "code": "ISO 12647",
+              "label": "Printing process control",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Color management software",
+            "PANTONE ColorVision ProfilerPlus"
+          ],
+          "state_of_art": [
+            "X-Rite i1Profiler",
+            "GMG ColorProof"
+          ],
+          "open_tools": [
+            "ArgyllCMS",
+            "LittleCMS"
+          ],
+          "benchmarkable": "yes: profile accuracy is scoreable by CIEDE2000 against reference characterization data such as FOGRA51",
+          "notes": ""
+        },
+        {
+          "id": "produce.process_specific_prep.embroidery_digitizing",
+          "name": "Embroidery digitizing",
+          "definition": "Given artwork and fabric, convert shapes into stitch types, directions, underlay and sequence, and write a machine stitch file.",
+          "inputs": "vector or raster artwork, fabric type, machine format",
+          "outputs": "stitch file, stitch count and run time",
+          "crosswalk": [],
+          "onet_products": [
+            "Embroidery design software",
+            "DRAWSTITCH Artistic Sewing Suite",
+            "Floriani MDQ My Decorative Quilter"
+          ],
+          "state_of_art": [
+            "Wilcom EmbroideryStudio",
+            "Hatch Embroidery"
+          ],
+          "open_tools": [
+            "Ink/Stitch"
+          ],
+          "benchmarkable": "partly: stitch count, jumps and coverage are computable; appearance needs a stitch-out",
+          "notes": ""
+        },
+        {
+          "id": "produce.process_specific_prep.knitting_weaving_programs",
+          "name": "Knitting and weaving machine programming",
+          "definition": "Given a fabric or garment design, produce needle-level knitting programs or Jacquard weave files for the target machine.",
+          "inputs": "stitch or weave pattern, yarns, machine gauge and type",
+          "outputs": "machine knitting program or loom file",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Shima Seiki SDS-ONE APEX",
+            "Stoll M1plus",
+            "ArahWeave"
+          ],
+          "open_tools": [
+            "knitout"
+          ],
+          "benchmarkable": "partly: programs can be checked for machine validity by simulators; fabric results need knitting or weaving",
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "existing_function_map": [
+    {
+      "function": "cam",
+      "nodes": [
+        "produce.milling_cam",
+        "produce.turning_cam",
+        "produce.profile_cutting_cam",
+        "produce.nc_programs",
+        "produce.additive_prep"
+      ],
+      "note": "Split by process and by post-processor kinematics. The CAM category's rapid-prototyping products go to additive_prep, CNC calculators to process_planning.cutting_tool_data, and PCB CAM (Ucam) to process_specific_prep."
+    },
+    {
+      "function": "controls",
+      "nodes": [
+        "produce.plc_programming",
+        "produce.supervisory_control",
+        "produce.batch_control",
+        "produce.robot_programming"
+      ],
+      "note": "Only the PLC, SCADA, DCS and robot half. Dynamic simulation and control-law design (Simulink, LabVIEW, Dymola, Automation Studio) go to simulate and science; building automation to operate; traffic signal control to move."
+    },
+    {
+      "function": "logistics",
+      "nodes": [
+        "produce.production_scheduling",
+        "produce.factory_design"
+      ],
+      "note": "Production scheduling, MRP and lot sizing only. Routing, fleet, warehousing, transport and supply-chain planning go to move; mathematical programming solvers to science."
+    }
+  ],
+  "handoffs": [
+    {
+      "what": "Utility network SCADA, energy, distribution and outage management (ABB MicroSCADA Pro, Siemens Spectrum Power, OSI monarch, Milsoft DisSPatch, substation automation, wide-area monitoring)",
+      "to_domain": "operate",
+      "why": "utility network operations per the boundary table"
+    },
+    {
+      "what": "Building automation (Siemens APOGEE, Honeywell WEBs-N4, Alerton, Delta Controls, direct digital control)",
+      "to_domain": "operate",
+      "why": "building automation per the boundary table"
+    },
+    {
+      "what": "Emissions and gas monitoring (CEMS, fugitive emission leak detection, Industrial Scientific iNET, gas field monitoring)",
+      "to_domain": "operate",
+      "why": "EHS monitoring"
+    },
+    {
+      "what": "FMEA software (ReliaSoft XFMEA, Relex FMEA, Dyadem FMEA Pro-6) and FANUC Diagnostic Resource Center",
+      "to_domain": "operate",
+      "why": "reliability engineering and diagnostics"
+    },
+    {
+      "what": "Digital-human ergonomics (Siemens UGS Jack, 3DSSPP, human modeling software)",
+      "to_domain": "operate",
+      "why": "occupational safety and ergonomics are EHS"
+    },
+    {
+      "what": "Safety integrity level determination and verification for safety instrumented systems",
+      "to_domain": "operate",
+      "why": "safety engineering; only the logic programming is here"
+    },
+    {
+      "what": "Casting, forming and AM build-process simulation (MAGMASOFT, Dynaform, CastView, distortion compensation)",
+      "to_domain": "simulate",
+      "why": "solving process physics, existing function mfgsim"
+    },
+    {
+      "what": "Automation Studio, Simulink, Stateflow, Dymola and other control-design and dynamic-system tools",
+      "to_domain": "simulate",
+      "why": "control-law design per the boundary table"
+    },
+    {
+      "what": "EPLAN, die and mould design (Logopress, Striker SS-Die Design, VISI-Mould, IMOLD, DIEMAKER), COPRA roll-forming design, garment pattern making and grading, reverse engineering",
+      "to_domain": "design",
+      "why": "authoring geometry and drawings"
+    },
+    {
+      "what": "Bill of materials software and engineering BOM management",
+      "to_domain": "design",
+      "why": "PDM/PLM"
+    },
+    {
+      "what": "Conveyor, sortation and crane control, warehouse control systems (Intelligrated InControlWare), rail yard and AEI systems, traffic signals, mining machine guidance",
+      "to_domain": "move",
+      "why": "material handling and vehicle operations"
+    },
+    {
+      "what": "Warehouse, transport, fleet, shipping and supply-chain planning products in the MRP and logistics category",
+      "to_domain": "move",
+      "why": "applied logistics per the boundary table"
+    },
+    {
+      "what": "Laboratory information management systems used by quality-control labs; LabVIEW and DAQ instrument control",
+      "to_domain": "science",
+      "why": "laboratory informatics and instrument control"
+    },
+    {
+      "what": "Design of experiments and general statistics packages (Minitab, JMP, Statgraphics, Design-Expert, ECHIP)",
+      "to_domain": "science",
+      "why": "general statistics; only SPC-specific products stay here"
+    },
+    {
+      "what": "Print MIS and estimating (Presidio, printing management systems, Xerox ProfitQuick, bindery estimating) and bakery ERP",
+      "to_domain": "enterprise",
+      "why": "job costing and ERP"
+    },
+    {
+      "what": "Orthotic fabrication software",
+      "to_domain": "health",
+      "why": "patient-specific device design and fitting"
+    },
+    {
+      "what": "Hospital bed management products filed under materials planning",
+      "to_domain": "health",
+      "why": "patient flow"
+    },
+    {
+      "what": "Program testing and development environment products other than PLC and robot tools; Moxa industrial networking; CA Easytrieve (misfiled as MES)",
+      "to_domain": "computing",
+      "why": "general software and network tools"
+    }
+  ],
+  "unplaced_products": [
+    "VIA Information Tools MAN-IT",
+    "Honeywell Wintress PACNet",
+    "Kinematic Engineering MicroMeasure IV",
+    "Siemens Energy and Automation",
+    "ExtraTech Machine Tools Suite",
+    "Extranet Machine Tools Suite",
+    "Merry Mechanization SMP/IS",
+    "Vero Software SMIRTsoftware",
+    "LAB SUM3D",
+    "Intera Systems Hawk-i",
+    "AABACH Graphic Systems DIGRA",
+    "Direct motion computer numerically controlled CNC software",
+    "Logic programming software",
+    "Pelion manufacturing process optimization MPO software"
+  ],
+  "open_questions": [
+    "Capability count is 16, above the 6 to 14 guidance, because CAM was split by process and ISA-95 Levels 2 and 3 each need room. To reach 14: fold turning_cam into milling_cam as 'Machining toolpath programming' and fold batch_control into supervisory_control.",
+    "process_specific_prep groups electronics, print and textile tasks as the seed did. It could be split into electronics and print/textile, or print preflight, imposition and RIP could move to media.",
+    "Tolerance stack-up, manufacturability analysis and formula management straddle design. They are placed here with see_also links; design should not also model them.",
+    "Control-law design is simulate's, but loop tuning, MPC deployment and operator training simulators are placed here as plant-floor work. Please confirm.",
+    "CT and ultrasonic evaluation of manufactured parts is here, and in-service NDT is operate's. The editor should check that operate draws the line the same way.",
+    "General robotics (mobile robots, general motion planning, Gazebo) has no owner in the boundary table. Industrial-cell motion planning is modelled here.",
+    "Conveyor and sortation control is handed to move as material handling. It could equally be plant-floor control here."
+  ]
+}

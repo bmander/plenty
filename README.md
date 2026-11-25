@@ -78,6 +78,28 @@ accessories, stampings, wiring devices, relays and industrial controls, steel pr
 hardware, adhesives, motors and generators
 ([`results/bottleneck_candidates.csv`](results/bottleneck_candidates.csv)).
 
+## Capability taxonomy (draft)
+
+The 18 capabilities above were a hand-made list with no stated source. [`taxonomy/`](taxonomy/)
+holds its replacement: a taxonomy of what software does for the people who meet needs, with
+14 domains, 223 capabilities and 1,440 tasks, classified by function and assembled from
+published taxonomies (NAFEMS competency areas, NIST GAMS, EDAM, the WHO classification of
+digital health interventions, APQC PCF, the ACM classification and about 330 others). Each
+task records its inputs and outputs, example products from O\*NET, open-source and
+proprietary tools, and whether an open benchmark for it is possible.
+
+It is machine-readable: `taxonomy/domains/*.json` is the source of truth, and
+`taxonomy/capabilities.csv`, `crosswalk.csv`, `products_seed.csv` and `function_map.csv`
+(which capabilities each of the 18 became) are built from it by `taxonomy/build.py`.
+The capabilities page of the website shows the whole tree.
+
+How far to trust it: AI models wrote it and no practitioner has reviewed it. 1,082 of its
+1,803 citations of published sources (60%) were checked against the source itself; checking
+corrected 192 and removed 11. The rest could not be read and are marked `basis: memory`.
+The tools and benchmark notes on each task were not checked. **It has no weights yet**: the
+numbers in this README still belong to the 18 functions. See
+[`taxonomy/README.md`](taxonomy/README.md).
+
 ## Method
 
 **1. Tables.** BEA 2017 benchmark Make (V) and Use (U) tables, 402 industries by 402
@@ -223,6 +245,7 @@ must be set to deploy from GitHub Actions (Settings > Pages > Source).
     python scripts/03_run.py        # writes results/
     python scripts/04_figures.py    # writes figures/
     python -m plenty.site           # writes site/
+    python taxonomy/build.py        # rebuilds taxonomy/*.csv from taxonomy/domains/*.json
     python -m pytest tests
 
 `scripts/00_extract_bea.py` re-extracts the BEA tables from a checkout of USEPA/useeior, and
@@ -241,4 +264,6 @@ must be set to deploy from GitHub Actions (Settings > Pages > Source).
     plenty/        model.py (Leontief + capital), analysis.py (measures), occupations.py (O*NET x OEWS usage), site.py and web/ (website)
     scripts/       extraction, config seeding, run, figures
     results/       CSV outputs and summary.md
-    tests/         accounting identities and config consistency
+    taxonomy/      the capability taxonomy: domain files (JSON), flat tables (CSV), the briefs,
+                   the verifiers' verdicts and the edit log
+    tests/         accounting identities, config and taxonomy consistency

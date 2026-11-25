@@ -1,0 +1,245 @@
+from	to	new_to	reason
+commerce.marketing_automation	media.social_media	media.public_communication	renamed; real capability
+commerce.marketing_analytics	science.survey_analysis	science.social_research	renamed; real capability
+commerce.marketing_analytics	enterprise.business_intelligence	enterprise.reporting_bi	renamed; real capability
+commerce.merchandising	move.warehouse_management	move.warehouse_inventory	renamed; real capability
+commerce.ecommerce	media.web_content_management	media.web_publishing	renamed; real capability
+commerce.ecommerce	move.warehouse_management	move.warehouse_inventory	renamed; real capability
+commerce.customer_service	computing.it_service_management	computing.it_operations	renamed; real capability
+commerce.customer_service	computing.network_telephony	computing.networking	renamed; real capability
+commerce.customer_service	govern.emergency_dispatch	govern.emergency_response	renamed; real capability
+commerce.food_service	produce.batch_recipe	produce.batch_control	renamed; real capability
+commerce.real_estate	govern.public_finance	govern.public_administration	renamed; real capability
+commerce.service_scheduling	health.practice_management	health.patient_administration	renamed; real capability
+commerce.service_scheduling	enterprise.workforce_scheduling	enterprise.payroll_time	renamed; real capability
+commerce.personal_services	health.veterinary_practice		no matching capability
+computing.languages	design.hardware_description	design.digital_design	renamed; real capability
+computing.dev_tooling	enterprise.project_management	enterprise.projects	renamed; real capability
+computing.requirements_design	design.systems_engineering		no matching capability
+computing.requirements_design	enterprise.project_management	enterprise.projects	renamed; real capability
+computing.embedded	simulate.control_design	simulate.system_dynamics	renamed; real capability
+computing.embedded	design.pcb_design	design.pcb	renamed; real capability
+computing.app_platforms	media.games	media.games_interactive	renamed; real capability
+computing.app_platforms	media.interaction_design	media.ux_prototyping	renamed; real capability
+computing.databases	enterprise.business_intelligence	enterprise.reporting_bi	renamed; real capability
+computing.databases	science.data_analysis	science.statistics	renamed; real capability
+computing.data_integration	enterprise.business_intelligence	enterprise.reporting_bi	renamed; real capability
+computing.data_integration	science.data_analysis	science.statistics	renamed; real capability
+computing.networking	operate.utility_network_operations	operate.telecom_plant	renamed; real capability
+computing.networking	commerce.contact_center	commerce.customer_service	renamed; real capability
+computing.security_protection	govern.public_safety		no matching capability
+computing.security_operations	govern.public_safety	govern.emergency_response	renamed; real capability
+computing.storage	enterprise.document_management	enterprise.documents	renamed; real capability
+computing.it_operations	commerce.contact_center	commerce.customer_service	renamed; real capability
+design.solid_modeling	simulate.design_optimization	simulate.design_exploration	renamed; real capability
+design.solid_modeling	produce.additive_preparation	produce.additive_prep	renamed; real capability
+design.solid_modeling	media.modeling_animation	media.three_d_animation	renamed; real capability
+design.product_data	enterprise.document_management	enterprise.documents	renamed; real capability
+design.product_data	computing.requirements	computing.requirements_design	renamed; real capability
+design.architecture	simulate.frame_analysis	simulate.structural_design	renamed; real capability
+design.architecture	media.rendering	media.rendering_effects	renamed; real capability
+design.civil_site	simulate.network_hydraulics	simulate.pipe_networks	renamed; real capability
+design.civil_site	simulate.geotechnical_analysis	simulate.geotechnical	renamed; real capability
+design.civil_site	move.traffic_management	move.road_traffic	renamed; real capability
+design.plant_services	simulate.process_flowsheeting	simulate.process_flowsheet	renamed; real capability
+design.plant_services	simulate.network_hydraulics	simulate.pipe_networks	renamed; real capability
+design.electrical_systems	simulate.power_system_analysis	simulate.power_systems	renamed; real capability
+design.pcb	produce.electronics_assembly		no matching capability
+design.digital_design	computing.programming_languages	computing.languages	renamed; real capability
+design.digital_design	computing.embedded_toolchains	computing.embedded	renamed; real capability
+design.ic_signoff	produce.semiconductor_fabrication		no matching capability
+design.estimating	enterprise.project_management	enterprise.projects	renamed; real capability
+design.estimating	govern.insurance_claims	govern.insurance	renamed; real capability
+design.craft_design	produce.nesting	produce.profile_cutting_cam	renamed; real capability
+design.craft_design	media.vector_illustration	media.vector_graphics	renamed; real capability
+design.craft_design	health.treatment_planning	health.therapy_planning	renamed; real capability
+earth.gis	computing.database_management	computing.databases	renamed; real capability
+earth.cartography	media.vector_illustration	media.vector_graphics	renamed; real capability
+earth.photogrammetry	move.aviation	move.flight_operations	renamed; real capability
+earth.reservoir	simulate.engineered_networks	simulate.pipe_networks	renamed; real capability
+earth.reservoir	operate.utility_network_operations	operate.pipeline_operations	renamed; real capability
+earth.mining	move.fleet_tracking	move.fleet_dispatch	renamed; real capability
+earth.surface_water	simulate.engineered_networks	simulate.pipe_networks	renamed; real capability
+earth.atmosphere	science.visualization	science.visualization_imaging	renamed; real capability
+earth.atmosphere	move.aviation	move.flight_operations	renamed; real capability
+earth.environmental_site	operate.ehs	operate.environmental_compliance	renamed; real capability
+earth.environmental_site	science.laboratory_informatics	science.lab_informatics	renamed; real capability
+earth.agriculture	health.veterinary		no matching capability
+earth.forestry	govern.emergency_dispatch	govern.emergency_response	renamed; real capability
+earth.forestry	move.maritime_navigation	move.maritime	renamed; real capability
+enterprise.accounting	govern.banking	govern.banking_payments	renamed; real capability
+enterprise.receivables_payables	health.medical_billing	health.revenue_cycle	renamed; real capability
+enterprise.financial_planning	science.time_series_forecasting	science.signal_time_series	renamed; real capability
+enterprise.financial_planning	govern.investment_analysis	govern.securities_analysis	renamed; real capability
+enterprise.tax	govern.tax_administration	govern.public_administration	renamed; real capability
+enterprise.payroll_time	move.crew_scheduling	move.vehicle_routing	renamed; real capability
+enterprise.payroll_time	health.nurse_staffing	health.patient_administration	renamed; real capability
+enterprise.talent_acquisition	commerce.crm	commerce.customer_relationship	renamed; real capability
+enterprise.hr_admin	learn.training_management	learn.course_delivery	renamed; real capability
+enterprise.procurement	move.supply_planning	move.supply_chain_planning	renamed; real capability
+enterprise.procurement	govern.public_procurement		no matching capability
+enterprise.projects	design.quantity_takeoff	design.estimating	renamed; real capability
+enterprise.projects	computing.issue_tracking	computing.dev_tooling	renamed; real capability
+enterprise.process_workflow	produce.factory_simulation	produce.factory_design	renamed; real capability
+enterprise.process_workflow	computing.workflow_orchestration	computing.data_integration	renamed; real capability
+enterprise.documents	media.web_content_management	media.web_publishing	renamed; real capability
+enterprise.documents	govern.ediscovery	govern.legal_practice	renamed; real capability
+enterprise.documents	computing.enterprise_search		no matching capability
+enterprise.reporting_bi	computing.data_warehousing	computing.databases	renamed; real capability
+enterprise.audit_risk	operate.safety_engineering	operate.failure_hazard_analysis	renamed; real capability
+enterprise.audit_risk	computing.security_compliance	computing.security_operations	renamed; real capability
+enterprise.authoring	media.desktop_publishing	media.page_layout	renamed; real capability
+enterprise.authoring	media.creative_writing		no matching capability
+enterprise.authoring	learn.classroom_response	learn.classroom_interaction	renamed; real capability
+enterprise.communication	commerce.marketing_email	commerce.marketing_automation	renamed; real capability
+enterprise.communication	commerce.contact_center	commerce.customer_service	renamed; real capability
+enterprise.communication	learn.family_communication	learn.student_information	renamed; real capability
+enterprise.communication	media.social_media	media.public_communication	renamed; real capability
+govern.insurance	commerce.crm	commerce.customer_relationship	renamed; real capability
+govern.compliance_financial_crime	operate.ehs	operate.environmental_compliance	renamed; real capability
+govern.compliance_financial_crime	health.clinical_trials	health.clinical_research	renamed; real capability
+govern.compliance_financial_crime	computing.security	computing.security_operations	renamed; real capability
+govern.legal_research	learn.libraries	learn.library_management	renamed; real capability
+govern.legal_practice	enterprise.billing	enterprise.receivables_payables	renamed; real capability
+govern.emergency_response	move.dispatch	move.fleet_dispatch	renamed; real capability
+govern.emergency_response	earth.wildfire	earth.forestry	renamed; real capability
+govern.emergency_response	health.ems		no matching capability
+govern.law_enforcement	computing.security	computing.security_operations	renamed; real capability
+govern.social_services	health.care_management	health.orders_coordination	renamed; real capability
+govern.public_administration	move.customs_logistics	move.trade_compliance	renamed; real capability
+health.clinical_record	enterprise.document_management	enterprise.documents	renamed; real capability
+health.patient_administration	move.scheduling		no matching capability
+health.revenue_cycle	enterprise.billing	enterprise.receivables_payables	renamed; real capability
+health.imaging	science.image_analysis	science.visualization_imaging	renamed; real capability
+health.imaging	media.image_editing	media.raster_imaging	renamed; real capability
+health.physiological_signals	science.signal_processing	science.signal_time_series	renamed; real capability
+health.therapy_planning	simulate.radiation_transport	simulate.nuclear_radiation	renamed; real capability
+health.psych_assessment	science.experiment_presentation		no matching capability
+health.rehabilitation	simulate.biomechanics	simulate.multibody	renamed; real capability
+health.nutrition	commerce.restaurant_operations	commerce.food_service	renamed; real capability
+health.remote_care	media.video_conferencing	enterprise.communication	renamed; real capability
+health.interoperability	computing.integration	computing.data_integration	renamed; real capability
+health.interoperability	computing.security	computing.security_protection	renamed; real capability
+learn.course_delivery	enterprise.human_resources	enterprise.hr_admin	renamed; real capability
+learn.course_delivery	media.video	media.video_post	renamed; real capability
+learn.courseware_authoring	media.video	media.video_post	renamed; real capability
+learn.courseware_authoring	media.web_content	media.web_publishing	renamed; real capability
+learn.special_education	health.therapy	health.rehabilitation	renamed; real capability
+learn.assistive_access	health.therapy	health.rehabilitation	renamed; real capability
+learn.simulation_training	produce.operator_training		no matching capability
+learn.simulation_training	health.clinical_education		no matching capability
+learn.library_management	computing.search_engines		no matching capability
+learn.archives_collections	media.digital_asset_management	enterprise.documents	renamed; real capability
+learn.scholarly_information	health.clinical_reference	health.decision_support	renamed; real capability
+learn.scholarly_information	computing.search_engines		no matching capability
+learn.career_guidance	enterprise.human_resources	enterprise.hr_admin	renamed; real capability
+media.raster_imaging	science.image_analysis	science.visualization_imaging	renamed; real capability
+media.raster_imaging	health.medical_imaging	health.imaging	renamed; real capability
+media.raster_imaging	govern.forensics	govern.law_enforcement	renamed; real capability
+media.vector_graphics	design.drafting	design.product_definition	renamed; real capability
+media.page_layout	produce.prepress		no matching capability
+media.page_layout	enterprise.office_productivity	enterprise.authoring	renamed; real capability
+media.video_post	science.image_analysis	science.visualization_imaging	renamed; real capability
+media.rendering_effects	science.visualization	science.visualization_imaging	renamed; real capability
+media.audio_production	simulate.acoustics	simulate.acoustics_vibration	renamed; real capability
+media.games_interactive	computing.programming_languages	computing.languages	renamed; real capability
+media.games_interactive	learn.immersive_training	learn.simulation_training	renamed; real capability
+media.web_publishing	computing.web_frameworks	computing.app_platforms	renamed; real capability
+media.web_publishing	commerce.marketing	commerce.marketing_automation	renamed; real capability
+media.ux_prototyping	computing.requirements_modeling	computing.requirements_design	renamed; real capability
+media.ux_prototyping	computing.web_frameworks	computing.app_platforms	renamed; real capability
+media.broadcast_streaming	operate.telecom_broadcast_plant	operate.telecom_plant	renamed; real capability
+media.broadcast_streaming	commerce.marketing	commerce.advertising	renamed; real capability
+media.language	health.clinical_documentation	health.clinical_record	renamed; real capability
+media.public_communication	commerce.marketing	commerce.marketing_automation	renamed; real capability
+media.public_communication	commerce.crm	commerce.customer_relationship	renamed; real capability
+move.warehouse_inventory	commerce.retail_inventory	commerce.merchandising	renamed; real capability
+move.warehouse_inventory	enterprise.erp		no matching capability
+move.fleet_dispatch	govern.emergency_dispatch	govern.emergency_response	renamed; real capability
+move.fleet_dispatch	operate.equipment_diagnostics	operate.condition_monitoring	renamed; real capability
+move.trade_compliance	govern.regulatory_compliance	govern.compliance_financial_crime	renamed; real capability
+move.maritime	earth.weather_climate	earth.atmosphere	renamed; real capability
+move.maritime	design.ship_design		no matching capability
+move.travel_reservation	commerce.hospitality_reservations	commerce.hospitality	renamed; real capability
+move.road_traffic	design.civil_site_design	design.civil_site	renamed; real capability
+operate.maintenance_management	enterprise.erp		no matching capability
+operate.maintenance_management	move.warehouse_management	move.warehouse_inventory	renamed; real capability
+operate.maintenance_management	commerce.field_service	commerce.service_scheduling	renamed; real capability
+operate.asset_strategy	enterprise.project_portfolio	enterprise.projects	renamed; real capability
+operate.vehicle_diagnostics	move.fleet_telematics	move.fleet_dispatch	renamed; real capability
+operate.vehicle_diagnostics	computing.embedded_toolchains	computing.embedded	renamed; real capability
+operate.electrical_testing	simulate.power_system_analysis	simulate.power_systems	renamed; real capability
+operate.fault_isolation	learn.reference_tools	learn.scholarly_information	renamed; real capability
+operate.fault_isolation	media.technical_publishing	media.page_layout	renamed; real capability
+operate.condition_monitoring	produce.scada_hmi	produce.supervisory_control	renamed; real capability
+operate.failure_hazard_analysis	produce.quality_management	produce.quality_control	renamed; real capability
+operate.occupational_safety	enterprise.human_resources	enterprise.hr_admin	renamed; real capability
+operate.occupational_safety	health.public_health_surveillance	health.population_health	renamed; real capability
+operate.occupational_safety	learn.learning_management	learn.course_delivery	renamed; real capability
+operate.environmental_compliance	earth.environmental_sampling	earth.environmental_site	renamed; real capability
+operate.environmental_compliance	govern.regulatory_compliance	govern.compliance_financial_crime	renamed; real capability
+operate.building_automation	produce.scada_hmi	produce.supervisory_control	renamed; real capability
+operate.building_automation	simulate.control_design	simulate.system_dynamics	renamed; real capability
+operate.building_automation	computing.security	computing.security_protection	renamed; real capability
+operate.facility_management	design.bim	design.architecture	renamed; real capability
+operate.facility_management	learn.school_administration	learn.student_information	renamed; real capability
+operate.grid_operations	simulate.power_system_analysis	simulate.power_systems	renamed; real capability
+operate.grid_operations	produce.scada_hmi	produce.supervisory_control	renamed; real capability
+operate.grid_operations	computing.network_administration	computing.networking	renamed; real capability
+operate.pipeline_operations	simulate.network_hydraulics	simulate.pipe_networks	renamed; real capability
+operate.pipeline_operations	produce.scada_hmi	produce.supervisory_control	renamed; real capability
+operate.telecom_plant	computing.network_administration	computing.networking	renamed; real capability
+operate.telecom_plant	media.broadcast_automation	media.broadcast_streaming	renamed; real capability
+produce.process_planning	design.product_data_management	design.product_data	renamed; real capability
+produce.additive_prep	simulate.manufacturing_process_simulation	simulate.manufacturing_process	renamed; real capability
+produce.robot_programming	operate.safety_engineering	operate.failure_hazard_analysis	renamed; real capability
+produce.robot_programming	science.computer_vision	science.visualization_imaging	renamed; real capability
+produce.plc_programming	computing.embedded_toolchains	computing.embedded	renamed; real capability
+produce.plc_programming	design.electrical_design	design.electrical_systems	renamed; real capability
+produce.plc_programming	simulate.control_design	simulate.system_dynamics	renamed; real capability
+produce.supervisory_control	simulate.control_design	simulate.system_dynamics	renamed; real capability
+produce.supervisory_control	operate.utility_network_operations	operate.grid_operations	renamed; real capability
+produce.batch_control	design.product_data_management	design.product_data	renamed; real capability
+produce.manufacturing_execution	enterprise.erp		no matching capability
+produce.production_scheduling	science.optimization_solvers	science.optimization	renamed; real capability
+produce.factory_design	operate.ergonomics	operate.occupational_safety	renamed; real capability
+produce.factory_design	move.warehouse_design	move.warehouse_inventory	renamed; real capability
+produce.quality_control	operate.reliability_engineering	operate.reliability_analysis	renamed; real capability
+produce.metrology	operate.nondestructive_testing		no matching capability
+produce.process_specific_prep	design.pcb_design	design.pcb	renamed; real capability
+science.numerical_computing	computing.programming_languages	computing.languages	renamed; real capability
+science.symbolic_math	learn.instruction	learn.adaptive_practice	renamed; real capability
+science.experimental_design	produce.spc	produce.quality_control	renamed; real capability
+science.signal_time_series	design.ic_design	design.ic_implementation	renamed; real capability
+science.stochastic_simulation	produce.factory_simulation	produce.factory_design	renamed; real capability
+science.stochastic_simulation	govern.risk_modeling	govern.risk_actuarial	renamed; real capability
+science.visualization_imaging	simulate.post_processing	simulate.meshing_prepost	renamed; real capability
+science.visualization_imaging	enterprise.business_intelligence	enterprise.reporting_bi	renamed; real capability
+science.visualization_imaging	health.medical_imaging	health.imaging	renamed; real capability
+science.analytical_data	health.clinical_laboratory	health.laboratory	renamed; real capability
+science.lab_informatics	health.clinical_laboratory	health.laboratory	renamed; real capability
+science.lab_informatics	health.clinical_trials	health.clinical_research	renamed; real capability
+science.social_research	commerce.market_research	commerce.marketing_analytics	renamed; real capability
+science.genomics	health.clinical_genomics	health.laboratory	renamed; real capability
+science.systems_biology	simulate.process_flowsheeting	simulate.process_flowsheet	renamed; real capability
+science.molecular_modeling	simulate.materials_process	simulate.material_behavior	renamed; real capability
+simulate.material_behavior	science.materials	science.molecular_modeling	renamed; real capability
+simulate.fatigue_fracture	operate.reliability	operate.reliability_analysis	renamed; real capability
+simulate.structural_design	design.bim	design.architecture	renamed; real capability
+simulate.fire	earth.wildfire	earth.forestry	renamed; real capability
+simulate.fire	operate.ehs	operate.occupational_safety	renamed; real capability
+simulate.vehicle_vessel	move.vessel_operations	move.maritime	renamed; real capability
+simulate.vehicle_vessel	govern.public_safety	govern.emergency_response	renamed; real capability
+simulate.acoustics_vibration	earth.environmental_noise	earth.atmosphere	renamed; real capability
+simulate.manufacturing_process	produce.cam	produce.milling_cam	renamed; real capability
+simulate.manufacturing_process	design.ic_design		no matching capability
+simulate.process_flowsheet	produce.process_control	produce.supervisory_control	renamed; real capability
+simulate.power_systems	operate.utility_network_operations	operate.grid_operations	renamed; real capability
+simulate.renewable_energy	earth.solar_wind_resource	earth.atmosphere	renamed; real capability
+simulate.pipe_networks	operate.utility_network_operations	operate.pipeline_operations	renamed; real capability
+simulate.system_dynamics	computing.embedded_toolchains	computing.embedded	renamed; real capability
+simulate.nuclear_radiation	science.physics		no matching capability
+simulate.nuclear_radiation	operate.reliability	operate.reliability_analysis	renamed; real capability
+simulate.nuclear_radiation	health.radiation_therapy	health.therapy_planning	renamed; real capability
+simulate.meshing_prepost	media.scientific_visualization	science.visualization_imaging	renamed; real capability
+simulate.design_exploration	design.tolerancing	design.product_definition	renamed; real capability
