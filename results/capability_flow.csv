@@ -1,0 +1,224 @@
+capability,name,domain,flow,flow_distinctive,rank,rank_distinctive,occupations,products,top_need,top_need_distinctive
+enterprise.authoring,Office document authoring,enterprise,0.097265198137,0.00925977573,1,28,742,40,safety,clothing
+enterprise.communication,Communication and collaboration,enterprise,0.077142487386,0.017570310366,2,8,649,60,clothing,clothing
+computing.databases,Database management and query,computing,0.041321816063,0.020735170778,3,3,402,72,safety,safety
+computing.app_platforms,Application frameworks and servers,computing,0.039692351132,0.017523221025,4,9,470,87,communication,clothing
+enterprise.spreadsheets,Spreadsheet calculation and modeling,enterprise,0.036278861911,0.004106692485,5,54,740,11,food,clothing
+computing.operating_systems,Operating systems and virtualization,computing,0.027057720967,0.02111146935,6,2,289,39,communication,safety
+enterprise.receivables_payables,"Billing, receivables and payables",enterprise,0.019350713874,0.017235118194,7,10,308,40,mobility,water_sanitation
+enterprise.accounting,General accounting and financial close,enterprise,0.017799171558,0.019805617586,8,4,150,28,clothing,clothing
+media.public_communication,Social media and public communication,media,0.016730923222,0.018018470387,9,7,174,24,meaning,meaning
+enterprise.reporting_bi,Business intelligence and reporting,enterprise,0.015720852114,0.018894073955,10,5,112,39,communication,communication
+commerce.customer_relationship,Customer relationship management,commerce,0.014054863886,0.018540696065,11,6,113,35,meaning,meaning
+enterprise.documents,Document and records management,enterprise,0.012754569818,0.008681725312,12,32,277,64,safety,safety
+design.product_definition,"Drawings, tolerancing and manufacturability",design,0.011846210104,0.017234435115,13,11,171,25,energy,energy
+move.warehouse_inventory,Warehouse and inventory control,move,0.01165992597,0.02129156345,14,1,97,34,mobility,mobility
+enterprise.projects,Project and portfolio management,enterprise,0.011576086262,0.012784807028,15,14,167,36,communication,communication
+computing.languages,Programming languages and compilers,computing,0.011571842899,0.010436760305,16,21,162,50,communication,communication
+enterprise.payroll_time,"Payroll, time and attendance",enterprise,0.009730386366,0.012877130043,17,13,117,46,water_sanitation,water_sanitation
+media.raster_imaging,Raster image editing and photography,media,0.009332194799,0.007700987493,18,37,222,39,clothing,meaning
+computing.data_integration,Data integration and pipelines,computing,0.009242949906,0.011994247819,19,17,110,72,communication,communication
+science.statistics,Statistical modeling and inference,science,0.008939177971,0.009378202925,20,27,149,38,communication,communication
+health.clinical_record,Clinical record and documentation,health,0.008816786489,0.011456194474,21,19,126,50,health,health
+commerce.food_service,Restaurant and food service operations,commerce,0.008455361837,0.013178272393,22,12,22,40,food,food
+learn.course_delivery,Learning management and course delivery,learn,0.008340157065,0.011696567657,23,18,92,32,education,education
+computing.networking,Network operations and communications,computing,0.008022846083,0.012413120475,24,16,67,77,communication,communication
+operate.maintenance_management,Maintenance work management,operate,0.007619586359,0.012738850523,25,15,77,55,mobility,mobility
+media.page_layout,Page layout and typesetting,media,0.007509879539,0.009120017966,26,30,157,36,meaning,meaning
+computing.dev_tooling,Software development tooling,computing,0.006839670828,0.008240754378,27,34,101,63,communication,communication
+computing.cloud,Cloud infrastructure and automation,computing,0.006738808689,0.009860874052,28,24,72,48,communication,communication
+computing.security_protection,"Identity, access and protection",computing,0.006608670112,0.011425749133,29,20,55,65,communication,communication
+produce.supervisory_control,Supervisory and process control,produce,0.006068548661,0.009851025315,30,25,59,31,energy,energy
+commerce.point_of_sale,Point of sale and payment acceptance,commerce,0.006005699928,0.0099770446,31,23,20,31,food,food
+media.video_post,"Video editing, compositing and motion graphics",media,0.005994669567,0.0086379258,32,33,84,32,education,education
+health.revenue_cycle,"Medical coding, billing and claims",health,0.005955620625,0.008747486488,33,31,76,34,health,health
+learn.classroom_interaction,Live classroom interaction,learn,0.005722030142,0.009991289786,34,22,52,13,education,education
+media.web_publishing,Web page creation and content management,media,0.004825536325,0.007332774217,35,38,78,27,meaning,meaning
+enterprise.process_workflow,Process modeling and workflow automation,enterprise,0.004737159855,0.005256460622,36,43,124,28,safety,safety
+move.fleet_dispatch,Fleet dispatch and tracking,move,0.004664849212,0.009234184288,37,29,14,40,water_sanitation,water_sanitation
+commerce.marketing_automation,Marketing campaign automation,commerce,0.004544407299,0.009406058181,38,26,43,14,communication,communication
+enterprise.financial_planning,"Budgeting, forecasting and cost accounting",enterprise,0.004398638019,0.006296708056,39,39,78,27,energy,energy
+commerce.property_management,Rental property and lease management,commerce,0.004102216695,0.008139221499,40,35,31,21,meaning,meaning
+enterprise.hr_admin,Workforce administration and rewards,enterprise,0.00369994413,0.005740151877,41,41,60,61,meaning,meaning
+earth.gis,Geographic information systems,earth,0.003531036641,0.004265688294,42,51,119,58,safety,energy
+produce.plc_programming,Programmable controller programming,produce,0.003528309861,0.007911089684,43,36,29,20,energy,energy
+design.estimating,Quantity takeoff and cost estimating,design,0.003525531,0.00562836534,44,42,70,30,energy,safety
+enterprise.tax,Tax preparation and compliance,enterprise,0.003193376123,0.00524790994,45,44,35,31,meaning,meaning
+govern.legal_research,Legal research and analytics,govern,0.003130121716,0.004913199537,46,47,57,24,safety,safety
+media.vector_graphics,Vector illustration and graphic design,media,0.002908460785,0.003820699454,47,56,104,20,clothing,meaning
+design.architecture,Architectural design and building modeling,design,0.002804174985,0.005008279296,48,46,82,34,energy,energy
+enterprise.audit_risk,"Audit, risk and internal control",enterprise,0.002714368592,0.00615931535,49,40,6,41,meaning,meaning
+enterprise.talent_acquisition,Recruiting and selection,enterprise,0.002482004159,0.004585888459,50,49,33,35,meaning,meaning
+computing.testing,Software testing and verification,computing,0.002401306851,0.004177639904,51,52,33,52,communication,communication
+govern.law_enforcement,Law-enforcement records and forensics,govern,0.002383428171,0.004910180809,52,48,12,39,safety,safety
+commerce.marketing_analytics,Marketing measurement and research,commerce,0.002372792401,0.004404993009,53,50,37,18,meaning,meaning
+design.solid_modeling,Mechanical solid and surface modeling,design,0.002306453329,0.002980320714,54,72,78,40,mobility,mobility
+govern.investment_management,"Investment, trading and wealth management",govern,0.002202982342,0.004148332487,55,53,20,51,meaning,health
+commerce.customer_service,Customer service and contact centers,commerce,0.0022021178,0.005193320565,56,45,10,29,communication,communication
+govern.lending,"Credit scoring, lending and servicing",govern,0.001944966541,0.003124407346,57,67,11,63,mobility,meaning
+govern.legal_practice,Legal matter management and litigation support,govern,0.001930173968,0.003771858225,58,57,5,39,safety,safety
+computing.it_operations,IT service management and observability,computing,0.001907734464,0.003200157783,59,66,41,33,communication,communication
+move.road_traffic,Road navigation and traffic engineering,move,0.001861649073,0.003688510741,60,58,14,28,water_sanitation,water_sanitation
+computing.security_operations,"Security assessment, detection and response",computing,0.001859745897,0.003053362266,61,70,40,54,communication,communication
+move.flight_operations,Flight planning and airline operations,move,0.001808108676,0.002904947798,62,75,4,17,mobility,mobility
+computing.storage,"Storage, backup and recovery",computing,0.001727805137,0.003456929321,63,61,30,39,communication,communication
+move.vehicle_routing,Vehicle routing and scheduling,move,0.001663160532,0.003114634111,64,68,14,13,food,food
+commerce.advertising,Advertising buying and serving,commerce,0.00164473334,0.00345775099,65,60,27,7,meaning,meaning
+move.parcel_mail,Parcel and mail processing,move,0.00164334081,0.002918090899,66,74,8,23,clothing,clothing
+produce.quality_control,Quality control and management,produce,0.001643293576,0.003501487437,67,59,15,24,water_sanitation,water_sanitation
+commerce.service_scheduling,Appointment and field service management,commerce,0.001620526895,0.003050396945,68,71,32,17,mobility,mobility
+health.psych_assessment,Psychological and cognitive assessment,health,0.001613992032,0.003311566504,69,64,9,32,health,health
+produce.production_scheduling,Production planning and scheduling,produce,0.001569322129,0.00327214979,70,65,19,30,energy,water_sanitation
+produce.milling_cam,Milling toolpath programming,produce,0.001549473412,0.001919331588,71,102,62,42,mobility,mobility
+earth.surveying,Land and hydrographic surveying,earth,0.001534496111,0.002921496468,72,73,65,58,energy,energy
+simulate.building_energy,Building energy and environmental performance,simulate,0.001528175744,0.002746993668,73,78,12,49,energy,energy
+govern.compliance_financial_crime,Regulatory compliance and financial crime,govern,0.001516897388,0.002702180914,74,80,9,42,meaning,meaning
+earth.agriculture,"Crop, soil and livestock management",earth,0.001495619279,0.003840366785,75,55,13,61,food,food
+science.instrument_control,Instrument control and data acquisition,science,0.001478440274,0.002235142291,76,95,54,20,energy,energy
+learn.adaptive_practice,Tutoring and adaptive practice,learn,0.001442551503,0.002703981398,77,79,25,15,education,education
+design.digital_design,Digital logic design and verification,design,0.001428774255,0.001976454764,78,99,23,35,communication,communication
+govern.securities_analysis,Securities analysis and pricing,govern,0.001385870728,0.002466791579,79,88,9,58,meaning,meaning
+learn.assessment,"Assessment, testing and academic integrity",learn,0.001381656905,0.002485591702,80,86,57,17,education,education
+science.signal_time_series,Signal and time-series analysis,science,0.001371116826,0.001594882253,81,108,107,25,education,education
+govern.courts_corrections,Courts and corrections management,govern,0.001363119766,0.003372735522,82,63,12,26,safety,safety
+computing.requirements_design,Requirements and software architecture,computing,0.001331100852,0.002368264765,83,91,39,21,communication,communication
+learn.courseware_authoring,Instructional design and courseware authoring,learn,0.001322935703,0.002884882835,84,76,19,22,education,education
+govern.insurance,Insurance underwriting and claims,govern,0.001322880734,0.002650247159,85,83,10,56,water_sanitation,water_sanitation
+simulate.power_systems,Power system analysis,simulate,0.001295393772,0.002319059787,86,93,7,19,energy,energy
+health.medication,Medication management and pharmacy,health,0.00129388386,0.002842672573,87,77,16,26,health,health
+science.experimental_design,Experimental and sampling design,science,0.001285098805,0.00188655724,88,103,65,12,water_sanitation,water_sanitation
+operate.vehicle_diagnostics,Vehicle and aircraft diagnostics,operate,0.001228642343,0.002666826211,89,82,10,18,mobility,mobility
+science.numerical_computing,Numerical computing,science,0.00121910001,0.001300097196,90,116,90,25,energy,energy
+simulate.pipe_networks,Engineered network hydraulics,simulate,0.001210989937,0.00207372816,91,97,14,39,energy,energy
+earth.cartography,Cartography and map production,earth,0.00120083725,0.001347907764,92,115,103,31,safety,safety
+operate.occupational_safety,Occupational health and safety management,operate,0.001175230543,0.002603733958,93,84,11,30,water_sanitation,water_sanitation
+health.orders_coordination,"Orders, results and care coordination",health,0.001158090634,0.001612794117,94,107,73,18,health,health
+commerce.merchandising,"Merchandise planning, pricing and store inventory",commerce,0.001153964478,0.003408937677,95,62,4,6,clothing,clothing
+operate.fault_isolation,Fault isolation and service information,operate,0.001153422057,0.002428816655,96,90,12,15,mobility,mobility
+operate.building_automation,Building automation and control,operate,0.001140691889,0.003088509459,97,69,9,12,energy,energy
+science.optimization,Mathematical optimization,science,0.001101324276,0.001225311113,98,123,88,24,energy,communication
+commerce.hospitality,"Lodging, reservations and events",commerce,0.001043499115,0.002461769312,99,89,15,34,food,meaning
+enterprise.procurement,Procurement and supplier management,enterprise,0.001042152143,0.002288486093,100,94,16,16,food,food
+commerce.personal_services,Personal and death care services,commerce,0.001040411093,0.001870988073,101,105,12,46,meaning,meaning
+govern.emergency_response,Emergency dispatch and incident command,govern,0.001009576666,0.002332287566,102,92,15,17,safety,safety
+produce.manufacturing_execution,Manufacturing execution,produce,0.000996046571,0.002076135391,103,96,16,20,food,food
+health.patient_administration,Patient administration and scheduling,health,0.000978045277,0.001796195235,104,106,42,16,health,health
+computing.embedded,Embedded and real-time toolchains,computing,0.000941897605,0.001875899243,105,104,17,33,communication,communication
+produce.metrology,Dimensional metrology and inspection,produce,0.000909534065,0.001946682295,106,101,14,18,water_sanitation,water_sanitation
+design.plant_services,Plant and building services layout,design,0.000837917035,0.001948171194,107,100,13,22,energy,energy
+design.circuit_simulation,Circuit and interconnect simulation,design,0.000828701415,0.001231233759,108,120,15,32,energy,energy
+learn.student_information,Student information and school administration,learn,0.000823780471,0.002038137272,109,98,15,20,education,education
+science.symbolic_math,Symbolic and exact mathematics,science,0.000822021049,0.001379939352,110,114,41,20,education,education
+govern.banking_payments,Banking operations and payments,govern,0.000816876344,0.002677008239,111,81,6,12,meaning,meaning
+move.supply_chain_planning,Supply chain planning,move,0.000814353772,0.002522639561,112,85,9,21,food,food
+science.visualization_imaging,Scientific visualization and image analysis,science,0.000769462839,0.001033168981,113,131,57,63,health,meaning
+health.decision_support,Clinical decision support,health,0.000760065325,0.001430890706,114,113,12,23,health,health
+produce.nc_programs,NC post-processing and verification,produce,0.000756434935,0.001434624356,115,112,15,20,mobility,mobility
+move.trade_compliance,Trade compliance and shipping documents,move,0.000721079657,0.001244135634,116,119,8,19,clothing,clothing
+science.lab_informatics,Laboratory informatics,science,0.000720194228,0.001136475125,117,127,25,17,water_sanitation,water_sanitation
+operate.telecom_plant,Telecom and broadcast plant operations,operate,0.000701958751,0.002470830479,118,87,3,5,communication,communication
+commerce.real_estate,Real estate brokerage and valuation,commerce,0.000695777868,0.001438114883,119,111,5,26,clothing,clothing
+media.broadcast_streaming,"Broadcast, streaming and live production",media,0.000691286484,0.001584437355,120,109,17,26,meaning,meaning
+design.civil_site,"Civil site, road and corridor design",design,0.000669118287,0.001178572717,121,126,30,15,safety,safety
+health.imaging,Medical imaging management and analysis,health,0.000645552069,0.001180141162,122,125,15,39,health,health
+earth.surface_water,Surface water hydrology and hydraulics,earth,0.000638782362,0.001016982371,123,134,16,35,water_sanitation,water_sanitation
+simulate.structural_design,Structural frame analysis and code checking,simulate,0.000638154425,0.001226749493,124,122,13,15,safety,energy
+media.language,"Translation, captioning and speech",media,0.000590890088,0.001274668101,125,118,31,34,safety,safety
+science.molecular_modeling,Molecular modeling and structural biology,science,0.000587666531,0.000890078286,126,145,12,45,water_sanitation,water_sanitation
+operate.electrical_testing,Electrical test and instrument calibration,operate,0.00057176188,0.001563076621,127,110,6,8,energy,energy
+media.audio_production,"Audio recording, editing and mixing",media,0.000569398772,0.001018140347,128,133,21,37,meaning,education
+produce.profile_cutting_cam,Sheet and profile cutting programming,produce,0.000568825304,0.00127876724,129,117,7,23,clothing,clothing
+health.rehabilitation,"Rehabilitation, hearing, speech and vision",health,0.000559568284,0.000979384202,130,139,25,43,health,health
+produce.process_planning,Manufacturing process planning,produce,0.000553936502,0.001190004361,131,124,9,10,mobility,mobility
+design.pcb,Printed circuit board design,design,0.000553545847,0.000882281633,132,146,10,20,energy,energy
+science.machine_learning,Machine learning and data mining,science,0.000551336021,0.001010764299,133,136,21,33,communication,communication
+move.freight_transport,Freight transportation management,move,0.000546615937,0.001033135033,134,132,7,33,mobility,mobility
+science.analytical_data,Analytical instrument data processing,science,0.00054627082,0.000951422854,135,143,15,36,health,health
+operate.failure_hazard_analysis,"Failure, hazard and risk analysis",operate,0.000542223443,0.000867427844,136,147,13,23,energy,energy
+design.ic_implementation,Digital integrated circuit implementation,design,0.000539782513,0.000920188103,137,144,4,22,energy,energy
+govern.public_administration,"Public revenue, registries and permits",govern,0.000527066502,0.001135652801,138,128,14,37,safety,safety
+health.clinical_research,Clinical trials and research data,health,0.000516097158,0.001036652255,139,130,5,26,health,health
+operate.grid_operations,Electric grid operations,operate,0.000514771472,0.000964195814,140,141,3,18,energy,energy
+media.ux_prototyping,User-interface and experience prototyping,media,0.000488444452,0.001082241064,141,129,20,10,energy,energy
+produce.factory_design,Factory design and simulation,produce,0.00047605927,0.001013173685,142,135,12,12,energy,energy
+design.craft_design,"Apparel, jewelry and craft design",design,0.000432496312,0.000963326962,143,142,7,22,clothing,clothing
+science.social_research,Survey and behavioral research methods,science,0.000432171273,0.000831556548,144,149,19,48,education,education
+simulate.system_dynamics,System dynamics simulation and control design,simulate,0.000419827084,0.000657297623,145,161,19,15,communication,communication
+operate.environmental_compliance,Environmental compliance management,operate,0.000414235232,0.000840914542,146,148,7,13,energy,energy
+commerce.ecommerce,Online storefront and order management,commerce,0.000408392797,0.001226949097,147,121,3,3,clothing,clothing
+simulate.structural_fea,Structural finite element analysis,simulate,0.000395914201,0.000568392922,148,168,19,17,energy,energy
+produce.robot_programming,Industrial robot programming,produce,0.000390980808,0.000994130945,149,137,8,18,mobility,mobility
+simulate.process_flowsheet,Chemical process simulation,simulate,0.000389824996,0.000768741823,150,151,8,23,energy,energy
+health.laboratory,Clinical laboratory and pathology,health,0.000382582069,0.000734971235,151,155,10,52,health,health
+move.rail_operations,Rail operations,move,0.000380388472,0.000743372041,152,154,6,12,mobility,mobility
+science.genomics,High-throughput genomic data analysis,science,0.000378270537,0.000756139578,153,152,15,36,communication,communication
+learn.assistive_access,Assistive reading and writing technology,learn,0.000376264977,0.000978004526,154,140,13,15,health,health
+earth.photogrammetry,"Photogrammetry, lidar and aerial mapping",earth,0.000373074502,0.000486559405,155,177,27,34,mobility,mobility
+learn.library_management,Library management and cataloging,learn,0.000360284186,0.000770687115,156,150,8,29,safety,safety
+science.stochastic_simulation,General-purpose stochastic simulation,science,0.000338023917,0.00052125698,157,174,23,14,energy,energy
+simulate.renewable_energy,Renewable energy system performance,simulate,0.000335491787,0.000982361327,158,138,4,15,energy,safety
+earth.subsurface,Subsurface imaging and geological modeling,earth,0.000334838367,0.000639833892,159,163,7,59,mobility,mobility
+media.three_d_animation,3D modeling and character animation,media,0.000317954207,0.000670940833,160,159,22,28,meaning,meaning
+learn.career_guidance,Career guidance and education planning,learn,0.000317736328,0.00074707599,161,153,5,16,education,education
+operate.reliability_analysis,Reliability and maintainability analysis,operate,0.000312666472,0.000572818868,162,167,5,9,energy,energy
+earth.atmosphere,"Weather, climate and air quality",earth,0.000311783775,0.000723101301,163,156,8,41,safety,safety
+health.nutrition,Nutrition and dietetics,health,0.000296179947,0.00067290728,164,158,6,23,meaning,meaning
+design.product_data,Product data and lifecycle management,design,0.000291999922,0.000545324694,165,170,15,11,communication,communication
+design.electrical_systems,Electrical wiring and harness design,design,0.000289459678,0.000523645214,166,173,7,7,energy,energy
+govern.risk_actuarial,Financial risk and actuarial modeling,govern,0.000280343504,0.000460243286,167,180,10,23,meaning,meaning
+produce.turning_cam,"Turning, mill-turn and grinding programming",produce,0.000271549232,0.00050502588,168,175,15,14,mobility,mobility
+earth.environmental_site,Environmental sampling and site assessment,earth,0.0002646101,0.000540798597,169,171,7,26,safety,safety
+earth.reservoir,Reservoir and well performance engineering,earth,0.000260798862,0.000594290872,170,165,3,11,mobility,mobility
+media.rendering_effects,Rendering and effects simulation,media,0.000259014027,0.000637727641,171,164,9,24,communication,communication
+learn.scholarly_information,"Scholarly search, reference works and dictionaries",learn,0.000257065866,0.000586734584,172,166,19,33,education,education
+media.games_interactive,Game engines and interactive media,media,0.000255595569,0.000535410803,173,172,12,13,meaning,meaning
+earth.forestry,"Forests, rangelands, wildlife and fire",earth,0.00025430538,0.000661753019,174,160,9,43,safety,safety
+simulate.thermal,Heat transfer and thermal analysis,simulate,0.000240514591,0.000355283799,175,186,22,19,water_sanitation,water_sanitation
+health.population_health,Public health and population health,health,0.00023855454,0.000491082575,176,176,10,24,health,health
+science.sequence_analysis,Biological sequence analysis,science,0.000237975754,0.000424200998,177,181,7,43,health,health
+operate.condition_monitoring,Condition monitoring and prognostics,operate,0.000232251465,0.000642868991,178,162,7,8,energy,energy
+design.custom_ic,Analog and custom IC design,design,0.000226493434,0.00037155108,179,184,5,18,energy,energy
+design.geometry_exchange,"Geometry exchange, repair and reverse engineering",design,0.00022624901,0.000369395596,180,185,13,11,energy,energy
+operate.energy_management,Facility energy management,operate,0.000225776566,0.000548587107,181,169,5,9,energy,energy
+simulate.optics,Optical and photonic simulation,simulate,0.000225283877,0.000405092526,182,182,5,19,energy,energy
+move.travel_reservation,Travel reservation and distribution,move,0.000222132263,0.000476580351,183,179,4,11,mobility,mobility
+simulate.nuclear_radiation,Radiation transport and nuclear systems,simulate,0.00021427467,0.000380083274,184,183,6,12,energy,energy
+media.music_notation,Music notation and composition,media,0.000186645588,0.000247360204,185,198,3,36,meaning,meaning
+learn.special_education,Special education planning,learn,0.00017960962,0.000349725445,186,187,6,16,education,education
+govern.social_services,Social services and benefits,govern,0.000178459739,0.000711596728,187,157,7,7,safety,safety
+health.physiological_signals,Physiological signal monitoring and diagnostics,health,0.000167167472,0.000483136495,188,178,8,14,health,health
+earth.mining,Mineral resource and mine planning,earth,0.000165356574,0.000300236276,189,192,6,17,energy,energy
+learn.simulation_training,Simulation-based training,learn,0.000162852565,0.000336484544,190,189,10,16,education,education
+simulate.geotechnical,Geotechnical analysis,simulate,0.000161889625,0.000221428195,191,202,7,13,safety,safety
+health.remote_care,Telehealth and patient engagement,health,0.000148267572,0.000330644726,192,190,6,3,health,health
+simulate.multibody,Multibody dynamics and mechanisms,simulate,0.00014789412,0.000259490469,193,196,9,13,mobility,mobility
+operate.asset_strategy,Asset strategy and lifecycle planning,operate,0.000143497761,0.000289789069,194,193,5,6,energy,energy
+computing.ml_platforms,Machine-learning platforms and operations,computing,0.000134629359,0.000305977897,195,191,12,10,communication,communication
+produce.process_specific_prep,Process-specific production preparation,produce,0.000132807511,0.000275802063,196,195,10,13,communication,meaning
+simulate.electromagnetics,Electromagnetic field simulation,simulate,0.000131822585,0.000200782601,197,207,13,8,energy,energy
+learn.archives_collections,Archives and museum collections,learn,0.000129172067,0.000289229059,198,194,8,35,meaning,meaning
+move.maritime,Maritime navigation and port operations,move,0.000129130288,0.000256798721,199,197,5,15,mobility,mobility
+simulate.fire,Fire and smoke simulation,simulate,0.000121555695,0.00020518069,200,206,2,29,energy,safety
+science.cheminformatics,Cheminformatics,science,0.000117439796,0.000220635469,201,203,5,9,water_sanitation,water_sanitation
+simulate.acoustics_vibration,"Acoustics, noise and vibration",simulate,0.000111095428,0.000191872791,202,208,13,14,mobility,mobility
+operate.pipeline_operations,Pipeline and water network operations,operate,0.00011002155,0.000348608774,203,188,2,2,energy,energy
+simulate.meshing_prepost,Simulation pre- and post-processing,simulate,0.000106636165,0.000181391901,204,209,8,9,energy,energy
+earth.remote_sensing,Remote sensing image analysis,earth,0.000104700166,0.000171411221,205,211,19,20,mobility,safety
+earth.groundwater,Groundwater and vadose zone modeling,earth,0.00010315961,0.000154450657,206,212,8,56,safety,safety
+health.interoperability,Health data exchange and terminology,health,9.7335176e-05,0.000245966729,207,199,9,5,health,health
+science.systems_biology,Biochemical and physiological systems modeling,science,9.6884081e-05,0.000174194851,208,210,5,11,health,education
+health.therapy_planning,Radiation and procedure planning,health,9.6734299e-05,0.000154061496,209,213,9,19,health,health
+produce.additive_prep,Additive manufacturing build preparation,produce,9.1996014e-05,0.00020896948,210,205,6,5,mobility,mobility
+simulate.cfd,Computational fluid dynamics,simulate,8.7518532e-05,0.000140516723,211,215,10,5,energy,energy
+design.ic_signoff,IC physical verification and signoff,design,8.1048535e-05,0.000140988585,212,214,3,5,communication,communication
+simulate.manufacturing_process,Manufacturing process simulation,simulate,8.0337423e-05,0.000213254957,213,204,2,5,mobility,mobility
+simulate.vehicle_vessel,Vehicle and vessel performance,simulate,6.9226662e-05,0.000125029518,214,216,5,13,water_sanitation,water_sanitation
+produce.batch_control,Batch control and recipe management,produce,6.6148241e-05,0.000227824281,215,200,1,1,mobility,mobility
+simulate.fatigue_fracture,Fatigue and fracture analysis,simulate,6.2050887e-05,0.000109578003,216,217,8,6,mobility,mobility
+operate.facility_management,Facility and space management,operate,6.0716873e-05,0.000225305994,217,201,3,3,education,education
+simulate.semiconductor_device,Semiconductor process and device simulation,simulate,5.4883117e-05,0.000108210705,218,218,1,9,energy,energy
+simulate.multiphysics,Coupled multiphysics simulation,simulate,4.3300395e-05,8.3073623e-05,219,219,6,8,energy,energy
+simulate.material_behavior,Material nonlinearity and composites,simulate,4.1188702e-05,7.3138292e-05,220,221,8,6,water_sanitation,water_sanitation
+simulate.design_exploration,"Design optimization, uncertainty and validation",simulate,3.8433447e-05,6.1124466e-05,221,222,12,3,communication,communication
+move.air_traffic,Air traffic and airport operations,move,3.5598939e-05,8.275275e-05,222,220,2,13,mobility,mobility
+move.public_transit,Public transit planning and information,move,0.0,0.0,223,223,0,0,food,food

@@ -4,7 +4,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
-from plenty import model as M, analysis as A, occupations as O, rd as RD
+from plenty import model as M, analysis as A, occupations as O, rd as RD, flows as F
 
 OUT = M.ROOT / "results"
 OUT.mkdir(exist_ok=True)
@@ -33,6 +33,59 @@ def md(df, floatfmt="{:.3f}"):
     for idx, row in df.iterrows():
         lines.append("| " + " | ".join([str(idx)] + [str(v) for v in row.values]) + " |")
     return "\n".join(lines)
+
+
+TOP_OCCUPATIONS = 12   # occupations listed per capability in results/capability_flow_occupations.csv
+
+
+def capability_flows(m, r):
+    """Where today's value flows (plenty/flows.py): each need dollar traced through sectors and
+    occupations to the taxonomy's capabilities. Writes results/capability_flow*.csv and returns
+    (table, accounting)."""
+    com, caps = m.t.commodities, F.capabilities()
+    tax = pd.read_csv(F.TAXONOMY / "capabilities.csv", dtype=str).fillna("").set_index("id")
+    ls, pc = F.listings(), F.product_capabilities()
+    vn = F.need_value_added(m, r)
+    out = {}
+    for label, distinctive in (("flow", False), ("flow_distinctive", True)):
+        theta = F.occupation_shares(ls, pc, caps, distinctive)
+        work = F.sector_work(com, theta)
+        out[label] = (theta, work) + F.flow(vn, work, caps)
+    theta, work, flow, by_need, terms = out["flow"]
+    flow_d, by_need_d = out["flow_distinctive"][2], out["flow_distinctive"][3]
+    work.round(10).to_csv(OUT / "capability_flow_work.csv")
+    by_need.round(12).to_csv(OUT / "capability_flow_by_need.csv")
+    by_need_d.round(12).to_csv(OUT / "capability_flow_distinctive_by_need.csv")
+
+    # the occupations each flow passes through
+    ov = F.occupation_value(com, vn.mean(axis=1))
+    o = O.oews()
+    title = o.drop_duplicates("OCC_CODE").set_index("OCC_CODE").OCC_TITLE
+    th = O._occupation_uses(ov.index, theta, "mean").fillna(0.0)
+    listed, in_cap = ls.groupby("soc").size(), ls.merge(pc, on="product").groupby(["soc", "capability"]).size()
+    rows = []
+    for k in caps:
+        through = (ov * th[k]).nlargest(TOP_OCCUPATIONS)
+        for code, v in through[through > 0].items():
+            rows.append(dict(capability=k, occupation=code, title=title.get(code, "?"), share_of_basket=ov[code],
+                             products_in_capability=int(in_cap.get((code, k), 0)), products_listed=int(listed.get(code, 0)),
+                             share_of_work=th.at[code, k], flow=v))
+    pd.DataFrame(rows).round(10).to_csv(OUT / "capability_flow_occupations.csv", index=False)
+
+    table = pd.DataFrame({
+        "name": tax.name.reindex(caps), "domain": [k.split(".")[0] for k in caps],
+        "flow": flow, "flow_distinctive": flow_d,
+        "rank": flow.rank(ascending=False, method="min").astype(int),
+        "rank_distinctive": flow_d.rank(ascending=False, method="min").astype(int),
+        "occupations": (theta > 0).sum().reindex(caps),
+        "products": pc.groupby("capability")["product"].nunique().reindex(caps).fillna(0).astype(int),
+        "top_need": by_need.idxmax(axis=1), "top_need_distinctive": by_need_d.idxmax(axis=1),
+    }).sort_values("flow", ascending=False)
+    table.index.name = "capability"
+    table.round(12).to_csv(OUT / "capability_flow.csv")
+    acct = pd.DataFrame({label: F.unattributed(vn, out[label][1], caps) for label in out}).rename_axis("part")
+    acct.round(6).to_csv(OUT / "capability_flow_accounting.csv")
+    return table, acct
 
 
 def main():
@@ -160,6 +213,7 @@ def main():
     }).join(ranks).sort_values("volume weight", ascending=False)
     cap_table.index.name = "capability"
     cap_table.round(4).to_csv(OUT / "capability_table.csv")
+    flows, flow_acct = capability_flows(m, r)
 
     # ---- summary.md
     L = []
@@ -169,7 +223,15 @@ def main():
     L.append(f"\nTotal basket: ${T.sum()/1e6:.2f} trillion. Physical sectors (farming, extraction, "
              f"utilities, construction, manufacturing) carry {phys_share:.0%} of the value added "
              f"embodied in it; the rest is services.\n")
-    L.append("## Capabilities\n")
+    L.append("## Where today's value flows (taxonomy capabilities)\n")
+    L.append(f"Each need dollar traced through sectors (value added) and occupations (wage mix) to the capabilities whose "
+             f"software they list. Flowed: {flow_acct.at['flowed', 'flow']:.1%} of the basket; "
+             f"{flow_acct.at['sectors_without_occupation_data', 'flow']:.1%} sits in sectors with no occupational data and "
+             f"{flow_acct.at['work_not_placed', 'flow']:.1%} is work the chain could not place. Top 25 of {len(flows)}:\n")
+    L.append(md(flows.head(25)[["name", "flow", "flow_distinctive", "rank_distinctive", "occupations", "top_need"]], "{:.4f}"))
+    L.append("\n### By domain\n")
+    L.append(md(flows.groupby("domain")[["flow", "flow_distinctive"]].sum().sort_values("flow", ascending=False), "{:.4f}"))
+    L.append("\n## Engineering functions (elicited scores)\n")
     show = cap_table[["volume weight", "exposure", "reach 0.1c", "reach 1c", "reach 5c",
                       "need breadth", "volume_rank", "exposure_rank"]]
     L.append(md(show))

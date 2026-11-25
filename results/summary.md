@@ -16,7 +16,58 @@
 
 Total basket: $12.98 trillion. Physical sectors (farming, extraction, utilities, construction, manufacturing) carry 24% of the value added embodied in it; the rest is services.
 
-## Capabilities
+## Where today's value flows (taxonomy capabilities)
+
+Each need dollar traced through sectors (value added) and occupations (wage mix) to the capabilities whose software they list. Flowed: 78.0% of the basket; 4.8% sits in sectors with no occupational data and 17.2% is work the chain could not place. Top 25 of 223:
+
+| capability | name | flow | flow_distinctive | rank_distinctive | occupations | top_need |
+|---|---|---|---|---|---|---|
+| enterprise.authoring | Office document authoring | 0.0973 | 0.0093 | 28 | 742 | safety |
+| enterprise.communication | Communication and collaboration | 0.0771 | 0.0176 | 8 | 649 | clothing |
+| computing.databases | Database management and query | 0.0413 | 0.0207 | 3 | 402 | safety |
+| computing.app_platforms | Application frameworks and servers | 0.0397 | 0.0175 | 9 | 470 | communication |
+| enterprise.spreadsheets | Spreadsheet calculation and modeling | 0.0363 | 0.0041 | 54 | 740 | food |
+| computing.operating_systems | Operating systems and virtualization | 0.0271 | 0.0211 | 2 | 289 | communication |
+| enterprise.receivables_payables | Billing, receivables and payables | 0.0194 | 0.0172 | 10 | 308 | mobility |
+| enterprise.accounting | General accounting and financial close | 0.0178 | 0.0198 | 4 | 150 | clothing |
+| media.public_communication | Social media and public communication | 0.0167 | 0.0180 | 7 | 174 | meaning |
+| enterprise.reporting_bi | Business intelligence and reporting | 0.0157 | 0.0189 | 5 | 112 | communication |
+| commerce.customer_relationship | Customer relationship management | 0.0141 | 0.0185 | 6 | 113 | meaning |
+| enterprise.documents | Document and records management | 0.0128 | 0.0087 | 32 | 277 | safety |
+| design.product_definition | Drawings, tolerancing and manufacturability | 0.0118 | 0.0172 | 11 | 171 | energy |
+| move.warehouse_inventory | Warehouse and inventory control | 0.0117 | 0.0213 | 1 | 97 | mobility |
+| enterprise.projects | Project and portfolio management | 0.0116 | 0.0128 | 14 | 167 | communication |
+| computing.languages | Programming languages and compilers | 0.0116 | 0.0104 | 21 | 162 | communication |
+| enterprise.payroll_time | Payroll, time and attendance | 0.0097 | 0.0129 | 13 | 117 | water_sanitation |
+| media.raster_imaging | Raster image editing and photography | 0.0093 | 0.0077 | 37 | 222 | clothing |
+| computing.data_integration | Data integration and pipelines | 0.0092 | 0.0120 | 17 | 110 | communication |
+| science.statistics | Statistical modeling and inference | 0.0089 | 0.0094 | 27 | 149 | communication |
+| health.clinical_record | Clinical record and documentation | 0.0088 | 0.0115 | 19 | 126 | health |
+| commerce.food_service | Restaurant and food service operations | 0.0085 | 0.0132 | 12 | 22 | food |
+| learn.course_delivery | Learning management and course delivery | 0.0083 | 0.0117 | 18 | 92 | education |
+| computing.networking | Network operations and communications | 0.0080 | 0.0124 | 16 | 67 | communication |
+| operate.maintenance_management | Maintenance work management | 0.0076 | 0.0127 | 15 | 77 | mobility |
+
+### By domain
+
+| domain | flow | flow_distinctive |
+|---|---|---|
+| enterprise | 0.3199 | 0.1568 |
+| computing | 0.1674 | 0.1422 |
+| media | 0.0507 | 0.0617 |
+| commerce | 0.0493 | 0.0858 |
+| design | 0.0269 | 0.0419 |
+| move | 0.0262 | 0.0495 |
+| health | 0.0237 | 0.0375 |
+| science | 0.0210 | 0.0270 |
+| learn | 0.0208 | 0.0359 |
+| govern | 0.0200 | 0.0394 |
+| produce | 0.0196 | 0.0376 |
+| operate | 0.0161 | 0.0329 |
+| earth | 0.0106 | 0.0177 |
+| simulate | 0.0082 | 0.0147 |
+
+## Engineering functions (elicited scores)
 
 | capability | volume weight | exposure | reach 0.1c | reach 1c | reach 5c | need breadth | volume_rank | exposure_rank |
 |---|---|---|---|---|---|---|---|---|

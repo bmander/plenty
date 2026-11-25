@@ -34,6 +34,16 @@ OEWS_TOP_CODE = 208_000.0
 # crosswalk maps to real-estate lessors but are imputed rents with no employees.
 FARM_PREFIXES = ("111", "112")
 SPECIAL_PREFIXES = ("GSLG", "S00") + tuple(M.HOUSING)
+# Stand-ins for some of those, used when wage_mix(use_proxies=True): BEA commodity prefix -> NAICS
+# prefixes of the OEWS industries whose occupational mix stands in for it. OEWS reports public
+# schools and hospitals inside 611 and 622 (all ownerships) and other government under 999xxx;
+# support activities for crop and animal production stand in for farms.
+PROXY_PREFIXES = {
+    "GSLGE": ["611"], "GSLGH": ["622"],
+    "GSLGO": ["9992", "9993"], "S00201": ["9992", "9993"], "S00202": ["9992", "9993"], "S00203": ["9992", "9993"],
+    "S00500": ["9991"], "S00600": ["9991"], "S00101": ["9991"], "S00102": ["9991"], "491000": ["9991"],
+    "111": ["1151"], "112": ["1152"],
+}
 
 
 def soc6(code: pd.Series) -> pd.Series:
@@ -172,51 +182,69 @@ def _fallback_reason(c: str) -> str:
     return "no_oews_match"
 
 
-def _occupation_uses(occ_codes: pd.Index, u: pd.DataFrame) -> pd.DataFrame:
+def _occupation_uses(occ_codes: pd.Index, u: pd.DataFrame, agg: str = "max") -> pd.DataFrame:
     """uses[] for OEWS occupation codes. OEWS sometimes publishes an aggregate code ending in 0
-    (e.g. 51-2090 for 51-2091..2099); it uses k if any O*NET occupation under it does."""
+    (e.g. 51-2090 for 51-2091..2099); it takes agg over the O*NET occupations under it: "max"
+    (uses k if any member does) for 0/1 uses, "mean" for shares."""
     rows = {}
     for code in occ_codes:
         if code in u.index:
             rows[code] = u.loc[code]
         else:  # an all-NaN row when nothing in O*NET sits under the code
-            rows[code] = u[u.index.str.startswith(code.rstrip("0"))].max()
+            rows[code] = u[u.index.str.startswith(code.rstrip("0"))].agg(agg)
     return pd.DataFrame(rows).T
 
 
-def shares(commodities: list[str], u: pd.DataFrame) -> pd.DataFrame:
-    """Commodity x capability wage-bill shares in [0, 1], with provenance columns.
+def wage_mix(commodities: list[str], use_proxies: bool = False) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """(W, info). W is commodity x OEWS occupation code: the wage bill ($) of each detailed
+    occupation in the OEWS industries the commodity maps to, all zero where it maps to none.
+    info has source, oews_industries, wagebill_musd and wagebill_dropped_frac per commodity.
 
-    Occupations with suppressed employment or wages are dropped (the share renormalizes over the
-    rest). Occupations missing from O*NET count as not using any capability.
-    """
+    Occupations with suppressed employment or wages are dropped. use_proxies measures the
+    commodities in PROXY_PREFIXES through their stand-in industries (source "oews_proxy")
+    instead of leaving them to a fallback."""
     o = oews()
     det = o[o.O_GROUP.str.lower() == "detailed"]
     totals = o[o.OCC_CODE == "00-0000"]
     tot = totals.set_index("NAICS").wagebill
     wb = det.dropna(subset=["wagebill"]).groupby(["NAICS", "OCC_CODE"]).wagebill.sum().unstack(fill_value=0.0)
-    ou = _occupation_uses(wb.columns, u)
-    unmatched = ou.isna().all(axis=1)
-    ou = ou.fillna(0.0)
     covers = {r.NAICS: oews_coverage(r.NAICS, r.NAICS_TITLE) for r in totals.itertuples()}
     ind = bea_industries(commodities, covers)
-    rows = []
+    W, info = {}, []
     for c in commodities:
-        naics = [] if c in M.HOUSING else ind[c]
-        rec = {"commodity": c, "source": "oews" if naics else f"fallback:{_fallback_reason(c)}",
-               "oews_industries": ";".join(naics)}
+        pref = next((v for k, v in PROXY_PREFIXES.items() if c.startswith(k)), None) if use_proxies else None
+        if pref:
+            naics, source = sorted(i for i in wb.index if i.startswith(tuple(pref))), "oews_proxy"
+        else:
+            naics = [] if c in M.HOUSING else ind[c]
+            source = "oews" if naics else f"fallback:{_fallback_reason(c)}"
+        rec = {"commodity": c, "source": source, "oews_industries": ";".join(naics)}
+        W[c] = wb.loc[naics].sum()
         if naics:
-            w = wb.loc[naics].sum()
-            total = w.sum()
-            rec.update((w @ ou / total).to_dict())
+            total, known = W[c].sum(), tot.reindex(naics).sum()
             rec["wagebill_musd"] = total / 1e6
-            known = tot.reindex(naics).sum()
             rec["wagebill_dropped_frac"] = 1 - total / known if known > 0 else np.nan
-            rec["wagebill_unmatched_frac"] = w[unmatched].sum() / total
-        rows.append(rec)
+        info.append(rec)
+    return pd.DataFrame(W).T.reindex(columns=wb.columns), pd.DataFrame(info).set_index("commodity")
+
+
+def shares(commodities: list[str], u: pd.DataFrame, agg: str = "max", use_proxies: bool = False) -> pd.DataFrame:
+    """Commodity x column wage-bill-weighted means of u (SOC x column, values in [0, 1]), with
+    provenance columns.
+
+    The share renormalizes over the occupations OEWS reports (see wage_mix). Occupations missing
+    from O*NET count as 0. agg: see _occupation_uses. use_proxies: see wage_mix.
+    """
+    W, info = wage_mix(commodities, use_proxies)
+    ou = _occupation_uses(W.columns, u, agg)
+    unmatched = ou.isna().all(axis=1)
+    total = W.sum(axis=1)
+    measured = total > 0
+    sh = (W @ ou.fillna(0.0)).div(total, axis=0)[measured]
+    info["wagebill_unmatched_frac"] = (W.loc[:, unmatched].sum(axis=1) / total)[measured]
     caps = list(u.columns)
     cols = ["source", "oews_industries"] + caps + ["wagebill_musd", "wagebill_dropped_frac", "wagebill_unmatched_frac"]
-    return pd.DataFrame(rows).set_index("commodity").reindex(columns=cols)
+    return info.join(sh).reindex(index=commodities, columns=cols).rename_axis("commodity")
 
 
 def score_levels(sh: pd.DataFrame, scores: pd.DataFrame, cov: pd.DataFrame) -> pd.DataFrame:
