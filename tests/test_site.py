@@ -59,6 +59,14 @@ def test_activity_pages_add_up_to_the_flows(built):
     assert d.act_need.mean(axis=1).sum() == pytest.approx(d.act_acct["flowed"], abs=1e-5)
 
 
+def test_method_page_opens_with_the_account_as_equations(built):
+    html = (site.SITE / "method.html").read_text()
+    assert html.index('id="account"') < html.index("<h2>Steps</h2>")
+    assert html.count('<math display="block"') == 1 and html.count("<mtr>") == 3
+    assert 'href="#requirements"' in html and 'id="requirements"' in html
+    assert f"{built.act_acct.flowed * 100:.1f} cents" in html
+
+
 def test_ai_use_sits_beside_the_work(built):
     d = built
     I = d.ai[d.ai.level == "intermediate"]

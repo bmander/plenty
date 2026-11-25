@@ -1615,6 +1615,63 @@ authors followed, each checker's verdicts with the page read, and a log of every
 """
 
 
+def _m(body: str, block: bool = False) -> str:
+    """MathML, which browsers render natively: the site loads nothing from elsewhere."""
+    return f'<div class="eq"><math display="block">{body}</math></div>' if block else f"<math>{body}</math>"
+
+
+def _sub(a: str, b: str) -> str:
+    """a with subscript b; each letter of b is its own identifier, so that it is set in italic."""
+    return f"<msub><mi>{a}</mi><mrow>{''.join(f'<mi>{c}</mi>' for c in b)}</mrow></msub>"
+
+
+def _sum(i: str) -> str:
+    return f"<munder><mo>&sum;</mo><mi>{i}</mi></munder>"
+
+
+# bold letters are Unicode's mathematical bold: browsers do not all honour mathvariant
+_X, _I, _A, _D = "&#x1D431;", "&#x1D408;", "&#x1D400;", "&#x1D41D;"
+_ONE_LESS_C = f'<mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo>{_sub("c", "a")}<mo>)</mo></mrow>'
+
+
+def account_section(d: Data) -> str:
+    """The whole account as three equations, and which of their terms are known."""
+    def row(lhs, rhs):
+        return f'<mtr><mtd class="l">{lhs}</mtd><mtd><mo>=</mo></mtd><mtd class="r">{rhs}</mtd></mtr>'
+    eq = _m('<mtable displaystyle="true" columnalign="right center left" columnspacing="0.3em" rowspacing="1.1em">'
+            + row(_sub(_X, "n"),
+                  f'<msup><mrow><mo>(</mo><mi>{_I}</mi><mo>&minus;</mo><mi>{_A}</mi><mo>)</mo></mrow><mrow><mo>&minus;</mo><mn>1</mn></mrow></msup>'
+                  f'<mo>&#x2062;</mo>{_sub(_D, "n")}')
+            + row(_sub("f", "a"),
+                  f'<mfrac><mn>1</mn><mi>N</mi></mfrac><mo>&#x2062;</mo>{_sum("n")}{_sum("j")}{_sub("v", "jn")}'
+                  f'{_sum("o")}{_sub("w", "jo")}<mo>&#x2062;</mo>{_sub("&theta;", "oa")}')
+            + row("<mi>gap</mi>", f'{_sum("a")}{_sub("f", "a")}<mo>&#x2062;</mo>{_ONE_LESS_C}')
+            + "</mtable>", block=True)
+    where = [
+        (_sub(_D, "n"), f"final demand for need {_m('<mi>n</mi>')}, scaled to one dollar"),
+        (f"<mi>{_A}</mi>", 'the input-output table, with capital counted as an input (<a href="#requirements">total requirements</a>)'),
+        (_sub(_X, "n"), "everything the economy must produce, directly and indirectly, to deliver that dollar"),
+        (_sub("v", "jn"), f"sector {_m('<mi>j</mi>')}'s share of the value added in {_m(_sub(_X, 'n'))}"),
+        (_sub("w", "jo"), f"occupation {_m('<mi>o</mi>')}'s share of sector {_m('<mi>j</mi>')}'s wage bill"),
+        (_sub("&theta;", "oa"), f"the share of occupation {_m('<mi>o</mi>')}'s work that is activity {_m('<mi>a</mi>')}"),
+        ("<mi>N</mi>", f"the number of needs, {len(NEED_NAME)}, each counted equally"),
+        (_sub("f", "a"), f'the part of a need dollar that pays for activity {_m("<mi>a</mi>")} (<a href="#activities">how it is computed</a>)'),
+        (_sub("c", "a"), f"the fraction of activity {_m('<mi>a</mi>')} that machines can do, ideally with open tools"),
+    ]
+    n_act = int((d.act.level == "intermediate").sum())
+    return f"""<h2 id="account">The account in three lines</h2>
+{eq}
+<dl class="where">{"".join(f"<dt>{_m(k)}</dt><dd>{v}</dd>" for k, v in where)}</dl>
+<p>The first two lines are computed. Together they place {d.act_acct.flowed * 100:.1f} cents of a need dollar on
+{n_act} <a href="activities.html">activities</a>. The third line is the goal, and {_m(_sub("c", "a"))} is the unknown.</p>
+<p>So far there are only proxies for {_m(_sub("c", "a"))}: the share of an activity's software tasks with a known open-source
+tool, and the share of <a href="#ai">AI use</a> that falls on it. Neither is capability. Measuring {_m(_sub("c", "a"))} is what
+open benchmarks are for, and {_m(_sub("f", "a") + "<mo>&#x2062;</mo>" + _ONE_LESS_C)} ranks where to build them first.</p>
+<p class="note">{_m(_sub("f", "a"))} is where today's money goes, not how much an activity matters, so the gap is measured
+in today's prices.</p>
+"""
+
+
 def method_page(d: Data) -> str:
     srows = [f'<tr><td class="wrap">{e(k[0].upper() + k[1:])}</td><td class="num">{r.spearman_vs_headline:.2f}</td>'
              f'<td class="num">{int(r.top5_overlap)} of 5</td></tr>' for k, r in d.sens.iterrows()]
@@ -1627,6 +1684,7 @@ def method_page(d: Data) -> str:
 <p class="lede">Input-output analysis: define a basket of needs, trace everything the economy must
 produce to deliver it, then follow each need dollar to the work it pays for and the means that work is done with.</p>
 
+{account_section(d)}
 <h2>Steps</h2>
 <h3>Tables</h3>
 <p>The U.S. Bureau of Economic Analysis 2017 benchmark Make and Use tables: 402 industries by 402 commodities,
@@ -1638,7 +1696,7 @@ user (farm machinery to farms, medical equipment to health care, turbines to ele
 in proportion to each industry's gross operating surplus.</p>
 {table([th("Kind of sector"), th("Without capital, &cent;", "num"), th("With capital, &cent;", "num"), th("Change", "num")], arows,
        caption="Output required per dollar of basket. Machines only show up once capital counts as an input.")}
-<h3>Total requirements</h3>
+<h3 id="requirements">Total requirements</h3>
 <p>With <i>U</i> the Use table, <i>K</i> the capital matrix, <i>V</i> the Make table, <i>g</i> industry output and <i>q</i> commodity output:</p>
 <pre><code>B = (U + K) diag(g)^-1     D = V diag(q)^-1     A = B D     L = (I - A)^-1</code></pre>
 <p><code>L[j, i]</code> is dollars of commodity <i>j</i> needed, directly and indirectly, per dollar of final demand for

@@ -98,6 +98,16 @@ p, li { max-width: 68ch; }
 code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.9em; background: var(--bar); padding: 1px 4px; border-radius: 3px; }
 pre { background: var(--bar); padding: 12px 14px; overflow-x: auto; font-size: 13.5px; line-height: 1.5; max-width: 72ch; }
 pre code { background: none; padding: 0; }
+math { font-family: "Latin Modern Math", "STIX Two Math", "Cambria Math", math; font-size: 1.08em; }
+.eq { width: fit-content; max-width: 100%; overflow-x: auto; margin: 22px 0 20px; padding: 2px 8px 4px 22px; border-left: 2px solid var(--rule); font-size: 21px; }
+.eq math { font-size: 1em; }
+.eq mtd { padding: 0.55em 0.18em; }
+/* the -webkit- values are what move a cell's contents in Chrome and Safari; elsewhere the columnalign attribute does */
+.eq mtd.l { text-align: right; text-align: -webkit-right; }
+.eq mtd.r { text-align: left; text-align: -webkit-left; }
+dl.where { display: grid; grid-template-columns: max-content 1fr; gap: 5px 16px; margin: 0 0 18px; max-width: 68ch; font-size: 14.5px; color: var(--ink-2); }
+dl.where dt { text-align: right; color: var(--ink); }
+dl.where dd { margin: 0; }
 
 /* Ledger tables: alternate rows carry the green band. */
 .scroll { overflow-x: auto; margin: 14px 0 6px; }
