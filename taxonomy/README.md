@@ -1,7 +1,8 @@
 # Capability taxonomy
 
 A hand-written taxonomy of what software does for the people who meet human needs:
-14 domains, 223 capabilities, 1,440 tasks. Draft, 2026-11-25. Not yet wired into the model or the site.
+14 domains, 223 capabilities, 1,440 tasks. Draft, 2026-11-25. The site's capabilities page shows it, and
+`plenty/flows.py` traces each need dollar to its capabilities through `products_seed.csv`.
 
 It replaces two earlier attempts. A list of 18 engineering capabilities was too narrow and had
 no stated source. Clustering O\*NET products by which occupations use them grouped tools by

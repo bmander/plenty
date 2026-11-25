@@ -246,3 +246,6 @@ td > .capsrc { padding-left: 18px; }
 .controls label[for="tq"] { font-weight: 600; }
 .controls input#tq { min-width: min(420px, 100%); }
 .ledger td.nowrap { white-space: nowrap; }
+ul.tasklist { columns: 2 320px; column-gap: 32px; padding-left: 1.1em; margin: 8px 0 0; font-size: 14.5px; }
+ul.tasklist li { break-inside: avoid; margin: 0 0 5px; }
+ul.tasklist .pill { font-size: 12px; font-weight: 600; margin-left: 4px; }

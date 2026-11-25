@@ -12,9 +12,11 @@ def built():
 
 def test_site_builds_and_links_resolve(built):
     pages = sorted(p.name for p in site.SITE.glob("*.html"))
-    capability_pages = sorted(site.cap_href(k) for k in built.ct.index)
+    capability_pages = [site.cap_href(k) for k in built.ct.index]
+    flow_pages = [site.flow_href(k) for k in built.flow.index]
+    assert len(set(flow_pages)) == len(flow_pages) == (built.tax.level == 1).sum()
     assert pages == sorted(["capabilities.html", "gaps.html", "index.html", "method.html", "needs.html",
-                            "sectors.html", "work.html"] + capability_pages)
+                            "sectors.html", "work.html"] + capability_pages + flow_pages)
     for name in pages:
         text = (site.SITE / name).read_text()
         assert ">nan<" not in text and "nan%" not in text, name
@@ -38,6 +40,17 @@ def test_capabilities_page_carries_the_whole_taxonomy(built):
     # each weighted function links to the capabilities it became
     for k in d.ct.index:
         assert re.search(rf'<tr id="{k}">.*?In the new list: <a href="#', text, re.S), k
+
+
+def test_flow_pages_add_up_to_the_flows(built):
+    d = built
+    for k in d.flow.index:
+        assert site.flow_terms(d, k).term.sum() == pytest.approx(d.flow.at[k, "flow"], abs=1e-8), k
+        assert d.flow_need.loc[k].mean() == pytest.approx(d.flow.at[k, "flow"], abs=1e-9), k
+    # the flows and what could not be attributed make up the need dollar
+    assert d.flow.flow.sum() == pytest.approx(d.flow_acct.at["flowed", "flow"], abs=1e-5)
+    assert d.flow_acct.flow.sum() == pytest.approx(1, abs=1e-5)
+    assert d.flow.flow_distinctive.sum() == pytest.approx(d.flow.flow.sum(), abs=1e-8)
 
 
 def test_capability_pages_add_up_to_the_bars(built):

@@ -96,9 +96,45 @@ The capabilities page of the website shows the whole tree.
 How far to trust it: AI models wrote it and no practitioner has reviewed it. 1,082 of its
 1,803 citations of published sources (60%) were checked against the source itself; checking
 corrected 192 and removed 11. The rest could not be read and are marked `basis: memory`.
-The tools and benchmark notes on each task were not checked. **It has no weights yet**: the
-numbers in this README still belong to the 18 functions. See
+The tools and benchmark notes on each task were not checked. See
 [`taxonomy/README.md`](taxonomy/README.md).
+
+### Where today's value flows
+
+Each need dollar is traced to the capabilities it passes through (`plenty/flows.py`). The
+dollar is split among the sectors whose value added it embodies (the model below, needs
+counted equally), each sector's part among its occupations by pay (OEWS), and each
+occupation's part among the capabilities whose software it lists (O\*NET, each product
+placed in the taxonomy). Every step only splits, so the parts add up to the dollar:
+78 cents reach a capability, 5 sit in sectors with no occupation data, and
+17 are work the chain cannot place.
+
+| capability | domain | flow, cents per need dollar | by distinctive work |
+|---|---|---|---|
+| Office document authoring | Run the organization | 9.73 | 0.93 |
+| Communication and collaboration | Run the organization | 7.71 | 1.76 |
+| Database management and query | Build and run computing itself | 4.13 | 2.07 |
+| Application frameworks and servers | Build and run computing itself | 3.97 | 1.75 |
+| Spreadsheet calculation and modeling | Run the organization | 3.63 | 0.41 |
+| Operating systems and virtualization | Build and run computing itself | 2.71 | 2.11 |
+| Billing, receivables and payables | Run the organization | 1.94 | 1.72 |
+| General accounting and financial close | Run the organization | 1.78 | 1.98 |
+| Social media and public communication | Create media and communicate with the public | 1.67 | 1.80 |
+| Business intelligence and reporting | Run the organization | 1.57 | 1.89 |
+
+*By distinctive work* changes only how an occupation's part is divided: toward the
+capabilities few other occupations list, so tools everyone uses take less. All 223 flows,
+by need and with the sectors and occupations behind each, are in
+`results/capability_flow*.csv` and on the site.
+
+**Flow is where today's work goes, not how much a capability matters.** General office tools
+lead because everyone uses them. A capability few people use, such as genome analysis
+(under 0.1 cents), can still be one a need cannot be met without, and a flow of present
+value cannot see what a capability makes possible. Other limits: every product an occupation
+lists counts equally (O\*NET does not say for how long it is used); a sector's whole value
+added is split the way its payroll is; software running inside machines does not appear.
+The exposure measure, which asks what cannot run without a capability, still exists only
+for the 18 functions.
 
 ## Method
 
@@ -231,10 +267,11 @@ Limits, most important first:
 
 ## Website
 
-`python -m plenty.site` renders a static site into `site/` from `config/` and `results/`: the
-balance of capabilities against open leaderboards, then a page for each step of the loop (needs,
-capabilities, gaps, work), a sortable table of every sector, and the method. Proposed work lives
-in `config/work.csv`.
+`python -m plenty.site` renders a static site into `site/` from `config/`, `taxonomy/` and
+`results/`: the balance of capabilities against open leaderboards, then a page for each step of
+the loop (needs, capabilities, gaps, work), a sortable table of every sector, and the method.
+Each of the 223 capabilities has a page deriving its flow sector by sector, and each of the 18
+functions a page deriving its weight and exposure. Proposed work lives in `config/work.csv`.
 
 `.github/workflows/site.yml` rebuilds and publishes it on every push to `main`. GitHub Pages
 must be set to deploy from GitHub Actions (Settings > Pages > Source).
@@ -261,7 +298,7 @@ must be set to deploy from GitHub Actions (Settings > Pages > Source).
     data/bea/      BEA 2017 detail tables (public domain, via USEPA/useeior)
     data/occupations/  O*NET 31.0 software lists, OEWS May 2021 wages by industry, BEA-NAICS concordance
     data/rd/       NSF business R&D by industry, 2017
-    plenty/        model.py (Leontief + capital), analysis.py (measures), occupations.py (O*NET x OEWS usage), site.py and web/ (website)
+    plenty/        model.py (Leontief + capital), analysis.py (measures), occupations.py (O*NET x OEWS usage), flows.py (need dollar to capabilities), site.py and web/ (website)
     scripts/       extraction, config seeding, run, figures
     results/       CSV outputs and summary.md
     taxonomy/      the capability taxonomy: domain files (JSON), flat tables (CSV), the briefs,
