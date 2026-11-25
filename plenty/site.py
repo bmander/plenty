@@ -115,6 +115,9 @@ class Data:
         self.act_acct = pd.read_csv(RESULTS / "activity_flow_accounting.csv", index_col=0).value
         self.act_children = {k: g.sort_values("flow", ascending=False) for k, g in self.act[self.act.parent != ""].groupby("parent")}
         self.act_software = {k: g for k, g in self.act_cap.sort_values("flow", ascending=False).groupby("iwa")}
+        # AI as a means (plenty/ai.py): each vendor's share of conversations by activity, beside the work's share
+        self.ai = pd.read_csv(RESULTS / "activity_ai.csv", index_col=0)
+        self.ai_src = pd.read_csv(RESULTS / "activity_ai_sources.csv", index_col=0)
 
     def cap_name(self, k):
         return self.caps.at[k, "name"]
@@ -516,6 +519,9 @@ def index(d: Data) -> str:
     lead = ", ".join(f'<a href="{flow_href(k)}">{e(r["name"].lower())}</a>' for k, r in half.head(3).iterrows())
     I = A[A.level == "intermediate"].sort_values("flow", ascending=False)
     biggest = ", ".join(f'<a href="{act_href(k)}">{e(r["name"].rstrip(".").lower())}</a>' for k, r in I.head(3).iterrows())
+    U = d.ai[d.ai.level == "intermediate"].sort_values("pooled", ascending=False)
+    n_half = int(((U.pooled.cumsum() / U.pooled.sum()) < 0.5).sum()) + 1
+    half_flow, absent = U.flow_share.iloc[:n_half].sum(), U.flow_share[U.intensity < 0.1].sum()
     body = f"""
 <h1>A material balance for the machines behind human needs</h1>
 <p class="lede">Plenty keeps an account of what people need, the work that meeting those needs takes, and which of
@@ -541,9 +547,14 @@ occupations with no data. The largest activities are {biggest}. <a href="activit
 <p class="note">{(B.tasks.sum() - B.open.sum()):,} of {B.tasks.sum():,} software tasks have no known open tool, and {len(half)} of {len(B)}
 capabilities have one for fewer than half their tasks; the largest of those by flow are {lead}.
 {len(d.boards)} open leaderboards exist. <a href="gaps.html">See the gaps</a>.</p>
-<p class="note">AI is not yet on the means side. It is a way of doing much of this work, but the lists of software that
-occupations use barely name it, and how well AI systems do each kind of work is what open benchmarks would measure.
-<a href="method.html#ai">Why it is missing</a>.</p>
+<h3 id="ai">Means: AI</h3>
+<p>AI systems are a way of doing much of this work, and three vendors publish what theirs are used for. Half of that use
+falls in {n_half} of the {len(I)} activities, which together carry {half_flow:.0%} of the need dollar: gathering information,
+editing and writing, and work on computers. Activities that carry {absent:.0%} of the dollar, most of them physical work
+and directing people, get less than a tenth of the AI use their size would suggest. The last column of the first table
+shows it for every kind of work. <a href="activities.html#ai">Where AI is used</a>.</p>
+<p class="note">Use is not capability. How well AI systems do each kind of work is what open benchmarks would measure, and
+that is not collected yet. <a href="method.html#ai">What the sources are and what they leave out</a>.</p>
 
 <h2>How the account is kept</h2>
 <ol class="loop">
@@ -737,10 +748,28 @@ def open_bar(r, name: str) -> str:
                f"{name}: of the software listed by the people who do this work, {r.software_open_share:.0%} of its tasks have a known open-source tool")
 
 
+AI_NAME = {"claude": "Claude", "chatgpt": "ChatGPT", "copilot": "Copilot", "claude_api": "Anthropic API",
+           "copilot_action": "Copilot, by what the AI did"}
+AI_MIN_SHARE = 0.001    # below this share of AI use, a source's descriptions of the use are too thin to show
+
+
+def share(x: float) -> str:
+    """A share of conversations or of the dollar, as a percentage that does not round small to nothing."""
+    return "0%" if x == 0 else "&lt;0.1%" if x < 0.0005 else f"{x * 100:.1f}%"
+
+
+def ai_tip(d: Data, a: str) -> str:
+    r = d.ai.loc[a]
+    by = ", ".join(f"{AI_NAME[k]} {r[k] * 100:.1f}%" for k in ("claude", "chatgpt", "copilot"))
+    return (f"{r['name'].rstrip('.')}: {r.pooled * 100:.1f}% of AI conversations on average ({by}), against "
+            f"{r.flow_share * 100:.1f}% of the need dollar's work.")
+
+
 def activity_tree(d: Data) -> list[str]:
     """Demand against means: one row per general work activity, each followed by its intermediate
     activities as hidden child rows that its name toggles open (site.js)."""
     G = d.act[d.act.level == "general"].sort_values("flow", ascending=False)
+    gmax = d.ai.pooled[d.ai.level == "general"].max()
     rows = []
     for i, (g, r) in enumerate(G.iterrows()):
         band, kids = (" band" if i % 2 == 0 else ""), d.act_children[g]
@@ -748,21 +777,24 @@ def activity_tree(d: Data) -> list[str]:
             f'<tr class="kind{band}" id="{g}" data-cap><td><button type="button" class="expander" aria-expanded="false" data-group="{g}">'
             f'{e(r["name"])}</button><div class="dim capdef">{len(kids)} activities</div></td>'
             f'<td>{bar(r.flow, G.flow.max(), cents(r.flow, 1), f"{r["name"]}: {r.flow * 100:.2f} cents of each need dollar pay for this kind of work")}</td>'
-            f'<td>{e(NEED_NAME[r.top_need])}</td><td></td><td>{open_bar(r, r["name"])}</td></tr>')
+            f'<td></td><td>{open_bar(r, r["name"])}</td>'
+            f'<td>{bar(d.ai.at[g, "pooled"], gmax, share(d.ai.at[g, "pooled"]), ai_tip(d, g))}</td></tr>')
         rows += [
             f'<tr class="sub{band}" data-group="{g}" hidden><td class="child"><a href="{act_href(k)}">{e(c["name"].rstrip("."))}</a></td>'
             f'<td class="num"><a href="{act_href(k, "flow")}" data-tip="Rank {int(c["rank"])} of {len(d.act[d.act.level == "intermediate"])}. Click for the derivation.">{cents(c.flow)}</a></td>'
-            f'<td>{e(NEED_NAME[c.top_need])}</td><td class="wrap">{software_links(d, k)}</td>'
-            f'<td class="num">{"" if pd.isna(c.software_open_share) else f"{c.software_open_share:.0%}"}</td></tr>' for k, c in kids.iterrows()]
+            f'<td class="wrap">{software_links(d, k)}</td>'
+            f'<td class="num">{"" if pd.isna(c.software_open_share) else f"{c.software_open_share:.0%}"}</td>'
+            f'<td class="num"><span data-tip="{e(ai_tip(d, k))}" tabindex="0">{share(d.ai.at[k, "pooled"])}</span></td></tr>' for k, c in kids.iterrows()]
     return rows
 
 
-ACTIVITY_HEAD = ["Kind of work, then its activities", "Demand: flow, &cent;", "Need that sends it most",
-                 "Means: software listed with it", "Means: open tools"]
+ACTIVITY_HEAD = ["Kind of work, then its activities", "Demand: flow, &cent;", "Means: software listed with it",
+                 "Means: open tools", "Means: share of AI use"]
 ACTIVITY_CAPTION = ("Demand is the part of each need dollar that pays for a kind of work today. It shows where the work goes, not how "
-                    "much it matters. Means are the kinds of software most particular to the people who do the work, and the share of "
-                    "that software's tasks with a known open-source tool. Click a kind of work to list its activities, and an activity "
-                    "to see where its flow comes from.")
+                    "much it matters. Means are the kinds of software most particular to the people who do the work, the share of "
+                    "that software's tasks with a known open-source tool, and the share of AI conversations that are about this kind "
+                    "of work (the average of Claude, ChatGPT and Copilot). Flow is in cents of a dollar, so it compares directly with "
+                    "the AI share in percent. Click a kind of work to list its activities, and an activity to see where its flow comes from.")
 
 
 def activities_page(d: Data) -> str:
@@ -771,6 +803,17 @@ def activities_page(d: Data) -> str:
     top = [f'<tr><th scope="row"><a href="{act_href(k)}">{e(r["name"].rstrip("."))}</a></th><td class="dim">{e(A.at[r.parent, "name"])}</td>'
            f'<td data-v="{r.flow}"><a class="barlink" href="{act_href(k, "flow")}">{bar(r.flow, I.flow.max(), cents(r.flow), f"{r["name"]} {r.flow * 100:.2f} cents of each need dollar. Click for the derivation.")}</a></td>'
            f'<td>{e(NEED_NAME[r.top_need])}</td><td class="wrap">{software_links(d, k)}</td></tr>' for k, r in I.head(SHOW_FLOWS).iterrows()]
+    U = d.ai[d.ai.level == "intermediate"].sort_values("pooled", ascending=False)
+    cum = U.pooled.cumsum() / U.pooled.sum()
+    n_half = int((cum < 0.5).sum()) + 1
+    half_flow, absent = U.flow_share.iloc[:n_half].sum(), U.flow_share[U.intensity < 0.1].sum()
+    ai_top = [f'<tr><th scope="row"><a href="{act_href(k, "ai")}">{e(r["name"].rstrip("."))}</a></th><td class="num" data-v="{r.flow_share}">{share(r.flow_share)}</td>'
+              + "".join(f'<td class="num" data-v="{r[c]}">{share(r[c])}</td>' for c in ("claude", "chatgpt", "copilot"))
+              + f'<td class="num" data-v="{r.intensity}">{r.intensity:.1f}</td></tr>' for k, r in U.head(SHOW_FLOWS).iterrows()]
+    least = U.sort_values("flow_share", ascending=False).head(60).sort_values("intensity").head(12)
+    ai_least = [f'<tr><th scope="row"><a href="{act_href(k, "ai")}">{e(r["name"].rstrip("."))}</a></th><td class="dim">{e(A.at[A.at[k, "parent"], "name"])}</td>'
+                f'<td class="num" data-v="{r.flow_share}">{share(r.flow_share)}</td><td class="num" data-v="{r.pooled}">{share(r.pooled)}</td></tr>'
+                for k, r in least.iterrows()]
     body = f"""
 <h1>Activities</h1>
 <p class="lede">The work that has to get done to meet the needs: {(A.level == "general").sum()} kinds of work, {len(I)} activities and
@@ -789,6 +832,21 @@ follows pay: directing and supervising rank high partly because managers are pai
 {table([th("Activity"), th("Kind of work"), th("Flow, &cent; per need dollar"), th("Need that sends it most"), th("Software listed with it")], top,
        caption=f"The {SHOW_FLOWS} largest of {len(I)} activities. Software listed with it is the software most particular to the people who "
                "do the work; O*NET says which software an occupation uses, not which of its tasks it is used for.")}
+
+<h2 id="ai">Where AI is used</h2>
+<p>Three AI vendors publish what their systems are used for, classified into these same activities. Half of that use
+falls in {n_half} activities that carry {half_flow:.0%} of the need dollar. Activities that carry {absent:.0%} of the dollar
+get less than a tenth of the AI use their size would suggest.</p>
+<p class="caveat">This is where AI is used, not how well it does the work. A conversation asking how to weld counts
+toward welding. The figures are each vendor's own classification of its chat logs, mostly from consumer plans.
+<a href="method.html#ai">What the three sources are and what they leave out</a>.</p>
+{table([th("Activity"), th("Share of the need dollar", "num", "num"), th("Claude", "num", "num"), th("ChatGPT", "num", "num"),
+        th("Copilot", "num", "num"), th("AI use against its share of work", "num", "num")], ai_top,
+       caption=f"The {SHOW_FLOWS} activities with the most AI use, by the average of the three sources. The last column divides that average by "
+               "the activity's share of the dollar: 10 means ten times as much AI use as its share of the work.")}
+<h3>The largest work with the least AI use</h3>
+{table([th("Activity"), th("Kind of work"), th("Share of the need dollar", "num", "num"), th("Share of AI use", "num", "num")], ai_least,
+       caption="Of the 60 largest activities, the twelve with the least AI use relative to their size.")}
 
 <h2 id="all">All the work</h2>
 <div class="controls"><label for="tq">Find an activity</label>
@@ -820,6 +878,26 @@ is the software around the work, not proof that it does the work. AI systems are
 {table([th("Software capability"), th("Domain"), th("Flow shared with this work, &cent;", "num"), th("Its tasks with a known open tool", "num")], srows)}"""
     else:
         software = "<p>The occupations that do this work list no software that the capability list places.</p>"
+    u = d.ai.loc[a]
+    arows = [f'<tr><td>{e(d.ai_src.at[k, "what"])}</td><td class="dim">{e(d.ai_src.at[k, "where"])}, {e(d.ai_src.at[k, "when"])}</td>'
+             f'<td class="num">{share(u[k])}</td></tr>' for k in d.ai_src.index]
+    facts = []
+    if u.claude >= AI_MIN_SHARE or u.claude_api >= AI_MIN_SHARE:
+        if pd.notna(u.automation):
+            facts.append(f"In Claude chat, {u.automation:.0%} of this use hands the task over to the AI and the rest works alongside it.")
+        if pd.notna(u.hours_without_ai) and pd.notna(u.minutes_with_ai):
+            facts.append(f"Anthropic estimates the tasks would take a person {u.hours_without_ai:.1f} hours without AI and "
+                         f"{u.minutes_with_ai:.0f} minutes with it.")
+    if u.copilot_action >= AI_MIN_SHARE and pd.notna(u.copilot_completion):
+        facts.append(f"When Copilot itself did this activity, Microsoft judged the task completed in {u.copilot_completion:.0%} of conversations.")
+    ai_html = f"""<p>What three AI vendors report their systems being used for. This activity is {share(u.flow_share)} of the work
+the need dollar pays for, and {share(u.pooled)} of AI conversations on average across Claude, ChatGPT and Copilot
+({"about " + f"{u.intensity:.1f}" + " times" if u.intensity >= 0.1 else "under a tenth of"} its share of the work).</p>
+{table([th("Source"), th("Where and when"), th("Share of its conversations", "num")], arows,
+       caption="Each figure is the share of that source's classified conversations about this activity. A source that does not publish an activity, because too few conversations fall in it, is shown as zero.")}
+{"<p>" + " ".join(facts) + "</p>" if facts else ""}
+<p class="note">This is where AI is used, not how well it does the work: a conversation asking how to do something counts toward
+doing it. <a href="method.html#ai">What the sources are and what they leave out</a>.</p>"""
     body = f"""
 <p class="crumbs"><a href="activities.html">Activities</a> / <a href="activities.html#{r.parent}">{e(d.act.at[r.parent, "name"])}</a></p>
 <h1>{e(name)}</h1>
@@ -865,6 +943,9 @@ from each sector is that sector's share of the dollar times the share of its wor
 
 <h2 id="means">The means: software listed with it</h2>
 {software}
+
+<h2 id="ai">The means: AI</h2>
+{ai_html}
 """
     return page(name, act_href(a), body, long_title=True)
 
@@ -1001,8 +1082,8 @@ def taxonomy_section(d: Data) -> str:
 {len(domains)} domains, broken into {len(tasks):,} tasks. A capability here is something software does for the people
 doing the work. A task is a problem with defined inputs and outputs, small enough that an open benchmark could be
 built for it.</p>
-<p>Software is one means among several. AI systems are another, and they are barely in this list: see
-<a href="method.html#ai">why</a>.</p>
+<p>Software is one means among several. AI systems are another: <a href="activities.html#ai">where AI is used</a>
+is shown against the work itself, not in this list.</p>
 <p class="caveat">This list is a new draft. AI models wrote it from published taxonomies, and nobody who works in these
 fields has reviewed it. {n_checked:,} of its {n_cross:,} source citations were checked against the source itself; the rest
 are from memory. <a href="method.html#taxonomy">How the list was made</a>.</p>
@@ -1435,6 +1516,8 @@ def activity_method(d: Data) -> str:
     rows = [f'<tr><td>{e(r["name"])}</td><td class="num">{r.flow * 100:.1f}</td><td class="num">{r.flow_frequency * 100:.1f}</td></tr>'
             for _, r in G.head(10).iterrows()]
     ml = d.flow.loc[["science.machine_learning", "computing.ml_platforms"]]
+    src_rows = [f'<tr><td>{e(r.what)}</td><td>{e(r["where"])}</td><td>{e(r.when)}</td><td class="num">{int(r.activities)}</td>'
+                f'<td class="num">{r.spearman_with_flow:.2f}</td></tr>' for _, r in d.ai_src.iterrows()]
     return f"""<h2 id="activities">Flowing value through the work</h2>
 <p>Needs are met by work, and software, AI or a person with a pencil are means of doing it. The account is therefore kept
 at the level of the work: O*NET's work activities ({(A.level == "general").sum()} general, {(A.level == "intermediate").sum()}
@@ -1464,13 +1547,28 @@ partly because managers are paid well.</li>
 not which of its tasks it is used for, so the link assumes an occupation's software is spread evenly over its activities,
 and credits each occupation for the software particular to it (the distinctive split described below). It shows the
 software around the work. It does not show that the software does the work.</p>
-<h3 id="ai">Where AI is</h3>
-<p>Almost nowhere in these numbers, for three reasons. The data are old: input-output tables from 2017, wages from 2021,
-and software lists that lag further. The flow follows paid people, and an AI system doing a task leaves no trace in a
-wage bill; as it takes over a task, the flow through that task falls. And the software lists barely name it: machine
-learning receives {ml.flow.iloc[0] * 100:.2f} cents of a need dollar and machine-learning platforms {ml.flow.iloc[1] * 100:.2f}.</p>
-<p>In this account AI belongs on the means side, beside software: for each kind of work, how well can an AI system do it?
-That is what an open benchmark measures, and it is not collected here yet.</p>
+<h3 id="ai">AI as a means</h3>
+<p>AI systems are another means of doing the work, and three vendors publish what theirs are used for, each classifying its
+own conversations into O*NET's work activities:</p>
+{table([th("Source"), th("Where"), th("When"), th("Activities reported", "num"), th("Rank correlation with the work's flow", "num")], src_rows,
+       caption="Each source gives the share of its conversations in each of the 332 intermediate activities. The last column compares "
+               "that with each activity's share of the need dollar.")}
+<p>The sources agree with each other more than any agrees with where the work is. The site shows their average
+(Claude chat, ChatGPT and Copilot, counted equally) beside each activity's share of the need dollar.</p>
+<ul>
+<li>Use is not capability. These figures say what people bring to an AI system, not whether it does the work well. A
+conversation asking how to weld counts toward welding.</li>
+<li>They are each vendor's own classification of its chat logs, made by a language model, and nobody outside can check them.</li>
+<li>Coverage is narrow: mostly consumer plans in the United States. ChatGPT's figures leave out enterprise accounts and
+coding tools. Claude's chat figures are restricted here to work use by weighting each activity by the share of its
+conversations that are work; coding through Claude Code is in neither Anthropic series.</li>
+<li>The periods differ. Copilot's data are from 2024 and the others from 2026.</li>
+<li>Activities with too few conversations are not published, and count as zero here.</li>
+<li>None of this is in the flows above. The flow follows paid people through 2021 wages, so work AI already does leaves no
+trace in it. Machine learning as a kind of software receives {ml.flow.iloc[0] * 100:.2f} cents of a need dollar.</li>
+</ul>
+<p>How well AI systems do each kind of work is what an open benchmark measures. That is the part of the means side this
+account does not have yet.</p>
 """
 
 

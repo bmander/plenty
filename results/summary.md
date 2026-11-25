@@ -96,6 +96,63 @@ Each need dollar traced through sectors (value added) and occupations (wage mix)
 | 4.A.3.b.5.a | Maintain tools or equipment. | 0.0076 | water_sanitation | 0.6964 |
 | 4.A.3.b.2.f | Develop operational or technical procedures or standards. | 0.0075 | communication | 0.8299 |
 
+## Where AI is used, beside where the work is
+
+Share of each vendor's conversations by kind of work (plenty/ai.py), against the kind of work's share of the need dollar. Intensity is the pooled share of AI use divided by the share of the dollar.
+
+|  | name | flow_share | claude | chatgpt | copilot | pooled | intensity |
+|---|---|---|---|---|---|---|---|
+| 4.A.1.a.1 | Getting Information | 0.041 | 0.139 | 0.101 | 0.424 | 0.221 | 5.413 |
+| 4.A.3.b.1 | Working with Computers | 0.013 | 0.113 | 0.068 | 0.032 | 0.071 | 5.346 |
+| 4.A.2.b.1 | Making Decisions and Solving Problems | 0.034 | 0.092 | 0.207 | 0.046 | 0.115 | 3.366 |
+| 4.A.2.b.2 | Thinking Creatively | 0.045 | 0.140 | 0.161 | 0.054 | 0.118 | 2.660 |
+| 4.A.4.a.8 | Performing for or Working Directly with the Public | 0.013 | 0.009 | 0.004 | 0.091 | 0.035 | 2.642 |
+| 4.A.4.b.6 | Providing Consultation and Advice to Others | 0.036 | 0.163 | 0.083 | 0.016 | 0.087 | 2.436 |
+| 4.A.4.a.1 | Interpreting the Meaning of Information for Others | 0.016 | 0.016 | 0.041 | 0.049 | 0.035 | 2.203 |
+| 4.A.4.b.5 | Coaching and Developing Others | 0.001 | 0.001 | 0.001 | 0.001 | 0.001 | 1.891 |
+| 4.A.4.b.2 | Developing and Building Teams | 0.001 | 0.000 | 0.002 | 0.003 | 0.002 | 1.334 |
+| 4.A.3.b.6 | Documenting/Recording Information | 0.075 | 0.131 | 0.118 | 0.037 | 0.095 | 1.262 |
+| 4.A.2.b.3 | Updating and Using Relevant Knowledge | 0.014 | 0.000 | 0.001 | 0.041 | 0.014 | 1.024 |
+| 4.A.4.a.3 | Communicating with People Outside the Organization | 0.018 | 0.007 | 0.000 | 0.049 | 0.019 | 1.022 |
+| 4.A.2.a.1 | Judging the Qualities of Objects, Services, or People | 0.021 | 0.010 | 0.037 | 0.016 | 0.021 | 1.005 |
+| 4.A.2.a.4 | Analyzing Data or Information | 0.039 | 0.061 | 0.031 | 0.022 | 0.038 | 0.959 |
+| 4.A.1.b.3 | Estimating the Quantifiable Characteristics of Products, Events, or Information | 0.014 | 0.006 | 0.018 | 0.004 | 0.010 | 0.702 |
+| 4.A.2.b.6 | Organizing, Planning, and Prioritizing Work | 0.007 | 0.005 | 0.007 | 0.003 | 0.005 | 0.692 |
+| 4.A.4.c.1 | Performing Administrative Activities | 0.018 | 0.021 | 0.005 | 0.008 | 0.011 | 0.629 |
+| 4.A.2.b.5 | Scheduling Work and Activities | 0.005 | 0.002 | 0.006 | 0.001 | 0.003 | 0.541 |
+| 4.A.2.a.2 | Processing Information | 0.020 | 0.014 | 0.008 | 0.009 | 0.010 | 0.523 |
+| 4.A.2.a.3 | Evaluating Information to Determine Compliance with Standards | 0.011 | 0.006 | 0.006 | 0.003 | 0.005 | 0.457 |
+| 4.A.4.b.3 | Training and Teaching Others | 0.026 | 0.005 | 0.028 | 0.003 | 0.012 | 0.448 |
+| 4.A.4.a.5 | Assisting and Caring for Others | 0.020 | 0.000 | 0.005 | 0.021 | 0.009 | 0.439 |
+| 4.A.4.a.4 | Establishing and Maintaining Interpersonal Relationships | 0.003 | 0.000 | 0.003 | 0.001 | 0.001 | 0.408 |
+| 4.A.3.b.2 | Drafting, Laying Out, and Specifying Technical Devices, Parts, and Equipment | 0.019 | 0.010 | 0.006 | 0.004 | 0.007 | 0.351 |
+| 4.A.4.a.2 | Communicating with Supervisors, Peers, or Subordinates | 0.043 | 0.007 | 0.011 | 0.013 | 0.010 | 0.244 |
+| 4.A.4.a.6 | Selling or Influencing Others | 0.012 | 0.001 | 0.004 | 0.002 | 0.003 | 0.235 |
+| 4.A.1.b.1 | Identifying Objects, Actions, and Events | 0.007 | 0.000 | 0.004 | 0.001 | 0.002 | 0.233 |
+| 4.A.2.b.4 | Developing Objectives and Strategies | 0.011 | 0.003 | 0.003 | 0.000 | 0.002 | 0.191 |
+| 4.A.4.a.7 | Resolving Conflicts and Negotiating with Others | 0.009 | 0.000 | 0.004 | 0.001 | 0.002 | 0.179 |
+| 4.A.1.a.2 | Monitoring Processes, Materials, or Surroundings | 0.036 | 0.006 | 0.001 | 0.009 | 0.006 | 0.156 |
+| 4.A.4.c.2 | Staffing Organizational Units | 0.009 | 0.000 | 0.003 | 0.000 | 0.001 | 0.132 |
+| 4.A.4.c.3 | Monitoring and Controlling Resources | 0.025 | 0.000 | 0.001 | 0.005 | 0.002 | 0.076 |
+| 4.A.4.b.1 | Coordinating the Work and Activities of Others | 0.024 | 0.000 | 0.002 | 0.003 | 0.002 | 0.067 |
+| 4.A.3.a.2 | Handling and Moving Objects | 0.082 | 0.000 | 0.000 | 0.013 | 0.004 | 0.054 |
+| 4.A.3.b.4 | Repairing and Maintaining Mechanical Equipment | 0.010 | 0.000 | 0.000 | 0.002 | 0.001 | 0.053 |
+| 4.A.1.b.2 | Inspecting Equipment, Structures, or Materials | 0.038 | 0.001 | 0.000 | 0.004 | 0.002 | 0.044 |
+| 4.A.3.b.5 | Repairing and Maintaining Electronic Equipment | 0.012 | 0.000 | 0.000 | 0.001 | 0.000 | 0.038 |
+| 4.A.3.a.1 | Performing General Physical Activities | 0.054 | 0.000 | 0.000 | 0.005 | 0.002 | 0.035 |
+| 4.A.3.a.3 | Controlling Machines and Processes | 0.025 | 0.000 | 0.000 | 0.002 | 0.001 | 0.023 |
+| 4.A.4.b.4 | Guiding, Directing, and Motivating Subordinates | 0.084 | 0.000 | 0.000 | 0.001 | 0.000 | 0.005 |
+| 4.A.3.a.4 | Operating Vehicles, Mechanized Devices, or Equipment | 0.009 | 0.000 | 0.000 | 0.000 | 0.000 | 0.004 |
+
+
+| source | what | where | when | share_placed | spearman_with_flow |
+|---|---|---|---|---|---|
+| claude | Claude chat, work use (Anthropic Economic Index) | United States | April and May 2026 | 0.97 | 0.32 |
+| claude_api | Anthropic API (Anthropic Economic Index) | world | April and May 2026 | 0.90 | 0.38 |
+| chatgpt | ChatGPT consumer plans, work-related messages (OpenAI Signals) | United States | October 2025 to September 2026 | 0.98 | 0.22 |
+| copilot | Bing Copilot, by the user's goal (Microsoft, Working with AI) | United States | January to September 2024 | 1.00 | 0.27 |
+| copilot_action | Bing Copilot, by what the AI did (Microsoft, Working with AI) | United States | January to September 2024 | 1.00 | 0.27 |
+
 ## Where today's value flows, by the software listed (taxonomy capabilities)
 
 Each need dollar traced through sectors (value added) and occupations (wage mix) to the capabilities whose software they list. Flowed: 78.0% of the basket; 4.8% sits in sectors with no occupational data and 17.2% is work the chain could not place. Top 25 of 223:

@@ -180,12 +180,43 @@ Each activity is shown with the software most particular to the people who do it
 which of its tasks it is used for, so this is the software around the work, not proof that it
 does the work.
 
-**AI is almost absent from these numbers.** The data are old (2017 tables, 2021 wages, software
-lists that lag further); the flow follows paid people, and an AI system doing a task leaves no
-trace in a wage bill; and the software lists barely name it (machine learning receives under
-0.1 cents of a need dollar). In this account AI belongs on the means side, beside software:
-for each kind of work, how well can an AI system do it? That is what an open benchmark
-measures, and it is not collected here yet.
+## The means: AI
+
+AI systems are another means of doing the work. Three vendors publish what theirs are used
+for, each classifying its own conversations into the same O\*NET work activities
+(`plenty/ai.py`, `data/ai/`): Anthropic's Economic Index (Claude, 2026), OpenAI Signals
+(ChatGPT, 2025-26) and Microsoft's "Working with AI" (Copilot, 2024).
+
+Half of that use falls in 12 of the 332 activities, which together carry 4% of the need
+dollar: gathering information, editing and writing, and work on computers. Activities that
+carry 47% of the dollar, most of them physical work and directing people, get less than a
+tenth of the AI use their size would suggest.
+
+| kind of work (the eight largest) | share of the need dollar's work | share of AI use |
+|---|---|---|
+| Guiding, Directing, and Motivating Subordinates | 8.4% | 0.0% |
+| Handling and Moving Objects | 8.2% | 0.4% |
+| Documenting/Recording Information | 7.5% | 9.5% |
+| Performing General Physical Activities | 5.4% | 0.2% |
+| Thinking Creatively | 4.5% | 11.8% |
+| Communicating with Supervisors, Peers, or Subordinates | 4.3% | 1.0% |
+| Getting Information | 4.1% | 22.1% |
+| Analyzing Data or Information | 3.9% | 3.8% |
+
+*Share of AI use* is the average of Claude chat (work use), ChatGPT (work-related) and Copilot.
+The three sources agree with each other (rank correlations 0.6 to 0.8) far more than any
+agrees with where the work is (0.2 to 0.3). Figures for all activities are in
+`results/activity_ai.csv` and on each activity's page.
+
+**Use is not capability.** These figures say what people bring to an AI system, not whether
+it does the work well; a conversation asking how to weld counts toward welding. They are each
+vendor's own classification of its chat logs, mostly from consumer plans in the United
+States, from different years, and rare activities are not published. How well AI systems do
+each kind of work is what an open benchmark measures, and that is the part of the means side
+this account does not have yet.
+
+None of this is in the flows above: the flow follows paid people through 2021 wages, so work
+that AI already does leaves no trace in it.
 
 ## Method
 
@@ -338,7 +369,7 @@ must be set to deploy from GitHub Actions (Settings > Pages > Source).
 
 `scripts/00_extract_bea.py` re-extracts the BEA tables from a checkout of USEPA/useeior, and
 `scripts/00_extract_occupations.py` and `00_extract_tasks.py` the O\*NET, OEWS and concordance files (see
-`data/occupations/README.md`), and `scripts/00_extract_rd.py` the NSF business R&D table
+`data/occupations/README.md`), `scripts/00_extract_ai.py` the AI usage files (`data/ai/README.md`), and `scripts/00_extract_rd.py` the NSF business R&D table
 (`data/rd/README.md`).
 `scripts/01_*` and `scripts/02_*` regenerate `config/basket.csv` and
 `config/sector_archetypes.csv` from prefix rules and overwrite hand edits.
@@ -350,7 +381,8 @@ must be set to deploy from GitHub Actions (Settings > Pages > Source).
     data/bea/      BEA 2017 detail tables (public domain, via USEPA/useeior)
     data/occupations/  O*NET 31.0 software lists, tasks and work activities; OEWS May 2021 wages by industry; BEA-NAICS concordance
     data/rd/       NSF business R&D by industry, 2017
-    plenty/        model.py (Leontief + capital), analysis.py (measures), occupations.py (O*NET x OEWS usage), work.py (O*NET tasks and work activities), flows.py (need dollar to work and to software), site.py and web/ (website)
+    data/ai/       what three vendors report their AI systems being used for, by work activity
+    plenty/        model.py (Leontief + capital), analysis.py (measures), occupations.py (O*NET x OEWS usage), work.py (O*NET tasks and work activities), flows.py (need dollar to work and to software), ai.py (what AI is used for), site.py and web/ (website)
     scripts/       extraction, config seeding, run, figures
     results/       CSV outputs and summary.md
     taxonomy/      the capability taxonomy: domain files (JSON), flat tables (CSV), the briefs,

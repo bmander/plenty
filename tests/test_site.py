@@ -1,4 +1,5 @@
 import re
+import numpy as np
 import pandas as pd
 import pytest
 from plenty import site
@@ -56,6 +57,21 @@ def test_activity_pages_add_up_to_the_flows(built):
         assert A.flow[A.level == level].sum() == pytest.approx(d.act_acct["flowed"], abs=1e-5), level
     assert d.act_acct[["flowed", "sectors_without_occupation_data", "work_not_placed"]].sum() == pytest.approx(1, abs=1e-5)
     assert d.act_need.mean(axis=1).sum() == pytest.approx(d.act_acct["flowed"], abs=1e-5)
+
+
+def test_ai_use_sits_beside_the_work(built):
+    d = built
+    I = d.ai[d.ai.level == "intermediate"]
+    assert set(I.index) == set(d.act.index[d.act.level == "intermediate"])
+    assert I.flow_share.sum() == pytest.approx(1) and I.pooled.sum() <= 1
+    # a kind of work's figures are the sums of its activities'
+    G = d.ai[d.ai.level == "general"]
+    parent = d.act.parent.reindex(I.index)
+    assert np.allclose(I.pooled.groupby(parent).sum().reindex(G.index), G.pooled, atol=1e-6)
+    assert np.allclose(I.flow_share.groupby(parent).sum().reindex(G.index), G.flow_share, atol=1e-6)
+    home = (site.SITE / "index.html").read_text()
+    assert 'id="ai"' in home and "Means: share of AI use" in home
+    assert 'id="ai"' in (site.SITE / site.act_href(I.index[0])).read_text()
 
 
 def test_home_page_leads_with_the_work(built):

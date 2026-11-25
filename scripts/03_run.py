@@ -4,7 +4,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
-from plenty import model as M, analysis as A, occupations as O, rd as RD, flows as F, work as W
+from plenty import model as M, analysis as A, occupations as O, rd as RD, flows as F, work as W, ai as AI
 
 OUT = M.ROOT / "results"
 OUT.mkdir(exist_ok=True)
@@ -163,6 +163,35 @@ def activity_flows(m, r):
     return table, acct
 
 
+def ai_use(acts: pd.DataFrame):
+    """Where AI is used, beside where the work is (plenty/ai.py). Writes results/activity_ai.csv
+    (intermediate and general activities) and results/activity_ai_sources.csv, and returns both."""
+    H = W.hierarchy().drop_duplicates("iwa").set_index("iwa")
+    I = acts[acts.level == "intermediate"]
+    u = AI.use().reindex(I.index)
+    shares = ["claude", "claude_api", "chatgpt", "copilot", "copilot_action", "pooled"]
+    u.insert(0, "flow_share", I.flow / I.flow.sum())
+    g = u[["flow_share"] + shares].groupby(H.gwa.reindex(u.index)).sum()
+    # for a kind of work: Anthropic's own figures at that level, and Copilot's rates weighted by what it did
+    g = g.join(AI.anthropic("general")[["automation", "autonomy", "hours_without_ai", "minutes_with_ai"]])
+    for c in ("copilot_completion", "copilot_scope"):
+        g[c] = (u[c] * u.copilot_action).groupby(H.gwa.reindex(u.index)).sum() / g.copilot_action
+    out = pd.concat([u.assign(level="intermediate"), g.assign(level="general")])
+    out["intensity"] = out.pooled / out.flow_share
+    out.insert(0, "name", acts.name.reindex(out.index))
+    out.rename_axis("activity").round(8).to_csv(OUT / "activity_ai.csv")
+    label = {"claude": ("Claude chat, work use (Anthropic Economic Index)", "United States", "April and May 2026"),
+             "claude_api": ("Anthropic API (Anthropic Economic Index)", "world", "April and May 2026"),
+             "chatgpt": ("ChatGPT consumer plans, work-related messages (OpenAI Signals)", "United States", "October 2025 to September 2026"),
+             "copilot": ("Bing Copilot, by the user's goal (Microsoft, Working with AI)", "United States", "January to September 2024"),
+             "copilot_action": ("Bing Copilot, by what the AI did (Microsoft, Working with AI)", "United States", "January to September 2024")}
+    src = pd.DataFrame([dict(source=k, what=v[0], where=v[1], when=v[2], share_placed=u[k].sum(),
+                             activities=int((u[k] > 0).sum()), spearman_with_flow=spearmanr(u[k], u.flow_share)[0],
+                             spearman_with_pooled=spearmanr(u[k], u.pooled)[0]) for k, v in label.items()]).set_index("source")
+    src.round(4).to_csv(OUT / "activity_ai_sources.csv")
+    return out, src
+
+
 def main():
     m = M.build()
     r = A.run(m)
@@ -290,6 +319,7 @@ def main():
     cap_table.round(4).to_csv(OUT / "capability_table.csv")
     flows, flow_acct = capability_flows(m, r)
     acts, act_acct = activity_flows(m, r)
+    ai, ai_src = ai_use(acts)
 
     # ---- summary.md
     L = []
@@ -309,6 +339,12 @@ def main():
     L.append(md(acts[acts.level == "general"].sort_values("flow", ascending=False)[["name", "flow", "top_need", "software_open_share"]], "{:.4f}"))
     L.append("\n### Top 25 intermediate work activities\n")
     L.append(md(acts[acts.level == "intermediate"].sort_values("flow", ascending=False).head(25)[["name", "flow", "top_need", "software_open_share"]], "{:.4f}"))
+    L.append("\n## Where AI is used, beside where the work is\n")
+    L.append("Share of each vendor's conversations by kind of work (plenty/ai.py), against the kind of work's share of the "
+             "need dollar. Intensity is the pooled share of AI use divided by the share of the dollar.\n")
+    L.append(md(ai[ai.level == "general"].sort_values("intensity", ascending=False)[["name", "flow_share", "claude", "chatgpt", "copilot", "pooled", "intensity"]], "{:.3f}"))
+    L.append("\n")
+    L.append(md(ai_src[["what", "where", "when", "share_placed", "spearman_with_flow"]], "{:.2f}"))
     L.append("\n## Where today's value flows, by the software listed (taxonomy capabilities)\n")
     L.append(f"Each need dollar traced through sectors (value added) and occupations (wage mix) to the capabilities whose "
              f"software they list. Flowed: {flow_acct.at['flowed', 'flow']:.1%} of the basket; "
