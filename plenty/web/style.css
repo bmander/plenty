@@ -20,6 +20,8 @@
   --gap-bg: #f6ead0;
   --met: #1d6b3a;
   --focus: #2a78d6;
+  /* one hue for how much, light to dark: the picture of a matrix */
+  --heat-0: #cde2fb; --heat-1: #86b6ef; --heat-2: #3987e5; --heat-3: #1c5cab; --heat-4: #0d366b;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -36,6 +38,7 @@
     --gap-bg: #3a2f14;
     --met: #6fcf97;
     --focus: #7fb2f0;
+    --heat-0: #0d366b; --heat-1: #1c5cab; --heat-2: #3987e5; --heat-3: #86b6ef; --heat-4: #cde2fb;
   }
 }
 
@@ -99,7 +102,7 @@ code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.9em;
 pre { background: var(--bar); padding: 12px 14px; overflow-x: auto; font-size: 13.5px; line-height: 1.5; max-width: 72ch; }
 pre code { background: none; padding: 0; }
 math { font-family: "Latin Modern Math", "STIX Two Math", "Cambria Math", math; font-size: 1.08em; }
-.eq { width: fit-content; max-width: 100%; overflow-x: auto; margin: 22px 0 20px; padding: 2px 8px 4px 22px; border-left: 2px solid var(--rule); font-size: 21px; }
+.eq { width: fit-content; max-width: 100%; overflow-x: auto; overflow-y: hidden; margin: 22px 0 20px; padding: 2px 8px 4px 22px; border-left: 2px solid var(--rule); font-size: 21px; }
 .eq math { font-size: 1em; }
 .eq mtd { padding: 0.55em 0.18em; }
 /* the -webkit- values are what move a cell's contents in Chrome and Safari; elsewhere the columnalign attribute does */
@@ -260,3 +263,44 @@ ul.tasklist { columns: 2 320px; column-gap: 32px; padding-left: 1.1em; margin: 8
 ul.tasklist li { break-inside: avoid; margin: 0 0 5px; }
 ul.tasklist .pill { font-size: 12px; font-weight: 600; margin-left: 4px; }
 .ledger[data-tree] tr.kind > td:first-child { min-width: 30ch; }
+
+/* A matrix page: the picture of every entry, and one sector's column and row */
+math a { color: inherit; }
+#tip { white-space: pre-line; }
+.mx { max-width: 990px; }
+.mx-frame { display: grid; grid-template-columns: auto minmax(0, 804px); justify-content: start; }
+.mx-axis { grid-column: 2; font-size: 13px; color: var(--ink-2); padding-bottom: 4px; }
+.mx-strip { display: flex; font-size: 11px; line-height: 1.15; color: var(--ink-2); }
+.mx-strip span { min-width: 0; min-height: 0; overflow: hidden; white-space: nowrap; }
+.mx-strip span:nth-child(odd) { background: var(--bar); }
+.mx-top { grid-column: 2; height: 11em; }
+.mx-top span { writing-mode: vertical-rl; transform: rotate(180deg); padding: 4px 0; text-align: left; display: flex; align-items: center; }
+.mx-left { grid-column: 1; flex-direction: column; width: 11.5em; }
+.mx-left span { padding: 0 6px; text-align: right; display: flex; align-items: center; justify-content: flex-end; }
+.mx-plot { position: relative; grid-column: 2; aspect-ratio: 1; border: 1px solid var(--rule); }
+.mx-plot canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; cursor: crosshair; }
+.mx-lines i { position: absolute; background: var(--rule); opacity: 0.55; pointer-events: none; }
+.mx-lines i[style^="left"] { top: 0; bottom: 0; width: 1px; }
+.mx-lines i[style^="top"] { left: 0; right: 0; height: 1px; }
+#mx-h, #mx-v { position: absolute; display: none; background: var(--ink); opacity: 0.5; pointer-events: none; }
+#mx-h { left: 0; right: 0; height: 1px; }
+#mx-v { top: 0; bottom: 0; width: 1px; }
+.mx-legend { margin: 12px 0 2px; width: min(320px, 100%); font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.mx-ramp { height: 10px; border-radius: 2px; background: linear-gradient(to right, var(--heat-0), var(--heat-1), var(--heat-2), var(--heat-3), var(--heat-4)); }
+.mx-ticks { display: flex; justify-content: space-between; margin-top: 3px; }
+@media (max-width: 900px) {
+  .mx-strip { font-size: 0; }
+  .mx-top { height: 8px; }
+  .mx-left { width: 8px; }
+}
+.controls select { font: inherit; padding: 6px 8px; max-width: 100%; background: var(--paper); color: var(--ink); border: 1.5px solid var(--rule); border-radius: 4px; }
+.controls label[for="mx-pick"] { font-weight: 600; }
+.mx-lookup { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr)); gap: 8px 40px; max-width: 1100px; align-items: start; }
+.mx-lookup h3 { margin-bottom: 0; }
+.mx-lookup button.pick { font: inherit; color: inherit; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; text-decoration: underline; text-decoration-color: var(--rule); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.mx-lookup button.more { font: inherit; font-size: 14px; color: var(--ink-2); background: none; border: 1.5px solid var(--rule); border-radius: 4px; padding: 4px 10px; margin-top: 8px; cursor: pointer; }
+.mx-lookup .barcell { grid-template-columns: minmax(50px, 1fr) 5.5ch; min-width: 110px; }
+.ledger th.grp { vertical-align: bottom; text-align: right; padding-left: 4px; padding-right: 8px; }
+.ledger th.grp span { display: inline-block; writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
+.mx-lookup thead th.num { white-space: normal; max-width: 13ch; vertical-align: bottom; }
+.mx-lookup tbody th { width: 52%; }

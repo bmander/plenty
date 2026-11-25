@@ -8,15 +8,18 @@ method. Assets in plenty/web/ are copied as they are. Everything is plain HTML w
 so the site works from any path (GitHub Pages serves it under /plenty/).
 """
 from __future__ import annotations
+import functools
 import html
+import json
 import math
 import shutil
 import urllib.parse
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 
-from . import analysis as A, occupations as O
+from . import analysis as A, matrix as MX, model as M, occupations as O
 
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG, RESULTS, WEB, SITE = ROOT / "config", ROOT / "results", ROOT / "plenty" / "web", ROOT / "site"
@@ -119,6 +122,11 @@ class Data:
         self.ai = pd.read_csv(RESULTS / "activity_ai.csv", index_col=0)
         self.ai_src = pd.read_csv(RESULTS / "activity_ai_sources.csv", index_col=0)
 
+    @functools.cached_property
+    def io(self) -> M.Model:
+        """The input-output model itself, for the pages that show its matrices."""
+        return M.build()
+
     def cap_name(self, k):
         return self.caps.at[k, "name"]
 
@@ -136,7 +144,7 @@ class Data:
 
 # ---------------------------------------------------------------- pieces
 
-def page(title: str, active: str, body: str, long_title: bool = False) -> str:
+def page(title: str, active: str, body: str, long_title: bool = False, scripts: tuple[str, ...] = ()) -> str:
     links = []
     for i, (href, label, step) in enumerate(NAV):
         if step is None and NAV[i - 1][2] is not None:
@@ -169,7 +177,7 @@ def page(title: str, active: str, body: str, long_title: bool = False) -> str:
 call is a CSV you can edit: <a href="{REPO}">source and data on GitHub</a>.</p>
 </footer>
 </div>
-<script src="site.js"></script>
+<script src="site.js"></script>{"".join(f'<script src="{x}"></script>' for x in scripts)}
 </body>
 </html>
 """
@@ -1631,7 +1639,202 @@ def _sum(i: str) -> str:
 
 # bold letters are Unicode's mathematical bold: browsers do not all honour mathvariant
 _X, _I, _A, _D = "&#x1D431;", "&#x1D408;", "&#x1D400;", "&#x1D41D;"
+# a symbol that has a page of its own is a link to it; HTML is allowed inside a MathML identifier
+_A_LINK = f'<mi><a href="matrix-A.html">{_A}</a></mi>'
 _ONE_LESS_C = f'<mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo>{_sub("c", "a")}<mo>)</mo></mrow>'
+
+
+MATRIX_A = "matrix-A.html"
+MATRIX_CUT = 1e-4          # entries under a hundredth of a cent per dollar are left out of the picture and the lists
+MATRIX_UNIT = 1e-5         # the unit of the page's data file: a thousandth of a cent per dollar
+MATRIX_SHOWN = "221100"    # the sector the lookup opens on: electric power
+MATRIX_LABEL_MIN = 7       # groups with fewer sectors than this get no label beside the picture
+MATRIX_TOP = 15            # entries in the table of the largest
+
+
+def _bold(letter: str) -> str:
+    """A capital or small Latin letter as Unicode's mathematical bold."""
+    return f"&#x{0x1D400 + ord(letter) - ord('A') if letter.isupper() else 0x1D41A + ord(letter) - ord('a'):X};"
+
+
+def _diag(letter: str) -> str:
+    """A vector written as a diagonal matrix."""
+    return f"<mrow><mspace width=\"0.17em\"/><mi>diag</mi><mo>&#x2061;</mo><mo>(</mo><mi>{_bold(letter)}</mi><mo>)</mo></mrow>"
+
+
+def _inv(base: str) -> str:
+    return f"<msup>{base}<mrow><mo>&minus;</mo><mn>1</mn></mrow></msup>"
+
+
+def _eqs(rows: list[tuple[str, str]]) -> str:
+    """Equations set one to a line and aligned at the equals sign."""
+    return _m('<mtable displaystyle="true" columnalign="right center left" columnspacing="0.3em" rowspacing="1.1em">'
+              + "".join(f'<mtr><mtd class="l">{a}</mtd><mtd><mo>=</mo></mtd><mtd class="r">{b}</mtd></mtr>' for a, b in rows)
+              + "</mtable>", block=True)
+
+
+def matrix_a(d: Data):
+    """(A, the part of it that is capital), both with sectors in the order the page shows them."""
+    m = d.io
+    order = MX.ordered(m.t.commodities)
+    return m.A.loc[order, order], MX.direct_parts(m)[1].loc[order, order]
+
+
+def matrix_a_data(d: Data) -> str:
+    """The page's data file: every entry of at least MATRIX_CUT in size, by column, as
+    (row, value, capital part) in units of MATRIX_UNIT, with each column's exact totals."""
+    A, K = matrix_a(d)
+    a, k = A.values, K.values
+    cols = []
+    for j in range(len(A)):
+        rows = np.flatnonzero(np.abs(a[:, j]) >= MATRIX_CUT)
+        cols.append([int(x) for i in rows for x in (i, round(a[i, j] / MATRIX_UNIT), round(k[i, j] / MATRIX_UNIT))])
+    group = MX.groups(A.index)
+    names = d.io.t.names
+    payload = {"unit": MATRIX_UNIT, "cut": MATRIX_CUT, "shown": MATRIX_SHOWN, "codes": list(A.index),
+               "names": [names[c] for c in A.index], "groups": [group[c] for c in A.index], "cols": cols,
+               "total": [round(x / MATRIX_UNIT) for x in a.sum(axis=0)], "capital": [round(x / MATRIX_UNIT) for x in k.sum(axis=0)]}
+    return "window.PLENTY_MATRIX = " + json.dumps(payload, separators=(",", ":")) + ";\n"
+
+
+def matrix_a_csv(d: Data) -> str:
+    A, _ = matrix_a(d)
+    return A.to_csv(float_format="%.6g")
+
+
+def matrix_a_page(d: Data) -> str:
+    m, t = d.io, d.io.t
+    A, K = matrix_a(d)
+    a, n, names = A.values, len(A), t.names
+    group = MX.groups(A.index)
+    sizes = group.value_counts().reindex(MX.ORDER)
+    shown = np.abs(a) >= MATRIX_CUT
+    col_total = A.sum()
+    over = col_total[col_total > 1]
+    own = sum(t.V.at[c, c] for c in t.commodities if c in t.V.index) / t.V.values.sum()
+
+    # strips beside the picture that name the groups, and the lines between groups
+    def strip(cls):
+        return f'<div class="{cls}" aria-hidden="true">' + "".join(
+            f'<span style="flex:{c}" data-tip="{e(g)}: {c} sectors">{e(MX.SHORT[g]) if c >= MATRIX_LABEL_MIN else ""}</span>'
+            for g, c in sizes.items()) + "</div>"
+    edges = sizes.cumsum().iloc[:-1] / n * 100
+    lines = "".join(f'<i style="left:{x:.3f}%"></i><i style="top:{x:.3f}%"></i>' for x in edges)
+
+    # A summed to groups
+    G = MX.by_group(m.A, t.q) * 100
+    gmax = G.values.max()
+    def heat(v):
+        mix = 60 * max(v, 0) / gmax
+        text = f"{abs(v):.1f}" if round(v, 1) >= 0 else f"&minus;{-v:.1f}"
+        return f'<td class="heat" style="background:color-mix(in srgb, var(--series) {mix:.0f}%, transparent)">{text}</td>'
+    grows = [f'<tr><th scope="row">{e(g)}</th>{"".join(heat(v) for v in G.loc[g])}</tr>' for g in G.index]
+    gfoot = '<tr><td>All inputs</td>' + "".join(f'<td class="num">{v:.1f}</td>' for v in G.sum()) + "</tr>"
+    ghead = [th("Input, by group")] + [th(f"<span>{e(MX.SHORT[g])}</span>", "grp") for g in G.columns]
+
+    # the largest entries
+    top = A.stack().sort_values(ascending=False).head(MATRIX_TOP)
+    def pick(c):
+        return f'<a href="#sector" data-sector="{c}">{e(names[c])}</a>'
+    trows = [f'<tr><td class="name">{pick(i)}</td><td class="name">{pick(j)}</td><td class="num">{v * 100:.1f}</td>'
+             f'<td class="num">{K.at[i, j] * 100:.1f}</td></tr>' for (i, j), v in top.items()]
+    (qi, qj), qv = next(iter(top.items()))
+
+    A_, B_, D_, U_, K_, V_, I_ = (f"<mi>{_bold(x)}</mi>" for x in "ABDUKVI")
+    series = (f'{_inv(f"<mrow><mo>(</mo>{I_}<mo>&minus;</mo>{A_}<mo>)</mo></mrow>")}<mo>=</mo>{I_}<mo>+</mo>{A_}<mo>+</mo>'
+              f'<msup>{A_}<mn>2</mn></msup><mo>+</mo><msup>{A_}<mn>3</mn></msup><mo>+</mo><mo>&hellip;</mo>')
+    derivation = _eqs([
+        (B_, f'<mrow><mo>(</mo>{U_}<mo>+</mo>{K_}<mo>)</mo></mrow><mo>&#x2062;</mo>{_inv(_diag("g"))}'),
+        (D_, f'{V_}<mo>&#x2062;</mo>{_inv(_diag("q"))}'),
+        (A_, f'{B_}<mo>&#x2062;</mo>{D_}')])
+    trillion = lambda x: f"${x / 1e6:.1f} trillion"
+    where = [
+        (U_, f"the Use table: what each of {len(t.industries)} industries bought of each of {n} commodities in 2017, "
+             f"{trillion(t.U.values.sum())} in all. Imports are included."),
+        (K_, f'the capital matrix: {trillion(m.K.values.sum())} of equipment, buildings and software bought that year, placed on the '
+             f'industries that use them. The Bureau of Economic Analysis does not publish who bought what at this level, so '
+             f'<a href="method.html#capital">this is estimated</a>.'),
+        (V_, "the Make table: how much of each commodity each industry made."),
+        (f"<mi>{_bold('g')}</mi>", f"each industry's output, {trillion(t.g.sum())} in all. Dividing by it turns purchases into purchases per dollar."),
+        (f"<mi>{_bold('q')}</mi>", "the output of each commodity."),
+        (B_, "what each industry buys per dollar of what it makes."),
+        (D_, f"which industries make each commodity. An industry mostly makes the commodity it is named for "
+             f"({own:.0%} of output), so {_m(D_)} is close to the identity."),
+    ]
+    body = f"""
+<p class="crumbs"><a href="method.html">Method</a> / <a href="method.html#account">The account in three lines</a></p>
+<h1 class="long">{_m(A_)}, the direct requirements</h1>
+<p class="lede">What it takes to make a dollar of each thing. The entry in row <i>i</i> and column <i>j</i> is the dollars of
+commodity <i>i</i> used up in making one dollar of commodity <i>j</i>, with equipment and buildings counted as inputs.</p>
+<dl class="figures">
+<div><dt>Size</dt><dd>{n} &times; {n}</dd><dd class="dim">commodities by commodities</dd></div>
+<div><dt>Entries that are not zero</dt><dd>{(a != 0).mean():.0%}</dd><dd class="dim">{shown.mean():.0%} are a hundredth of a cent or more</dd></div>
+<div><dt>Inputs per dollar of output</dt><dd>{col_total.median() * 100:.0f}&cent;</dd><dd class="dim">the median column total</dd></div>
+<div><dt>Equipment and buildings</dt><dd>{K.values.sum() / a.sum():.0%}</dd><dd class="dim">of the total of all entries</dd></div>
+</dl>
+
+<h2 id="use">What it is for</h2>
+<p>To deliver a dollar of something, the economy must make that dollar, then the inputs to it, then the inputs to
+those, and so on. Each round is another multiplication by {_m(A_)}, and the rounds add up to the inverse in the
+<a href="method.html#account">first line of the account</a>:</p>
+{_m(series, block=True)}
+
+<h2 id="derivation">How it is derived</h2>
+<p>From the Bureau of Economic Analysis's 2017 benchmark tables and one matrix built here:</p>
+{derivation}
+<dl class="where">{"".join(f"<dt>{_m(k)}</dt><dd>{v}</dd>" for k, v in where)}</dl>
+<p>The Use table says what industries buy, but people need commodities, and some industries make more than one.
+Multiplying by {_m(D_)} gives each commodity the recipe of the industries that make it, in proportion to how much of
+it each makes.</p>
+<p>Imports stay in {_m(U_)}, so a column is the recipe for the commodity wherever its inputs are made. The code is
+<a href="{REPO}/blob/main/plenty/model.py"><code>plenty/model.py</code></a>.</p>
+
+<h2 id="picture">The whole matrix</h2>
+<figure class="mx">
+<div class="mx-frame">
+<div class="mx-axis mx-axis-top">Made: one dollar of each commodity &rarr;</div>
+{strip("mx-strip mx-top")}
+{strip("mx-strip mx-left")}
+<div class="mx-plot">
+<canvas id="mx-canvas" width="{n}" height="{n}" role="img"
+ aria-label="Heat map of the {n} by {n} direct requirements matrix. The table of groups and the sector lookup below give the same figures."></canvas>
+<div class="mx-lines" aria-hidden="true">{lines}</div>
+<i id="mx-h" aria-hidden="true"></i><i id="mx-v" aria-hidden="true"></i>
+</div>
+</div>
+<div class="mx-legend" aria-hidden="true"><div class="mx-ramp"></div>
+<div class="mx-ticks"><span>0.01&cent;</span><span>0.1&cent;</span><span>1&cent;</span><span>10&cent;</span><span>$1</span></div></div>
+<figcaption>Each column is a commodity being made and each row an input to it. Colour is cents of the input per dollar
+made, on a log scale. The {(~shown).mean():.0%} of entries under a hundredth of a cent are blank. Sectors are in the Bureau's
+order within fifteen groups, and the diagonal blocks are groups buying from themselves. Hover over a cell for its
+sectors and value, and click it to look the pair up below.</figcaption>
+</figure>
+
+<h2 id="sector">One sector's column and row</h2>
+<div class="controls"><label for="mx-pick">Sector</label><select id="mx-pick"></select></div>
+<noscript><p class="note">This lookup needs JavaScript. The whole matrix is in <a href="matrix-A.csv">the CSV file</a>.</p></noscript>
+<div class="mx-lookup">
+<section><h3 id="mx-in-title">What a dollar of it uses</h3><div id="mx-in"></div></section>
+<section><h3 id="mx-out-title">Who uses it</h3><div id="mx-out"></div></section>
+</div>
+<p class="note">A column's total is what a dollar of output spends on inputs, equipment and buildings. What is left is
+wages, taxes, and whatever owners keep after investing.{f" {len(over)} column{'s' if len(over) > 1 else ''} totals more than a dollar: {e(names[over.index[0]].lower())}, which spent more than it sold." if len(over) else ""}</p>
+
+<h2 id="groups">Summed to groups</h2>
+{table(ghead, grows, attrs=' id="heat"', foot=gfoot,
+       caption="Cents of each group's products used per dollar of each group's output. Read down a column for a group's recipe. "
+               "The last group is bookkeeping rows in the Bureau's tables, not industries.")}
+
+<h2 id="largest">The largest entries</h2>
+{table([th("Input"), th("To make a dollar of"), th("&cent; per dollar", "num"), th("Of which equipment and buildings, &cent;", "num")], trows,
+       caption="Most are a raw material going into the plant that processes it.")}
+<p class="note">These are the Bureau's figures as published. The largest, {qv * 100:.0f} cents of {e(names[qi].lower())} per dollar
+of {e(names[qj].lower())}, is in the Use table itself and looks like a quirk of how that industry's leases are recorded.</p>
+<p class="note">{int((a < 0).sum())} entries are negative, nearly all in the rows for used goods and scrap, where an industry
+sold more than it bought. They are small (the largest is {-a.min() * 100:.1f} cents) and blank in the picture.</p>
+<p><a href="matrix-A.csv">Download the matrix as CSV</a> ({n} rows and columns, sector codes as headings).</p>
+"""
+    return page("A, the direct requirements", "method.html", body, long_title=True, scripts=("matrix-A-data.js", "matrix.js"))
 
 
 def account_section(d: Data) -> str:
@@ -1640,7 +1843,7 @@ def account_section(d: Data) -> str:
         return f'<mtr><mtd class="l">{lhs}</mtd><mtd><mo>=</mo></mtd><mtd class="r">{rhs}</mtd></mtr>'
     eq = _m('<mtable displaystyle="true" columnalign="right center left" columnspacing="0.3em" rowspacing="1.1em">'
             + row(_sub(_X, "n"),
-                  f'<msup><mrow><mo>(</mo><mi>{_I}</mi><mo>&minus;</mo><mi>{_A}</mi><mo>)</mo></mrow><mrow><mo>&minus;</mo><mn>1</mn></mrow></msup>'
+                  f'<msup><mrow><mo>(</mo><mi>{_I}</mi><mo>&minus;</mo>{_A_LINK}<mo>)</mo></mrow><mrow><mo>&minus;</mo><mn>1</mn></mrow></msup>'
                   f'<mo>&#x2062;</mo>{_sub(_D, "n")}')
             + row(_sub("f", "a"),
                   f'<mfrac><mn>1</mn><mi>N</mi></mfrac><mo>&#x2062;</mo>{_sum("n")}{_sum("j")}{_sub("v", "jn")}'
@@ -1649,8 +1852,9 @@ def account_section(d: Data) -> str:
             + "</mtable>", block=True)
     where = [
         (_sub(_D, "n"), f"final demand for need {_m('<mi>n</mi>')}, scaled to one dollar"),
-        (f"<mi>{_A}</mi>", 'the input-output table, with capital counted as an input (<a href="#requirements">total requirements</a>)'),
-        (_sub(_X, "n"), "everything the economy must produce, directly and indirectly, to deliver that dollar"),
+        (_A_LINK, f'the input-output table, with capital counted as an input: <a href="{MATRIX_A}">the matrix and how it is derived</a>'),
+        (_sub(_X, "n"), 'everything the economy must produce, directly and indirectly, to deliver that dollar '
+                        '(<a href="#requirements">total requirements</a>)'),
         (_sub("v", "jn"), f"sector {_m('<mi>j</mi>')}'s share of the value added in {_m(_sub(_X, 'n'))}"),
         (_sub("w", "jo"), f"occupation {_m('<mi>o</mi>')}'s share of sector {_m('<mi>j</mi>')}'s wage bill"),
         (_sub("&theta;", "oa"), f"the share of occupation {_m('<mi>o</mi>')}'s work that is activity {_m('<mi>a</mi>')}"),
@@ -1689,7 +1893,7 @@ produce to deliver it, then follow each need dollar to the work it pays for and 
 <h3>Tables</h3>
 <p>The U.S. Bureau of Economic Analysis 2017 benchmark Make and Use tables: 402 industries by 402 commodities,
 after redefinitions, in producer prices.</p>
-<h3>Capital as an input</h3>
+<h3 id="capital">Capital as an input</h3>
 <p>A standard input-output table treats equipment and buildings as final demand, so a tractor is not an input to
 farming. Here, investment is routed back to the industries that use it. Capital goods with an evident user go to that
 user (farm machinery to farms, medical equipment to health care, turbines to electric utilities). The rest is spread
@@ -1765,8 +1969,11 @@ def main():
     pages["activities.html"] = activities_page
     for a in d.act.index[d.act.level == "intermediate"]:
         pages[act_href(a)] = lambda d, a=a: activity_page(d, a)
+    pages[MATRIX_A] = matrix_a_page
     for name, fn in pages.items():
         (SITE / name).write_text(fn(d), encoding="utf-8")
+    (SITE / "matrix-A-data.js").write_text(matrix_a_data(d), encoding="utf-8")
+    (SITE / "matrix-A.csv").write_text(matrix_a_csv(d), encoding="utf-8")
     (SITE / ".nojekyll").write_text("")
     print(f"wrote {len(pages)} pages to {SITE}")
 

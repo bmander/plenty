@@ -1,3 +1,4 @@
+import json
 import re
 import numpy as np
 import pandas as pd
@@ -19,7 +20,7 @@ def test_site_builds_and_links_resolve(built):
     activity_pages = [site.act_href(a) for a in built.act.index[built.act.level == "intermediate"]]
     assert len(set(activity_pages)) == len(activity_pages) == 332
     assert pages == sorted(["activities.html", "capabilities.html", "gaps.html", "index.html", "method.html", "needs.html",
-                            "sectors.html", "work.html"] + capability_pages + flow_pages + activity_pages)
+                            "sectors.html", "work.html", site.MATRIX_A] + capability_pages + flow_pages + activity_pages)
     for name in pages:
         text = (site.SITE / name).read_text()
         assert ">nan<" not in text and "nan%" not in text, name
@@ -28,7 +29,7 @@ def test_site_builds_and_links_resolve(built):
                 continue
             assert (site.SITE / href).exists(), f"{name}: broken link {href}"
         # every anchor used, on another page or this one, exists on its target
-        for target, anchor in re.findall(r'href="([a-z-]*\.html)?#([^"]+)"', text):
+        for target, anchor in re.findall(r'href="([A-Za-z0-9-]*\.html)?#([^"]+)"', text):
             assert f'id="{anchor}"' in (site.SITE / (target or name)).read_text(), f"{name}: {target}#{anchor}"
 
 
@@ -65,6 +66,36 @@ def test_method_page_opens_with_the_account_as_equations(built):
     assert html.count('<math display="block"') == 1 and html.count("<mtr>") == 3
     assert 'href="#requirements"' in html and 'id="requirements"' in html
     assert f"{built.act_acct.flowed * 100:.1f} cents" in html
+
+
+def test_the_page_for_A_shows_the_matrix_the_model_uses(built):
+    A = built.io.A
+    method = (site.SITE / "method.html").read_text()
+    assert f'<mi><a href="{site.MATRIX_A}">' in method          # the A in the equation is the link
+    html = (site.SITE / site.MATRIX_A).read_text()
+    assert f'width="{len(A)}" height="{len(A)}"' in html and 'src="matrix.js"' in html
+    # the data file: every entry of any size, in the page's order, to within its rounding
+    text = (site.SITE / "matrix-A-data.js").read_text()
+    data = json.loads(text[text.index("{"):text.rindex("}") + 1])
+    codes, unit = data["codes"], data["unit"]
+    assert sorted(codes) == sorted(A.index) and len(data["cols"]) == len(codes)
+    a = A.loc[codes, codes].values
+    k = site.MX.direct_parts(built.io)[1].loc[codes, codes].values
+    got, got_k = np.zeros_like(a), np.zeros_like(a)
+    for j, col in enumerate(data["cols"]):
+        got[col[0::3], j] = np.array(col[1::3]) * unit
+        got_k[col[0::3], j] = np.array(col[2::3]) * unit
+    kept = np.abs(a) >= data["cut"]
+    assert kept.sum() > 50_000 and ((got != 0) == kept).all()
+    assert np.abs(got - a)[kept].max() <= unit / 2 + 1e-12
+    assert np.abs(got_k - k)[kept].max() <= unit / 2 + 1e-12      # and the part of each that is capital
+    assert np.allclose(np.array(data["capital"]) * unit, k.sum(axis=0), atol=unit)
+    assert np.allclose(np.array(data["total"]) * unit, a.sum(axis=0), atol=unit)
+    # sectors are grouped, so the picture's blocks are groups
+    assert data["groups"] == sorted(data["groups"], key=site.MX.ORDER.index)
+    # the download is the matrix itself
+    csv = pd.read_csv(site.SITE / "matrix-A.csv", index_col=0, dtype={0: str})
+    assert list(csv.index.astype(str)) == codes and np.allclose(csv.values, a, rtol=1e-5, atol=1e-12)
 
 
 def test_ai_use_sits_beside_the_work(built):

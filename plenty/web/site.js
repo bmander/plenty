@@ -14,6 +14,11 @@
     tip.style.left = Math.max(8, x) + "px";
     tip.style.top = Math.max(8, y) + "px";
   }
+  // for a page's own script: a tip that follows the pointer over something drawn, such as a canvas
+  window.plentyTip = {
+    show: function (text, e) { tip.textContent = text; tip.style.display = "block"; place(e); },
+    hide: function () { tip.style.display = "none"; }
+  };
   document.addEventListener("mouseover", function (e) {
     var t = e.target.closest && e.target.closest("[data-tip]");
     if (!t) { tip.style.display = "none"; return; }

@@ -382,7 +382,7 @@ must be set to deploy from GitHub Actions (Settings > Pages > Source).
     data/occupations/  O*NET 31.0 software lists, tasks and work activities; OEWS May 2021 wages by industry; BEA-NAICS concordance
     data/rd/       NSF business R&D by industry, 2017
     data/ai/       what three vendors report their AI systems being used for, by work activity
-    plenty/        model.py (Leontief + capital), analysis.py (measures), occupations.py (O*NET x OEWS usage), work.py (O*NET tasks and work activities), flows.py (need dollar to work and to software), ai.py (what AI is used for), site.py and web/ (website)
+    plenty/        model.py (Leontief + capital), analysis.py (measures), occupations.py (O*NET x OEWS usage), work.py (O*NET tasks and work activities), flows.py (need dollar to work and to software), ai.py (what AI is used for), matrix.py (the model's matrices arranged for looking at), site.py and web/ (website)
     scripts/       extraction, config seeding, run, figures
     results/       CSV outputs and summary.md
     taxonomy/      the capability taxonomy: domain files (JSON), flat tables (CSV), the briefs,

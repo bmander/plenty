@@ -125,6 +125,12 @@ def capital_matrix(t: Tables, use_rules: bool = True) -> pd.DataFrame:
     return K
 
 
+def market_shares(t: Tables) -> np.ndarray:
+    """D[i, c]: the share of commodity c's output made by industry i."""
+    q = t.q.values
+    return t.V.values / np.where(q > 0, q, np.inf)[None, :]   # commodities nobody makes are dead ends
+
+
 @dataclass
 class Model:
     t: Tables
@@ -139,9 +145,7 @@ def build(endogenize_capital: bool = True, capital_rules: bool = True) -> Model:
     K = capital_matrix(t, capital_rules) if endogenize_capital else None
     inputs = t.U + K if K is not None else t.U
     B = inputs.values / g.values[None, :]
-    qsafe = np.where(q.values > 0, q.values, np.inf)   # commodities nobody makes are dead ends
-    D = t.V.values / qsafe[None, :]
-    A = B @ D
+    A = B @ market_shares(t)
     L = np.linalg.inv(np.eye(len(q)) - A)
     com = t.commodities
     return Model(t=t, A=pd.DataFrame(A, index=com, columns=com),
