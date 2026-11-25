@@ -32,7 +32,7 @@ NEED_NAME = {
 NAV = [  # (file, label, step number or None)
     ("needs.html", "Needs", 1), ("capabilities.html", "Capabilities", 2),
     ("gaps.html", "Gaps", 3), ("work.html", "Work", 4),
-    ("sectors.html", "Sectors", None), ("method.html", "Method", None),
+    ("sectors.html", "Sectors", None), ("activities.html", "Activities", None), ("method.html", "Method", None),
 ]
 KIND_NAME = {"board": "Leaderboard", "measure": "Measurement", "review": "Review", "data": "Data"}
 
@@ -104,6 +104,17 @@ class Data:
             tasks=("id", "size"), open=("open_tools", lambda x: (x != "").sum()),
             bench=("benchmarkable", lambda x: (x == "yes").sum())).join(self.flow[["name", "domain", "flow", "rank", "top_need"]])
         self.boards = pd.read_csv(CONFIG / "boards.csv").fillna("")
+        # The work that has to get done (plenty/work.py): O*NET work activities at three levels, the
+        # flow through each, and the software listed by the people who do each.
+        self.act = pd.read_csv(RESULTS / "activity_flow.csv", index_col=0).fillna({"parent": ""})
+        self.act_need = pd.read_csv(RESULTS / "activity_flow_by_need.csv", index_col=0)
+        self.act_work = pd.read_csv(RESULTS / "activity_flow_work.csv", index_col=0)
+        self.act_occ = pd.read_csv(RESULTS / "activity_flow_occupations.csv")
+        self.act_tasks = pd.read_csv(RESULTS / "activity_flow_tasks.csv")
+        self.act_cap = pd.read_csv(RESULTS / "activity_capability_flow.csv")
+        self.act_acct = pd.read_csv(RESULTS / "activity_flow_accounting.csv", index_col=0).value
+        self.act_children = {k: g.sort_values("flow", ascending=False) for k, g in self.act[self.act.parent != ""].groupby("parent")}
+        self.act_software = {k: g for k, g in self.act_cap.sort_values("flow", ascending=False).groupby("iwa")}
 
     def cap_name(self, k):
         return self.caps.at[k, "name"]
@@ -499,46 +510,56 @@ def balance_tree(d: Data) -> list[str]:
 
 def index(d: Data) -> str:
     total = d.needs.final_demand_musd.sum() / 1e6
-    B = d.balance
-    acct = d.flow_acct.flow
+    B, A = d.balance, d.act
+    acct = d.act_acct
     half = B[B.open * 2 < B.tasks].sort_values("flow", ascending=False)
     lead = ", ".join(f'<a href="{flow_href(k)}">{e(r["name"].lower())}</a>' for k, r in half.head(3).iterrows())
+    I = A[A.level == "intermediate"].sort_values("flow", ascending=False)
+    biggest = ", ".join(f'<a href="{act_href(k)}">{e(r["name"].rstrip(".").lower())}</a>' for k, r in I.head(3).iterrows())
     body = f"""
 <h1>A material balance for the machines behind human needs</h1>
-<p class="lede">Plenty keeps an account of what people need, the capabilities those needs depend on, and which of
-those capabilities exist in the open. Where the two sides do not balance, there is work to do.</p>
-<p class="caveat">This is a first pass. AI models wrote the list of capabilities and what is said about open tools, and
-nobody who works in these fields has reviewed either. <a href="method.html#taxonomy">How far to trust it</a>.</p>
+<p class="lede">Plenty keeps an account of what people need, the work that meeting those needs takes, and which of
+the means of doing that work exist in the open. Where the two sides do not balance, there is work to do.</p>
+<p class="caveat">This is a first pass. The work and its flows come from public data. AI models wrote the list of software
+capabilities and what is said about open tools, and nobody who works in these fields has reviewed either.
+<a href="method.html#trust">How far to trust it</a>.</p>
 
 <h2>The balance today</h2>
+<h3 id="demand">Demand: the work that has to get done</h3>
+{table([th(x) for x in ACTIVITY_HEAD], activity_tree(d), attrs=" data-tree", caption=ACTIVITY_CAPTION)}
+<p class="note">{acct["flowed"] * 100:.0f} cents of each need dollar are traced to a kind of work; the rest sits in sectors or
+occupations with no data. The largest activities are {biggest}. <a href="activities.html">All {len(I)} activities</a>.</p>
+
+<h3 id="means">Means: the software that exists to do it</h3>
 {table(
-    [th("Domain, then its capabilities"), th("Demand: flow, &cent; per need dollar"), th("Means: tasks with an open tool"),
-     th("Means: open benchmark possible"), th("Open leaderboard today")],
+    [th("Domain, then its capabilities"), th("Flow, &cent; per need dollar"), th("Tasks with an open tool"),
+     th("Open benchmark possible"), th("Open leaderboard today")],
     balance_tree(d), attrs=" data-tree",
-    caption="Demand is the part of each need dollar that flows through a domain's capabilities today. It shows where the work "
-            "goes, not how much a capability matters. Means is the share of its tasks that have a known open-source tool, and "
-            "the share for which public reference problems exist to score tools on. Click a domain to list its capabilities, "
-            "and a flow to see where it comes from.")}
-<p class="note">{(B.tasks.sum() - B.open.sum()):,} of {B.tasks.sum():,} tasks have no known open tool, and {len(half)} of {len(B)}
+    caption="Software is one means of doing the work. Flow here is the part of each need dollar earned by the people who list a "
+            "domain's software. The next columns are the share of its tasks that have a known open-source tool, and the share for "
+            "which public reference problems exist to score tools on. Click a domain to list its capabilities.")}
+<p class="note">{(B.tasks.sum() - B.open.sum()):,} of {B.tasks.sum():,} software tasks have no known open tool, and {len(half)} of {len(B)}
 capabilities have one for fewer than half their tasks; the largest of those by flow are {lead}.
 {len(d.boards)} open leaderboards exist. <a href="gaps.html">See the gaps</a>.</p>
-<p class="note">{acct["flowed"] * 100:.0f} cents of each need dollar reach a capability. The rest sits in sectors with no
-occupation data or is work the chain cannot place (<a href="method.html#flows">how value is flowed</a>). An earlier account
-of <a href="capabilities.html#functions">eighteen engineering functions</a> also measures exposure: what cannot run
-without a function.</p>
+<p class="note">AI is not yet on the means side. It is a way of doing much of this work, but the lists of software that
+occupations use barely name it, and how well AI systems do each kind of work is what open benchmarks would measure.
+<a href="method.html#ai">Why it is missing</a>.</p>
 
 <h2>How the account is kept</h2>
 <ol class="loop">
 <li><a href="needs.html">Collect needs</a><p>{len(d.needs)} needs, each counted equally, met the way US households
-and governments met them in 2017 with ${total:.1f} trillion of spending.</p></li>
-<li><a href="capabilities.html">Collect capabilities</a><p>{len(B)} capabilities in {(d.tax.level == 0).sum()} domains and
-{B.tasks.sum():,} tasks, drafted from published taxonomies. Each has the part of a need dollar that flows through it today,
-and what is known to exist in the open for each task.</p></li>
-<li><a href="gaps.html">Identify gaps</a><p>Capabilities that value flows through and that have no open tool, or that
-nobody is measuring in the open.</p></li>
+and governments met them in 2017 with ${total:.1f} trillion of spending. Each need dollar is traced through
+<a href="sectors.html">sectors</a> to the <a href="activities.html">work</a> it pays for.</p></li>
+<li><a href="capabilities.html">Collect capabilities</a><p>The means of doing the work. So far {len(B)} kinds of software in
+{(d.tax.level == 0).sum()} domains and {B.tasks.sum():,} tasks, drafted from published taxonomies, with what is known to exist
+in the open for each.</p></li>
+<li><a href="gaps.html">Identify gaps</a><p>Means that work depends on and that have no open tool, or that nobody is
+measuring in the open.</p></li>
 <li><a href="work.html">Dispatch work</a><p>{len(d.work)} proposed leaderboards, measurements and reviews. Each one
 can be claimed by opening an issue.</p></li>
 </ol>
+<p class="note">An earlier account of <a href="capabilities.html#functions">eighteen engineering functions</a> also measures
+exposure: what cannot run without a function.</p>
 """
     return page("Plenty", "index.html", body)
 
@@ -573,7 +594,11 @@ def needs_page(d: Data) -> str:
     def largest(frame, n):
         return "; ".join(f'<a href="{flow_href(k)}">{e(d.tax_name[k].lower())}</a> ({v * 100:.1f})'
                          for k, v in frame[n].nlargest(5).items())
-    runs_on = [f'<tr><th scope="row">{e(NEED_NAME[n])}</th><td class="wrap">{largest(d.flow_need, n)}</td>'
+    det = d.act[d.act.level == "detailed"]
+    def work_of(n):
+        return "; ".join(f'<a href="{act_href(det.at[k, "parent"])}">{e(det.at[k, "name"].rstrip(".").lower())}</a> ({v * 100:.1f})'
+                         for k, v in d.act_need[n].nlargest(5).items())
+    runs_on = [f'<tr><th scope="row">{e(NEED_NAME[n])}</th><td class="wrap">{work_of(n)}</td>'
                f'<td class="wrap">{largest(d.flow_need_d, n)}</td></tr>' for n in need_cols]
 
     ups = []
@@ -602,11 +627,11 @@ are over a third of food. A basket in physical units (calories, square meters, k
 <a href="work.html#sufficiency-basket">proposed work</a>.</p>
 
 <h2 id="runs-on">What each need runs on today</h2>
-<p>The capabilities that the largest parts of each need's dollar pass through
-(<a href="capabilities.html#flows">how value is flowed</a>). The first list splits work by share; the second credits
-each occupation for what is distinctive of it, which sets aside the office tools every need uses.</p>
-{table([th("Need"), th("By share of work, &cent; of the need's dollar"), th("By distinctive work")], runs_on,
-       caption="The five largest flows per need. Flow shows where today's work goes, not what a need could not do without.")}
+<p>The work the largest parts of each need's dollar pay for (<a href="activities.html">activities</a>), and the software
+most particular to the people who do it (<a href="capabilities.html">capabilities</a>). Figures are cents of the need's
+dollar.</p>
+{table([th("Need"), th("The work: detailed activities"), th("The means: software listed, by distinctive work")], runs_on,
+       caption="The five largest flows of each kind per need. Flow shows where today's work goes, not what a need could not do without.")}
 
 <h2>What each need draws on: engineering functions</h2>
 {table(head, hrows, attrs=' id="heat"', caption="Percent of each need's embodied value added that arises in sectors depending on the capability, score-weighted. Stronger color is more.")}
@@ -645,12 +670,14 @@ def cents(x: float, digits: int = 2) -> str:
     return f"{x * 100:.{digits}f}&cent;"
 
 
-def flow_terms(d: Data, k: str) -> pd.DataFrame:
-    """Per-sector terms that sum to capability k's flow (flows.flow): the sector's share of the
-    basket's value added times the share of its work done with k."""
+def flow_terms(d: Data, k: str, work: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Per-sector terms that sum to k's flow (flows.flow): the sector's share of the basket's
+    value added times the share of its work in k. work is commodity x k: the capability table
+    by default, the activity table for a work activity."""
     s = d.sectors
+    work = d.flow_work if work is None else work
     t = pd.DataFrame({"name": s.name, "archetype": s.archetype, "share": s.value_added_share_equal,
-                      "work": d.flow_work[k].reindex(s.index).fillna(0.0)})
+                      "work": work[k].reindex(s.index).fillna(0.0)})
     t["term"] = t.share * t.work
     # != 0, not > 0: a few sectors (scrap, used goods) have negative value added and belong in the sum
     return t[t.term != 0].sort_values("term", ascending=False)
@@ -658,13 +685,12 @@ def flow_terms(d: Data, k: str) -> pd.DataFrame:
 
 def flow_term_tip(name: str, share: float, work: float, term: float, n: int | None = None) -> str:
     who = f"Its {n} sector{'s' if n != 1 else ''} hold" if n is not None else "This sector holds"
-    return (f"{who} {share:.3%} of the value added behind a need dollar; {work:.2%} of that work is done with "
-            f"{name.lower()}: {term * 100:.4f} cents." + (" The sum of their terms." if n is not None else ""))
+    return (f"{who} {share:.3%} of the value added behind a need dollar; {work:.2%} of that work goes to "
+            f"{name[:1].lower() + name[1:]}: {term * 100:.4f} cents." + (" The sum of their terms." if n is not None else ""))
 
 
-def flow_kind_rows(d: Data, k: str, t: pd.DataFrame) -> list[str]:
+def flow_kind_rows(name: str, t: pd.DataFrame) -> list[str]:
     """Kinds of sector, each followed by its sectors as hidden child rows (site.js), as kind_rows."""
-    name = d.tax_name[k]
     cut = FLOW_SECTOR_CUT * t.term.sum()
     rows = []
     for i, (a, g) in enumerate(sorted(t.groupby("archetype"), key=lambda x: -x[1].term.sum())):
@@ -687,6 +713,162 @@ def flow_kind_rows(d: Data, k: str, t: pd.DataFrame) -> list[str]:
     return rows
 
 
+def act_href(a: str, anchor: str = "") -> str:
+    return "activity-" + a.replace(".", "-") + ".html" + (f"#{anchor}" if anchor else "")
+
+
+def act_name(d: Data, a: str) -> str:
+    """O*NET's names end in a full stop at the lower levels; drop it for headings and links."""
+    return d.act.at[a, "name"].rstrip(".")
+
+
+def software_links(d: Data, a: str, n: int = 3) -> str:
+    """The software capabilities listed most by the people who do intermediate activity a."""
+    g = d.act_software.get(a)
+    if g is None:
+        return '<span class="dim">none listed</span>'
+    return ", ".join(f'<a href="{flow_href(k)}">{e(d.tax_name[k].lower())}</a>' for k in g.capability.head(n))
+
+
+def open_bar(r, name: str) -> str:
+    if pd.isna(r.software_open_share):
+        return '<span class="dim">no software listed</span>'
+    return bar(r.software_open_share, 1, f"{r.software_open_share:.0%}",
+               f"{name}: of the software listed by the people who do this work, {r.software_open_share:.0%} of its tasks have a known open-source tool")
+
+
+def activity_tree(d: Data) -> list[str]:
+    """Demand against means: one row per general work activity, each followed by its intermediate
+    activities as hidden child rows that its name toggles open (site.js)."""
+    G = d.act[d.act.level == "general"].sort_values("flow", ascending=False)
+    rows = []
+    for i, (g, r) in enumerate(G.iterrows()):
+        band, kids = (" band" if i % 2 == 0 else ""), d.act_children[g]
+        rows.append(
+            f'<tr class="kind{band}" id="{g}" data-cap><td><button type="button" class="expander" aria-expanded="false" data-group="{g}">'
+            f'{e(r["name"])}</button><div class="dim capdef">{len(kids)} activities</div></td>'
+            f'<td>{bar(r.flow, G.flow.max(), cents(r.flow, 1), f"{r["name"]}: {r.flow * 100:.2f} cents of each need dollar pay for this kind of work")}</td>'
+            f'<td>{e(NEED_NAME[r.top_need])}</td><td></td><td>{open_bar(r, r["name"])}</td></tr>')
+        rows += [
+            f'<tr class="sub{band}" data-group="{g}" hidden><td class="child"><a href="{act_href(k)}">{e(c["name"].rstrip("."))}</a></td>'
+            f'<td class="num"><a href="{act_href(k, "flow")}" data-tip="Rank {int(c["rank"])} of {len(d.act[d.act.level == "intermediate"])}. Click for the derivation.">{cents(c.flow)}</a></td>'
+            f'<td>{e(NEED_NAME[c.top_need])}</td><td class="wrap">{software_links(d, k)}</td>'
+            f'<td class="num">{"" if pd.isna(c.software_open_share) else f"{c.software_open_share:.0%}"}</td></tr>' for k, c in kids.iterrows()]
+    return rows
+
+
+ACTIVITY_HEAD = ["Kind of work, then its activities", "Demand: flow, &cent;", "Need that sends it most",
+                 "Means: software listed with it", "Means: open tools"]
+ACTIVITY_CAPTION = ("Demand is the part of each need dollar that pays for a kind of work today. It shows where the work goes, not how "
+                    "much it matters. Means are the kinds of software most particular to the people who do the work, and the share of "
+                    "that software's tasks with a known open-source tool. Click a kind of work to list its activities, and an activity "
+                    "to see where its flow comes from.")
+
+
+def activities_page(d: Data) -> str:
+    A, acct = d.act, d.act_acct
+    I = A[A.level == "intermediate"].sort_values("flow", ascending=False)
+    top = [f'<tr><th scope="row"><a href="{act_href(k)}">{e(r["name"].rstrip("."))}</a></th><td class="dim">{e(A.at[r.parent, "name"])}</td>'
+           f'<td data-v="{r.flow}"><a class="barlink" href="{act_href(k, "flow")}">{bar(r.flow, I.flow.max(), cents(r.flow), f"{r["name"]} {r.flow * 100:.2f} cents of each need dollar. Click for the derivation.")}</a></td>'
+           f'<td>{e(NEED_NAME[r.top_need])}</td><td class="wrap">{software_links(d, k)}</td></tr>' for k, r in I.head(SHOW_FLOWS).iterrows()]
+    body = f"""
+<h1>Activities</h1>
+<p class="lede">The work that has to get done to meet the needs: {(A.level == "general").sum()} kinds of work, {len(I)} activities and
+{(A.level == "detailed").sum():,} detailed activities, as the U.S. Department of Labor's O*NET describes them. Software, AI
+or a person with a pencil are ways of doing this work. This is the work itself.</p>
+<p>Each need dollar is traced to the work it pays for. The dollar is split among the sectors whose value added it embodies,
+each sector's part among its occupations by pay, and each occupation's part among its tasks by how important they are and
+how many of its workers do them. {acct["flowed"] * 100:.0f} cents of the dollar reach an activity this way.
+{acct["sectors_without_occupation_data"] * 100:.0f} cents sit in sectors with no occupation data and
+{acct["work_not_placed"] * 100:.0f} in occupations O*NET has no task list for.</p>
+<p class="caveat">Flow measures where today's paid work goes. It does not measure how much an activity matters, and it
+follows pay: directing and supervising rank high partly because managers are paid well.
+<a href="method.html#activities">How the flow is computed and what it leaves out</a>.</p>
+
+<h2 id="largest">The largest activities</h2>
+{table([th("Activity"), th("Kind of work"), th("Flow, &cent; per need dollar"), th("Need that sends it most"), th("Software listed with it")], top,
+       caption=f"The {SHOW_FLOWS} largest of {len(I)} activities. Software listed with it is the software most particular to the people who "
+               "do the work; O*NET says which software an occupation uses, not which of its tasks it is used for.")}
+
+<h2 id="all">All the work</h2>
+<div class="controls"><label for="tq">Find an activity</label>
+<input type="search" id="tq" placeholder="for example: diagnose, weld, schedule, teach" autocomplete="off">
+<span id="tcount" class="note" role="status"></span></div>
+{table([th(x) for x in ACTIVITY_HEAD], activity_tree(d), attrs=" data-tree", caption=ACTIVITY_CAPTION)}
+"""
+    return page("Activities", "activities.html", body)
+
+
+def activity_page(d: Data, a: str) -> str:
+    r, name = d.act.loc[a], act_name(d, a)
+    n = (d.act.level == "intermediate").sum()
+    t = flow_terms(d, a, d.act_work)
+    total = t.term.sum()
+    tot = tipped(f"{total * 100:.4f}", f"Sum of the {len(t)} sector terms: {total * 100:.4f} cents of each need dollar.")
+    kids = d.act_children.get(a)
+    by_need = d.act_need.loc[kids.index].sum()
+    occ, tasks = d.act_occ[d.act_occ.iwa == a], d.act_tasks[d.act_tasks.iwa == a]
+    sw = d.act_software.get(a)
+    if sw is not None:
+        srows = [f'<tr><td><a href="{flow_href(x.capability)}">{e(d.tax_name[x.capability])}</a></td>'
+                 f'<td class="dim">{e(d.tax_name[x.capability.split(".")[0]])}</td><td class="num">{x.flow * 100:.4f}</td>'
+                 f'<td class="num">{int(d.balance.at[x.capability, "open"])} of {int(d.balance.at[x.capability, "tasks"])}</td></tr>'
+                 for x in sw.itertuples()]
+        software = f"""<p>The kinds of software most particular to the people who do this work, by the part of this activity's flow that
+their listing carries. O*NET records which software an occupation uses, not which of its tasks it is used for, so this
+is the software around the work, not proof that it does the work. AI systems are barely in O*NET's lists yet.</p>
+{table([th("Software capability"), th("Domain"), th("Flow shared with this work, &cent;", "num"), th("Its tasks with a known open tool", "num")], srows)}"""
+    else:
+        software = "<p>The occupations that do this work list no software that the capability list places.</p>"
+    body = f"""
+<p class="crumbs"><a href="activities.html">Activities</a> / <a href="activities.html#{r.parent}">{e(d.act.at[r.parent, "name"])}</a></p>
+<h1>{e(name)}</h1>
+<dl class="figures">
+<div><dt><a href="#flow">Flow</a></dt><dd>{cents(r.flow)}</dd><dd class="dim">of each need dollar; rank {int(r["rank"])} of {n}</dd></div>
+<div><dt><a href="method.html#activities">Weighting tasks by frequency</a></dt><dd>{cents(r.flow_frequency)}</dd><dd class="dim">instead of importance</dd></div>
+<div><dt>Need that sends it most</dt><dd class="small">{e(NEED_NAME[r.top_need])}</dd></div>
+<div><dt><a href="#means">Software around it with an open tool</a></dt><dd>{"n/a" if pd.isna(r.software_open_share) else f"{r.software_open_share:.0%}"}</dd></div>
+</dl>
+<p class="caveat">Flow is where today's paid work goes, not how much an activity matters.
+<a href="method.html#activities">How the flow is computed</a>.</p>
+
+<h2 id="detailed">What it consists of</h2>
+{table([th("Detailed activity"), th("Flow, &cent;", "num"), th("Need that sends it most")],
+       [f'<tr><td class="name">{e(c["name"].rstrip("."))}</td><td class="num">{c.flow * 100:.4f}</td><td>{e(NEED_NAME[c.top_need])}</td></tr>' for _, c in kids.iterrows()],
+       foot=f'<tr><td>{e(name)}</td><td class="num">{kids.flow.sum() * 100:.4f}</td><td></td></tr>')}
+
+<h2 id="tasks">The tasks behind it</h2>
+<p>The tasks, in O*NET's words, that carry the most of this flow, and the occupation each belongs to.</p>
+{table([th("Task"), th("Occupation"), th("Flow, &cent;", "num")],
+       [f'<tr><td class="wrap">{e(x.task)}</td><td class="dim">{e(x.occupation)}</td><td class="num">{x.flow * 100:.4f}</td></tr>' for x in tasks.itertuples()],
+       caption=f"The largest {len(tasks)}.")}
+
+<h2 id="flow">The flow, worked out</h2>
+<p>A need dollar is first split among the sectors whose value added it embodies (every need counted equally). Each
+sector's part is split among its occupations by pay, and each occupation's part among its tasks. What reaches this activity
+from each sector is that sector's share of the dollar times the share of its work that is this activity.</p>
+<h3>By kind of sector</h3>
+<p class="note">Click a kind to list its sectors. Hover over a term to see its arithmetic. Terms are in cents per need dollar.</p>
+{table([th("Kind of sector"), th("Sectors", "num"), th("Share of value added", "num"), th("Share of its work", "num"),
+        th("Term, &cent;", "num")], flow_kind_rows(name, t), attrs=" data-tree",
+       foot=f'<tr><td>Flow</td><td class="num">{len(t)}</td><td class="num">{t.share.sum():.2%}</td>'
+            f'<td class="num">{(total / t.share.sum() if len(t) else 0):.2%}</td><td class="num">{tot}</td></tr>')}
+<h3>By need</h3>
+<p class="note">Cents of each need's dollar that pay for this activity. The flow is their average; the largest is in bold.</p>
+{by_need_list(by_need, cents)}
+
+<h2 id="occupations">Who does it</h2>
+{table([th("Occupation"), th("Share of its work", "num"), th("Its share of the need dollar", "num"), th("Flow, &cent;", "num")],
+       [f'<tr><td class="name">{e(o.title)}</td><td class="num">{o.share_of_work:.1%}</td><td class="num">{o.share_of_basket:.2%}</td>'
+        f'<td class="num">{o.flow * 100:.4f}</td></tr>' for o in occ.itertuples()],
+       caption=f"The largest {len(occ)}. An occupation's share of the need dollar is the value added of the sectors that employ it, by pay.")}
+
+<h2 id="means">The means: software listed with it</h2>
+{software}
+"""
+    return page(name, act_href(a), body, long_title=True)
+
+
 def flow_page(d: Data, k: str) -> str:
     r, node = d.flow.loc[k], d.tax.set_index("id").loc[k]
     name, n, dom = node["name"], len(d.flow), k.split(".")[0]
@@ -703,7 +885,7 @@ share of its work done with it.</p>
 <h3>By kind of sector</h3>
 <p class="note">Click a kind to list its sectors. Hover over a term to see its arithmetic. Terms are in cents per need dollar.</p>
 {table([th("Kind of sector"), th("Sectors", "num"), th("Share of value added", "num"), th("Share of work with it", "num"),
-        th("Term, &cent;", "num")], flow_kind_rows(d, k, t), attrs=" data-tree",
+        th("Term, &cent;", "num")], flow_kind_rows(name, t), attrs=" data-tree",
        foot=f'<tr><td>Flow</td><td class="num">{len(t)}</td><td class="num">{t.share.sum():.2%}</td>'
             f'<td class="num">{total / t.share.sum():.2%}</td><td class="num">{tot}</td></tr>')}
 <h3>By need</h3>
@@ -721,6 +903,13 @@ share of its work is those products as a share of all the software it lists, eve
     else:
         derivation = f"""<p>No value reaches {e(name.lower())}: no occupation in the wage data lists software that the
 taxonomy places here. That says the chain cannot see it, not that nobody does it.</p>"""
+    w = d.act_cap[d.act_cap.capability == k].sort_values("flow", ascending=False).head(8)
+    listed_with = (f"""<p>The work most often done by the people who list this software, by the part of its flow they share. This is
+the work the software sits beside, not proof of what it is used for.</p>
+{table([th("Activity"), th("Kind of work"), th("Flow shared, &cent;", "num")],
+       [f'<tr><td><a href="{act_href(x.iwa)}">{e(act_name(d, x.iwa))}</a></td><td class="dim">{e(d.act.at[d.act.at[x.iwa, "parent"], "name"])}</td>'
+        f'<td class="num">{x.flow * 100:.4f}</td></tr>' for x in w.itertuples()])}""" if len(w) else
+                   "<p>No occupation with a task list also lists this software.</p>")
     body = f"""
 <p class="crumbs"><a href="capabilities.html">Capabilities</a> / <a href="capabilities.html#{dom}">{e(d.tax_name[dom])}</a></p>
 <h1>{e(name)}</h1>
@@ -736,6 +925,9 @@ still be one that nothing gets made without. <a href="method.html#flows">How the
 
 <h2 id="flow">The flow, worked out</h2>
 {derivation}
+
+<h2 id="work">The work it is listed with</h2>
+{listed_with}
 
 <h2 id="tasks">Its tasks</h2>
 <ul class="tasklist">{"".join(f'<li>{e(x.name)} <span class="pill {BENCH_PILL[x.benchmarkable]}" data-tip="Open benchmark possible: {e(x.benchmark_note)}" tabindex="0">{x.benchmarkable}</span></li>' for x in tasks.itertuples())}</ul>
@@ -805,9 +997,12 @@ def taxonomy_section(d: Data) -> str:
     n_checked, n_cross = int((X.basis == "fetched").sum()), len(X)
     return f"""
 <h1>Capabilities</h1>
-<p class="lede">{(T.level == 1).sum()} capabilities in {len(domains)} domains, broken into {len(tasks):,} tasks. A capability is
-something software does for the people meeting a need. A task is a problem with defined inputs and outputs, small
-enough that an open benchmark could be built for it.</p>
+<p class="lede">The means of doing the <a href="activities.html">work</a>: {(T.level == 1).sum()} kinds of software in
+{len(domains)} domains, broken into {len(tasks):,} tasks. A capability here is something software does for the people
+doing the work. A task is a problem with defined inputs and outputs, small enough that an open benchmark could be
+built for it.</p>
+<p>Software is one means among several. AI systems are another, and they are barely in this list: see
+<a href="method.html#ai">why</a>.</p>
 <p class="caveat">This list is a new draft. AI models wrote it from published taxonomies, and nobody who works in these
 fields has reviewed it. {n_checked:,} of its {n_cross:,} source citations were checked against the source itself; the rest
 are from memory. <a href="method.html#taxonomy">How the list was made</a>.</p>
@@ -1203,9 +1398,10 @@ def flow_method(d: Data) -> str:
             for k, r in dom.iterrows()]
     proxied = int((d.flow_work.source == "oews_proxy").sum())
     spearman = f.flow.corr(f.flow_distinctive, method="spearman")
-    return f"""<h2 id="flows">Flowing value through capabilities</h2>
-<p>Each need dollar is traced to the taxonomy's capabilities in three steps, and each step only splits what it receives,
-so nothing is counted twice and the parts add up to the dollar.</p>
+    return f"""<h2 id="flows">Flowing value through software capabilities</h2>
+<p>The same need dollar can be traced to the software the work is done with. The first two steps are the same as for
+<a href="#activities">the work</a>; the third splits each occupation's part among the capabilities whose software it lists,
+where the activity flow splits it among its tasks. Each step only splits what it receives, so the parts add up to the dollar.</p>
 <pre><code>share[j]    = sector j's share of the value added embodied in a need dollar   (the model above; needs counted equally)
 theta[o, k] = products occupation o lists in capability k / all products o lists     (O*NET; a product in several capabilities is divided among them)
 work[j, k]  = sum_o wagebill[j, o] theta[o, k] / sum_o wagebill[j, o]               (OEWS May 2021)
@@ -1233,6 +1429,51 @@ met without, and a flow of present value cannot see what a capability makes poss
 """
 
 
+def activity_method(d: Data) -> str:
+    a, A = d.act_acct, d.act
+    G = A[A.level == "general"].sort_values("flow", ascending=False)
+    rows = [f'<tr><td>{e(r["name"])}</td><td class="num">{r.flow * 100:.1f}</td><td class="num">{r.flow_frequency * 100:.1f}</td></tr>'
+            for _, r in G.head(10).iterrows()]
+    ml = d.flow.loc[["science.machine_learning", "computing.ml_platforms"]]
+    return f"""<h2 id="activities">Flowing value through the work</h2>
+<p>Needs are met by work, and software, AI or a person with a pencil are means of doing it. The account is therefore kept
+at the level of the work: O*NET's work activities ({(A.level == "general").sum()} general, {(A.level == "intermediate").sum()}
+intermediate, {(A.level == "detailed").sum():,} detailed), which group the tasks O*NET records for each occupation. Each need
+dollar is traced to them in three steps, and each step only splits what it receives, so the parts add up to the dollar.</p>
+<pre><code>share[j]    = sector j's share of the value added embodied in a need dollar   (the model above; needs counted equally)
+weight[t]   = importance of task t to its occupation * share of its workers who do it   (O*NET task ratings)
+theta[o, d] = sum of weight[t] over o's tasks in activity d / sum of weight[t] over all o's tasks
+work[j, d]  = sum_o wagebill[j, o] theta[o, d] / sum_o wagebill[j, o]               (OEWS May 2021)
+flow[d]     = sum_j share[j] * work[j, d]</code></pre>
+<p>Of each dollar, {a["flowed"] * 100:.0f} cents reach an activity. {a["sectors_without_occupation_data"] * 100:.0f} cents sit in
+sectors with no occupation data (mostly housing services, which are imputed rents) and {a["work_not_placed"] * 100:.0f} in
+occupations O*NET has no task list for. A task that belongs to several detailed activities is divided among them.</p>
+{table([th("Kind of work"), th("Flow, &cent;", "num"), th("Weighting tasks by frequency, &cent;", "num")], rows,
+       caption=f"The ten largest general work activities. Weighting tasks by how often they are done, in place of importance, "
+               f"gives a rank correlation of {a["spearman_frequency_intermediate"]:.2f} across the intermediate activities.")}
+<h3>What this flow is not</h3>
+<ul>
+<li>It is not importance. It measures where today's paid work goes, and it follows pay: directing and supervising rank high
+partly because managers are paid well.</li>
+<li>It is not time. O*NET rates how important a task is and how often it is done, not how many hours it takes.</li>
+<li>A sector's whole value added, capital's share included, is split the way its payroll is.</li>
+<li>Work done by machines without anyone doing it does not appear, and neither does unpaid work.</li>
+</ul>
+<h3>From the work to its means</h3>
+<p>Each activity is shown with the software listed by the people who do it. O*NET says which software an occupation uses,
+not which of its tasks it is used for, so the link assumes an occupation's software is spread evenly over its activities,
+and credits each occupation for the software particular to it (the distinctive split described below). It shows the
+software around the work. It does not show that the software does the work.</p>
+<h3 id="ai">Where AI is</h3>
+<p>Almost nowhere in these numbers, for three reasons. The data are old: input-output tables from 2017, wages from 2021,
+and software lists that lag further. The flow follows paid people, and an AI system doing a task leaves no trace in a
+wage bill; as it takes over a task, the flow through that task falls. And the software lists barely name it: machine
+learning receives {ml.flow.iloc[0] * 100:.2f} cents of a need dollar and machine-learning platforms {ml.flow.iloc[1] * 100:.2f}.</p>
+<p>In this account AI belongs on the means side, beside software: for each kind of work, how well can an AI system do it?
+That is what an open benchmark measures, and it is not collected here yet.</p>
+"""
+
+
 def taxonomy_method(d: Data) -> str:
     T, X = d.tax, d.tax_cross
     tasks = T[T.level == 2]
@@ -1243,9 +1484,9 @@ def taxonomy_method(d: Data) -> str:
     weak = ", ".join(f"{e(name[k].lower())} ({int(r.ok)} of {int(r.n)})" for k, r in by.sort_values("share").head(3).iterrows())
     strong = ", ".join(e(name[k].lower()) for k in by.sort_values("share", ascending=False).head(3).index)
     bench = tasks.benchmarkable.value_counts()
-    return f"""<h2 id="taxonomy">The capability taxonomy</h2>
+    return f"""<h2 id="taxonomy">The means: a taxonomy of software capabilities</h2>
 <p>The <a href="capabilities.html">list of capabilities</a> is a hand-written taxonomy of what software does for the people
-who meet needs: {(T.level == 0).sum()} domains, {(T.level == 1).sum()} capabilities and {len(tasks):,} tasks. It classifies by
+who do the work: {(T.level == 0).sum()} domains, {(T.level == 1).sum()} capabilities and {len(tasks):,} tasks. It classifies by
 function (what is computed or done), not by who uses a product or how popular it is, and it is assembled from
 {X.scheme.nunique()} published taxonomies and standards, among them the NAFEMS simulation competency areas, NIST's
 classification of mathematical software, the EDAM bioinformatics ontology, the WHO classification of digital health
@@ -1286,7 +1527,7 @@ def method_page(d: Data) -> str:
     body = f"""
 <h1>Method</h1>
 <p class="lede">Input-output analysis: define a basket of needs, trace everything the economy must
-produce to deliver it, then ask which engineering capabilities those producers depend on.</p>
+produce to deliver it, then follow each need dollar to the work it pays for and the means that work is done with.</p>
 
 <h2>Steps</h2>
 <h3>Tables</h3>
@@ -1318,6 +1559,7 @@ spending is used only within a need, where the options do substitute. Weighting 
 Scores map to weights of 1.0, 0.3 and 0.1, an assumption that
 <a href="#score-weights">occupation data</a> suggest is too steep.</p>
 {occ}
+{activity_method(d)}
 {taxonomy_method(d)}
 {flow_method(d)}
 <h2 id="trust">How far to trust it</h2>
@@ -1364,6 +1606,9 @@ def main():
         pages[cap_href(k)] = lambda d, k=k: capability_detail_page(d, k)
     for k in d.flow.index:
         pages[flow_href(k)] = lambda d, k=k: flow_page(d, k)
+    pages["activities.html"] = activities_page
+    for a in d.act.index[d.act.level == "intermediate"]:
+        pages[act_href(a)] = lambda d, a=a: activity_page(d, a)
     for name, fn in pages.items():
         (SITE / name).write_text(fn(d), encoding="utf-8")
     (SITE / ".nojekyll").write_text("")

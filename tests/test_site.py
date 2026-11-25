@@ -15,8 +15,10 @@ def test_site_builds_and_links_resolve(built):
     capability_pages = [site.cap_href(k) for k in built.ct.index]
     flow_pages = [site.flow_href(k) for k in built.flow.index]
     assert len(set(flow_pages)) == len(flow_pages) == (built.tax.level == 1).sum()
-    assert pages == sorted(["capabilities.html", "gaps.html", "index.html", "method.html", "needs.html",
-                            "sectors.html", "work.html"] + capability_pages + flow_pages)
+    activity_pages = [site.act_href(a) for a in built.act.index[built.act.level == "intermediate"]]
+    assert len(set(activity_pages)) == len(activity_pages) == 332
+    assert pages == sorted(["activities.html", "capabilities.html", "gaps.html", "index.html", "method.html", "needs.html",
+                            "sectors.html", "work.html"] + capability_pages + flow_pages + activity_pages)
     for name in pages:
         text = (site.SITE / name).read_text()
         assert ">nan<" not in text and "nan%" not in text, name
@@ -42,13 +44,36 @@ def test_capabilities_page_carries_the_whole_taxonomy(built):
         assert re.search(rf'<tr id="{k}">.*?In the new list: <a href="#', text, re.S), k
 
 
+def test_activity_pages_add_up_to_the_flows(built):
+    d = built
+    A = d.act
+    I = A[A.level == "intermediate"]
+    for a in I.index:
+        assert site.flow_terms(d, a, d.act_work).term.sum() == pytest.approx(I.at[a, "flow"], abs=1e-8), a
+        assert d.act_children[a].flow.sum() == pytest.approx(I.at[a, "flow"], abs=1e-9), a
+    # the three levels are the same dollar, and with what is unattributed they make it up
+    for level in ("general", "intermediate", "detailed"):
+        assert A.flow[A.level == level].sum() == pytest.approx(d.act_acct["flowed"], abs=1e-5), level
+    assert d.act_acct[["flowed", "sectors_without_occupation_data", "work_not_placed"]].sum() == pytest.approx(1, abs=1e-5)
+    assert d.act_need.mean(axis=1).sum() == pytest.approx(d.act_acct["flowed"], abs=1e-5)
+
+
+def test_home_page_leads_with_the_work(built):
+    d = built
+    text = (site.SITE / "index.html").read_text()
+    assert text.index('id="demand"') < text.index('id="means"')
+    for a in d.act.index[d.act.level == "intermediate"]:
+        assert f'href="{site.act_href(a)}"' in text, a
+    assert text.count("data-cap>") == (d.act.level == "general").sum()
+
+
 def test_home_page_balances_every_capability(built):
     d = built
     text = (site.SITE / "index.html").read_text()
     # every capability is on the balance, under its domain, linked to its derivation
     for k in d.flow.index:
         assert f'href="{site.flow_href(k)}"' in text, k
-    assert text.count('class="kind') == (d.tax.level == 0).sum()
+    assert text.count('data-group="b-') == (d.tax.level == 0).sum() + len(d.flow)
     assert d.balance.flow.sum() == pytest.approx(d.flow.flow.sum())
     assert (d.balance.open <= d.balance.tasks).all() and (d.balance.bench <= d.balance.tasks).all()
     # the old function ranking no longer leads the home page

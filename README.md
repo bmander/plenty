@@ -78,7 +78,46 @@ accessories, stampings, wiring devices, relays and industrial controls, steel pr
 hardware, adhesives, motors and generators
 ([`results/bottleneck_candidates.csv`](results/bottleneck_candidates.csv)).
 
-## Capability taxonomy (draft)
+## The work that has to get done
+
+Needs are met by work. Software, AI or a person with a pencil are means of doing it. The
+account is kept at the level of the work: O\*NET's work activities (41 general, 332
+intermediate, 2,087 detailed), which group the 18,838 tasks O\*NET records for 923
+occupations (`plenty/work.py`).
+
+Each need dollar is traced to the work it pays for (`plenty/flows.py`). The dollar is split
+among the sectors whose value added it embodies (the model below, needs counted equally), each
+sector's part among its occupations by pay (OEWS), and each occupation's part among its tasks
+by rated importance times the share of its workers who do them. Every step only splits, so
+the parts add up to the dollar: 93 cents reach an activity, 5 sit in sectors with no
+occupation data, and 2 in occupations with no task list.
+
+| activity | kind of work | flow, cents per need dollar |
+|---|---|---|
+| Direct organizational operations, activities, or procedures | Guiding, Directing, and Motivating Subordinates | 3.63 |
+| Maintain operational records | Documenting/Recording Information | 2.33 |
+| Communicate with others about operational plans or activities | Communicating with Supervisors, Peers, or Subordinates | 1.70 |
+| Clean tools, equipment, facilities, or work areas | Performing General Physical Activities | 1.68 |
+| Supervise personnel activities | Guiding, Directing, and Motivating Subordinates | 1.53 |
+| Maintain current knowledge in area of expertise | Updating and Using Relevant Knowledge | 1.28 |
+| Train others on operational or work procedures | Training and Teaching Others | 1.28 |
+| Provide information to guests, clients, or customers | Communicating with People Outside the Organization | 1.23 |
+| Respond to customer problems or inquiries | Performing for or Working Directly with the Public | 1.20 |
+| Read documents or materials to inform work processes | Getting Information | 1.12 |
+
+Weighting tasks by how often they are done, in place of importance, gives a rank correlation
+of 0.98 across the intermediate activities. All flows, by need and with the sectors, occupations and
+tasks behind each, are in `results/activity_*.csv` and on the site, where each activity
+has a page.
+
+**Flow is where today's paid work goes, not how much it matters.** It follows pay, so
+directing and supervising rank high. It is not time: O\*NET rates how important and how
+frequent a task is, not how many hours it takes. Work done by machines with nobody doing it
+does not appear, and neither does unpaid work.
+
+## The means: a taxonomy of software capabilities (draft)
+
+Software is one means of doing the work, and so far the only one this account lists.
 
 The 18 capabilities above were a hand-made list with no stated source. [`taxonomy/`](taxonomy/)
 holds its replacement: a taxonomy of what software does for the people who meet needs, with
@@ -99,9 +138,9 @@ corrected 192 and removed 11. The rest could not be read and are marked `basis: 
 The tools and benchmark notes on each task were not checked. See
 [`taxonomy/README.md`](taxonomy/README.md).
 
-### Where today's value flows
+### Where today's value flows, by the software listed
 
-Each need dollar is traced to the capabilities it passes through (`plenty/flows.py`). The
+The same need dollar can be traced to the software the work is done with. The
 dollar is split among the sectors whose value added it embodies (the model below, needs
 counted equally), each sector's part among its occupations by pay (OEWS), and each
 occupation's part among the capabilities whose software it lists (O\*NET, each product
@@ -135,6 +174,18 @@ lists counts equally (O\*NET does not say for how long it is used); a sector's w
 added is split the way its payroll is; software running inside machines does not appear.
 The exposure measure, which asks what cannot run without a capability, still exists only
 for the 18 functions.
+
+Each activity is shown with the software most particular to the people who do it
+(`results/activity_capability_flow.csv`). O\*NET says which software an occupation uses, not
+which of its tasks it is used for, so this is the software around the work, not proof that it
+does the work.
+
+**AI is almost absent from these numbers.** The data are old (2017 tables, 2021 wages, software
+lists that lag further); the flow follows paid people, and an AI system doing a task leaves no
+trace in a wage bill; and the software lists barely name it (machine learning receives under
+0.1 cents of a need dollar). In this account AI belongs on the means side, beside software:
+for each kind of work, how well can an AI system do it? That is what an open benchmark
+measures, and it is not collected here yet.
 
 ## Method
 
@@ -270,7 +321,7 @@ Limits, most important first:
 `python -m plenty.site` renders a static site into `site/` from `config/`, `taxonomy/` and
 `results/`: the balance of capabilities against open leaderboards, then a page for each step of
 the loop (needs, capabilities, gaps, work), a sortable table of every sector, and the method.
-Each of the 223 capabilities has a page deriving its flow sector by sector, and each of the 18
+Each of the 332 work activities and 223 software capabilities has a page deriving its flow sector by sector, and each of the 18
 functions a page deriving its weight and exposure. Proposed work lives in `config/work.csv`.
 
 `.github/workflows/site.yml` rebuilds and publishes it on every push to `main`. GitHub Pages
@@ -286,7 +337,7 @@ must be set to deploy from GitHub Actions (Settings > Pages > Source).
     python -m pytest tests
 
 `scripts/00_extract_bea.py` re-extracts the BEA tables from a checkout of USEPA/useeior, and
-`scripts/00_extract_occupations.py` the O\*NET, OEWS and concordance files (see
+`scripts/00_extract_occupations.py` and `00_extract_tasks.py` the O\*NET, OEWS and concordance files (see
 `data/occupations/README.md`), and `scripts/00_extract_rd.py` the NSF business R&D table
 (`data/rd/README.md`).
 `scripts/01_*` and `scripts/02_*` regenerate `config/basket.csv` and
@@ -297,9 +348,9 @@ must be set to deploy from GitHub Actions (Settings > Pages > Source).
     config/        the judgment calls: needs, basket, capital allocation, archetypes, scores, software map, proposed work,
                    and which capability each open leaderboard measures (boards.csv)
     data/bea/      BEA 2017 detail tables (public domain, via USEPA/useeior)
-    data/occupations/  O*NET 31.0 software lists, OEWS May 2021 wages by industry, BEA-NAICS concordance
+    data/occupations/  O*NET 31.0 software lists, tasks and work activities; OEWS May 2021 wages by industry; BEA-NAICS concordance
     data/rd/       NSF business R&D by industry, 2017
-    plenty/        model.py (Leontief + capital), analysis.py (measures), occupations.py (O*NET x OEWS usage), flows.py (need dollar to capabilities), site.py and web/ (website)
+    plenty/        model.py (Leontief + capital), analysis.py (measures), occupations.py (O*NET x OEWS usage), work.py (O*NET tasks and work activities), flows.py (need dollar to work and to software), site.py and web/ (website)
     scripts/       extraction, config seeding, run, figures
     results/       CSV outputs and summary.md
     taxonomy/      the capability taxonomy: domain files (JSON), flat tables (CSV), the briefs,
