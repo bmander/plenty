@@ -75,6 +75,40 @@
     });
   });
 
+  // --- capability filter: show the capabilities and tasks that match, and open them
+  var tq = document.getElementById("tq");
+  if (tq) {
+    var tcount = document.getElementById("tcount");
+    var sections = document.querySelectorAll("section[data-domain]");
+    var caps = Array.prototype.map.call(document.querySelectorAll("tr[data-cap]"), function (row) {
+      return { row: row, b: row.querySelector("button.expander"), text: null, ktext: null,
+               kids: Array.prototype.slice.call(document.querySelectorAll('tr[data-group="' + row.id + '"]')) };
+    });
+    tq.addEventListener("input", function () {
+      var needle = tq.value.trim().toLowerCase(), nc = 0, nt = 0;
+      caps.forEach(function (c) {
+        if (c.text === null) {   // read the rows' text once, on first use
+          c.text = c.row.textContent.toLowerCase();
+          c.ktext = c.kids.map(function (k) { return k.textContent.toLowerCase(); });
+        }
+        var own = !needle || c.text.indexOf(needle) !== -1, any = false;
+        c.kids.forEach(function (k, i) {
+          var m = !!needle && c.ktext[i].indexOf(needle) !== -1;
+          k.hidden = !m;
+          if (m) { any = true; nt++; }
+        });
+        c.row.hidden = !(own || any);
+        if (needle && (own || any)) nc++;
+        c.b.setAttribute("aria-expanded", any ? "true" : "false");
+      });
+      Array.prototype.forEach.call(sections, function (s) {
+        s.hidden = !!needle && !s.querySelector("tr[data-cap]:not([hidden])");
+      });
+      tcount.textContent = !needle ? "" :
+        nc + (nc === 1 ? " capability" : " capabilities") + " and " + nt + (nt === 1 ? " task" : " tasks") + " match";
+    });
+  }
+
   // --- sector filter
   var q = document.getElementById("q"), phys = document.getElementById("phys"), count = document.getElementById("count");
   var table = document.getElementById("sectors");

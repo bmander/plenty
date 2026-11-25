@@ -27,6 +27,19 @@ def test_site_builds_and_links_resolve(built):
             assert f'id="{anchor}"' in (site.SITE / (target or name)).read_text(), f"{name}: {target}#{anchor}"
 
 
+def test_capabilities_page_carries_the_whole_taxonomy(built):
+    d = built
+    text = (site.SITE / "capabilities.html").read_text()
+    assert text.count("data-cap>") == (d.tax.level == 1).sum()
+    assert text.count('<tr class="sub') == (d.tax.level == 2).sum()
+    ids = re.findall(r'\bid="([^"]+)"', text)
+    assert len(ids) == len(set(ids))
+    assert set(d.tax.id[d.tax.level <= 1]) <= set(ids)
+    # each weighted function links to the capabilities it became
+    for k in d.ct.index:
+        assert re.search(rf'<tr id="{k}">.*?In the new list: <a href="#', text, re.S), k
+
+
 def test_capability_pages_add_up_to_the_bars(built):
     d = built
     for k in d.ct.index:

@@ -232,3 +232,17 @@ button.expander:focus-visible { outline: 2px solid var(--focus); outline-offset:
 .ledger td [data-tip], .pill[data-tip] { cursor: help; }
 .ledger td span[data-tip] { text-decoration: underline dotted var(--ink-2); text-underline-offset: 3px; }
 .ledger tfoot td span[data-tip] { cursor: help; }
+
+/* capability taxonomy: capabilities that open to their tasks */
+section[data-domain] { margin-top: 8px; }
+section[data-domain] > .note { max-width: 80ch; margin-top: -6px; }
+.capdef, .capsrc { font-size: 13.5px; max-width: 78ch; margin-top: 2px; }
+.capdef { padding-left: 18px; }
+td > .capsrc { padding-left: 18px; }
+.ledger[data-tree] tr.sub .tname { font-weight: 600; font-size: 14px; }
+.ledger[data-tree] tr.sub td.child > .dim { max-width: 70ch; }
+.ledger[data-tree] tr.sub td.wrap { max-width: 30ch; }
+.ledger[data-tree] tr.kind[data-cap] td { vertical-align: top; }
+.controls label[for="tq"] { font-weight: 600; }
+.controls input#tq { min-width: min(420px, 100%); }
+.ledger td.nowrap { white-space: nowrap; }

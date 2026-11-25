@@ -20,6 +20,7 @@ from . import analysis as A, occupations as O
 
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG, RESULTS, WEB, SITE = ROOT / "config", ROOT / "results", ROOT / "plenty" / "web", ROOT / "site"
+TAXONOMY = ROOT / "taxonomy"
 REPO = "https://github.com/bmander/plenty"
 
 NEED_NAME = {
@@ -79,6 +80,15 @@ class Data:
         self.calibration = pd.read_csv(RESULTS / "score_weight_calibration.csv", index_col=0)
         self.rdi = pd.read_csv(RESULTS / "rd_intensity.csv", index_col=0)
         self.has_board = self.caps.board.notna()
+        # The capability taxonomy (taxonomy/build.py): domains, capabilities and tasks; where each
+        # was drawn from; and which taxonomy capabilities each of the 18 weighted functions became.
+        self.tax = pd.read_csv(TAXONOMY / "capabilities.csv", dtype=str).fillna("").astype({"level": int})
+        self.tax_children = {k: g for k, g in self.tax.groupby("parent")}
+        self.tax_name = self.tax.set_index("id").name
+        cross = pd.read_csv(TAXONOMY / "crosswalk.csv").fillna("")
+        self.tax_cross = cross.assign(capability=cross.node.str.split(".").str[:2].str.join("."),
+                                      domain=cross.node.str.split(".").str[0])
+        self.tax_func = pd.read_csv(TAXONOMY / "function_map.csv").fillna("")
 
     def cap_name(self, k):
         return self.caps.at[k, "name"]
@@ -488,8 +498,9 @@ measures are {e(d.cap_name(top[0]).lower())} and {e(d.cap_name(top[1]).lower())}
 <li><a href="needs.html">Collect needs</a><p>{len(d.needs)} needs, each counted equally, met the way US households
 and governments met them in 2017 with ${total:.1f} trillion of spending. Farming, extraction, utilities, construction and manufacturing carry
 {phys_share:.0%} of the value added embodied in that basket.</p></li>
-<li><a href="capabilities.html">Collect capabilities</a><p>{len(d.ct)} engineering capabilities, weighted by how much
-of the basket passes through sectors that depend on them. What open tools can actually do today is not collected yet.</p></li>
+<li><a href="capabilities.html">Collect capabilities</a><p>{(d.tax.level == 1).sum()} capabilities in {(d.tax.level == 0).sum()} domains, drafted from
+published taxonomies and not yet weighted. The {len(d.ct)} engineering functions above are weighted by how much of the
+basket passes through sectors that depend on them. What open tools can actually do today is not collected yet.</p></li>
 <li><a href="gaps.html">Identify gaps</a><p>Capabilities people depend on that nobody is measuring in the open,
 ranked by how much depends on them.</p></li>
 <li><a href="work.html">Dispatch work</a><p>{len(d.work)} proposed leaderboards, measurements and reviews. Each one
@@ -561,8 +572,98 @@ are over a third of food. A basket in physical units (calories, square meters, k
     return page("Needs", "needs.html", body)
 
 
+BENCH_PILL = {"yes": "s3", "partly": "s2", "no": "s1"}
+SHOW_SOURCES = 4    # schemes named per capability before "and n more"
+
+
+def taxonomy_sources(cross: pd.DataFrame) -> str:
+    """The published schemes a capability and its tasks cite, most cited first. A check mark
+    means at least one of its entries here was checked against the source."""
+    if cross.empty:
+        return "no published counterpart found"
+    g = cross.groupby("scheme").basis.agg(n="size", checked=lambda b: (b == "fetched").any())
+    g = g.sort_values(["checked", "n"], ascending=False)
+    names = [e(k) + (" &#10003;" if r.checked else "") for k, r in g.head(SHOW_SOURCES).iterrows()]
+    more = f" and {len(g) - SHOW_SOURCES} more" if len(g) > SHOW_SOURCES else ""
+    return "; ".join(names) + more
+
+
+def taxonomy_rows(d: Data, dom: str) -> list[str]:
+    """One row per capability of a domain, each followed by its tasks as hidden child rows that
+    the capability's name toggles open (site.js)."""
+    empty = d.tax_cross.iloc[0:0]
+    by_cap = {k: g for k, g in d.tax_cross[d.tax_cross.domain == dom].groupby("capability")}
+    rows = []
+    for i, c in enumerate(d.tax_children[dom].itertuples()):
+        band = " band" if i % 2 == 0 else ""
+        tasks = d.tax_children[c.id]
+        n, yes, partly = len(tasks), (tasks.benchmarkable == "yes").sum(), (tasks.benchmarkable == "partly").sum()
+        rows.append(
+            f'<tr class="kind{band}" id="{c.id}" data-cap><td><button type="button" class="expander" aria-expanded="false" '
+            f'data-group="{c.id}">{e(c.name)}</button><div class="dim capdef">{e(c.definition)}</div>'
+            f'<div class="dim capsrc">Drawn from: {taxonomy_sources(by_cap.get(c.id, empty))}</div></td>'
+            f'<td class="num">{n}</td><td class="nowrap">{yes} yes, {partly} partly</td>'
+            f'<td class="nowrap">{(tasks.open_tools != "").sum()} of {n} tasks</td><td></td></tr>')
+        for t in tasks.itertuples():
+            note = t.benchmark_note[:1].upper() + t.benchmark_note[1:]
+            rows.append(
+                f'<tr class="sub{band}" data-group="{c.id}" hidden><td class="child"><span class="tname">{e(t.name)}</span>'
+                f'<div class="dim">{e(t.definition)}</div></td><td></td>'
+                f'<td><span class="pill {BENCH_PILL[t.benchmarkable]}" data-tip="{e(note)}" tabindex="0">{t.benchmarkable}</span></td>'
+                f'<td class="wrap">{e(t.open_tools.replace("; ", ", ")) or "<span class=dim>none known</span>"}</td>'
+                f'<td class="wrap dim">{e(t.state_of_art.replace("; ", ", "))}</td></tr>')
+    return rows
+
+
+def taxonomy_section(d: Data) -> str:
+    T, X = d.tax, d.tax_cross
+    tasks = T[T.level == 2].assign(domain=lambda t: t.id.str.split(".").str[0])
+    domains = T[T.level == 0]
+    summary, sections = [], []
+    head = [th("Capability, then its tasks"), th("Tasks", "num"), th("Open benchmark possible"), th("Open tools"),
+            th("Proprietary state of the art")]
+    for dm in domains.itertuples():
+        t, x = tasks[tasks.domain == dm.id], X[X.domain == dm.id]
+        n, yes, has_open = len(t), int((t.benchmarkable == "yes").sum()), int((t.open_tools != "").sum())
+        checked = int((x.basis == "fetched").sum())
+        summary.append(
+            f'<tr><th scope="row"><a href="#{dm.id}">{e(dm.name)}</a></th><td class="num">{len(d.tax_children[dm.id])}</td>'
+            f'<td class="num">{n}</td>'
+            f'<td data-v="{yes / n}">{bar(yes / n, 1, f"{yes / n:.0%}", f"{dm.name}: an open benchmark is possible today for {yes} of {n} tasks")}</td>'
+            f'<td data-v="{has_open / n}">{bar(has_open / n, 1, f"{has_open / n:.0%}", f"{dm.name}: {has_open} of {n} tasks have a known open-source tool")}</td>'
+            f'<td class="num" data-v="{checked / len(x)}">{checked} of {len(x)}</td></tr>')
+        sections.append(
+            f'<section data-domain id="{dm.id}"><h2>{e(dm.name)}</h2><p class="note">{e(dm.definition)}</p>'
+            f'{table(head, taxonomy_rows(d, dm.id), attrs=" data-tree")}</section>')
+    n_checked, n_cross = int((X.basis == "fetched").sum()), len(X)
+    return f"""
+<h1>Capabilities</h1>
+<p class="lede">{(T.level == 1).sum()} capabilities in {len(domains)} domains, broken into {len(tasks):,} tasks. A capability is
+something software does for the people meeting a need. A task is a problem with defined inputs and outputs, small
+enough that an open benchmark could be built for it.</p>
+<p class="caveat">This list is a new draft and carries no weights yet. AI models wrote it from published taxonomies, and
+nobody who works in these fields has reviewed it. {n_checked:,} of its {n_cross:,} source citations were checked against
+the source itself; the rest are from memory. The only capabilities with weights so far are the
+<a href="#functions">eighteen engineering functions</a>, an older and narrower list.
+<a href="method.html#taxonomy">How the list was made</a>.</p>
+{table([th("Domain"), th("Capabilities", "num", "num"), th("Tasks", "num", "num"), th("Open benchmark possible", sort="num"),
+        th("Has an open tool", sort="num"), th("Sources checked", "num", "num")], summary,
+       caption="Open benchmark possible counts tasks marked yes: public reference problems exist to score tools on. "
+               "Sources checked counts citations of published taxonomies and standards that were read at the source.")}
+<div class="controls"><label for="tq">Find a capability or task</label>
+<input type="search" id="tq" placeholder="for example: modal analysis, payroll, routing" autocomplete="off">
+<span id="tcount" class="note" role="status"></span></div>
+<p class="note">Click a capability to list its tasks. &#10003; marks a source that was checked against the published document;
+unmarked sources are cited from memory. Hover over yes, partly or no to see why. Open tools and state of the art are what
+the authors knew of and have not been checked: "none known" does not mean none exists.
+The full list is in <a href="{REPO}/tree/main/taxonomy"><code>taxonomy/</code></a> as JSON and CSV.</p>
+{"".join(sections)}
+"""
+
+
 def capabilities_page(d: Data) -> str:
     order = d.ct.sort_values("volume weight", ascending=False).index
+    became = d.tax_func.groupby("function").node.agg(list)
     vmax, emax = d.ct["volume weight"].max(), d.ct["exposure"].max()
     omax = d.ct["occupational weight"].max()
     rows = []
@@ -574,18 +675,20 @@ def capabilities_page(d: Data) -> str:
         if d.agree.at[k, "thin"]:
             otip += " (too few occupations to measure: elicited scores, rescaled)"
         rows.append(
-            f'<tr id="{k}"><th scope="row" class="cap"><a href="{cap_href(k)}">{e(d.cap_name(k))}</a><div class="dim" style="font-weight:400">{e(d.caps.at[k, "description"].replace("; ", ", "))}</div></th>'
+            f'<tr id="{k}"><th scope="row" class="cap"><a href="{cap_href(k)}">{e(d.cap_name(k))}</a><div class="dim" style="font-weight:400">{e(d.caps.at[k, "description"].replace("; ", ", "))}</div>'
+            f'<div class="dim capsrc" style="font-weight:400">In the new list: {", ".join(f"""<a href="#{n}">{e(d.tax_name[n].lower())}</a>""" for n in became.get(k, []))}</div></th>'
             f'<td data-v="{r["volume weight"]}">{bar(r["volume weight"], vmax, f3(r["volume weight"]), f"Volume rank {int(r.volume_rank)} of {len(d.ct)}")}</td>'
             f'<td data-v="{r["occupational weight"]}">{bar(r["occupational weight"], omax, f3(r["occupational weight"]), otip)}</td>'
             f'<td data-v="{r["exposure"]}">{bar(r["exposure"], emax, f3(r["exposure"]), f"Exposure rank {int(r.exposure_rank)} of {len(d.ct)}")}</td>'
             f'<td class="num" data-v="{r["reach 1c"]}">{r["reach 1c"]:.0%}</td>'
             f'<td class="wrap dim">{e(crit)}</td>'
             f'<td>{d.board_html(k)}</td></tr>')
-    body = f"""
-<h1>Capabilities</h1>
-<p class="lede">Eighteen kinds of engineering computation, weighted by how much of the basket of
-needs passes through sectors that depend on them.</p>
-<p class="caveat">This page shows demand for each capability. It does not yet show supply: how far today's open
+    body = f"""{taxonomy_section(d)}
+<h2 id="functions">Engineering functions with weights</h2>
+<p>Eighteen kinds of engineering computation, weighted by how much of the basket of needs passes through sectors that
+depend on them. This is the older list, and so far the only one with numbers. Each function has turned out to be
+several capabilities in the new list, linked under its name.</p>
+<p class="caveat">These numbers show demand for each function. They do not yet show supply: how far today's open
 tools are from the state of the art. <a href="work.html#inventory">Collecting that</a> is the next step of the loop.</p>
 {table(
     [th("Capability"), th("Weight", sort="num"), th("Occupational weight", sort="num"), th("Exposure", sort="num"),
@@ -596,7 +699,7 @@ tools are from the state of the art. <a href="work.html#inventory">Collecting th
             "(<a href=\"method.html#occupations\">how</a>); compare ranks, not levels. Exposure: dollars of output from sectors that "
             "cannot run without the capability, per dollar of basket. Reach at 1&cent;: share of the basket with at least one cent "
             "per dollar passing through those sectors. Click a column heading to sort.")}
-<h2>Reading the two measures together</h2>
+<h3>Reading the two measures together</h3>
 <p>Weight follows cost: a capability scores high when large sectors use it, even casually. Exposure counts
 only sectors that cannot run without the capability. When the two agree, the result is sturdy. When they
 disagree, look closer:</p>
@@ -881,6 +984,48 @@ hydraulic modeling looks like it does none.</li>
 """
 
 
+def taxonomy_method(d: Data) -> str:
+    T, X = d.tax, d.tax_cross
+    tasks = T[T.level == 2]
+    n_x, n_ok = len(X), int((X.basis == "fetched").sum())
+    by = X.groupby("domain").basis.agg(n="size", ok=lambda b: (b == "fetched").sum())
+    by["share"] = by.ok / by.n
+    name = d.tax_name
+    weak = ", ".join(f"{e(name[k].lower())} ({int(r.ok)} of {int(r.n)})" for k, r in by.sort_values("share").head(3).iterrows())
+    strong = ", ".join(e(name[k].lower()) for k in by.sort_values("share", ascending=False).head(3).index)
+    bench = tasks.benchmarkable.value_counts()
+    return f"""<h2 id="taxonomy">The capability taxonomy</h2>
+<p>The <a href="capabilities.html">list of capabilities</a> is a hand-written taxonomy of what software does for the people
+who meet needs: {(T.level == 0).sum()} domains, {(T.level == 1).sum()} capabilities and {len(tasks):,} tasks. It classifies by
+function (what is computed or done), not by who uses a product or how popular it is, and it is assembled from
+{X.scheme.nunique()} published taxonomies and standards, among them the NAFEMS simulation competency areas, NIST's
+classification of mathematical software, the EDAM bioinformatics ontology, the WHO classification of digital health
+interventions, the APQC process framework and the ACM computing classification.</p>
+<h3>How it was made</h3>
+<ol>
+<li>An editor (an AI model) wrote the domains, the boundaries between them, a first list of capabilities, and the published
+taxonomies each domain had to integrate.</li>
+<li>One author per domain (also AI models) wrote the capabilities and tasks from that brief, the sources, and
+O*NET's list of the software each occupation uses, from which every example product is taken.</li>
+<li>The editor read the whole tree, gave each task that two domains had modeled a single owner, and fixed the references
+between domains.</li>
+<li>A separate checker per domain tried to read each cited source and compared every citation with what it found.</li>
+</ol>
+<h3>How far to trust it</h3>
+<ul>
+<li>{n_ok:,} of {n_x:,} citations ({n_ok / n_x:.0%}) were checked against the source itself. Checking corrected 192 and removed 11
+that cited something that does not exist. The rest could not be read: ISO, IEC, SAE and ASTM documents are paywalled or
+refuse automated reading. Sourcing is weakest for {weak} and strongest for {strong}.</li>
+<li>Each task says whether an open benchmark is possible ({int(bench.get("yes", 0))} yes, {int(bench.get("partly", 0))} partly,
+{int(bench.get("no", 0))} no) and names open-source and proprietary tools. Those three fields are the authors' knowledge and
+were not checked.</li>
+<li>No one who works in these fields has reviewed it, and it has no weights: nothing yet says how much each capability matters.</li>
+</ul>
+<p class="note">Everything is in <a href="{REPO}/tree/main/taxonomy"><code>taxonomy/</code></a>: the tree as JSON and CSV, the brief the
+authors followed, each checker's verdicts with the page read, and a log of every edit.</p>
+"""
+
+
 def method_page(d: Data) -> str:
     srows = [f'<tr><td class="wrap">{e(k[0].upper() + k[1:])}</td><td class="num">{r.spearman_vs_headline:.2f}</td>'
              f'<td class="num">{int(r.top5_overlap)} of 5</td></tr>' for k, r in d.sens.iterrows()]
@@ -923,6 +1068,7 @@ spending is used only within a need, where the options do substitute. Weighting 
 Scores map to weights of 1.0, 0.3 and 0.1, an assumption that
 <a href="#score-weights">occupation data</a> suggest is too steep.</p>
 {occ}
+{taxonomy_method(d)}
 <h2 id="trust">How far to trust it</h2>
 <p>Checked by tests: the Use table balances, the capital matrix conserves investment, and the model reproduces the
 observed output of every sizeable commodity to within 1%, with and without capital.</p>
