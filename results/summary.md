@@ -131,6 +131,7 @@ Physical sectors with observed need breadth of at least 9 of 11 that reach at le
 | variant | spearman_vs_headline | top5_overlap | top5 |
 |---|---|---|---|
 | occupation-based usage (O*NET x OEWS) | 0.358 | 4 | cad, controls, gis, logistics, cam |
+| score weights calibrated to occupations (0.26, 0.53, 1) | 0.961 | 5 | logistics, controls, gis, cad, civil |
 | linear score weights (1/3, 2/3, 1) | 0.944 | 5 | logistics, controls, gis, cad, civil |
 | no capital endogenization | 0.901 | 3 | logistics, controls, gis, process, emag |
 | capital spread by operating surplus only (no user rules) | 1.000 | 5 | logistics, controls, gis, cad, civil |
@@ -140,6 +141,9 @@ Physical sectors with observed need breadth of at least 9 of 11 that reach at le
 ## Elicited scores against occupations
 
 Occupation-based usage (O*NET 31.0 software lists x OEWS May 2021 wage bills) measured for 376 of 402 commodities; the rest, and capabilities with thin coverage (mfgsim, mbd), use elicited scores on the occupational scale. Rank correlation of the capability ranking: 0.36.
+
+
+Score weights implied by occupations (mean share above score 0, scaled to score 3): 1 -> 0.26, 2 -> 0.53, 3 -> 1; assumed 0.1, 0.3, 1.
 
 | capability | elicited_rank | occupational_rank | rank_change | spearman_across_sectors | thin |
 |---|---|---|---|---|---|

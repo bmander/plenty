@@ -182,3 +182,53 @@ svg.chart .dot:hover { fill-opacity: 1; }
 
 footer { margin-top: 72px; padding-top: 14px; border-top: 1px solid var(--rule); color: var(--ink-2); font-size: 14px; }
 footer p { max-width: 80ch; margin: 4px 0; }
+
+/* Capability pages: the worked sums behind each bar */
+a.barlink { display: block; text-decoration: none; border-radius: 3px; padding: 3px 4px; margin: -3px -4px; }
+a.barlink:hover { background: var(--series-soft); }
+.crumbs { font-size: 14px; color: var(--ink-2); margin: 28px 0 -24px; }
+dl.figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px 28px; margin: 24px 0 8px; max-width: 900px; }
+dl.figures > div { border-top: 2px solid var(--ink); padding-top: 6px; }
+dl.figures dt { font-size: 13.5px; color: var(--ink-2); }
+dl.figures dd { margin: 0; font: 700 30px/1.15 "Old Standard TT", Georgia, serif; font-variant-numeric: tabular-nums; }
+dl.figures dd.dim { font: 400 13.5px/1.4 "Golos Text", system-ui, sans-serif; color: var(--ink-2); }
+dl.figures dd.small { font: 400 15px/1.5 "Golos Text", system-ui, sans-serif; }
+details.fold { margin: 4px 0 10px; }
+details.fold > summary { cursor: pointer; font-size: 14.5px; color: var(--ink-2); padding: 4px 0; }
+details.fold > summary:hover { color: var(--ink); }
+/* once opened, the full table replaces the short one above it */
+.scroll:has(+ details.fold[open]) { display: none; }
+ul.byneed { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 0 28px; max-width: 900px; font-size: 14.5px; font-variant-numeric: tabular-nums; }
+ul.byneed li { display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px dotted var(--rule); padding: 3px 0; max-width: none; }
+ul.byneed li.max span:last-child { font-weight: 700; }
+.scores { display: grid; gap: 0; max-width: 980px; }
+article.score { padding: 16px 0 14px; border-top: 1px solid var(--rule); scroll-margin-top: 16px; }
+article.score:target { background: var(--series-soft); box-shadow: -10px 0 0 var(--series-soft), 10px 0 0 var(--series-soft); }
+article.score h3 { margin: 0 0 6px; font-size: 17px; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+article.score h3 .dim { font-weight: 400; font-size: 14px; color: var(--ink-2); }
+article.score p { margin: 4px 0; font-size: 15px; }
+article.score .dim { color: var(--ink-2); }
+.pill { display: inline-block; min-width: 1.7em; text-align: center; font-size: 13.5px; font-weight: 700; padding: 1px 7px; border-radius: 10px; font-variant-numeric: tabular-nums; }
+.pill.s3 { background: var(--series); color: var(--paper); }
+.pill.s2 { background: var(--series-soft); color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--series); }
+.pill.s1 { color: var(--ink-2); box-shadow: inset 0 0 0 1px var(--rule); }
+
+/* Tree tables: a kind of sector and its sectors share one band */
+.ledger[data-tree] tbody tr { background: none; }
+.ledger[data-tree] tbody tr.band { background: var(--bar); }
+.ledger[data-tree] tr.sub td { padding-top: 3px; padding-bottom: 3px; font-size: 13.5px; }
+.ledger[data-tree] td.child { padding-left: 34px; position: relative; }
+.ledger[data-tree] td.child::before { content: ""; position: absolute; left: 18px; top: 0; bottom: 0; border-left: 1px solid var(--rule); }
+.ledger[data-tree] tr.kind:has(+ tr.sub:not([hidden])) td { border-bottom: 1px solid var(--rule); }
+button.expander { all: unset; cursor: pointer; display: inline-flex; align-items: baseline; gap: 7px;
+  text-decoration: underline; text-decoration-color: var(--rule); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+button.expander::before { content: "\25B8"; font-size: 11px; color: var(--ink-2); transition: transform 120ms ease; display: inline-block; text-decoration: none; }
+button.expander[aria-expanded="true"]::before { transform: rotate(90deg); }
+button.expander:hover { text-decoration-color: var(--series); }
+button.expander:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+@media (prefers-reduced-motion: reduce) { button.expander::before { transition: none; } }
+
+/* Scores explain themselves on hover or focus */
+.ledger td [data-tip], .pill[data-tip] { cursor: help; }
+.ledger td span[data-tip] { text-decoration: underline dotted var(--ink-2); text-underline-offset: 3px; }
+.ledger tfoot td span[data-tip] { cursor: help; }

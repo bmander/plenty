@@ -1,38 +1,38 @@
-commodity,name,archetype,consumed_as,output_per_basket_dollar,output_per_need_dollar_equal,value_added_per_basket_dollar,need_breadth,need_breadth_observed,top_need,reach_0.0003,reach_0.001,reach_0.003,product_breadth
-331490,"Nonferrous metal (except copper and aluminum) rolling, drawing, extruding and alloying",primary_metals,shelter,0.000821,0.000941,0.00026,10.145726,9.4964,energy,0.992729,0.255185,0.022081,65.979979
-33351B,"Cutting and machine tool accessory, rolling mill, and other metalworking machinery manufacturing",machinery,none,0.000891,0.000977,0.000349,10.157036,9.089535,mobility,0.981006,0.232315,0.048434,58.268834
-332119,"Metal crown, closure, and other metal stamping (except automotive)",fabricated_metals,shelter,0.000988,0.001027,0.000394,10.095769,9.154643,water_sanitation,0.981006,0.266096,0.036311,62.370015
-335930,Wiring device manufacturing,electrical_equipment,none,0.001043,0.001002,0.000559,9.881171,9.480782,shelter,0.995873,0.335209,0.016116,47.464329
-2122A0,"Iron, gold, silver, and other metal ore mining",mining,none,0.001066,0.00118,0.000407,10.457758,9.909266,energy,0.995897,0.455997,0.022362,68.257651
-335314,Relay and industrial control manufacturing,electrical_equipment,none,0.001073,0.00113,0.000497,10.545716,9.569341,water_sanitation,1.0,0.444315,0.048819,72.393594
-331200,Steel product manufacturing from purchased steel,primary_metals,shelter,0.001124,0.001161,0.000365,10.298997,9.39479,mobility,0.995897,0.484493,0.030633,56.906355
-332500,Hardware manufacturing,fabricated_metals,shelter,0.001135,0.001093,0.000388,9.875845,9.568782,shelter,0.96097,0.301557,0.046871,51.48658
-325520,Adhesive manufacturing,formulated_chemicals,shelter,0.001201,0.001152,0.000476,10.13821,9.30961,shelter,1.0,0.301879,0.025112,59.557975
-332999,Other fabricated metal manufacturing,fabricated_metals,shelter,0.001433,0.001482,0.000559,10.639228,10.159678,water_sanitation,1.0,0.544349,0.069074,64.709865
-335312,Motor and generator manufacturing,electrical_equipment,shelter,0.001472,0.001497,0.000528,10.489576,9.231682,water_sanitation,1.0,0.737103,0.007545,60.64212
-322220,Paper bag and coated and treated paper manufacturing,paper_printing,shelter,0.001512,0.001372,0.000487,9.706349,9.252459,food,0.996829,0.441199,0.035223,70.867649
-333318,Other commercial and service industry machinery manufacturing,machinery,shelter,0.001519,0.001672,0.000583,10.725098,9.252764,communication,1.0,0.876764,0.044321,57.255539
-321910,Millwork,wood_furniture,none,0.001714,0.001596,0.0006,10.356372,10.507525,shelter,1.0,0.822586,0.093751,49.509784
-331313,Alumina refining and primary aluminum production,primary_metals,none,0.001764,0.001788,0.000295,10.365683,9.320997,mobility,1.0,0.782194,0.070724,70.450145
-33399A,Other general purpose machinery manufacturing,machinery,shelter,0.00183,0.001975,0.000723,10.634268,9.479681,communication,1.0,0.987074,0.102382,66.389098
-331420,"Copper rolling, drawing, extruding and alloying",primary_metals,none,0.002002,0.002112,0.000357,10.272127,9.384126,communication,1.0,0.870983,0.06892,60.90424
-325510,Paint and coating manufacturing,formulated_chemicals,shelter,0.002113,0.002044,0.000763,10.106913,9.305374,shelter,1.0,0.828811,0.119502,56.689802
-3219A0,All other wood product manufacturing,wood_furniture,shelter,0.00223,0.001908,0.000717,9.351758,9.647001,shelter,1.0,0.611147,0.125093,46.244883
-33131B,Aluminum product manufacturing from purchased aluminum,primary_metals,none,0.002282,0.002268,0.000537,10.411092,9.307778,mobility,1.0,0.887796,0.111112,67.72844
-325180,Other basic inorganic chemical manufacturing,bulk_chemicals,shelter,0.002386,0.002444,0.001072,10.031155,9.437669,water_sanitation,1.0,0.842201,0.141941,62.754645
-322130,Paperboard mills,paper_printing,none,0.002427,0.002652,0.000793,9.973065,9.257842,water_sanitation,1.0,0.988768,0.131764,74.739641
-321200,"Veneer, plywood, and engineered wood product manufacturing",wood_furniture,none,0.002441,0.002165,0.000853,9.280591,9.897848,shelter,1.0,0.755896,0.305387,36.197278
-33329A,Other industrial machinery manufacturing,machinery,shelter,0.002607,0.002739,0.000947,10.296157,9.433123,water_sanitation,1.0,0.900413,0.151943,67.654045
-322120,Paper mills,paper_printing,shelter,0.002622,0.002304,0.000872,9.464245,9.045502,shelter,1.0,0.62826,0.127418,45.541788
-332720,"Turned product and screw, nut, and bolt manufacturing",fabricated_metals,shelter,0.002733,0.003002,0.001099,10.378019,9.703499,mobility,1.0,0.977838,0.319628,66.132568
-3259A0,All other chemical product and preparation manufacturing,formulated_chemicals,shelter,0.002883,0.003104,0.000967,10.269402,9.88887,water_sanitation,1.0,0.984228,0.291312,56.740454
-333415,"Air conditioning, refrigeration, and warm air heating equipment manufacturing",fluid_machinery,shelter,0.002911,0.002796,0.001112,10.628251,9.689022,shelter,1.0,0.976052,0.27582,57.025893
-332710,Machine shops,fabricated_metals,none,0.002982,0.003312,0.001497,10.108254,9.210855,water_sanitation,1.0,0.992729,0.370125,65.958091
-326110,Plastics packaging materials and unlaminated film and sheet manufacturing,plastics_rubber,shelter,0.003244,0.002933,0.000896,10.444377,9.851988,food,1.0,0.977987,0.154072,83.922765
-321100,Sawmills and wood preservation,wood_furniture,none,0.003277,0.003162,0.000918,9.955133,9.653649,shelter,1.0,0.968804,0.385018,51.01984
-323110,Printing,paper_printing,meaning,0.00396,0.004206,0.001877,9.553077,9.033245,meaning,1.0,0.996829,0.4272,51.133007
-325110,Petrochemical manufacturing,bulk_chemicals,none,0.004795,0.00511,0.001572,10.14198,9.689814,mobility,1.0,1.0,0.516555,56.493478
-325211,Plastics material and resin manufacturing,bulk_chemicals,none,0.006526,0.00669,0.001683,10.353672,9.669657,water_sanitation,1.0,1.0,0.89054,74.423413
-326190,Other plastics product manufacturing,plastics_rubber,shelter,0.00828,0.007479,0.002696,10.114688,9.60116,water_sanitation,1.0,1.0,0.950182,63.572754
-325190,Other basic organic chemical manufacturing,bulk_chemicals,shelter,0.009027,0.009262,0.002369,9.879397,9.299967,water_sanitation,1.0,1.0,0.986758,61.455416
-331110,Iron and steel mills and ferroalloy manufacturing,primary_metals,none,0.010852,0.011489,0.002675,10.275,9.049826,mobility,1.0,1.0,1.0,62.079611
+commodity,name,archetype,consumed_as,output_per_basket_dollar,output_per_need_dollar_equal,value_added_per_basket_dollar,need_breadth,need_breadth_observed,top_need,reach_0.0003,reach_0.001,reach_0.003,product_breadth,value_added_share_equal
+331490,"Nonferrous metal (except copper and aluminum) rolling, drawing, extruding and alloying",primary_metals,shelter,0.000821,0.000941,0.00026,10.145726,9.4964,energy,0.992729,0.255185,0.022081,65.979979,0.00023
+33351B,"Cutting and machine tool accessory, rolling mill, and other metalworking machinery manufacturing",machinery,none,0.000891,0.000977,0.000349,10.157036,9.089535,mobility,0.981006,0.232315,0.048434,58.268834,0.000299
+332119,"Metal crown, closure, and other metal stamping (except automotive)",fabricated_metals,shelter,0.000988,0.001027,0.000394,10.095769,9.154643,water_sanitation,0.981006,0.266096,0.036311,62.370015,0.000317
+335930,Wiring device manufacturing,electrical_equipment,none,0.001043,0.001002,0.000559,9.881171,9.480782,shelter,0.995873,0.335209,0.016116,47.464329,0.000411
+2122A0,"Iron, gold, silver, and other metal ore mining",mining,none,0.001066,0.00118,0.000407,10.457758,9.909266,energy,0.995897,0.455997,0.022362,68.257651,0.000351
+335314,Relay and industrial control manufacturing,electrical_equipment,none,0.001073,0.00113,0.000497,10.545716,9.569341,water_sanitation,1.0,0.444315,0.048819,72.393594,0.00041
+331200,Steel product manufacturing from purchased steel,primary_metals,shelter,0.001124,0.001161,0.000365,10.298997,9.39479,mobility,0.995897,0.484493,0.030633,56.906355,0.000292
+332500,Hardware manufacturing,fabricated_metals,shelter,0.001135,0.001093,0.000388,9.875845,9.568782,shelter,0.96097,0.301557,0.046871,51.48658,0.000286
+325520,Adhesive manufacturing,formulated_chemicals,shelter,0.001201,0.001152,0.000476,10.13821,9.30961,shelter,1.0,0.301879,0.025112,59.557975,0.000356
+332999,Other fabricated metal manufacturing,fabricated_metals,shelter,0.001433,0.001482,0.000559,10.639228,10.159678,water_sanitation,1.0,0.544349,0.069074,64.709865,0.000448
+335312,Motor and generator manufacturing,electrical_equipment,shelter,0.001472,0.001497,0.000528,10.489576,9.231682,water_sanitation,1.0,0.737103,0.007545,60.64212,0.000417
+322220,Paper bag and coated and treated paper manufacturing,paper_printing,shelter,0.001512,0.001372,0.000487,9.706349,9.252459,food,0.996829,0.441199,0.035223,70.867649,0.000351
+333318,Other commercial and service industry machinery manufacturing,machinery,shelter,0.001519,0.001672,0.000583,10.725098,9.252764,communication,1.0,0.876764,0.044321,57.255539,0.0005
+321910,Millwork,wood_furniture,none,0.001714,0.001596,0.0006,10.356372,10.507525,shelter,1.0,0.822586,0.093751,49.509784,0.000431
+331313,Alumina refining and primary aluminum production,primary_metals,none,0.001764,0.001788,0.000295,10.365683,9.320997,mobility,1.0,0.782194,0.070724,70.450145,0.000233
+33399A,Other general purpose machinery manufacturing,machinery,shelter,0.00183,0.001975,0.000723,10.634268,9.479681,communication,1.0,0.987074,0.102382,66.389098,0.00061
+331420,"Copper rolling, drawing, extruding and alloying",primary_metals,none,0.002002,0.002112,0.000357,10.272127,9.384126,communication,1.0,0.870983,0.06892,60.90424,0.000291
+325510,Paint and coating manufacturing,formulated_chemicals,shelter,0.002113,0.002044,0.000763,10.106913,9.305374,shelter,1.0,0.828811,0.119502,56.689802,0.000571
+3219A0,All other wood product manufacturing,wood_furniture,shelter,0.00223,0.001908,0.000717,9.351758,9.647001,shelter,1.0,0.611147,0.125093,46.244883,0.000475
+33131B,Aluminum product manufacturing from purchased aluminum,primary_metals,none,0.002282,0.002268,0.000537,10.411092,9.307778,mobility,1.0,0.887796,0.111112,67.72844,0.000417
+325180,Other basic inorganic chemical manufacturing,bulk_chemicals,shelter,0.002386,0.002444,0.001072,10.031155,9.437669,water_sanitation,1.0,0.842201,0.141941,62.754645,0.000861
+322130,Paperboard mills,paper_printing,none,0.002427,0.002652,0.000793,9.973065,9.257842,water_sanitation,1.0,0.988768,0.131764,74.739641,0.000685
+321200,"Veneer, plywood, and engineered wood product manufacturing",wood_furniture,none,0.002441,0.002165,0.000853,9.280591,9.897848,shelter,1.0,0.755896,0.305387,36.197278,0.000577
+33329A,Other industrial machinery manufacturing,machinery,shelter,0.002607,0.002739,0.000947,10.296157,9.433123,water_sanitation,1.0,0.900413,0.151943,67.654045,0.000783
+322120,Paper mills,paper_printing,shelter,0.002622,0.002304,0.000872,9.464245,9.045502,shelter,1.0,0.62826,0.127418,45.541788,0.000594
+332720,"Turned product and screw, nut, and bolt manufacturing",fabricated_metals,shelter,0.002733,0.003002,0.001099,10.378019,9.703499,mobility,1.0,0.977838,0.319628,66.132568,0.000936
+3259A0,All other chemical product and preparation manufacturing,formulated_chemicals,shelter,0.002883,0.003104,0.000967,10.269402,9.88887,water_sanitation,1.0,0.984228,0.291312,56.740454,0.000812
+333415,"Air conditioning, refrigeration, and warm air heating equipment manufacturing",fluid_machinery,shelter,0.002911,0.002796,0.001112,10.628251,9.689022,shelter,1.0,0.976052,0.27582,57.025893,0.000829
+332710,Machine shops,fabricated_metals,none,0.002982,0.003312,0.001497,10.108254,9.210855,water_sanitation,1.0,0.992729,0.370125,65.958091,0.00129
+326110,Plastics packaging materials and unlaminated film and sheet manufacturing,plastics_rubber,shelter,0.003244,0.002933,0.000896,10.444377,9.851988,food,1.0,0.977987,0.154072,83.922765,0.000637
+321100,Sawmills and wood preservation,wood_furniture,none,0.003277,0.003162,0.000918,9.955133,9.653649,shelter,1.0,0.968804,0.385018,51.01984,0.000684
+323110,Printing,paper_printing,meaning,0.00396,0.004206,0.001877,9.553077,9.033245,meaning,1.0,0.996829,0.4272,51.133007,0.0016
+325110,Petrochemical manufacturing,bulk_chemicals,none,0.004795,0.00511,0.001572,10.14198,9.689814,mobility,1.0,1.0,0.516555,56.493478,0.001317
+325211,Plastics material and resin manufacturing,bulk_chemicals,none,0.006526,0.00669,0.001683,10.353672,9.669657,water_sanitation,1.0,1.0,0.89054,74.423413,0.001362
+326190,Other plastics product manufacturing,plastics_rubber,shelter,0.00828,0.007479,0.002696,10.114688,9.60116,water_sanitation,1.0,1.0,0.950182,63.572754,0.001894
+325190,Other basic organic chemical manufacturing,bulk_chemicals,shelter,0.009027,0.009262,0.002369,9.879397,9.299967,water_sanitation,1.0,1.0,0.986758,61.455416,0.001915
+331110,Iron and steel mills and ferroalloy manufacturing,primary_metals,none,0.010852,0.011489,0.002675,10.275,9.049826,mobility,1.0,1.0,1.0,62.079611,0.002199

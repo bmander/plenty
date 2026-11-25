@@ -103,6 +103,10 @@ assigned to one of 11 needs or excluded (`config/basket.csv`, `config/needs.csv`
 retail, wholesale and freight margins are split across needs in proportion to goods spending.
 Excluded by default: federal government, finance and legal services, and a discretionary
 group (alcohol, tobacco, gambling, lodging, jewelry, pets, personal services).
+Each need is scaled to one dollar and the needs are averaged, so every need counts equally.
+Needs are complements: no amount of health care makes up for no water, so price, which
+values the last unit, cannot rank them (water and sanitation is 1.8% of spending but
+counts 9.1%). Spending is used only within a need, where the options do substitute.
 
 **5. Sector measures.**
 - *Volume*: output of j per dollar of basket (the sales-share weight that Hulten's theorem
@@ -136,6 +140,7 @@ Sensitivity of the capability ranking (Spearman correlation with the headline ra
 | No capital endogenization | 0.90 | 3 of 5 |
 | Exposure instead of volume | 0.78 | 4 of 5 |
 | Occupation-based usage instead of elicited scores (below) | 0.36 | 4 of 5 |
+| Score weights calibrated to occupations (0.26, 0.53, 1) | 0.96 | 5 of 5 |
 
 **Checked against occupations.** To test the *usage* half of the scores, each sector's
 score is replaced by the share of its wage bill paid to occupations that use the capability's
@@ -162,6 +167,20 @@ Manufacturing process simulation and multibody dynamics also move up (to 8 and 9
 because their elicited scores are rescaled with the pooled average of the other capabilities;
 those two ranks are not findings.
 
+**What a score is worth.** Across all measured sectors and capabilities, the mean occupational
+share rises with the elicited score: 1.6% at 0, 4.8% at 1, 8.1% at 2, 13.8% at 3. Above the
+score-0 baseline and scaled to a 3, that implies weights of 0.26 and 0.53 for scores 1 and 2,
+against the assumed 0.1 and 0.3 (`results/score_weight_calibration.csv`). Every capability
+weighs more with them, but the ranking hardly moves (0.96, same top five); CFD rises from 11th to
+6th.
+
+**Checked against business R&D.** For the product-design tools (CAD, FEA, CFD, MBD, EM, PCB,
+IC, molecular, firmware; `rd_proxy` in `config/capabilities.csv`), each sector also gets its
+industry's 2017 business R&D (NSF Business Enterprise R&D Survey, `data/rd/`) per dollar of BEA
+output (`plenty/rd.py`, `results/rd_intensity.csv`). Rank agreement with the scores across 374
+sectors is 0.52 to 0.68, except molecular modeling at 0.14. It also gives multibody dynamics a
+check that occupations could not.
+
 The headline above stays on the elicited scores, because exposure (which sectors cannot run
 without a capability) has no occupational counterpart.
 
@@ -174,7 +193,10 @@ Limits, most important first:
 - **No substitutability.** Volume understates a small input with no substitute; reach and
   breadth cannot tell a relay from a sign. Elasticities would have to be elicited sector by
   sector.
-- **US spending defines the basket.** Health care is 24% of it and restaurants are over a
+- **The list of needs carries weight.** Every need counts equally, so splitting one in two
+  doubles its share. The list is ours, not anchored to a published one (Doyal and Gough's
+  intermediate needs, FEMA's community lifelines).
+- **Within each need, US spending decides which sectors serve it.** Restaurants are over a
   third of food. A physical sufficiency basket (calories, square meters, kWh) would shift
   weight toward farming, water and energy.
 - **Capital buyers are allocated, not observed.** The rules move per-need attributions; the
@@ -205,7 +227,8 @@ must be set to deploy from GitHub Actions (Settings > Pages > Source).
 
 `scripts/00_extract_bea.py` re-extracts the BEA tables from a checkout of USEPA/useeior, and
 `scripts/00_extract_occupations.py` the O\*NET, OEWS and concordance files (see
-`data/occupations/README.md`).
+`data/occupations/README.md`), and `scripts/00_extract_rd.py` the NSF business R&D table
+(`data/rd/README.md`).
 `scripts/01_*` and `scripts/02_*` regenerate `config/basket.csv` and
 `config/sector_archetypes.csv` from prefix rules and overwrite hand edits.
 
@@ -214,6 +237,7 @@ must be set to deploy from GitHub Actions (Settings > Pages > Source).
     config/        the judgment calls: needs, basket, capital allocation, archetypes, scores, software map, proposed work
     data/bea/      BEA 2017 detail tables (public domain, via USEPA/useeior)
     data/occupations/  O*NET 31.0 software lists, OEWS May 2021 wages by industry, BEA-NAICS concordance
+    data/rd/       NSF business R&D by industry, 2017
     plenty/        model.py (Leontief + capital), analysis.py (measures), occupations.py (O*NET x OEWS usage), site.py and web/ (website)
     scripts/       extraction, config seeding, run, figures
     results/       CSV outputs and summary.md

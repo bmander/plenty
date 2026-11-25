@@ -219,6 +219,28 @@ def shares(commodities: list[str], u: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(rows).set_index("commodity").reindex(columns=cols)
 
 
+def score_levels(sh: pd.DataFrame, scores: pd.DataFrame, cov: pd.DataFrame) -> pd.DataFrame:
+    """Mean occupational share by elicited score, pooled over measured sectors and non-thin
+    capabilities (one observation per sector x capability cell)."""
+    measured = sh.source == "oews"
+    ok = [k for k in scores.columns if not cov.at[k, "thin"]]
+    S = scores.loc[measured, ok].values.ravel()
+    X = sh.loc[measured, ok].astype(float).values.ravel()
+    return pd.DataFrame({"cells": [(S == s).sum() for s in range(4)],
+                         "mean_share": [X[S == s].mean() for s in range(4)]},
+                        index=pd.Index(range(4), name="score"))
+
+
+def calibrated_score_weight(levels: pd.DataFrame) -> dict[int, float]:
+    """Score -> weight implied by occupations: the mean share above the score-0 baseline,
+    scaled so a 3 weighs 1, as analysis.SCORE_WEIGHT does."""
+    above = levels.mean_share - levels.mean_share[0]
+    w = (above / above[3]).to_dict()
+    if not 0 < w[1] < w[2] < w[3] == 1:
+        raise ValueError(f"occupational shares do not rise with score: {w}")
+    return {int(s): float(v) for s, v in w.items()}
+
+
 def usage_matrix(sh: pd.DataFrame, scores: pd.DataFrame, cov: pd.DataFrame) -> pd.DataFrame:
     """Commodity x capability usage for analysis.run(usage=...).
 
@@ -231,7 +253,7 @@ def usage_matrix(sh: pd.DataFrame, scores: pd.DataFrame, cov: pd.DataFrame) -> p
     measured = sh.source == "oews"
     ok = [k for k in caps if not cov.at[k, "thin"]]
     S, X = scores.loc[measured, ok], sh.loc[measured, ok].astype(float)
-    pooled = {s: X.values[S.values == s].mean() for s in range(4)}
+    pooled = score_levels(sh, scores, cov).mean_share.to_dict()
     U = pd.DataFrame(index=scores.index, columns=caps, dtype=float)
     for k in caps:
         U[k] = scores[k].map(pooled)

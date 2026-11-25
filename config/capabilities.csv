@@ -1,19 +1,19 @@
-capability,name,description,board,board_url
-cad,CAD / B-rep,3D solid (B-rep) modeling; geometric constraints; drawings,brep-bench,https://brepbench.org/
-fea,FEA,Structural and thermal-stress finite element analysis,FEA leaderboard,
-cfd,CFD / heat transfer,Fluid flow and heat transfer simulation,,
-cam,CAM,CNC toolpath planning and post-processing,cam-bench,https://github.com/bmander/cam-bench
-mfgsim,Manufacturing process simulation,Casting; molding; forming; welding; rolling,,
-mbd,Multibody dynamics,Mechanism kinematics and multibody dynamics,,
-emag,EM field,Electromagnetic field simulation: motors; transformers; antennas; signal integrity,,
-pcb,PCB design,Schematic or HDL capture; layout; routing,pcbhdlbench,https://github.com/bmander/pcbhdlbench
-ic,IC design,Synthesis; place and route; circuit simulation; verification,,
-controls,Controls / PLC / dynamic simulation,Dynamic system simulation; control design; PLC and SCADA programming,,
-process,Process flowsheeting,Chemical process flowsheets; thermodynamics; reaction and separation design,,
-power,Power systems,Load flow; protection; stability,,
-civil,Civil / structural / BIM,Structural frame analysis; code checking; BIM; geotechnics,,
-hydraulics,Pipe-network hydraulics,Water; sewer; gas and pipeline networks; open channels,,
-molecular,Molecular / bio modeling,Cheminformatics; genomics; bioprocess,,
-logistics,Logistics optimization,Routing; scheduling; mixed-integer programming; inventory,,
-gis,Geospatial,Surveying; mapping; remote sensing; subsurface models; precision agriculture,,
-firmware,Embedded toolchains,Compilers; RTOS; verification for embedded software,,
+capability,name,description,board,board_url,rd_proxy
+cad,CAD / B-rep,3D solid (B-rep) modeling; geometric constraints; drawings,brep-bench,https://brepbench.org/,1
+fea,FEA,Structural and thermal-stress finite element analysis,FEA leaderboard,,1
+cfd,CFD / heat transfer,Fluid flow and heat transfer simulation,,,1
+cam,CAM,CNC toolpath planning and post-processing,cam-bench,https://github.com/bmander/cam-bench,0
+mfgsim,Manufacturing process simulation,Casting; molding; forming; welding; rolling,,,0
+mbd,Multibody dynamics,Mechanism kinematics and multibody dynamics,,,1
+emag,EM field,Electromagnetic field simulation: motors; transformers; antennas; signal integrity,,,1
+pcb,PCB design,Schematic or HDL capture; layout; routing,pcbhdlbench,https://github.com/bmander/pcbhdlbench,1
+ic,IC design,Synthesis; place and route; circuit simulation; verification,,,1
+controls,Controls / PLC / dynamic simulation,Dynamic system simulation; control design; PLC and SCADA programming,,,0
+process,Process flowsheeting,Chemical process flowsheets; thermodynamics; reaction and separation design,,,0
+power,Power systems,Load flow; protection; stability,,,0
+civil,Civil / structural / BIM,Structural frame analysis; code checking; BIM; geotechnics,,,0
+hydraulics,Pipe-network hydraulics,Water; sewer; gas and pipeline networks; open channels,,,0
+molecular,Molecular / bio modeling,Cheminformatics; genomics; bioprocess,,,1
+logistics,Logistics optimization,Routing; scheduling; mixed-integer programming; inventory,,,0
+gis,Geospatial,Surveying; mapping; remote sensing; subsurface models; precision agriculture,,,0
+firmware,Embedded toolchains,Compilers; RTOS; verification for embedded software,,,1

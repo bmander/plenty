@@ -16,7 +16,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from . import occupations as O
+from . import analysis as A, occupations as O
 
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG, RESULTS, WEB, SITE = ROOT / "config", ROOT / "results", ROOT / "plenty" / "web", ROOT / "site"
@@ -62,6 +62,7 @@ class Data:
         self.caps = pd.read_csv(CONFIG / "capabilities.csv").set_index("capability")
         self.ct = pd.read_csv(RESULTS / "capability_table.csv", index_col=0)
         self.cbn = pd.read_csv(RESULTS / "capability_by_need.csv", index_col=0)
+        self.sbn = pd.read_csv(RESULTS / "sector_by_need.csv", index_col=0)
         self.needs_cfg = pd.read_csv(CONFIG / "needs.csv").set_index("need")
         self.needs = pd.read_csv(RESULTS / "needs.csv", index_col=0)
         self.sectors = pd.read_csv(RESULTS / "sectors.csv", index_col=0)
@@ -74,6 +75,9 @@ class Data:
         self.work = pd.read_csv(CONFIG / "work.csv").fillna("")
         self.agree = pd.read_csv(RESULTS / "score_agreement.csv", index_col=0)
         self.occ_shares = pd.read_csv(RESULTS / "occupation_capability_shares.csv", index_col=0)
+        self.rationale = pd.read_csv(CONFIG / "score_rationale.csv", dtype=str).fillna("")
+        self.calibration = pd.read_csv(RESULTS / "score_weight_calibration.csv", index_col=0)
+        self.rdi = pd.read_csv(RESULTS / "rd_intensity.csv", index_col=0)
         self.has_board = self.caps.board.notna()
 
     def cap_name(self, k):
@@ -157,15 +161,298 @@ def issue_link(title: str) -> str:
 
 # ---------------------------------------------------------------- pages
 
+SCORE_MEANING = {3: "cannot design, run or maintain its product or plant without it", 2: "important and routine",
+                 1: "incidental", 0: "not used"}
+SHOW_SECTORS = 15   # sectors listed before the "show all" fold on a capability page
+
+
+def score_tip(score: int, extra: str = "", focusable: bool = True) -> str:
+    """Attributes for the hover tip (site.js) saying what a 0-3 score means and how it counts.
+    focusable adds a tab stop so keyboard users get the tip too (links have one already)."""
+    tip = f"Score {score}: {SCORE_MEANING[score]}."
+    if score:
+        tip += f" Counts \u00d7 {A.SCORE_WEIGHT[score]:g} toward the weight"
+        tip += ", and the sector counts toward exposure." if score >= 3 else "."
+    if extra:
+        tip += " " + extra
+    return f'data-tip="{e(tip)}"' + (' tabindex="0"' if focusable else "")
+
+
+def cap_href(k: str, anchor: str = "") -> str:
+    return f"capability-{k}.html" + (f"#{anchor}" if anchor else "")
+
+
+def sector_scores(d: Data, k: str) -> pd.Series:
+    """Elicited 0-3 score on capability k for every sector (scores are set per kind of sector)."""
+    return d.scores[k].reindex(d.sectors.archetype).set_axis(d.sectors.index).astype(int)
+
+
+def weight_terms(d: Data, k: str) -> pd.DataFrame:
+    """Per-sector terms that sum to capability k's weight (analysis.run, weight_equal_need)."""
+    score = sector_scores(d, k)
+    t = pd.DataFrame({"archetype": d.sectors.archetype, "score": score, "score_weight": score.map(A.SCORE_WEIGHT),
+                      "share": d.sectors.value_added_share_equal})
+    t["term"] = t.score_weight * t.share
+    return t[t.term > 0].sort_values("term", ascending=False)
+
+
+def exposure_terms(d: Data, k: str) -> pd.DataFrame:
+    """Per-sector terms that sum to capability k's exposure (analysis.run, exposure_mean)."""
+    crit = sector_scores(d, k) >= 3
+    t = pd.DataFrame({"archetype": d.sectors.archetype, "term": d.sectors.output_per_need_dollar_equal})[crit]
+    return t.sort_values("term", ascending=False)
+
+
+def f4(x: float) -> str:
+    return f"{x:.4f}"
+
+
+def rationale(d: Data, arch: str, k: str) -> str:
+    r = d.rationale
+    hit = r[(r.archetype == arch) & (r.capability == k)]
+    if len(hit):
+        row = hit.iloc[0]
+        src = f' <span class="dim">Sources: {e(row.sources)}</span>' if row.sources else ""
+        return f"<p>{e(row.rationale)}{src}</p>"
+    score = int(d.scores.at[arch, k])
+    title = f"Justify score: {words(arch)} x {d.cap_name(k)} = {score}"
+    return (f'<p class="dim">No justification recorded yet. <a href="{issue_link(title)}">Propose one</a> '
+            f'(it goes in <code>config/score_rationale.csv</code>).</p>')
+
+
+def occupational_evidence(d: Data, arch: str, k: str) -> str:
+    sh, name = d.occ_shares, d.cap_name(k)
+    if d.agree.at[k, "thin"]:
+        return f'<p class="dim">Occupations: too few occupations list {e(name)} software to measure.</p>'
+    mine = sh[(d.sectors.archetype.reindex(sh.index) == arch)]
+    measured = mine[mine.source == "oews"][k]
+    if measured.empty:
+        why = {"fallback:farm": "OEWS does not survey farms",
+               "fallback:government_or_special": "these sectors have no OEWS industry"}.get(mine.source.iloc[0], "no OEWS data")
+        return f'<p class="dim">Occupations: not measured ({why}).</p>'
+    all_meas = sh.source == "oews"
+    by_score = sh.loc[all_meas, k].groupby(sector_scores(d, k)[all_meas]).mean()
+    score = int(d.scores.at[arch, k])
+    rng = (f"{measured.min():.1%} to {measured.max():.1%}, median {measured.median():.1%}" if len(measured) > 1
+           else f"{measured.iloc[0]:.1%}")
+    compare = ", ".join(f"{s}: {v:.1%}" for s, v in by_score.sort_index(ascending=False).items())
+    return (f'<p>Occupations: {rng} of the wage bill in these sectors goes to occupations that use {e(name)} software. '
+            f'<span class="dim">Average over all measured sectors, by their score for {e(name)}: {compare}.</span> '
+            f'<a href="method.html#occupations">How this is measured</a>.</p>')
+
+
+def rd_evidence(d: Data, arch: str, k: str) -> str:
+    """Business R&D per dollar of output for a kind's sectors, against sectors at each score."""
+    if not d.caps.at[k, "rd_proxy"]:
+        return ""
+    rd = d.rdi.rd_per_output
+    mine = rd[d.sectors.archetype.reindex(rd.index) == arch].dropna()
+    if mine.empty:
+        return '<p class="dim">R&amp;D: not covered (the NSF survey leaves out farms and government).</p>'
+    covered = rd.dropna()
+    by_score = covered.groupby(sector_scores(d, k)[covered.index]).median()
+    rng = (f"{mine.min():.1%} to {mine.max():.1%} of their output on R&amp;D (median {mine.median():.1%})" if len(mine) > 1
+           else f"{mine.iloc[0]:.1%} of their output on R&amp;D")
+    compare = ", ".join(f"{s}: {v:.1%}" for s, v in by_score.sort_index(ascending=False).items())
+    return (f'<p>R&amp;D: the industries these sectors belong to spend {rng}. <span class="dim">Median over all covered '
+            f'sectors, by their score for {e(d.cap_name(k))}: {compare}.</span> <a href="method.html#rd">How this is measured</a>.</p>')
+
+
+def tipped(text: str, tip: str) -> str:
+    """A value that explains itself on hover or focus (site.js)."""
+    return f'<span data-tip="{e(tip)}" tabindex="0">{text}</span>'
+
+
+def weight_term_tip(w: float, share: float, term: float, n: int | None = None) -> str:
+    tip = f"Score weight {w:g} \u00d7 share of value added {share:.3%} = {term:.4f}."
+    if n is not None:
+        tip = (f"Score weight {w:g} \u00d7 its {n} sector{'s' if n != 1 else ''}' combined share of value added "
+               f"{share:.3%} = {term:.4f}. The same as the sum of their terms.")
+    return tip
+
+
+EXPOSURE_TERM_TIP = ("Dollars of this sector's output needed, directly and through its customers, per dollar of "
+                     "basket (each need counted equally). Scored 3, so it counts in full: {term:.4f}.")
+
+
+def total_tip(n: int, what: str, total: float) -> str:
+    return f"Sum of the {n} sector terms: {what} = {total:.4f}."
+
+
+def kind_rows(d: Data, k: str, t: pd.DataFrame, with_score: bool, prefix: str) -> list[str]:
+    """One row per kind of sector, each followed by its sectors as hidden child rows that the
+    kind's name toggles open (site.js). Each group shares one band so it reads as a block."""
+    g = t.groupby("archetype").agg(n=("term", "size"), term=("term", "sum"))
+    if with_score:
+        g = g.join(t.groupby("archetype").agg(share=("share", "sum")))
+    g = g.sort_values("term", ascending=False)
+    rows = []
+    for i, (a, r) in enumerate(g.iterrows()):
+        band = ' band' if i % 2 == 0 else ''
+        group = f"{prefix}-{a}"
+        score = int(d.scores.at[a, k])
+        cells = [f'<td><button type="button" class="expander" aria-expanded="false" data-group="{group}">'
+                 f'{e(words(a))}</button></td>']
+        if with_score:
+            cells += [f'<td class="num"><a href="#score-{a}" {score_tip(score, "Click for the evidence.", focusable=False)}>{score}</a></td>',
+                      f'<td class="num">&times; {A.SCORE_WEIGHT[score]:g}</td>',
+                      f'<td class="num">{int(r.n)}</td>', f'<td class="num">{r.share:.2%}</td>']
+        else:
+            cells += [f'<td class="num">{int(r.n)}</td>']
+        w = A.SCORE_WEIGHT[score]
+        tip = (weight_term_tip(w, r.share, r.term, int(r.n)) if with_score else
+               f"Sum of the output per basket dollar of its {int(r.n)} sector{'s' if r.n != 1 else ''}, each scored 3: {r.term:.4f}.")
+        cells += [f'<td class="num">{tipped(f4(r.term), tip)}</td>']
+        rows.append(f'<tr class="kind{band}">{"".join(cells)}</tr>')
+        for j, c in t[t.archetype == a].iterrows():
+            cells = [f'<td class="child"><a href="sectors.html#{j}">{e(d.sectors.at[j, "name"])}</a></td>']
+            if with_score:
+                cells += [f'<td class="num dim"><span {score_tip(score)}>{score}</span></td>', f'<td class="num dim">&times; {A.SCORE_WEIGHT[score]:g}</td>',
+                          '<td></td>', f'<td class="num">{c.share:.2%}</td>']
+            else:
+                cells += ['<td></td>']
+            tip = weight_term_tip(w, c.share, c.term) if with_score else EXPOSURE_TERM_TIP.format(term=c.term)
+            cells += [f'<td class="num">{tipped(f4(c.term), tip)}</td>']
+            rows.append(f'<tr class="sub{band}" data-group="{group}" hidden>{"".join(cells)}</tr>')
+    return rows
+
+
+def sector_rows(d: Data, t: pd.DataFrame, with_score: bool) -> list[str]:
+    rows = []
+    for j, r in t.iterrows():
+        cells = [f'<td class="name"><a href="sectors.html#{j}">{e(d.sectors.at[j, "name"])}</a></td>',
+                 f'<td class="dim"><a href="#score-{r.archetype}">{e(words(r.archetype))}</a></td>']
+        if with_score:
+            cells += [f'<td class="num" data-v="{r.score}"><span {score_tip(int(r.score))}>{int(r.score)}</span></td>', f'<td class="num" data-v="{r.share}">{r.share:.3%}</td>']
+        tip = (weight_term_tip(A.SCORE_WEIGHT[int(r.score)], r.share, r.term) if with_score
+               else EXPOSURE_TERM_TIP.format(term=r.term))
+        cells += [f'<td class="num" data-v="{r.term}">{tipped(f4(r.term), tip)}</td>']
+        rows.append(f'<tr>{"".join(cells)}</tr>')
+    return rows
+
+
+def folded_table(head: list[str], rows: list[str], foot: str, what: str) -> str:
+    """The first SHOW_SECTORS rows, then the full sortable table behind a fold."""
+    if len(rows) <= SHOW_SECTORS:
+        return table(head, rows, foot=foot)
+    return (table(head, rows[:SHOW_SECTORS], foot=foot) +
+            f'<details class="fold"><summary>Show all {len(rows)} {what}</summary>'
+            f'{table(head, rows, attrs=" data-full", foot=foot)}</details>')
+
+
+def by_need_list(values: pd.Series) -> str:
+    top = values.idxmax()
+    items = "".join(f'<li{" class=max" if n == top else ""}><span>{e(NEED_NAME.get(n, n))}</span><span>{f3(v)}</span></li>'
+                    for n, v in values.items())
+    return f'<ul class="byneed">{items}</ul>'
+
+
+def capability_detail_page(d: Data, k: str) -> str:
+    name, r = d.cap_name(k), d.ct.loc[k]
+    n = len(d.ct)
+    cw = d.calibration.weight_calibrated
+    wt, xt = weight_terms(d, k), exposure_terms(d, k)
+    weight, expo = wt.term.sum(), xt.term.sum()
+    w_total = tipped(f4(weight), total_tip(len(wt), "weight", weight))
+
+    w_kind = table([th("Kind of sector"), th("Score", "num"), th("Weight", "num"), th("Sectors", "num"),
+                    th("Share of value added", "num"), th("Term", "num")],
+                   kind_rows(d, k, wt, True, "w"), attrs=" data-tree",
+                   foot=f'<tr><td>Weight</td><td></td><td></td><td class="num">{len(wt)}</td>'
+                        f'<td class="num">{wt.share.sum():.2%}</td><td class="num">{w_total}</td></tr>')
+    w_sec = folded_table([th("Sector", sort="text"), th("Kind", sort="text"), th("Score", "num", "num"),
+                          th("Share of value added", "num", "num"), th("Term", "num", "num")],
+                         sector_rows(d, wt, True),
+                         f'<tr><td>Weight</td><td></td><td></td><td class="num">{wt.share.sum():.3%}</td><td class="num">{w_total}</td></tr>',
+                         "sectors")
+    if len(xt):
+        x_total = tipped(f4(expo), total_tip(len(xt), "exposure", expo))
+        x_kind = table([th("Kind of sector"), th("Sectors", "num"), th("Output per basket $", "num")],
+                       kind_rows(d, k, xt, False, "x"), attrs=" data-tree",
+                       foot=f'<tr><td>Exposure</td><td class="num">{len(xt)}</td><td class="num">{x_total}</td></tr>')
+        x_sec = folded_table([th("Sector", sort="text"), th("Kind", sort="text"), th("Output per basket $", "num", "num")],
+                             sector_rows(d, xt, False),
+                             f'<tr><td>Exposure</td><td></td><td class="num">{x_total}</td></tr>', "sectors")
+        x_need = by_need_list(d.sbn.loc[xt.index].sum())
+        exposure_html = f"""<p>Exposure counts only sectors scored 3: those that cannot design, run or maintain their product or
+plant without {e(name)}. For each, it takes the dollars of output that sector must produce, directly or through its
+customers, per dollar of basket, with every need counted equally. The sum is {expo * 100:.1f} cents per basket dollar.</p>
+<h3>By kind of sector</h3>
+<p class="note">Click a kind to list its sectors.</p>
+{x_kind}
+<h3>Sector by sector</h3>
+{x_sec}
+<h3>By need</h3>
+<p class="note">The same sum per dollar of each need. Exposure is their average; the largest is in bold.</p>
+{x_need}"""
+    else:
+        exposure_html = f"<p>No kind of sector is scored 3 for {e(name)}, so its exposure is zero.</p>"
+
+    kinds = wt.groupby("archetype").term.sum().sort_values(ascending=False).index
+    entries = []
+    for a in kinds:
+        score = int(d.scores.at[a, k])
+        entries.append(f"""<article class="score" id="score-{a}">
+<h3>{e(words(a)).capitalize()} <span class="pill s{score}" {score_tip(score)}>{score}</span> <span class="dim">{SCORE_MEANING[score]}</span></h3>
+{rationale(d, a, k)}
+{occupational_evidence(d, a, k)}
+{rd_evidence(d, a, k)}
+</article>""")
+    zero = [words(a) for a in d.scores.index[d.scores[k] == 0]]
+
+    body = f"""
+<p class="crumbs"><a href="index.html">Balance</a> / <a href="capabilities.html#{k}">Capabilities</a></p>
+<h1>{e(name)}</h1>
+<p class="lede">{e(d.caps.at[k, "description"].replace("; ", ", "))}.</p>
+<dl class="figures">
+<div><dt><a href="#weight">Weight</a></dt><dd>{f3(r["volume weight"])}</dd><dd class="dim">rank {int(r.volume_rank)} of {n}</dd></div>
+<div><dt><a href="#exposure">Exposure</a></dt><dd>{f3(r["exposure"])}</dd><dd class="dim">rank {int(r.exposure_rank)} of {n}</dd></div>
+<div><dt><a href="method.html#occupations">Occupational weight</a></dt><dd>{f3(r["occupational weight"])}</dd><dd class="dim">rank {int(r.occupational_rank)} of {n}</dd></div>
+<div><dt>Open leaderboard</dt><dd class="small">{d.board_html(k)}</dd></div>
+</dl>
+
+<h2 id="weight">Weight, worked out</h2>
+<p>Weight is a sum over sectors. Each sector's share of the value added embodied in the basket of needs (every need
+counted equally) is multiplied by the weight of its score for {e(name)}: 1 for a 3 ({SCORE_MEANING[3]}), 0.3 for a 2
+({SCORE_MEANING[2]}), 0.1 for a 1 ({SCORE_MEANING[1]}). {len(wt)} of {len(d.sectors)} sectors have a nonzero score.
+Scores are set per kind of sector, so the sum is shown first by kind; each kind links to
+<a href="#scores">its score and the evidence for it</a>.</p>
+<p class="note">The weights 1, 0.3 and 0.1 are assumed. <a href="method.html#score-weights">Occupation data</a> put a 2 at
+{cw[2]:.2f} and a 1 at {cw[1]:.2f}; with those, {e(name)} would weigh {f3(r["calibrated weight"])} (rank
+{int(r.calibrated_rank)} of {n}).</p>
+<h3>By kind of sector</h3>
+<p class="note">Click a kind to list its sectors.</p>
+{w_kind}
+<h3>Sector by sector</h3>
+{w_sec}
+<h3>By need</h3>
+<p class="note">The same sum within each need. The weight is their average; the largest is in bold.</p>
+{by_need_list(d.cbn.loc[k])}
+
+<h2 id="exposure">Exposure, worked out</h2>
+{exposure_html}
+
+<h2 id="scores">The scores behind it</h2>
+<p>One score per kind of sector, from <a href="{REPO}/blob/main/config/archetype_capabilities.csv"><code>config/archetype_capabilities.csv</code></a>,
+in the order of the table above. Each shows its justification and what occupation data, and for design tools R&amp;D,
+say about it.</p>
+<div class="scores">{"".join(entries)}</div>
+<p class="note">Scored 0 (not used): {e(", ".join(zero)) or "none"}.</p>
+"""
+    return page(name, f"capability-{k}.html", body, long_title=True)
+
+
 def balance_rows(d: Data, order) -> list[str]:
     vmax, emax = d.ct["volume weight"].max(), d.ct["exposure"].max()
     rows = []
     for k in order:
         r = d.ct.loc[k]
+        wtip = f"{d.cap_name(k)}: {r['volume weight']:.1%} of the value added embodied in the basket, score-weighted. Click for the derivation."
+        xtip = f"{d.cap_name(k)}: {r['exposure'] * 100:.1f} cents of every basket dollar passes through sectors that cannot run without it. Click for the derivation."
         rows.append(
-            f'<tr><th scope="row">{e(d.cap_name(k))}</th>'
-            f'<td>{bar(r["volume weight"], vmax, f3(r["volume weight"]), f"{d.cap_name(k)}: {r['volume weight']:.1%} of the value added embodied in the basket, score-weighted")}</td>'
-            f'<td>{bar(r["exposure"], emax, f3(r["exposure"]), f"{d.cap_name(k)}: {r['exposure'] * 100:.1f} cents of every basket dollar passes through sectors that cannot run without it")}</td>'
+            f'<tr><th scope="row"><a href="{cap_href(k)}">{e(d.cap_name(k))}</a></th>'
+            f'<td><a class="barlink" href="{cap_href(k, "weight")}">{bar(r["volume weight"], vmax, f3(r["volume weight"]), wtip)}</a></td>'
+            f'<td><a class="barlink" href="{cap_href(k, "exposure")}">{bar(r["exposure"], emax, f3(r["exposure"]), xtip)}</a></td>'
             f'<td>{d.board_html(k)}</td></tr>')
     return rows
 
@@ -191,14 +478,15 @@ AI model and have not been reviewed by people who work in each field. <a href="m
     [th("Capability"), th("Demand: weight on the path to needs"), th("Demand: exposure"), th("Means: open leaderboard")],
     balance_rows(d, order),
     caption="Weight is the share of the basket's embodied value added arising in sectors that depend on the capability. "
-            "Exposure is dollars of output from sectors that cannot run without it, per dollar of basket.")}
+            "Exposure is dollars of output from sectors that cannot run without it, per dollar of basket. "
+            "Click a bar to see the sum behind it, sector by sector.")}
 <p class="note">{n_gap} of {len(d.ct)} capabilities have no open leaderboard. The two that rank highest on both
 measures are {e(d.cap_name(top[0]).lower())} and {e(d.cap_name(top[1]).lower())}. <a href="gaps.html">See the gaps</a>.</p>
 
 <h2>How the account is kept</h2>
 <ol class="loop">
-<li><a href="needs.html">Collect needs</a><p>{len(d.needs)} needs, sized by what US households and governments spent
-on them in 2017: ${total:.1f} trillion. Farming, extraction, utilities, construction and manufacturing carry
+<li><a href="needs.html">Collect needs</a><p>{len(d.needs)} needs, each counted equally, met the way US households
+and governments met them in 2017 with ${total:.1f} trillion of spending. Farming, extraction, utilities, construction and manufacturing carry
 {phys_share:.0%} of the value added embodied in that basket.</p></li>
 <li><a href="capabilities.html">Collect capabilities</a><p>{len(d.ct)} engineering capabilities, weighted by how much
 of the basket passes through sectors that depend on them. What open tools can actually do today is not collected yet.</p></li>
@@ -213,13 +501,16 @@ can be claimed by opening an issue.</p></li>
 
 def needs_page(d: Data) -> str:
     T = d.needs
+    n_needs = len(T)
     rows = []
     for n, r in T.iterrows():
         rows.append(
             f'<tr><th scope="row">{e(NEED_NAME[n])}</th><td class="wrap dim">{e(d.needs_cfg.at[n, "description"].replace("; ", ", "))}</td>'
+            f'<td class="num">{1 / n_needs:.1%}</td>'
             f'<td class="num">{r.final_demand_musd / 1e3:,.0f}</td>'
-            f'<td>{bar(r.share, T.share.max(), f"{r.share:.0%}", f"{NEED_NAME[n]}: ${r.final_demand_musd / 1e3:,.0f} billion, {r.share:.1%} of the basket")}</td></tr>')
-    foot = f'<tr><td>Basket</td><td></td><td class="num">{T.final_demand_musd.sum() / 1e3:,.0f}</td><td></td></tr>'
+            f'<td>{bar(r.share, T.share.max(), f"{r.share:.0%}", f"{NEED_NAME[n]}: ${r.final_demand_musd / 1e3:,.0f} billion, {r.share:.1%} of spending on the {n_needs} needs. Not its weight: every need weighs {1 / n_needs:.1%}.")}</td></tr>')
+    foot = f'<tr><td>All needs</td><td></td><td class="num">100%</td><td class="num">{T.final_demand_musd.sum() / 1e3:,.0f}</td><td></td></tr>'
+    water = T.share["water_sanitation"]
 
     # heat table: capability x need
     order = d.ct.sort_values("volume weight", ascending=False).index
@@ -243,13 +534,20 @@ def needs_page(d: Data) -> str:
 
     body = f"""
 <h1>Needs</h1>
-<p class="lede">The basket is what US households and governments spent in 2017 on eleven needs.
-Everything else on this site is traced back from it.</p>
-{table([th("Need"), th("What it covers"), th("Spending, $ billion", "num"), th("Share of basket")], rows, foot=foot)}
+<p class="lede">Each of these {n_needs} needs counts equally: {1 / n_needs:.1%} of every capability measure on this site.
+Within a need, what US households and governments spent on it in 2017 decides which sectors that share passes through.</p>
+<p>Needs are complements, not substitutes. More health care does not make up for no water, so losing any one need
+costs the whole bundle and no need can weigh more than another. Spending cannot measure this: it prices the last
+unit, and water is cheap because it is a solved problem. By spending, water and sanitation would be {water:.1%}
+of the basket; here it is {1 / n_needs:.1%}. Within a need the options do substitute (groceries or restaurants,
+bus or car), so there spending is the right measure of how the need is met.</p>
+{table([th("Need"), th("What it covers"), th("Weight", "num"), th("Spending, $ billion", "num"), th("Share of spending")], rows, foot=foot)}
 <p class="note">Left out by default: federal government, finance and legal services, and a discretionary group (alcohol,
 tobacco, gambling, lodging, jewelry, pets, personal services). They still count wherever the needs above buy from them.
 Edit <code>config/basket.csv</code> and <code>config/needs.csv</code> to change what counts.</p>
-<p class="caveat">Spending is a poor measure of need. Health care is {T.share['health']:.0%} of this basket and restaurants
+<p class="caveat">Equal weights move the judgment into the list itself: splitting food into groceries and restaurants
+would double food's weight. The list is ours and is not yet anchored to a published one such as Doyal and Gough's
+intermediate needs or FEMA's community lifelines. Within a need, spending still overstates some things: restaurants
 are over a third of food. A basket in physical units (calories, square meters, kilowatt-hours) is
 <a href="work.html#sufficiency-basket">proposed work</a>.</p>
 
@@ -276,7 +574,7 @@ def capabilities_page(d: Data) -> str:
         if d.agree.at[k, "thin"]:
             otip += " (too few occupations to measure: elicited scores, rescaled)"
         rows.append(
-            f'<tr id="{k}"><th scope="row" class="cap">{e(d.cap_name(k))}<div class="dim" style="font-weight:400">{e(d.caps.at[k, "description"].replace("; ", ", "))}</div></th>'
+            f'<tr id="{k}"><th scope="row" class="cap"><a href="{cap_href(k)}">{e(d.cap_name(k))}</a><div class="dim" style="font-weight:400">{e(d.caps.at[k, "description"].replace("; ", ", "))}</div></th>'
             f'<td data-v="{r["volume weight"]}">{bar(r["volume weight"], vmax, f3(r["volume weight"]), f"Volume rank {int(r.volume_rank)} of {len(d.ct)}")}</td>'
             f'<td data-v="{r["occupational weight"]}">{bar(r["occupational weight"], omax, f3(r["occupational weight"]), otip)}</td>'
             f'<td data-v="{r["exposure"]}">{bar(r["exposure"], emax, f3(r["exposure"]), f"Exposure rank {int(r.exposure_rank)} of {len(d.ct)}")}</td>'
@@ -436,7 +734,7 @@ def sectors_page(d: Data) -> str:
         phys = "1" if code in d.physical else "0"
         text = f"{r['name']} {words(r.archetype)} {code}".lower()
         rows.append(
-            f'<tr data-phys="{phys}" data-text="{e(text)}"><td class="name">{e(r["name"])}</td><td class="dim">{e(words(r.archetype))}</td>'
+            f'<tr id="{code}" data-phys="{phys}" data-text="{e(text)}"><td class="name">{e(r["name"])}</td><td class="dim">{e(words(r.archetype))}</td>'
             f'<td class="num" data-v="{r.output_per_basket_dollar}">{r.output_per_basket_dollar * 100:.2f}</td>'
             f'<td class="num" data-v="{r.value_added_per_basket_dollar}">{r.value_added_per_basket_dollar * 100:.2f}</td>'
             f'<td class="num" data-v="{r.need_breadth_observed}">{r.need_breadth_observed:.1f}</td>'
@@ -476,10 +774,26 @@ def occupations_section(d: Data) -> str:
     rho = d.ct["volume weight"].corr(d.ct["occupational weight"], method="spearman")
     min_products = {2: "two", 3: "three", 4: "four", 5: "five"}.get(O.MIN_PRODUCTS, str(O.MIN_PRODUCTS))
     order = a.sort_values("rank_change").index
+    c = d.calibration
+    cal_rows = [f'<tr><td>{s}</td><td class="num">{int(r.cells):,}</td><td class="num">{r.mean_share:.1%}</td>'
+                f'<td class="num">{r.weight_assumed:g}</td><td class="num">{r.weight_calibrated:.2f}</td></tr>'
+                for s, r in c.iterrows()]
+    cal_rho = d.ct["volume weight"].corr(d.ct["calibrated weight"], method="spearman")
+    gain = (d.ct["calibrated weight"] / d.ct["volume weight"]).nlargest(3).index
+    gainers = ", ".join(d.cap_name(k) for k in gain)
+    same_top5 = set(d.ct["volume weight"].nlargest(5).index) == set(d.ct["calibrated weight"].nlargest(5).index)
     rows = [f'<tr><td>{e(d.cap_name(k))}</td><td class="num">{int(a.at[k, "elicited_rank"])}</td>'
             f'<td class="num">{int(a.at[k, "occupational_rank"])}</td>'
-            f'<td class="num">{"&ndash;" if a.at[k, "thin"] else f"{a.at[k, "spearman_across_sectors"]:.2f}"}</td></tr>'
+            f'<td class="num">{"&ndash;" if a.at[k, "thin"] else f"{a.at[k, "spearman_across_sectors"]:.2f}"}</td>'
+            f'<td class="num">{"" if pd.isna(a.at[k, "spearman_rd"]) else f"{a.at[k, "spearman_rd"]:.2f}"}</td></tr>'
             for k in order]
+    rdi = d.rdi
+    rd_n = int(rdi.rd_per_output.notna().sum())
+    rd_mapped = rdi.dropna().groupby("berd_industry").rd_musd.first().sum() / 1e3
+    proxies = ", ".join(d.cap_name(k) for k in d.caps.index[d.caps.rd_proxy.astype(bool)])
+    rd_rho = a.spearman_rd.dropna()
+    weak = [d.cap_name(k) for k in rd_rho.index[rd_rho < 0.3]]
+    rd_range = f"{rd_rho[rd_rho >= 0.3].min():.2f} to {rd_rho.max():.2f}"
 
     def moves(k):
         r0, r1 = int(a.at[k, "elicited_rank"]), int(a.at[k, "occupational_rank"])
@@ -507,11 +821,34 @@ and the last on 2017 industry codes; it is four years after the input-output tab
 Elicited scores are put on the occupational scale: a score of <i>s</i> becomes the average share of measured sectors
 scored <i>s</i>.</li>
 </ul>
-{table([th("Capability"), th("Elicited rank", "num"), th("Occupational rank", "num"), th("Agreement across sectors", "num")], rows,
+{table([th("Capability"), th("Elicited rank", "num"), th("Occupational rank", "num"), th("Agreement across sectors", "num"),
+        th("R&amp;D agreement", "num")], rows,
        caption=f"Rank correlation between the two capability rankings: {rho:.2f}. Agreement across sectors: rank correlation, over the "
                f"{n_meas} measured sectors, between the elicited weight and the occupational share. Sorted by how far the "
                "occupational measure moves the capability up. A dash marks a capability too thin to measure: its occupational rank comes "
-               "from its elicited scores, rescaled with the pooled average of the other capabilities, and says nothing new.")}
+               "from its elicited scores, rescaled with the pooled average of the other capabilities, and says nothing new. "
+               "R&amp;D agreement: the same correlation against business R&amp;D per dollar of output, for design tools only (below).")}
+<h3 id="score-weights">What a score is worth</h3>
+<p>The model turns scores into weights of 0.1, 0.3 and 1, a judgment of its own. Occupations give a check on it: across
+every measured sector and capability, the average occupational share rises with the elicited score. Taking each score's
+average above the score-0 baseline, scaled so a 3 counts 1, gives the weights the data imply.</p>
+{table([th("Score"), th("Sector-capability cells", "num"), th("Mean occupational share", "num"),
+        th("Assumed weight", "num"), th("Implied weight", "num")], cal_rows,
+       caption=f"With the implied weights every capability weighs more, and the ranking correlates {cal_rho:.2f} with the headline "
+               f"({'same top five' if same_top5 else 'a different top five'}). Capabilities spread thinly over many sectors gain most: {e(gainers)}. "
+               "Occupations measure use, while a 3 also claims the sector cannot run without the capability, so these weights "
+               "speak to the usage half of the scores only.")}
+<h3 id="rd">A second check: business R&amp;D</h3>
+<p>For product-design tools ({e(proxies)}), research spending is a second measure of use: a sector that designs
+new products needs them, one that runs a plant or a store mostly does not. The NSF Business Enterprise R&amp;D Survey
+reports R&amp;D performed in the United States by industry in 2017, the same year as the input-output tables. Each sector
+gets its industry's R&amp;D divided by the BEA output of the sectors in that industry. {rd_n} sectors are covered,
+${rd_mapped:.0f} billion of the survey's $400 billion; it leaves out farms and government. Companies are classified by
+their main business, so a computer maker that designs at home and builds abroad shows R&amp;D close to its US output.</p>
+<p>Agreement with the scores is {rd_range} for the design tools{" except " + " and ".join(e(w).lower() for w in weak) + (" (" + ", ".join(f"{rd_rho[k]:.2f}" for k in rd_rho.index[rd_rho < 0.3]) + ")") if weak else ""}
+in the table above. R&amp;D also reaches {" and ".join(e(d.cap_name(k)).lower() for k in a.index[a.thin & a.spearman_rd.notna()]) or "no capability"},
+which too few occupations list to measure. Which design tools are judged by R&amp;D is
+set in <a href="{REPO}/blob/main/config/capabilities.csv"><code>config/capabilities.csv</code></a> (<code>rd_proxy</code>).</p>
 <h3>Where they disagree</h3>
 <ul>
 <li><b>Process flowsheeting {moves("process")}.</b> Only chemical, mechanical and biomedical engineers list
@@ -574,14 +911,19 @@ in proportion to each industry's gross operating surplus.</p>
 commodity <i>i</i>. Imports stay inside <i>U</i>, so <i>L</i> describes the technology required wherever it runs.</p>
 <h3>Basket</h3>
 <p>Household plus government consumption, with every commodity assigned to one of eleven needs or left out.
-Mixed retail, wholesale and freight margins are split across needs in proportion to goods spending.</p>
+Mixed retail, wholesale and freight margins are split across needs in proportion to goods spending.
+Each need is then scaled to one dollar and the needs are averaged, so every need counts equally. Needs are
+complements (no amount of one makes up for another), so price, which measures the last unit, cannot rank them;
+spending is used only within a need, where the options do substitute. Weighting needs by spending instead is
+<a href="#trust">a variant</a>.</p>
 <h3>Capabilities</h3>
 <p>Each commodity gets one of 56 engineering archetypes, and each archetype a score from 0 to 3 on each capability:
 3 means the sector cannot design, run or maintain its product or plant without it, 2 means important and routine,
 1 means incidental. Scores describe the sector's own activity; dependence on suppliers comes from <i>L</i>.
-Scores map to weights of 1.0, 0.3 and 0.1.</p>
+Scores map to weights of 1.0, 0.3 and 0.1, an assumption that
+<a href="#score-weights">occupation data</a> suggest is too steep.</p>
 {occ}
-<h2>How far to trust it</h2>
+<h2 id="trust">How far to trust it</h2>
 <p>Checked by tests: the Use table balances, the capital matrix conserves investment, and the model reproduces the
 observed output of every sizeable commodity to within 1%, with and without capital.</p>
 {table([th("Variant"), th("Rank correlation with headline", "num"), th("Top five shared", "num")], srows,
@@ -592,7 +934,10 @@ observed output of every sizeable commodity to within 1%, with and without capit
 explicit and shows their consequences, and it confirms nothing independently. The
 <a href="#occupations">occupational check</a> tests the usage half of them against data.</li>
 <li>No substitutability. Weight understates a small input with no substitute, and breadth cannot tell a relay from a sign.</li>
-<li>US spending defines the basket. A basket in physical units would shift weight toward farming, water and energy.</li>
+<li>The list of needs carries weight. Every need counts equally, so splitting one need in two doubles its share.
+The list is ours, not a published one.</li>
+<li>Within each need, US spending decides which sectors serve it. A basket in physical units would shift weight
+toward farming, water and energy.</li>
 <li>Capital buyers are allocated by rule, not observed. The rules move the per-need figures; the overall ranking does not depend on them.</li>
 <li>Gross investment stands in for capital use, so growing sectors look more capital-hungry than they are in steady state.</li>
 <li>Archetypes are coarse. All machinery shares one row of scores, apart from fluid machinery.</li>
@@ -618,6 +963,8 @@ def main():
     pages = {"index.html": index, "needs.html": needs_page, "capabilities.html": capabilities_page,
              "gaps.html": gaps_page, "work.html": work_page, "sectors.html": sectors_page,
              "method.html": method_page}
+    for k in d.ct.index:
+        pages[cap_href(k)] = lambda d, k=k: capability_detail_page(d, k)
     for name, fn in pages.items():
         (SITE / name).write_text(fn(d), encoding="utf-8")
     (SITE / ".nojekyll").write_text("")

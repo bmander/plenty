@@ -24,6 +24,16 @@
   document.addEventListener("mousemove", function (e) {
     if (tip.style.display === "block") place(e);
   });
+  // keyboard: show the tip under whatever focused element carries one
+  document.addEventListener("focusin", function (e) {
+    var t = e.target.closest && e.target.closest("[data-tip]");
+    if (!t) { tip.style.display = "none"; return; }
+    tip.textContent = t.getAttribute("data-tip");
+    tip.style.display = "block";
+    var r = t.getBoundingClientRect();
+    place({ clientX: r.left, clientY: r.bottom });
+  });
+  document.addEventListener("focusout", function () { tip.style.display = "none"; });
 
   // --- sortable tables: th[data-sort="num"|"text"]
   document.querySelectorAll("table.ledger").forEach(function (table) {
@@ -52,6 +62,16 @@
       th.addEventListener("keydown", function (e) {
         if (e.key === "Enter" || e.key === " ") { e.preventDefault(); sort(); }
       });
+    });
+  });
+
+  // --- expandable groups: a kind of sector opens its sectors beneath it
+  document.querySelectorAll("button.expander").forEach(function (b) {
+    var rows = document.querySelectorAll('tr[data-group="' + b.getAttribute("data-group") + '"]');
+    b.addEventListener("click", function () {
+      var open = b.getAttribute("aria-expanded") !== "true";
+      b.setAttribute("aria-expanded", open ? "true" : "false");
+      rows.forEach(function (r) { r.hidden = !open; });
     });
   });
 

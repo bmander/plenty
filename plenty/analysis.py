@@ -124,6 +124,9 @@ def run(m: M.Model, reach_eps=(0.0003, 0.001, 0.003), cap_eps=(0.001, 0.01, 0.05
         if np.isnan(C).any():
             raise ValueError("usage matrix is missing commodities or capabilities")
     va = X * v[:, None]                            # value added in j attributable to need n, $M
+    # j's share of embodied value added, each need counted equally: weight_equal_need[k] is
+    # sum_j C[j, k] * this, so the site can show each weight as a sum over sectors.
+    sectors["value_added_share_equal"] = (va / va.sum(axis=0)[None, :]).mean(axis=1)
     cap_by_need = pd.DataFrame((C.T @ va) / va.sum(axis=0)[None, :], index=S.columns, columns=needs)
     caps = pd.DataFrame(index=S.columns)
     caps["weight_spending"] = (C.T @ va.sum(axis=1)) / va.sum()

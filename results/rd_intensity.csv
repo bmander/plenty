@@ -1,0 +1,403 @@
+commodity,berd_industry,berd_naics,rd_musd,output_musd,rd_per_output
+1111A0,,,,,
+1111B0,,,,,
+111200,,,,,
+111300,,,,,
+111400,,,,,
+111900,,,,,
+112120,,,,,
+1121A0,,,,,
+112300,,,,,
+112A00,,,,,
+113000,,,,,
+114000,,,,,
+115000,,,,,
+211000,"Mining, extraction, and support activities",21,3150.0,443067.0,0.00711
+212100,"Mining, extraction, and support activities",21,3150.0,443067.0,0.00711
+212230,"Mining, extraction, and support activities",21,3150.0,443067.0,0.00711
+2122A0,"Mining, extraction, and support activities",21,3150.0,443067.0,0.00711
+212310,"Mining, extraction, and support activities",21,3150.0,443067.0,0.00711
+2123A0,"Mining, extraction, and support activities",21,3150.0,443067.0,0.00711
+213111,"Mining, extraction, and support activities",21,3150.0,443067.0,0.00711
+21311A,"Mining, extraction, and support activities",21,3150.0,443067.0,0.00711
+221100,Utilities,22,317.0,466208.0,0.00068
+221200,Utilities,22,317.0,466208.0,0.00068
+221300,Utilities,22,317.0,466208.0,0.00068
+233210,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+233262,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+230301,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+230302,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+2332A0,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+233412,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+2334A0,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+233230,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+2332D0,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+233240,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+233411,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+2332C0,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+321100,Wood products,321,175.0,106783.0,0.001639
+321200,Wood products,321,175.0,106783.0,0.001639
+321910,Wood products,321,175.0,106783.0,0.001639
+3219A0,Wood products,321,175.0,106783.0,0.001639
+327100,Nonmetallic mineral products,327,1334.0,124637.0,0.010703
+327200,Nonmetallic mineral products,327,1334.0,124637.0,0.010703
+327310,Nonmetallic mineral products,327,1334.0,124637.0,0.010703
+327320,Nonmetallic mineral products,327,1334.0,124637.0,0.010703
+327330,Nonmetallic mineral products,327,1334.0,124637.0,0.010703
+327390,Nonmetallic mineral products,327,1334.0,124637.0,0.010703
+327400,Nonmetallic mineral products,327,1334.0,124637.0,0.010703
+327910,Nonmetallic mineral products,327,1334.0,124637.0,0.010703
+327991,Nonmetallic mineral products,327,1334.0,124637.0,0.010703
+327992,Nonmetallic mineral products,327,1334.0,124637.0,0.010703
+327993,Nonmetallic mineral products,327,1334.0,124637.0,0.010703
+327999,Nonmetallic mineral products,327,1334.0,124637.0,0.010703
+331110,Primary metals,331,749.0,215124.0,0.003482
+331200,Primary metals,331,749.0,215124.0,0.003482
+331313,Primary metals,331,749.0,215124.0,0.003482
+33131B,Primary metals,331,749.0,215124.0,0.003482
+331410,Primary metals,331,749.0,215124.0,0.003482
+331420,Primary metals,331,749.0,215124.0,0.003482
+331490,Primary metals,331,749.0,215124.0,0.003482
+331510,Primary metals,331,749.0,215124.0,0.003482
+331520,Primary metals,331,749.0,215124.0,0.003482
+332114,Fabricated metal products,332,2206.0,336595.0,0.006554
+33211A,Fabricated metal products,332,2206.0,336595.0,0.006554
+332119,Fabricated metal products,332,2206.0,336595.0,0.006554
+332200,Fabricated metal products,332,2206.0,336595.0,0.006554
+332310,Fabricated metal products,332,2206.0,336595.0,0.006554
+332320,Fabricated metal products,332,2206.0,336595.0,0.006554
+332410,Fabricated metal products,332,2206.0,336595.0,0.006554
+332420,Fabricated metal products,332,2206.0,336595.0,0.006554
+332430,Fabricated metal products,332,2206.0,336595.0,0.006554
+332500,Fabricated metal products,332,2206.0,336595.0,0.006554
+332600,Fabricated metal products,332,2206.0,336595.0,0.006554
+332710,Fabricated metal products,332,2206.0,336595.0,0.006554
+332720,Fabricated metal products,332,2206.0,336595.0,0.006554
+332800,Fabricated metal products,332,2206.0,336595.0,0.006554
+332913,Fabricated metal products,332,2206.0,336595.0,0.006554
+33291A,Fabricated metal products,332,2206.0,336595.0,0.006554
+332991,Fabricated metal products,332,2206.0,336595.0,0.006554
+332996,Fabricated metal products,332,2206.0,336595.0,0.006554
+33299A,Fabricated metal products,332,2206.0,336595.0,0.006554
+332999,Fabricated metal products,332,2206.0,336595.0,0.006554
+333111,Agricultural implement,33311,1570.0,32426.0,0.048418
+333112,Agricultural implement,33311,1570.0,32426.0,0.048418
+333120,Other machinery,other 333,5853.0,279084.0,0.020972
+333130,Other machinery,other 333,5853.0,279084.0,0.020972
+333242,Semiconductor machinery,333242,3694.0,8345.0,0.44266
+33329A,Other machinery,other 333,5853.0,279084.0,0.020972
+333314,Other machinery,other 333,5853.0,279084.0,0.020972
+333316,Other machinery,other 333,5853.0,279084.0,0.020972
+333318,Other machinery,other 333,5853.0,279084.0,0.020972
+333414,Other machinery,other 333,5853.0,279084.0,0.020972
+333415,Other machinery,other 333,5853.0,279084.0,0.020972
+333413,Other machinery,other 333,5853.0,279084.0,0.020972
+333511,Other machinery,other 333,5853.0,279084.0,0.020972
+333514,Other machinery,other 333,5853.0,279084.0,0.020972
+333517,Other machinery,other 333,5853.0,279084.0,0.020972
+33351B,Other machinery,other 333,5853.0,279084.0,0.020972
+333611,"Engine, turbine, and power transmission equipment",3336,2080.0,45412.0,0.045803
+333612,"Engine, turbine, and power transmission equipment",3336,2080.0,45412.0,0.045803
+333613,"Engine, turbine, and power transmission equipment",3336,2080.0,45412.0,0.045803
+333618,"Engine, turbine, and power transmission equipment",3336,2080.0,45412.0,0.045803
+333912,Other machinery,other 333,5853.0,279084.0,0.020972
+333914,Other machinery,other 333,5853.0,279084.0,0.020972
+333920,Other machinery,other 333,5853.0,279084.0,0.020972
+333991,Other machinery,other 333,5853.0,279084.0,0.020972
+333993,Other machinery,other 333,5853.0,279084.0,0.020972
+333994,Other machinery,other 333,5853.0,279084.0,0.020972
+33399A,Other machinery,other 333,5853.0,279084.0,0.020972
+33399B,Other machinery,other 333,5853.0,279084.0,0.020972
+334111,Other computer and electronic products,other 334,21231.0,24256.0,0.875289
+334112,Other computer and electronic products,other 334,21231.0,24256.0,0.875289
+334118,Other computer and electronic products,other 334,21231.0,24256.0,0.875289
+334210,Communications equipment,3342,12687.0,35563.0,0.356747
+334220,Communications equipment,3342,12687.0,35563.0,0.356747
+334290,Communications equipment,3342,12687.0,35563.0,0.356747
+334413,Semiconductor and other electronic components,3344,30148.0,94254.0,0.319859
+334418,Semiconductor and other electronic components,3344,30148.0,94254.0,0.319859
+33441A,Semiconductor and other electronic components,3344,30148.0,94254.0,0.319859
+334510,"Electromedical, electrotherapeutic, and irradiation apparatus","334510, 334517",2696.0,40783.0,0.066106
+334511,"Search, detection, navigation, guidance, aeronautical, and nautical system and instrument",334511,7297.0,50866.0,0.143455
+334512,Other measuring and controlling device,other 3345,4516.0,56220.0,0.080327
+334513,Other measuring and controlling device,other 3345,4516.0,56220.0,0.080327
+334514,Other measuring and controlling device,other 3345,4516.0,56220.0,0.080327
+334515,Other measuring and controlling device,other 3345,4516.0,56220.0,0.080327
+334516,Other measuring and controlling device,other 3345,4516.0,56220.0,0.080327
+334517,"Electromedical, electrotherapeutic, and irradiation apparatus","334510, 334517",2696.0,40783.0,0.066106
+33451A,Other measuring and controlling device,other 3345,4516.0,56220.0,0.080327
+334300,Other computer and electronic products,other 334,21231.0,24256.0,0.875289
+334610,Other computer and electronic products,other 334,21231.0,24256.0,0.875289
+335110,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335120,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335210,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335220,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335311,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335312,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335313,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335314,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335911,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335912,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335920,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335930,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335991,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+335999,"Electrical equipment, appliances, and components",335,4291.0,119195.0,0.036
+336111,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336112,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336120,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336211,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336212,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336213,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336214,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336310,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336320,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336350,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336360,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336370,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336390,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+3363A0,"Automobiles, bodies, trailers, and parts",3361–63,23881.0,578218.0,0.041301
+336411,"Aircraft, aircraft engine, and aircraft parts",336411–13,24576.0,219270.0,0.112081
+336412,"Aircraft, aircraft engine, and aircraft parts",336411–13,24576.0,219270.0,0.112081
+336413,"Aircraft, aircraft engine, and aircraft parts",336411–13,24576.0,219270.0,0.112081
+336414,"Guided missile, space vehicle, and related parts","336414–15, 336419",1807.0,24637.0,0.073345
+33641A,"Guided missile, space vehicle, and related parts","336414–15, 336419",1807.0,24637.0,0.073345
+336500,Other transportation,other 336,3018.0,63501.0,0.047527
+336611,Other transportation,other 336,3018.0,63501.0,0.047527
+336612,Other transportation,other 336,3018.0,63501.0,0.047527
+336991,Other transportation,other 336,3018.0,63501.0,0.047527
+336992,"Military armored vehicle, tank, and tank component",336992,9.0,6367.0,0.001414
+336999,Other transportation,other 336,3018.0,63501.0,0.047527
+337110,Furniture and related products,337,422.0,74517.0,0.005663
+337121,Furniture and related products,337,422.0,74517.0,0.005663
+337122,Furniture and related products,337,422.0,74517.0,0.005663
+337127,Furniture and related products,337,422.0,74517.0,0.005663
+33712N,Furniture and related products,337,422.0,74517.0,0.005663
+337215,Furniture and related products,337,422.0,74517.0,0.005663
+33721A,Furniture and related products,337,422.0,74517.0,0.005663
+337900,Furniture and related products,337,422.0,74517.0,0.005663
+339112,Medical equipment and supplies,3391,13589.0,83012.0,0.163699
+339113,Medical equipment and supplies,3391,13589.0,83012.0,0.163699
+339114,Medical equipment and supplies,3391,13589.0,83012.0,0.163699
+339115,Medical equipment and supplies,3391,13589.0,83012.0,0.163699
+339116,Medical equipment and supplies,3391,13589.0,83012.0,0.163699
+339910,Other miscellaneous manufacturing,3399,2106.0,63303.0,0.033269
+339920,Other miscellaneous manufacturing,3399,2106.0,63303.0,0.033269
+339930,Other miscellaneous manufacturing,3399,2106.0,63303.0,0.033269
+339940,Other miscellaneous manufacturing,3399,2106.0,63303.0,0.033269
+339950,Other miscellaneous manufacturing,3399,2106.0,63303.0,0.033269
+339990,Other miscellaneous manufacturing,3399,2106.0,63303.0,0.033269
+311111,Food,311,4697.0,778057.0,0.006037
+311119,Food,311,4697.0,778057.0,0.006037
+311210,Food,311,4697.0,778057.0,0.006037
+311221,Food,311,4697.0,778057.0,0.006037
+311225,Food,311,4697.0,778057.0,0.006037
+311224,Food,311,4697.0,778057.0,0.006037
+311230,Food,311,4697.0,778057.0,0.006037
+311300,Food,311,4697.0,778057.0,0.006037
+311410,Food,311,4697.0,778057.0,0.006037
+311420,Food,311,4697.0,778057.0,0.006037
+311513,Food,311,4697.0,778057.0,0.006037
+311514,Food,311,4697.0,778057.0,0.006037
+31151A,Food,311,4697.0,778057.0,0.006037
+311520,Food,311,4697.0,778057.0,0.006037
+311615,Food,311,4697.0,778057.0,0.006037
+31161A,Food,311,4697.0,778057.0,0.006037
+311700,Food,311,4697.0,778057.0,0.006037
+311810,Food,311,4697.0,778057.0,0.006037
+3118A0,Food,311,4697.0,778057.0,0.006037
+311910,Food,311,4697.0,778057.0,0.006037
+311920,Food,311,4697.0,778057.0,0.006037
+311930,Food,311,4697.0,778057.0,0.006037
+311940,Food,311,4697.0,778057.0,0.006037
+311990,Food,311,4697.0,778057.0,0.006037
+312110,Beverage and tobacco products,312,1076.0,174360.0,0.006171
+312120,Beverage and tobacco products,312,1076.0,174360.0,0.006171
+312130,Beverage and tobacco products,312,1076.0,174360.0,0.006171
+312140,Beverage and tobacco products,312,1076.0,174360.0,0.006171
+312200,Beverage and tobacco products,312,1076.0,174360.0,0.006171
+313100,"Textile, apparel, and leather products",313–16,920.0,65120.0,0.014128
+313200,"Textile, apparel, and leather products",313–16,920.0,65120.0,0.014128
+313300,"Textile, apparel, and leather products",313–16,920.0,65120.0,0.014128
+314110,"Textile, apparel, and leather products",313–16,920.0,65120.0,0.014128
+314120,"Textile, apparel, and leather products",313–16,920.0,65120.0,0.014128
+314900,"Textile, apparel, and leather products",313–16,920.0,65120.0,0.014128
+315000,"Textile, apparel, and leather products",313–16,920.0,65120.0,0.014128
+316000,"Textile, apparel, and leather products",313–16,920.0,65120.0,0.014128
+322110,Paper,322,1322.0,182899.0,0.007228
+322120,Paper,322,1322.0,182899.0,0.007228
+322130,Paper,322,1322.0,182899.0,0.007228
+322210,Paper,322,1322.0,182899.0,0.007228
+322220,Paper,322,1322.0,182899.0,0.007228
+322230,Paper,322,1322.0,182899.0,0.007228
+322291,Paper,322,1322.0,182899.0,0.007228
+322299,Paper,322,1322.0,182899.0,0.007228
+323110,Printing and related support activities,323,229.0,87502.0,0.002617
+323120,Printing and related support activities,323,229.0,87502.0,0.002617
+324110,Petroleum and coal products,324,316.0,527702.0,0.000599
+324121,Petroleum and coal products,324,316.0,527702.0,0.000599
+324122,Petroleum and coal products,324,316.0,527702.0,0.000599
+324190,Petroleum and coal products,324,316.0,527702.0,0.000599
+325110,Basic chemicals,3251,2574.0,214511.0,0.011999
+325120,Basic chemicals,3251,2574.0,214511.0,0.011999
+325130,Basic chemicals,3251,2574.0,214511.0,0.011999
+325180,Basic chemicals,3251,2574.0,214511.0,0.011999
+325190,Basic chemicals,3251,2574.0,214511.0,0.011999
+325211,"Resin, synthetic rubber, and artificial synthetic fibers and filaments",3252,628.0,102080.0,0.006152
+3252A0,"Resin, synthetic rubber, and artificial synthetic fibers and filaments",3252,628.0,102080.0,0.006152
+325411,Pharmaceuticals and medicines,3254,66202.0,209374.0,0.31619
+325412,Pharmaceuticals and medicines,3254,66202.0,209374.0,0.31619
+325413,Pharmaceuticals and medicines,3254,66202.0,209374.0,0.31619
+325414,Pharmaceuticals and medicines,3254,66202.0,209374.0,0.31619
+325310,"Pesticide, fertilizer, and other agricultural chemicals",3253,1425.5,31048.0,0.045913
+325320,"Pesticide, fertilizer, and other agricultural chemicals",3253,1425.5,31048.0,0.045913
+325510,"Paint, coating, adhesive, and other chemicals","3255, 3259",1495.0,87116.0,0.017161
+325520,"Paint, coating, adhesive, and other chemicals","3255, 3259",1495.0,87116.0,0.017161
+325610,"Soap, cleaning compound, and toilet preparation",3256,2653.0,76319.0,0.034762
+325620,"Soap, cleaning compound, and toilet preparation",3256,2653.0,76319.0,0.034762
+325910,"Paint, coating, adhesive, and other chemicals","3255, 3259",1495.0,87116.0,0.017161
+3259A0,"Paint, coating, adhesive, and other chemicals","3255, 3259",1495.0,87116.0,0.017161
+326110,Plastics and rubber products,326,3754.0,232590.0,0.01614
+326120,Plastics and rubber products,326,3754.0,232590.0,0.01614
+326130,Plastics and rubber products,326,3754.0,232590.0,0.01614
+326140,Plastics and rubber products,326,3754.0,232590.0,0.01614
+326150,Plastics and rubber products,326,3754.0,232590.0,0.01614
+326160,Plastics and rubber products,326,3754.0,232590.0,0.01614
+326190,Plastics and rubber products,326,3754.0,232590.0,0.01614
+326210,Plastics and rubber products,326,3754.0,232590.0,0.01614
+326220,Plastics and rubber products,326,3754.0,232590.0,0.01614
+326290,Plastics and rubber products,326,3754.0,232590.0,0.01614
+423100,Wholesale trade,42,534.0,1997436.0,0.000267
+423400,Wholesale trade,42,534.0,1997436.0,0.000267
+423600,Wholesale trade,42,534.0,1997436.0,0.000267
+423800,Wholesale trade,42,534.0,1997436.0,0.000267
+423A00,Wholesale trade,42,534.0,1997436.0,0.000267
+424200,Wholesale trade,42,534.0,1997436.0,0.000267
+424400,Wholesale trade,42,534.0,1997436.0,0.000267
+424700,Wholesale trade,42,534.0,1997436.0,0.000267
+424A00,Wholesale trade,42,534.0,1997436.0,0.000267
+425000,Wholesale trade,42,534.0,1997436.0,0.000267
+4200ID,,,,,
+441000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+445000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+452000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+444000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+446000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+447000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+448000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+454000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+4B0000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+481000,Transportation and warehousing,48–49,1147.0,1290814.0,0.000889
+482000,Transportation and warehousing,48–49,1147.0,1290814.0,0.000889
+483000,Transportation and warehousing,48–49,1147.0,1290814.0,0.000889
+484000,Transportation and warehousing,48–49,1147.0,1290814.0,0.000889
+485000,Transportation and warehousing,48–49,1147.0,1290814.0,0.000889
+486000,Transportation and warehousing,48–49,1147.0,1290814.0,0.000889
+48A000,Transportation and warehousing,48–49,1147.0,1290814.0,0.000889
+492000,Transportation and warehousing,48–49,1147.0,1290814.0,0.000889
+493000,Transportation and warehousing,48–49,1147.0,1290814.0,0.000889
+511110,"Newspaper, periodical, book, and directory publishers",5111,74.0,101364.0,0.00073
+511120,"Newspaper, periodical, book, and directory publishers",5111,74.0,101364.0,0.00073
+511130,"Newspaper, periodical, book, and directory publishers",5111,74.0,101364.0,0.00073
+5111A0,"Newspaper, periodical, book, and directory publishers",5111,74.0,101364.0,0.00073
+511200,Software publishers,5112,34264.0,252481.0,0.135709
+512100,Other information,other 51,26015.5,524950.0,0.049558
+512200,Other information,other 51,26015.5,524950.0,0.049558
+515100,Other information,other 51,26015.5,524950.0,0.049558
+515200,Other information,other 51,26015.5,524950.0,0.049558
+517110,Telecommunications,517,3744.0,634570.0,0.0059
+517210,Telecommunications,517,3744.0,634570.0,0.0059
+517A00,Telecommunications,517,3744.0,634570.0,0.0059
+518200,"Data processing, hosting, and related services",518,16155.0,224378.0,0.071999
+519130,Other information,other 51,26015.5,524950.0,0.049558
+5191A0,Other information,other 51,26015.5,524950.0,0.049558
+522A00,Finance and insurance,52,7616.0,2831276.0,0.00269
+52A000,Finance and insurance,52,7616.0,2831276.0,0.00269
+523900,Finance and insurance,52,7616.0,2831276.0,0.00269
+523A00,Finance and insurance,52,7616.0,2831276.0,0.00269
+524113,Finance and insurance,52,7616.0,2831276.0,0.00269
+5241XX,Finance and insurance,52,7616.0,2831276.0,0.00269
+524200,Finance and insurance,52,7616.0,2831276.0,0.00269
+525000,Finance and insurance,52,7616.0,2831276.0,0.00269
+531HSO,Other real estate and rental and leasing,other 53,579.0,3492037.0,0.000166
+531HST,Other real estate and rental and leasing,other 53,579.0,3492037.0,0.000166
+531ORE,Other real estate and rental and leasing,other 53,579.0,3492037.0,0.000166
+532100,Other real estate and rental and leasing,other 53,579.0,3492037.0,0.000166
+532400,Other real estate and rental and leasing,other 53,579.0,3492037.0,0.000166
+532A00,Other real estate and rental and leasing,other 53,579.0,3492037.0,0.000166
+533000,Lessors of nonfinancial intangible assets (except copyrighted works),533,138.0,158327.0,0.000872
+541100,"Other professional, scientific, and technical services",other 54,3566.0,1092093.0,0.003265
+541511,Computer systems design and related services,5415,13327.0,526361.0,0.025319
+541512,Computer systems design and related services,5415,13327.0,526361.0,0.025319
+54151A,Computer systems design and related services,5415,13327.0,526361.0,0.025319
+541200,"Other professional, scientific, and technical services",other 54,3566.0,1092093.0,0.003265
+541300,"Architectural, engineering, and related services",5413,2708.0,332006.0,0.008156
+541610,"Other professional, scientific, and technical services",other 54,3566.0,1092093.0,0.003265
+5416A0,"Other professional, scientific, and technical services",other 54,3566.0,1092093.0,0.003265
+541700,Scientific research and development services,5417,17321.0,620511.0,0.027914
+541800,"Other professional, scientific, and technical services",other 54,3566.0,1092093.0,0.003265
+541400,"Other professional, scientific, and technical services",other 54,3566.0,1092093.0,0.003265
+541920,"Other professional, scientific, and technical services",other 54,3566.0,1092093.0,0.003265
+541940,"Other professional, scientific, and technical services",other 54,3566.0,1092093.0,0.003265
+5419A0,"Other professional, scientific, and technical services",other 54,3566.0,1092093.0,0.003265
+550000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+561300,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+561700,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+561100,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+561200,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+561400,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+561500,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+561600,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+561900,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+562000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+611100,,,,,
+611A00,,,,,
+611B00,,,,,
+621100,Health care services,621–23,1101.0,2139644.0,0.000515
+621200,Health care services,621–23,1101.0,2139644.0,0.000515
+621300,Health care services,621–23,1101.0,2139644.0,0.000515
+621400,Health care services,621–23,1101.0,2139644.0,0.000515
+621500,Health care services,621–23,1101.0,2139644.0,0.000515
+621600,Health care services,621–23,1101.0,2139644.0,0.000515
+621900,Health care services,621–23,1101.0,2139644.0,0.000515
+622000,Health care services,621–23,1101.0,2139644.0,0.000515
+623A00,Health care services,621–23,1101.0,2139644.0,0.000515
+623B00,Health care services,621–23,1101.0,2139644.0,0.000515
+624100,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+624400,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+624A00,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+711100,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+711200,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+711500,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+711A00,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+712000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+713100,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+713200,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+713900,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+721000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+722110,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+722211,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+722A00,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+811100,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+811200,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+811300,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+811400,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+812100,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+812200,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+812300,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+812900,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+813100,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+813A00,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+813B00,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+814000,Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799.0,7645316.0,0.000235
+S00500,,,,,
+S00600,,,,,
+491000,Transportation and warehousing,48–49,1147.0,1290814.0,0.000889
+S00102,,,,,
+GSLGE,,,,,
+GSLGH,,,,,
+GSLGO,,,,,
+S00203,,,,,
+S00401,,,,,
+S00402,,,,,
+S00300,,,,,
+S00900,,,,,

@@ -4,7 +4,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
-from plenty import model as M, analysis as A, occupations as O
+from plenty import model as M, analysis as A, occupations as O, rd as RD
 
 OUT = M.ROOT / "results"
 OUT.mkdir(exist_ok=True)
@@ -20,6 +20,7 @@ SERVICES = {"trade", "finance_insurance", "real_estate_housing", "professional_a
 
 BREADTH_MIN = 9.0
 OCC_VARIANT = "occupation-based usage (O*NET x OEWS)"
+CAL_VARIANT = "score weights calibrated to occupations"
 
 
 def md(df, floatfmt="{:.3f}"):
@@ -45,7 +46,9 @@ def main():
     # over buyers by assumption, which manufactures breadth for any capital good.
     s.insert(s.columns.get_loc("need_breadth") + 1, "need_breadth_observed", r0.sectors.need_breadth)
 
-    s.round(6).to_csv(OUT / "sectors.csv")
+    # The two columns the site's derivations sum over keep full precision, so the sums match.
+    exact = ["output_per_need_dollar_equal", "value_added_share_equal"]
+    s.round(6).assign(**{c: s[c].round(12) for c in exact}).to_csv(OUT / "sectors.csv")
     T = r.need_totals
     pd.DataFrame({"final_demand_musd": T.round(0), "share": (T / T.sum()).round(4)}).rename_axis("need").to_csv(OUT / "needs.csv")
     r.sector_by_need.round(6).to_csv(OUT / "sector_by_need.csv")
@@ -92,12 +95,28 @@ def main():
     shares.round(5).to_csv(OUT / "occupation_capability_shares.csv")
     S = A.capability_scores(m.t)
     occ = A.run(m, usage=O.usage_matrix(shares, S, cov)).capabilities.weight_equal_need
+    # What weight each score earns, judged by occupations: the pooled mean share at each score
+    # above the score-0 baseline, scaled so a 3 weighs 1 (the elicited mapping is 0.1 / 0.3 / 1).
+    levels = O.score_levels(shares, S, cov)
+    cal_weight = O.calibrated_score_weight(levels)
+    levels["weight_assumed"] = pd.Series(A.SCORE_WEIGHT)
+    levels["weight_calibrated"] = pd.Series(cal_weight)
+    levels.round(4).to_csv(OUT / "score_weight_calibration.csv")
+    cal = A.run(m, score_weight=cal_weight).capabilities.weight_equal_need
     measured = shares.source == "oews"
     elicited_w = S.loc[measured].replace(A.SCORE_WEIGHT)
     base = c.weight_equal_need
+    # Business R&D per dollar of output (NSF BERD 2017): a second measured check, for the
+    # capabilities config/capabilities.csv marks as product-design tools (rd_proxy).
+    rdi = RD.intensity(m.t)
+    rdi.round(6).to_csv(OUT / "rd_intensity.csv")
+    has_rd = rdi.rd_per_output.notna()
+    proxy = pd.read_csv(M.CONFIG / "capabilities.csv").set_index("capability").rd_proxy.astype(bool)
     agree = pd.DataFrame({
         "spearman_across_sectors": [np.nan if cov.at[k, "thin"] else spearmanr(elicited_w[k], shares.loc[measured, k])[0]
                                     for k in S.columns],
+        "spearman_rd": [spearmanr(S.loc[has_rd, k].replace(A.SCORE_WEIGHT), rdi.rd_per_output[has_rd])[0]
+                        if proxy[k] else np.nan for k in S.columns],
         "thin": cov.thin,
         "elicited_weight": base,
         "occupational_weight": occ,
@@ -111,6 +130,7 @@ def main():
     # Sensitivity of the capability ranking.
     variants = {
         OCC_VARIANT: occ,
+        f"{CAL_VARIANT} ({cal_weight[1]:.2f}, {cal_weight[2]:.2f}, 1)": cal,
         "linear score weights (1/3, 2/3, 1)": A.run(m, score_weight=A.SCORE_WEIGHT_LINEAR).capabilities.weight_equal_need,
         "no capital endogenization": r0.capabilities.weight_equal_need,
         "capital spread by operating surplus only (no user rules)": A.run(M.build(capital_rules=False)).capabilities.weight_equal_need,
@@ -131,8 +151,9 @@ def main():
     ranks["worst_rank"] = ranks.max(axis=1)
     desc = pd.read_csv(M.CONFIG / "capabilities.csv").set_index("capability")
     ranks["occupational_rank"] = agree.occupational_rank
+    ranks["calibrated_rank"] = cal.rank(ascending=False).astype(int)
     cap_table = pd.DataFrame({
-        "volume weight": base, "occupational weight": occ, "exposure": c.exposure_mean,
+        "volume weight": base, "occupational weight": occ, "calibrated weight": cal, "exposure": c.exposure_mean,
         "reach 0.1c": c["reach_0.001"], "reach 1c": c["reach_0.01"], "reach 5c": c["reach_0.05"],
         "need breadth": c.need_breadth, "most exposed need": c.most_exposed_need,
         "least exposed need": c.least_exposed_need,
@@ -173,6 +194,8 @@ def main():
              f"{int(measured.sum())} of {len(shares)} commodities; the rest, and capabilities with thin "
              f"coverage ({', '.join(cov.index[cov.thin]) or 'none'}), use elicited scores on the occupational "
              f"scale. Rank correlation of the capability ranking: {sens.at[OCC_VARIANT, "spearman_vs_headline"]:.2f}.\n")
+    L.append(f"\nScore weights implied by occupations (mean share above score 0, scaled to score 3): "
+             f"1 -> {cal_weight[1]:.2f}, 2 -> {cal_weight[2]:.2f}, 3 -> 1; assumed 0.1, 0.3, 1.\n")
     L.append(md(agree.sort_values("rank_change")[["elicited_rank", "occupational_rank", "rank_change",
                                                    "spearman_across_sectors", "thin"]], "{:.2f}"))
     L.append("\n## Top physical upstream sectors by need\n")
