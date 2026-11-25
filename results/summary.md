@@ -16,7 +16,87 @@
 
 Total basket: $12.98 trillion. Physical sectors (farming, extraction, utilities, construction, manufacturing) carry 24% of the value added embodied in it; the rest is services.
 
-## Where today's value flows (taxonomy capabilities)
+## Where today's value flows, by the work done (O*NET work activities)
+
+Each need dollar traced through sectors (value added) and occupations (wage mix) to what the occupations do (O*NET tasks, weighted by importance x relevance, grouped into work activities). Flowed: 92.7% of the basket; 4.8% sits in sectors with no occupational data and 2.5% in occupations with no task list. Weighting tasks by frequency instead gives a rank correlation of 0.98 across intermediate activities.
+
+### General work activities
+
+| activity | name | flow | top_need | software_open_share |
+|---|---|---|---|---|
+| 4.A.4.b.4 | Guiding, Directing, and Motivating Subordinates | 0.0775 | meaning | 0.7356 |
+| 4.A.3.a.2 | Handling and Moving Objects | 0.0762 | food | 0.6664 |
+| 4.A.3.b.6 | Documenting/Recording Information | 0.0700 | education | 0.7066 |
+| 4.A.3.a.1 | Performing General Physical Activities | 0.0497 | food | 0.6790 |
+| 4.A.2.b.2 | Thinking Creatively | 0.0413 | education | 0.7867 |
+| 4.A.4.a.2 | Communicating with Supervisors, Peers, or Subordinates | 0.0394 | communication | 0.7282 |
+| 4.A.1.a.1 | Getting Information | 0.0379 | safety | 0.6986 |
+| 4.A.2.a.4 | Analyzing Data or Information | 0.0366 | communication | 0.7652 |
+| 4.A.1.b.2 | Inspecting Equipment, Structures, or Materials | 0.0351 | energy | 0.6742 |
+| 4.A.4.b.6 | Providing Consultation and Advice to Others | 0.0333 | education | 0.7420 |
+| 4.A.1.a.2 | Monitoring Processes, Materials, or Surroundings | 0.0330 | clothing | 0.7035 |
+| 4.A.2.b.1 | Making Decisions and Solving Problems | 0.0317 | clothing | 0.7173 |
+| 4.A.4.b.3 | Training and Teaching Others | 0.0245 | education | 0.7291 |
+| 4.A.4.c.3 | Monitoring and Controlling Resources | 0.0235 | health | 0.6649 |
+| 4.A.3.a.3 | Controlling Machines and Processes | 0.0227 | energy | 0.7157 |
+| 4.A.4.b.1 | Coordinating the Work and Activities of Others | 0.0223 | communication | 0.7553 |
+| 4.A.2.a.1 | Judging the Qualities of Objects, Services, or People | 0.0194 | education | 0.7440 |
+| 4.A.2.a.2 | Processing Information | 0.0186 | clothing | 0.6762 |
+| 4.A.4.a.5 | Assisting and Caring for Others | 0.0181 | health | 0.6444 |
+| 4.A.3.b.2 | Drafting, Laying Out, and Specifying Technical Devices, Parts, and Equipment | 0.0176 | communication | 0.8216 |
+| 4.A.4.a.3 | Communicating with People Outside the Organization | 0.0169 | food | 0.6756 |
+| 4.A.4.c.1 | Performing Administrative Activities | 0.0169 | food | 0.6705 |
+| 4.A.4.a.1 | Interpreting the Meaning of Information for Others | 0.0148 | health | 0.6900 |
+| 4.A.2.b.3 | Updating and Using Relevant Knowledge | 0.0128 | education | 0.7407 |
+| 4.A.1.b.3 | Estimating the Quantifiable Characteristics of Products, Events, or Information | 0.0127 | energy | 0.6730 |
+| 4.A.3.b.1 | Working with Computers | 0.0123 | communication | 0.8203 |
+| 4.A.4.a.8 | Performing for or Working Directly with the Public | 0.0122 | clothing | 0.6809 |
+| 4.A.3.b.5 | Repairing and Maintaining Electronic Equipment | 0.0114 | energy | 0.7219 |
+| 4.A.4.a.6 | Selling or Influencing Others | 0.0108 | clothing | 0.6973 |
+| 4.A.2.b.4 | Developing Objectives and Strategies | 0.0103 | meaning | 0.7545 |
+| 4.A.2.a.3 | Evaluating Information to Determine Compliance with Standards | 0.0100 | safety | 0.6001 |
+| 4.A.3.b.4 | Repairing and Maintaining Mechanical Equipment | 0.0096 | mobility | 0.6167 |
+| 4.A.4.c.2 | Staffing Organizational Units | 0.0087 | meaning | 0.7593 |
+| 4.A.4.a.7 | Resolving Conflicts and Negotiating with Others | 0.0087 | meaning | 0.6603 |
+| 4.A.3.a.4 | Operating Vehicles, Mechanized Devices, or Equipment | 0.0085 | mobility | 0.5973 |
+| 4.A.2.b.6 | Organizing, Planning, and Prioritizing Work | 0.0065 | energy | 0.7233 |
+| 4.A.1.b.1 | Identifying Objects, Actions, and Events | 0.0064 | food | 0.7729 |
+| 4.A.2.b.5 | Scheduling Work and Activities | 0.0049 | health | 0.6495 |
+| 4.A.4.a.4 | Establishing and Maintaining Interpersonal Relationships | 0.0027 | meaning | 0.7129 |
+| 4.A.4.b.2 | Developing and Building Teams | 0.0013 | education | 0.7167 |
+| 4.A.4.b.5 | Coaching and Developing Others | 0.0005 | meaning | 0.8304 |
+
+### Top 25 intermediate work activities
+
+| activity | name | flow | top_need | software_open_share |
+|---|---|---|---|---|
+| 4.A.4.b.4.j | Direct organizational operations, activities, or procedures. | 0.0363 | meaning | 0.7353 |
+| 4.A.3.b.6.h | Maintain operational records. | 0.0233 | water_sanitation | 0.7002 |
+| 4.A.4.a.2.c | Communicate with others about operational plans or activities. | 0.0170 | energy | 0.6656 |
+| 4.A.3.a.1.c | Clean tools, equipment, facilities, or work areas. | 0.0168 | food | 0.7051 |
+| 4.A.4.b.4.a | Supervise personnel activities. | 0.0153 | health | 0.7282 |
+| 4.A.2.b.3.a | Maintain current knowledge in area of expertise. | 0.0128 | education | 0.7407 |
+| 4.A.4.b.3.d | Train others on operational or work procedures. | 0.0128 | meaning | 0.7112 |
+| 4.A.4.a.3.c | Provide information to guests, clients, or customers. | 0.0123 | food | 0.6842 |
+| 4.A.4.a.8.c | Respond to customer problems or inquiries. | 0.0120 | clothing | 0.6766 |
+| 4.A.1.a.1.b | Read documents or materials to inform work processes. | 0.0112 | mobility | 0.6791 |
+| 4.A.2.b.4.a | Develop organizational policies, systems, or processes. | 0.0101 | meaning | 0.7568 |
+| 4.A.4.c.1.c | Execute financial transactions. | 0.0101 | food | 0.6487 |
+| 4.A.4.c.3.e | Purchase goods or services. | 0.0098 | food | 0.6757 |
+| 4.A.4.b.6.e | Advise others on business or operational matters. | 0.0097 | communication | 0.7569 |
+| 4.A.4.b.4.h | Manage budgets or finances. | 0.0096 | meaning | 0.7385 |
+| 4.A.3.b.6.m | Prepare documentation for contracts, applications, or permits. | 0.0091 | clothing | 0.6612 |
+| 4.A.2.a.4.g | Analyze data to improve operations. | 0.0090 | communication | 0.7477 |
+| 4.A.3.a.4.a | Operate transportation equipment or vehicles. | 0.0085 | mobility | 0.5973 |
+| 4.A.4.b.1.f | Assign work to others. | 0.0083 | clothing | 0.7509 |
+| 4.A.2.b.1.a | Determine values or prices of goods or services. | 0.0083 | clothing | 0.6700 |
+| 4.A.4.b.6.b | Advise others on products or services. | 0.0082 | clothing | 0.7497 |
+| 4.A.2.a.4.k | Analyze business or financial data. | 0.0081 | meaning | 0.7206 |
+| 4.A.4.a.6.c | Promote products, services, or programs. | 0.0077 | clothing | 0.7145 |
+| 4.A.3.b.5.a | Maintain tools or equipment. | 0.0076 | water_sanitation | 0.6964 |
+| 4.A.3.b.2.f | Develop operational or technical procedures or standards. | 0.0075 | communication | 0.8299 |
+
+## Where today's value flows, by the software listed (taxonomy capabilities)
 
 Each need dollar traced through sectors (value added) and occupations (wage mix) to the capabilities whose software they list. Flowed: 78.0% of the basket; 4.8% sits in sectors with no occupational data and 17.2% is work the chain could not place. Top 25 of 223:
 

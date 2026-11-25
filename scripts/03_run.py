@@ -4,7 +4,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent.parent))
 import numpy as np
 import pandas as pd
 from scipy.stats import spearmanr
-from plenty import model as M, analysis as A, occupations as O, rd as RD, flows as F
+from plenty import model as M, analysis as A, occupations as O, rd as RD, flows as F, work as W
 
 OUT = M.ROOT / "results"
 OUT.mkdir(exist_ok=True)
@@ -85,6 +85,81 @@ def capability_flows(m, r):
     table.round(12).to_csv(OUT / "capability_flow.csv")
     acct = pd.DataFrame({label: F.unattributed(vn, out[label][1], caps) for label in out}).rename_axis("part")
     acct.round(6).to_csv(OUT / "capability_flow_accounting.csv")
+    return table, acct
+
+
+TOP_LINKS = 8   # capabilities kept per activity, and activities per capability, in activity_capability_flow.csv
+
+
+def activity_flows(m, r):
+    """Where today's value flows, by the work done (plenty/work.py): each need dollar traced through
+    sectors and occupations to O*NET's work activities, and split by the software the same
+    occupations list. Writes results/activity_*.csv and returns (table, accounting)."""
+    com, H, t = m.t.commodities, W.hierarchy(), W.tasks()
+    vn = F.need_value_added(m, r)
+    out = {}
+    for weight in W.WEIGHTS:
+        sh = W.task_activity_shares(t, weight)
+        theta = W.occupation_activity_shares(sh)
+        work = F.sector_work(com, theta)
+        out[weight] = (sh, theta, work) + F.flow(vn, work, list(theta.columns))
+    sh, theta, work, flow, by_need, _ = out["importance"]
+    dwas = list(theta.columns)
+    flow_f = out["frequency"][3].reindex(dwas).fillna(0.0)
+    iwa_of, gwa_of = H.iwa.reindex(dwas), H.gwa.reindex(dwas)
+    by_need.round(12).to_csv(OUT / "activity_flow_by_need.csv")
+
+    # each sector's work by intermediate activity, for the derivations on the site
+    work_iwa = work[dwas].astype(float).T.groupby(iwa_of.values).sum().T.where(work.source.str.startswith("oews"))
+    work[["source", "oews_industries"]].join(work_iwa.round(10)).to_csv(OUT / "activity_flow_work.csv")
+
+    # the occupations and the tasks each intermediate activity's flow passes through
+    sv = W.soc_value(F.occupation_value(com, vn.mean(axis=1)), theta.index)
+    title = O.oews().drop_duplicates("OCC_CODE").set_index("OCC_CODE").OCC_TITLE
+    theta_iwa = theta.T.groupby(iwa_of.values).sum().T
+    occ = theta_iwa.mul(sv, axis=0).stack()
+    occ = occ[occ > 0].rename("flow").rename_axis(["soc", "iwa"]).reset_index()
+    occ = occ.sort_values("flow", ascending=False).groupby("iwa").head(TOP_OCCUPATIONS)
+    occ = occ.assign(title=occ.soc.map(title).fillna("?"), share_of_basket=occ.soc.map(sv),
+                     share_of_work=[theta_iwa.at[s_, i] for s_, i in zip(occ.soc, occ.iwa)])
+    occ[["iwa", "soc", "title", "share_of_basket", "share_of_work", "flow"]].sort_values(["iwa", "flow"], ascending=[True, False]) \
+        .round(10).to_csv(OUT / "activity_flow_occupations.csv", index=False)
+    onet_title = pd.read_csv(O.OCC / "onet_occupations.csv").set_index("O*NET-SOC Code").Title
+    tk = sh.assign(iwa=sh.dwa.map(H.iwa), flow=sh.share * sh.soc.map(sv)).groupby(["iwa", "onet_soc", "task_id", "task"]).flow.sum().reset_index()
+    tk = tk[tk.flow > 0].sort_values("flow", ascending=False).groupby("iwa").head(TOP_OCCUPATIONS)
+    tk.assign(occupation=tk.onet_soc.map(onet_title))[["iwa", "occupation", "task", "flow"]].sort_values(["iwa", "flow"], ascending=[True, False]) \
+        .round(10).to_csv(OUT / "activity_flow_tasks.csv", index=False)
+
+    # The software listed by the people who do each activity, and how much of it has an open tool.
+    # The distinctive split is used, so each occupation counts for what is specific to it; with the
+    # plain split every activity is surrounded by the same office tools.
+    caps = F.capabilities()
+    J = W.joint(sv, theta, F.occupation_shares(F.listings(), F.product_capabilities(), caps, distinctive=True))
+    tax = pd.read_csv(F.TAXONOMY / "capabilities.csv", dtype=str).fillna("")
+    leaves = tax[tax.level == "2"]
+    open_share = (leaves.open_tools != "").groupby(leaves.parent).mean().reindex(caps).fillna(0.0)
+    J_iwa = J.groupby(iwa_of.reindex(J.index).values).sum()
+    long = J_iwa.stack().rename("flow").rename_axis(["iwa", "capability"]).reset_index()
+    long = long[long.flow > 0]
+    keep = pd.concat([long.sort_values("flow", ascending=False).groupby(c).head(TOP_LINKS) for c in ("iwa", "capability")]).drop_duplicates()
+    keep.sort_values(["iwa", "flow"], ascending=[True, False]).round(12).to_csv(OUT / "activity_capability_flow.csv", index=False)
+
+    frames = []
+    for level, key, name, parent in (("detailed", pd.Series(dwas, index=dwas), H.dwa_name, H.iwa),
+                                     ("intermediate", iwa_of, H.drop_duplicates("iwa").set_index("iwa").iwa_name, H.drop_duplicates("iwa").set_index("iwa").gwa),
+                                     ("general", gwa_of, H.drop_duplicates("gwa").set_index("gwa").gwa_name, None)):
+        f, ff, bn, j = flow.groupby(key).sum(), flow_f.groupby(key).sum(), by_need.groupby(key).sum(), J.groupby(key.reindex(J.index)).sum()
+        frames.append(pd.DataFrame({
+            "level": level, "name": name.reindex(f.index), "parent": parent.reindex(f.index) if parent is not None else "",
+            "flow": f, "flow_frequency": ff, "rank": f.rank(ascending=False, method="min").astype(int),
+            "top_need": bn.idxmax(axis=1), "software_flow": j.sum(axis=1).reindex(f.index).fillna(0.0),
+            "software_open_share": (j.mul(open_share, axis=1).sum(axis=1) / j.sum(axis=1)).reindex(f.index)}))
+    table = pd.concat(frames).rename_axis("activity")
+    table.round(12).to_csv(OUT / "activity_flow.csv")
+    acct = pd.Series(F.unattributed(vn, work, dwas), name="value").rename_axis("part")
+    acct["spearman_frequency_detailed"] = spearmanr(flow, flow_f)[0]
+    acct["spearman_frequency_intermediate"] = spearmanr(flow.groupby(iwa_of).sum(), flow_f.groupby(iwa_of).sum())[0]
+    acct.round(6).to_csv(OUT / "activity_flow_accounting.csv")
     return table, acct
 
 
@@ -214,6 +289,7 @@ def main():
     cap_table.index.name = "capability"
     cap_table.round(4).to_csv(OUT / "capability_table.csv")
     flows, flow_acct = capability_flows(m, r)
+    acts, act_acct = activity_flows(m, r)
 
     # ---- summary.md
     L = []
@@ -223,7 +299,17 @@ def main():
     L.append(f"\nTotal basket: ${T.sum()/1e6:.2f} trillion. Physical sectors (farming, extraction, "
              f"utilities, construction, manufacturing) carry {phys_share:.0%} of the value added "
              f"embodied in it; the rest is services.\n")
-    L.append("## Where today's value flows (taxonomy capabilities)\n")
+    L.append("## Where today's value flows, by the work done (O*NET work activities)\n")
+    L.append(f"Each need dollar traced through sectors (value added) and occupations (wage mix) to what the occupations do "
+             f"(O*NET tasks, weighted by importance x relevance, grouped into work activities). Flowed: {act_acct['flowed']:.1%} of "
+             f"the basket; {act_acct['sectors_without_occupation_data']:.1%} sits in sectors with no occupational data and "
+             f"{act_acct['work_not_placed']:.1%} in occupations with no task list. Weighting tasks by frequency instead gives a rank "
+             f"correlation of {act_acct['spearman_frequency_intermediate']:.2f} across intermediate activities.\n")
+    L.append("### General work activities\n")
+    L.append(md(acts[acts.level == "general"].sort_values("flow", ascending=False)[["name", "flow", "top_need", "software_open_share"]], "{:.4f}"))
+    L.append("\n### Top 25 intermediate work activities\n")
+    L.append(md(acts[acts.level == "intermediate"].sort_values("flow", ascending=False).head(25)[["name", "flow", "top_need", "software_open_share"]], "{:.4f}"))
+    L.append("\n## Where today's value flows, by the software listed (taxonomy capabilities)\n")
     L.append(f"Each need dollar traced through sectors (value added) and occupations (wage mix) to the capabilities whose "
              f"software they list. Flowed: {flow_acct.at['flowed', 'flow']:.1%} of the basket; "
              f"{flow_acct.at['sectors_without_occupation_data', 'flow']:.1%} sits in sectors with no occupational data and "
