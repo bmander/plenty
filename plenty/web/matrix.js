@@ -23,13 +23,20 @@
   function cents(dollars, digits) { return (dollars * 100).toFixed(digits === undefined ? 2 : digits) + "\u00a2"; }
   // For each kind of matrix: a value said in full, and a size (never negative) printed short on a cell.
   function hundredths(x) { x *= 100; return x.toFixed(x >= 99.95 ? 0 : x >= 9.995 ? 1 : 2); }
+  function thousands(x) { return x >= 99500 ? Math.round(x / 1000) + "k" : x >= 999.5 ? (x / 1000).toFixed(1) + "k" : String(Math.round(x)); }
   var KINDS = {
     per_dollar: { say: function (v) { return cents(v) + " per dollar"; }, cell: hundredths },
     share: { say: function (v) { return hundredths(v) + "%"; }, cell: hundredths },
     dollars: {
       say: function (v) { return (v < 0 ? "\u2212$" : "$") + Math.round(Math.abs(v)).toLocaleString("en-US") + " million"; },
-      cell: function (x) { return x >= 99500 ? Math.round(x / 1000) + "k" : x >= 999.5 ? (x / 1000).toFixed(1) + "k" : String(Math.round(x)); }
-    }
+      cell: thousands
+    },
+    people: { say: function (v) { return Math.round(v).toLocaleString("en-US") + " people"; }, cell: thousands },
+    wage: {
+      say: function (v) { return "$" + Math.round(v).toLocaleString("en-US") + " a year"; },
+      cell: function (x) { return Math.round(x / 1000) + "k"; }
+    },
+    mark: { say: function () { return M.marked; }, cell: function () { return "1"; } }
   }, kind = KINDS[M.kind];
 
   // --- the picture: the whole matrix, or a window on it

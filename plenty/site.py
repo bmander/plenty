@@ -154,6 +154,27 @@ class Data:
         return bill / 1e6, info, occ, survey
 
     @functools.cached_property
+    def survey(self) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """(E, M, T, industries), with P = T (E o M) / 1e6. E and M are the survey's employment and
+        mean annual wage (dollars), surveyed industry x occupation, NaN where nothing is published.
+        T is sector x surveyed industry: one where the industry covers the sector. industries has
+        each surveyed industry's title and group, in the order the pages show them."""
+        P, info, _, survey = self.wage_bill
+        o = O.oews()
+        det = o[o.O_GROUP.str.lower() == "detailed"]
+        def group(code):                                # the survey files government under 999
+            return "Government" if code.startswith("99") else MX.groups([code])[code]
+        ind = pd.DataFrame({"title": survey.title, "group": [group(c) for c in survey.index]})
+        ind = ind.loc[sorted(ind.index, key=lambda c: (MX.ORDER.index(ind.group[c]), c))]
+        E, wage = (det.pivot(index="NAICS", columns="OCC_CODE", values=x).reindex(index=ind.index, columns=P.columns)
+                   for x in ("emp", "wage"))
+        T = pd.DataFrame(0.0, index=P.index, columns=ind.index)
+        for c, covered_by in info.oews_industries.items():
+            if covered_by:
+                T.loc[c, covered_by.split(";")] = 1.0
+        return E, wage, T, ind
+
+    @functools.cached_property
     def wages(self) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
         """(W, info, occupations): each sector's wage bill as shares over occupations. A row sums to
         one, or to nothing where the sector is not measured."""
@@ -1688,7 +1709,7 @@ _ONE_LESS_C = f'<mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo>{_sub("c", "a")}<mo>)<
 
 
 MATRIX_A = "matrix-A.html"
-MATRIX_PAGES = "ABDUKVSWP" # the matrices with a picture page of their own: matrix-A.html, matrix-B.html and so on
+MATRIX_PAGES = "ABDUKVSWPEMT"  # the matrices with a picture page of their own: matrix-A.html, matrix-B.html and so on
 # every symbol with a page: those matrices, investment by investor (a table, being five columns wide)
 # and the vector of weights
 # and the two vectors there is one of for each need. A file is not named by a letter's case alone:
@@ -1711,6 +1732,7 @@ MATRIX_SHOWN = "221100"    # the sector A's lookup opens on: electric power
 MATRIX_PARTS = "matrix-A-parts.js"   # B and D, fetched when a cell of A is first marked
 MATRIX_PART_CUT = 1e-5     # entries of B under a thousandth of a cent are left out of that file
 MATRIX_TOP = 15            # entries in a table of the largest
+MATRIX_WIDTH, MATRIX_HEIGHT = 802, 780   # the most a picture takes of the page, in CSS pixels
 # How each kind of matrix is filed and shown: the unit of its data file, the smallest entry kept in
 # it (smaller ones are blank in the picture), the two ends of the colour scale and their legend,
 # what a blank cell is said to hold, and how a cell's printed value is described.
@@ -1722,6 +1744,13 @@ MATRIX_KINDS = {
     "dollars": {"unit": 1.0, "cut": 0.5, "scale": (1.0, 1e6), "ticks": ("$1M", "$10M", "$100M", "$1B", "$10B", "$100B", "$1T"),
                 "blank": "under $0.5 million", "small": "under half a million dollars",
                 "in_cell": "in millions of dollars, with k for thousands"},
+    "people": {"unit": 1.0, "cut": 0.5, "scale": (10.0, 1e7), "ticks": ("10", "100", "1k", "10k", "100k", "1M", "10M"),
+               "blank": "none published", "small": "not published", "in_cell": "in people, with k for thousands"},
+    # a wage's scale is narrow, so its ticks are doublings; wages beyond either end take the end's colour
+    "wage": {"unit": 1.0, "cut": 0.5, "scale": (25e3, 2e5), "ticks": ("$25k", "$50k", "$100k", "$200k"),
+             "blank": "none published", "small": "not published", "in_cell": "in thousands of dollars a year"},
+    # ones and zeros: no scale to show
+    "mark": {"unit": 1.0, "cut": 0.5, "scale": (0.1, 1.0), "ticks": (), "blank": "no", "small": "", "in_cell": "as a 1"},
 }
 MATRIX_CUT, MATRIX_UNIT = MATRIX_KINDS["per_dollar"]["cut"], MATRIX_KINDS["per_dollar"]["unit"]
 
@@ -1802,6 +1831,9 @@ class Sheet:
     second: pd.DataFrame | None = None     # the part of each entry that is equipment and buildings
     exact: bool = False            # entries are whole units, so a blank cell holds nothing at all
     col_groups: pd.Series | None = None    # column -> group, where the columns are not sectors
+    row_groups: pd.Series | None = None    # and the same for rows
+    blanks: tuple[str, str] | None = None  # what a blank cell holds, as a hover tip says it and as the caption does
+    marked: str = ""               # for a matrix of ones and zeros: what a one says
     short: dict | None = None      # short labels for those groups
     order: str = "Sectors are in the Bureau's order within fifteen groups."
 
@@ -1836,6 +1868,10 @@ def sheets(d: Data) -> dict[str, Sheet]:
     by_occupation = dict(col_groups=occ.major, short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
                          order="Sectors are in the Bureau's order within fifteen groups, and occupations in the order of the "
                                "Standard Occupational Classification within its 22 major groups.")
+    E, wage, T, surveyed = d.survey
+    not_published = ("none published", "not published, because nobody was counted there or the figure is withheld,")
+    by_occupation_only = dict(by_occupation, order="Surveyed industries are in code order within fifteen groups, and occupations "
+                              "in the order of the Standard Occupational Classification within its 22 major groups.")
     goods = dict(row_names=t.names, col_names=t.ind_names)       # commodities down, industries across
     makers = dict(row_names=t.ind_names, col_names=t.names)      # industries down, commodities across
     out = [
@@ -1884,6 +1920,26 @@ def sheets(d: Data) -> dict[str, Sheet]:
               caption="Each row is a sector and each column an occupation. Colour is millions of dollars paid in a year, on a "
                       "log scale. Rows are as bright as the surveyed industries behind them are large, which is what "
                       "dividing by the row's total takes away.", **by_occupation),
+        Sheet("E", "how many work in each occupation", "people", E.fillna(0.0), surveyed.title, occ.title,
+              row_tip="Surveyed industry", col_tip="Occupation", row_is="Row, the surveyed industry:", col_is="Column, the occupation:",
+              axis="Occupations: how many people each industry employs in them",
+              caption="Each row is an industry of the survey and each column an occupation. Colour is the number of people "
+                      "employed, on a log scale.", row_groups=surveyed.group, blanks=not_published, **by_occupation_only),
+        Sheet("M", "what each occupation is paid", "wage", wage.fillna(0.0), surveyed.title, occ.title,
+              row_tip="Surveyed industry", col_tip="Occupation", row_is="Row, the surveyed industry:", col_is="Column, the occupation:",
+              axis="Occupations: their mean annual wage in each industry",
+              caption="Each row is an industry of the survey and each column an occupation. Colour is the mean annual wage, on "
+                      "a log scale from $25,000 to $200,000; wages beyond either end take the end's colour. Columns are far "
+                      "more alike than rows: an occupation is paid much the same wherever it works.",
+              row_groups=surveyed.group, blanks=not_published, **by_occupation_only),
+        Sheet("T", "which surveyed industries cover each sector", "mark", T.loc[com], t.names, surveyed.title,
+              row_tip="Sector", col_tip="Surveyed industry", row_is="Row, the sector:", col_is="Column, the surveyed industry:",
+              axis="Surveyed industries",
+              caption="Each row is a sector and each column an industry of the survey. A filled cell means the industry covers "
+                      "the sector. Both are in the same order, so the filled cells run down the diagonal; a vertical run is "
+                      "one surveyed industry shared by several sectors.",
+              col_groups=surveyed.group, blanks=("does not cover it", "zero"), marked="covers it",
+              order="Sectors and surveyed industries are each in code order within the same fifteen groups."),
         Sheet("V", "the Make table", "dollars", t.V.loc[ind, com], **makers,
               row_tip="Industry", col_tip="Made", row_is="Row, the industry:", col_is="Column, the commodity made:",
               axis="Commodities made",
@@ -1907,8 +1963,9 @@ def sheet_data(s: Sheet, **extra) -> str:
         g = MX.groups(codes) if groups is None else groups
         return {"codes": list(codes), "names": [names[c] for c in codes], "groups": [g[c] for c in codes]}
     payload = {"key": s.key, "kind": s.kind, "unit": kind["unit"], "cut": kind["cut"], "scale": kind["scale"],
-               "blank": "nothing" if s.exact else kind["blank"], "short": {**MX.SHORT, **(s.short or {})},
-               "rows": side(s.values.index, s.row_names), "cols": side(s.values.columns, s.col_names, s.col_groups),
+               "blank": s.blanks[0] if s.blanks else "nothing" if s.exact else kind["blank"], "marked": s.marked,
+               "short": {**MX.SHORT, **(s.short or {})},
+               "rows": side(s.values.index, s.row_names, s.row_groups), "cols": side(s.values.columns, s.col_names, s.col_groups),
                "rowTip": s.row_tip, "colTip": s.col_tip, "rowIs": s.row_is, "colIs": s.col_is,
                "second": w is not None, "cells": [[int(x) for x in col] for col in cells], **extra}
     return "window.PLENTY_MATRIX = " + json.dumps(payload, separators=(",", ":")) + ";\n"
@@ -1952,9 +2009,12 @@ def sheet_picture(s: Sheet, also: str = "", extra: str = "") -> str:
     """The picture of a matrix with its margins, buttons and legend, drawn by web/matrix.js.
     also: a sentence for the caption about this picture alone; extra: markup the script uses."""
     kind, (nr, nc) = MATRIX_KINDS[s.kind], s.values.shape
-    blank = "zero" if s.exact else f"zero or {kind['small']}"
+    blank = s.blanks[1] if s.blanks else "zero" if s.exact else f"zero or {kind['small']}"
+    width = min(MATRIX_WIDTH, round(MATRIX_HEIGHT * nc / nr))       # a tall matrix is drawn narrower, to stay on the screen
+    legend = (f'<div class="mx-legend" aria-hidden="true"><div class="mx-ramp"></div>\n<div class="mx-ticks">'
+              + "".join(f"<span>{x}</span>" for x in kind["ticks"]) + "</div></div>") if kind["ticks"] else ""
     return f"""<figure class="mx">
-<div class="mx-frame">
+<div class="mx-frame" style="grid-template-columns: auto minmax(0, {width + 2}px)">
 <div class="mx-axis mx-axis-top"><span>{e(s.axis)} &rarr;</span>
 <span class="mx-zoom"><button type="button" id="mx-zoom-out" aria-label="Zoom out" disabled>&minus;</button><button
  type="button" id="mx-zoom-in" aria-label="Zoom in">+</button><button type="button" id="mx-zoom-all" disabled>Whole matrix</button><button
@@ -1968,8 +2028,7 @@ def sheet_picture(s: Sheet, also: str = "", extra: str = "") -> str:
 </div>
 </div>
 <div class="mx-note" id="mx-note" aria-live="polite"></div>
-{extra}<div class="mx-legend" aria-hidden="true"><div class="mx-ramp"></div>
-<div class="mx-ticks">{"".join(f"<span>{x}</span>" for x in kind["ticks"])}</div></div>
+{extra}{legend}
 <figcaption>{s.caption} The {(~s.shown).mean():.0%} of entries that are {blank} are blank. {s.order}</figcaption>
 </figure>
 <p class="note mx-how">Hover over a cell for its row, its column and its value. Click a cell to mark it with its row and
@@ -2150,7 +2209,7 @@ what else to know about the survey, is on the page for {sym("P")}. The code is
                 "<i>o</i> is the millions of dollars paid in a year to occupation <i>o</i> by the surveyed industries that cover sector <i>j</i>.")
         figures = [nonzero, ("Sectors with a row", f"{len(direct) + len(proxy)}", f"{len(direct)} directly and {len(proxy)} by a stand-in"),
                    ("Largest entry", f"${v.max() / 1e3:.0f} billion", e(f"{occ.title[top.index[0][1]]}, in {t.names[top.index[0][0]]}".lower()))]
-        E_, M_, T_ = (f"<mi>{_bold(x)}</mi>" for x in "EMT")
+        E_, M_, T_ = (_sym(x, key) for x in "EMT")
         def named(codes):
             return "; ".join(e(t.names[c].lower()) for c in codes)
         about = f"""<p>From the Bureau of Labor Statistics's Occupational Employment and Wage Statistics for May 2021, which gives
@@ -2175,7 +2234,8 @@ own wage bill, and rows must not be added together.</p>
 <ul>
 <li>The survey is four years later than the 2017 tables.</li>
 <li>Where the survey withholds an occupation's employment or wage, that occupation is left out of the row. For the
-median sector this is {dropped:.1%} of the wage bill. Wages above the survey's ceiling of ${O.OEWS_TOP_CODE:,.0f} are counted at the ceiling.</li>
+median sector this is {dropped:.1%} of the wage bill. Where it prints only that a wage is ${O.OEWS_TOP_CODE:,.0f} or more, the
+wage is counted as that.</li>
 <li>{len(proxy)} sectors are measured by a stand-in: public schools and hospitals by education and hospitals of every
 ownership, other government by the survey's government industries, and farms by support activities for farming.</li>
 <li>{len(none)} sectors have no row at all: {named(none)}.</li>
@@ -2184,6 +2244,85 @@ ownership, other government by the survey's government industries, and farms by 
         heads, caption = ("Sector", "Occupation", "$ million"), "Large occupations in large industries. The same figure appears wherever sectors share a surveyed industry."
         by_rows, by_cols = "sectors", "occupations"
         trail = f' /\n<a href="matrix-W.html#about">{_m(_sym("W", "W"))}, who does each sector&rsquo;s work</a>'
+    elif key in "EMT":
+        E, wage, T, surveyed = d.survey
+        _, info, occ, survey = d.wage_bill
+        o = O.oews()
+        pairs = int((o.O_GROUP.str.lower() == "detailed").sum())        # (industry, occupation) pairs the survey lists
+        grouped = int((~surveyed.index.str.isdigit()).sum())
+        product = _eqs([(_sym("P", key), f'{_sym("T", key)}<mo>&#x2062;</mo><mrow><mo>(</mo>{_sym("E", key)}<mo>&#x2218;</mo>{_sym("M", key)}<mo>)</mo></mrow>')])
+        source = ("the Bureau of Labor Statistics's Occupational Employment and Wage Statistics for May 2021, in the national "
+                  "table by industry")
+        axes = (f"<p>The rows are the survey's {len(surveyed)} industries. Most are one four-digit industry code; {grouped} are groupings "
+                f"the survey makes of several, and three are government. The columns are its {E.shape[1]} detailed occupations; the "
+                f"survey's summary lines for groups of occupations are not used.</p>")
+        trail = (f' /\n<a href="matrix-W.html#about">{_m(_sym("W", "W"))}, who does each sector&rsquo;s work</a> / '
+                 f'<a href="matrix-P.html#about">{_m(_sym("P", "P"))}, what was paid</a>')
+        by_rows, by_cols = "surveyed industries", "occupations"
+        if key == "E":
+            lede = ("How many people work in each occupation in each surveyed industry. The entry in row <i>i</i> and column <i>o</i> "
+                    "is the number of people employed in occupation <i>o</i> in industry <i>i</i> in May 2021.")
+            figures = [("Entries published", f"{int(E.notna().sum().sum()):,}", f"of {v.size:,}; the survey lists {pairs:,} pairs"),
+                       ("People counted", f"{E.sum().sum() / 1e6:.1f} million", "in the entries published"),
+                       ("Largest entry", f"{v.max() / 1e6:.1f} million", e(f"{occ.title[top.index[0][1]]}, in {surveyed.title[top.index[0][0]]}".lower()))]
+            about = f"""<p>This is the Bureau's own count, from {source}. Nothing is done to it here.</p>
+{axes}
+<p>The survey lists {pairs:,} pairs of an industry and an occupation, and withholds the employment of {pairs - int(E.notna().sum().sum()):,} of
+them. Those are blank here and count as nobody. Every figure is a multiple of ten, and the smallest is {int(E.min().min())}.</p>
+<p>It is multiplied, entry by entry, by {sym("M")}, the mean annual wage, to get what each industry paid each
+occupation. {sym("T")} then adds up the industries that cover a sector:</p>
+{product}"""
+            heads, caption = ("Surveyed industry", "Occupation", "People"), "The occupations an industry is mostly made of."
+        elif key == "M":
+            known = wage.values[~np.isnan(wage.values)]
+            capped = int((o.A_MEAN[o.O_GROUP.str.lower() == "detailed"] == "#").sum())
+            paid = (E * wage).sum().sum() / E.where(wage.notna()).sum().sum()
+            lede = ("What each occupation is paid in each surveyed industry. The entry in row <i>i</i> and column <i>o</i> is the "
+                    "mean annual wage, in dollars, of occupation <i>o</i> in industry <i>i</i> in May 2021.")
+            figures = [("Entries published", f"{len(known):,}", f"of {v.size:,}; the survey lists {pairs:,} pairs"),
+                       ("Mean over everyone", f"${paid:,.0f}", "total pay over total employment, where both are published"),
+                       ("Range", f"${known.min() / 1e3:.0f}k to ${known.max() / 1e3:.0f}k", "the lowest and highest mean wage published")]
+            about = f"""<p>This is the Bureau's own figure, from {source}. It is used as published, with one exception.</p>
+{axes}
+<p>The survey withholds the wage of {pairs - len(known):,} of its {pairs:,} pairs; those are blank here. For {capped} it prints only
+that the wage is ${O.OEWS_TOP_CODE:,.0f} or more, and those are counted as ${O.OEWS_TOP_CODE:,.0f}, which is the exception.</p>
+<p>It is multiplied, entry by entry, by {sym("E")}, employment, to get what each industry paid each occupation in a
+year. {sym("T")} then adds up the industries that cover a sector:</p>
+{product}
+<p>Only the product is used, so an entry counts when both its wage and its employment are published.</p>"""
+            heads, caption = ("Surveyed industry", "Occupation", "$ a year"), "The highest mean wages the survey publishes."
+        else:
+            covered, shared = T.sum(axis=1), T.sum(axis=0)
+            proxy = info.index[info.source == "oews_proxy"]
+            none = [c for c in s.values.index if not info.source[c].startswith("oews")]
+            unused = [surveyed.title[c] for c in shared.index[shared == 0]]
+            most = shared.sort_values(ascending=False).head(8)
+            mrows = [f'<tr><td class="name">{e(surveyed.title[c].split(" (")[0])}</td><td class="num">{int(k)}</td>'
+                     f'<td class="wrap dim">{"; ".join(e(t.names[x].lower()) for x in T.index[T[c] > 0][:4])}{" and others" if k > 4 else ""}</td></tr>'
+                     for c, k in most.items()]
+            lede = ("Which industries of the survey stand behind each sector. The entry in row <i>j</i> and column <i>i</i> is one "
+                    "if surveyed industry <i>i</i> covers sector <i>j</i>, and zero if not.")
+            figures = [("Entries that are one", f"{int(v.sum())}", f"of {v.size:,}"),
+                       ("Sectors with one industry", f"{int((covered == 1).sum())}", f"{int((covered > 1).sum())} have several and {int((covered == 0).sum())} have none"),
+                       ("Industries shared", f"{int((shared > 1).sum())}", f"of {len(shared)} cover more than one sector")]
+            about = f"""<p>The Bureau of Economic Analysis publishes, for each of its sectors, the industry codes the sector is made of.
+The survey's industries have codes of the same kind. A surveyed industry covers a sector when one of its codes contains
+one of the sector's or is contained in it, the sector's codes being cut to four digits, which is as fine as the survey
+goes.</p>
+<p>That leaves some sectors with nothing, and {len(proxy)} of them are given a stand-in instead: farms take the survey's
+support activities for crop or animal production; public schools and hospitals take education and hospitals of every
+ownership; and the rest of government takes the survey's federal, state and local government industries.
+{len(none)} sectors have no row at all: {"; ".join(e(t.names[c].lower()) for c in none)}.</p>
+<p>The survey has {len(shared)} industries and there are {n} sectors, so industries are shared. Where a column has several
+ones, every one of those sectors gets the industry's whole pay in {sym("P")}, which is why the rows of {sym("P")} overlap:</p>
+{product}
+{table([th("Surveyed industry"), th("Sectors it covers", "num"), th("Among them")], mrows,
+       caption="The surveyed industries that cover the most sectors.")}
+<p class="note">{len(unused)} surveyed {"industry covers" if len(unused) == 1 else "industries cover"} no sector: {e("; ".join(unused).lower())}. The postal service sector
+is given the federal government's stand-in instead, which looks like an oversight in the stand-ins and is worth a second look.</p>
+<p>The code is <a href="{REPO}/blob/main/plenty/occupations.py"><code>plenty/occupations.py</code></a>.</p>"""
+            heads, caption = None, ""
+            by_rows, by_cols = "sectors", "surveyed industries"
     else:
         assert key == "D", key
         makers = (v > 0).sum(axis=0)
@@ -2210,7 +2349,7 @@ industries that make it, in proportion to how much of it each makes. This is the
             top = top[[i != j for i, j in top.index]]
         top = top.head(MATRIX_TOP)
         def show(x):
-            return {"per_dollar": f"{x * 100:.1f}", "share": f"{x:.1%}", "dollars": f"{x:,.0f}"}[s.kind]
+            return {"per_dollar": f"{x * 100:.1f}", "share": f"{x:.1%}"}.get(s.kind, f"{x:,.0f}")
         head = [th(heads[0]), th(heads[1]), th(heads[2], "num")] + ([th("Of which equipment and buildings, &cent;", "num")] if s.second is not None else [])
         trows = [f'<tr><td class="name">{e(s.row_names[i])}</td><td class="name">{e(s.col_names[j])}</td><td class="num">{show(x)}</td>'
                  + (f'<td class="num">{show(s.second.at[i, j])}</td>' if s.second is not None else "") + "</tr>" for (i, j), x in top.items()]

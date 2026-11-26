@@ -125,13 +125,15 @@ def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
     m, t = built.io, built.io.t
     purchases, capital, D = site.MX.factors(m)
     truth = {"A": m.A, "B": purchases + capital, "D": D, "U": t.U, "K": m.K, "V": t.V, "S": built.capital.shares,
-             "W": built.wages[0], "P": built.wage_bill[0]}
+             "W": built.wages[0], "P": built.wage_bill[0],
+             "E": built.survey[0].fillna(0.0), "M": built.survey[1].fillna(0.0), "T": built.survey[2]}
     assert set(truth) == set(site.MATRIX_PAGES) == set(built.sheets)
     a_page, k_page = (site.SITE / site.MATRIX_A).read_text(), (site.SITE / "matrix-K.html").read_text()
     method = (site.SITE / "method.html").read_text()
     w_page = (site.SITE / "matrix-W.html").read_text()
-    linked_from = {"S": k_page, "W": method, "P": w_page}         # the rest are in A's derivation
-    leads_back = {"W": "method.html#account", "P": "matrix-W.html"}
+    p_page = (site.SITE / "matrix-P.html").read_text()
+    linked_from = {"S": k_page, "W": method, "P": w_page, "E": p_page, "M": p_page, "T": p_page}   # the rest are in A's derivation
+    leads_back = {"W": "method.html#account", "P": "matrix-W.html", "E": "matrix-P.html", "M": "matrix-P.html", "T": "matrix-P.html"}
     for key, X in truth.items():
         sheet = built.sheets[key]
         html = (site.SITE / sheet.href).read_text()
@@ -151,7 +153,7 @@ def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
             got[col[0::step], j] = np.array(col[1::step]) * unit
         kept = np.abs(x) >= data["cut"]
         assert not got[~kept].any() and np.abs(got - x)[kept].max() <= unit / 2 + 1e-9, key
-        assert kept.sum() > 1000 and data["scale"][0] < data["scale"][1]
+        assert kept.sum() > 500 and data["scale"][0] < data["scale"][1]
         csv = pd.read_csv(site.SITE / sheet.csv_file, index_col=0, dtype={0: str})
         assert list(csv.index.astype(str)) == rows and np.allclose(csv.values, x, rtol=1e-5, atol=1e-9), key
     # a table of whole millions is filed exactly, so its blank cells hold nothing
@@ -222,6 +224,20 @@ def test_the_wage_matrix_page_says_how_each_sector_is_measured(built):
     text = (site.SITE / "matrix-W-data.js").read_text()
     data = json.loads(text[text.index("{"):text.rindex("}") + 1])
     assert set(data["cols"]["groups"]) <= set(data["short"]) and len(set(data["cols"]["groups"])) == occ.major.nunique()
+
+
+def test_the_wage_bill_is_the_survey_added_up_over_the_industries_that_cover_a_sector(built):
+    E, wage, T, surveyed = built.survey
+    P = built.wage_bill[0]
+    assert list(T.index) == list(P.index) and list(T.columns) == list(E.index) == list(surveyed.index)
+    assert np.allclose(T.values @ (E * wage).fillna(0.0).values / 1e6, P.values)        # P = T (E o M)
+    assert set(np.unique(T.values)) == {0.0, 1.0} and set(surveyed.group) <= set(site.MX.ORDER)
+    groups = list(surveyed.group)
+    assert groups == sorted(groups, key=site.MX.ORDER.index)                          # in the page's groups, like sectors
+    # a tall matrix is drawn narrower than a wide one
+    t_page, e_page = ((site.SITE / f"matrix-{k}.html").read_text() for k in "TE")
+    assert f"minmax(0, {site.MATRIX_WIDTH + 2}px)" in e_page and f"minmax(0, {site.MATRIX_WIDTH + 2}px)" not in t_page
+    assert 'class="mx-legend"' in e_page and 'class="mx-legend"' not in t_page         # ones and zeros have no scale
 
 
 def test_ai_use_sits_beside_the_work(built):
