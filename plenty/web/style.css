@@ -271,6 +271,7 @@ table[data-heatgrid] thead th, table[data-heatgrid] td { width: 1%; white-space:
 table[data-heatgrid] thead th:first-child { width: auto; }                                    /* and the names take the rest */
 table[data-heatgrid] tbody th { min-width: 28ch; }
 math a sub { font-size: 0.72em; }
+p.note code { white-space: nowrap; }   /* an expression in code is not broken across lines */
 td.h { text-align: right; font-variant-numeric: tabular-nums; background: color-mix(in srgb, var(--series) calc(var(--h, 0) * 1%), transparent); }
 
 /* A matrix page: the picture of every entry, and one sector's column and row */

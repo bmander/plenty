@@ -140,15 +140,24 @@ class Data:
         return va / va.sum()
 
     @functools.cached_property
-    def wages(self) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-        """(W, info, occupations): each sector's wage bill as shares over occupations (rows sum to one,
-        or to nothing where the sector is not measured), how each sector was measured, and each
-        occupation's title and major group."""
+    def wage_bill(self) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """(P, info, occupations, survey): what the surveyed industries covering each sector paid each
+        occupation in a year, $M (sector x occupation); how each sector was measured; each
+        occupation's title and major group; and each surveyed industry's title and whole wage bill, $M."""
         bill, info = O.wage_mix(self.io.t.commodities, use_proxies=True)
         o = O.oews()
         titles = o.drop_duplicates("OCC_CODE").set_index("OCC_CODE").OCC_TITLE
         occ = pd.DataFrame({"title": titles.reindex(bill.columns),
                             "major": [titles[c[:2] + "-0000"].removesuffix(" Occupations") for c in bill.columns]})
+        all_jobs = o[o.OCC_CODE == "00-0000"].set_index("NAICS")
+        survey = pd.DataFrame({"title": all_jobs.NAICS_TITLE, "wagebill_musd": all_jobs.wagebill / 1e6})
+        return bill / 1e6, info, occ, survey
+
+    @functools.cached_property
+    def wages(self) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """(W, info, occupations): each sector's wage bill as shares over occupations. A row sums to
+        one, or to nothing where the sector is not measured."""
+        bill, info, occ, _ = self.wage_bill
         return bill.div(bill.sum(axis=1).replace(0, np.nan), axis=0).fillna(0.0), info, occ
 
     @functools.cached_property
@@ -1679,7 +1688,7 @@ _ONE_LESS_C = f'<mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo>{_sub("c", "a")}<mo>)<
 
 
 MATRIX_A = "matrix-A.html"
-MATRIX_PAGES = "ABDUKVSW"  # the matrices with a picture page of their own: matrix-A.html, matrix-B.html and so on
+MATRIX_PAGES = "ABDUKVSWP" # the matrices with a picture page of their own: matrix-A.html, matrix-B.html and so on
 # every symbol with a page: those matrices, investment by investor (a table, being five columns wide)
 # and the vector of weights
 # and the two vectors there is one of for each need. A file is not named by a letter's case alone:
@@ -1747,9 +1756,12 @@ def _elt(shown: str, sub: str, page: str = "") -> str:
     return f'<mi><a href="{SYMBOL_PAGES[page]}">{italic}<sub><i>{sub}</i></sub></a></mi>'
 
 
-def _diag(letter: str) -> str:
-    """A vector written as a diagonal matrix."""
-    return f"<mrow><mspace width=\"0.17em\"/><mi>diag</mi><mo>&#x2061;</mo><mo>(</mo><mi>{_bold(letter)}</mi><mo>)</mo></mrow>"
+_ONES = "<mn>&#x1D7CF;</mn>"     # a column of ones: a matrix times it is the matrix's row totals
+
+
+def _diag(letter: str = "", body: str = "") -> str:
+    """A vector written as a diagonal matrix: the vector of that letter, or the one body spells out."""
+    return f"<mrow><mspace width=\"0.17em\"/><mi>diag</mi><mo>&#x2061;</mo><mo>(</mo>{body or f'<mi>{_bold(letter)}</mi>'}<mo>)</mo></mrow>"
 
 
 def _inv(base: str) -> str:
@@ -1820,6 +1832,10 @@ def sheets(d: Data) -> dict[str, Sheet]:
     com, ind = MX.ordered(t.commodities), MX.ordered(t.industries)
     purchases, capital, D = MX.factors(m)
     A, A_capital = matrix_a(d)
+    occ = d.wage_bill[2]
+    by_occupation = dict(col_groups=occ.major, short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
+                         order="Sectors are in the Bureau's order within fifteen groups, and occupations in the order of the "
+                               "Standard Occupational Classification within its 22 major groups.")
     goods = dict(row_names=t.names, col_names=t.ind_names)       # commodities down, industries across
     makers = dict(row_names=t.ind_names, col_names=t.names)      # industries down, commodities across
     out = [
@@ -1856,16 +1872,18 @@ def sheets(d: Data) -> dict[str, Sheet]:
               caption="Each column is an industry and each row a capital good. Colour is the share of an investor's purchases of "
                       "the good that is placed on the industry, on a log scale. A short bright run is a good with few users; "
                       "a long faint one is a good spread over every industry of its kind."),
-        Sheet("W", "who does each sector's work", "share", d.wages[0].loc[com], t.names, d.wages[2].title,
+        Sheet("W", "who does each sector's work", "share", d.wages[0].loc[com], t.names, occ.title,
               row_tip="Sector", col_tip="Share of its wage bill paid to", row_is="Row, the sector:", col_is="Column, the occupation:",
               axis="Occupations: their share of each sector's wage bill",
               caption="Each row is a sector and each column an occupation. Colour is the occupation's share of the sector's "
                       "wage bill, on a log scale. A bright column is an occupation every sector pays, such as managers; a "
-                      "bright patch is one that belongs to a few sectors.",
-              col_groups=d.wages[2].major,
-              short={g: SOC_SHORT[c[:2]] for c, g in d.wages[2].major.items()},
-              order="Sectors are in the Bureau's order within fifteen groups, and occupations in the order of the Standard "
-                    "Occupational Classification within its 22 major groups."),
+                      "bright patch is one that belongs to a few sectors.", **by_occupation),
+        Sheet("P", "what each sector's industries paid each occupation", "dollars", d.wage_bill[0].loc[com], t.names, occ.title,
+              row_tip="Sector", col_tip="Paid to", row_is="Row, the sector:", col_is="Column, the occupation:",
+              axis="Occupations: what each sector's industries paid them",
+              caption="Each row is a sector and each column an occupation. Colour is millions of dollars paid in a year, on a "
+                      "log scale. Rows are as bright as the surveyed industries behind them are large, which is what "
+                      "dividing by the row's total takes away.", **by_occupation),
         Sheet("V", "the Make table", "dollars", t.V.loc[ind, com], **makers,
               row_tip="Industry", col_tip="Made", row_is="Row, the industry:", col_is="Column, the commodity made:",
               axis="Commodities made",
@@ -1980,7 +1998,7 @@ def matrix_page(d: Data, key: str) -> str:
     nonzero = ("Entries that are not zero", f"{(v != 0).mean():.0%}", f"{int((v != 0).sum()):,} of {v.size:,}")
     diagonal = sum(t.V.at[c, c] for c in t.commodities if c in t.V.index) / t.V.values.sum()
     code = f'<a href="{REPO}/blob/main/plenty/model.py"><code>plenty/model.py</code></a>'
-    top, off_diagonal, via = s.values.stack().sort_values(ascending=False), "", ""
+    top, off_diagonal, via, trail = s.values.stack().sort_values(ascending=False), "", "", None
     by_rows, by_cols = "commodities", "industries"
 
     if key == "U":
@@ -2031,7 +2049,7 @@ entries are negative: sales of used equipment and scrap, shared out the same way
                 "purchases of capital good <i>i</i> that is placed on industry <i>k</i>, the investor being the kind that <i>k</i> is.")
         figures = [nonzero, ("Capital goods", f"{goods}", f"of {n} commodities are bought as investment"),
                    ("Pairings", f"{len(rules)}", "of a capital good with its evident users")]
-        among = (f'<munder><mo>&sum;</mo><mrow><mi>m</mi><mo>&isin;</mo>{_sub("E", "ik")}</mrow></munder>')
+        among = (f'<munder><mo>&sum;</mo><mrow><mi>m</mi><mo>&isin;</mo>{_sub("&Omega;", "ik")}</mrow></munder>')
         def step_row(x):
             placed = cap.investment.loc[x["commodities"], x["group"]].sum()
             what = ("; ".join(e(t.names[c]) for c in x["commodities"]) if x["note"]
@@ -2044,7 +2062,7 @@ entries are negative: sales of used equipment and scrap, shared out the same way
 <dl class="where">
 <dt>{sym("z")}</dt><dd>each industry's weight: its gross operating surplus if it is a private business or housing, and its
 output if it is government.</dd>
-<dt>{_m(_sub("E", "ik"))}</dt><dd>the industries that could have bought capital good <i>i</i>, among those of the same kind of
+<dt>{_m(_sub("&Omega;", "ik"))}</dt><dd>the industries that could have bought capital good <i>i</i>, among those of the same kind of
 investor as <i>k</i>: the ones a pairing below names for it, or all of that kind if none does. If <i>k</i> is not one of
 them, or its kind of investor bought none of <i>i</i>, the share is zero.</dd>
 </dl>
@@ -2096,38 +2114,76 @@ the commodity's output, {_m(f"<mi>{_bold('q')}</mi>")}, which turns this table i
         _, info, occ = d.wages
         direct, proxy = info.index[info.source == "oews"], info.index[info.source == "oews_proxy"]
         none = [c for c in s.values.index if not info.source[c].startswith("oews")]
-        dropped = info.wagebill_dropped_frac.median()
         lede = ("Who does each sector's work, by pay. The entry in row <i>j</i> and column <i>o</i> is the share of sector "
                 "<i>j</i>'s wage bill that is paid to occupation <i>o</i>.")
         figures = [nonzero, ("Sectors measured", f"{len(direct) + len(proxy)}", f"{len(direct)} directly and {len(proxy)} by a stand-in"),
                    ("Largest share", f"{v.max():.0%}", e(f"{occ.title[top.index[0][1]]}, in {t.names[top.index[0][0]]}".lower()))]
-        bill = '<msub><mi>p</mi><mrow><mi>j</mi><mi>o</mi></mrow></msub>'
-        def named(codes):
-            return "; ".join(e(t.names[c].lower()) for c in codes)
-        about = f"""<p>From the Bureau of Labor Statistics's Occupational Employment and Wage Statistics for May 2021, which gives
-employment and the mean annual wage for each occupation in each industry. Their product is what the industry paid the
-occupation in a year, and a sector's row is that pay as shares:</p>
-{_m(f'{_sub("w", "jo")}<mo>=</mo><mfrac>{bill}<mrow>{_sum("r")}<msub><mi>p</mi><mrow><mi>j</mi><mi>r</mi></mrow></msub></mrow></mfrac>', block=True)}
+        P_ = _sym("P", key)
+        row_totals = _inv(_diag(body=P_ + "<mo>&#x2062;</mo>" + _ONES))
+        about = f"""<p>Each row of {sym("P")}, what a sector paid each occupation in a year, divided by the row's total:</p>
+{_eqs([(_sym("W", key), row_totals + "<mo>&#x2062;</mo>" + P_),
+       (_sub("w", "jo"), f'<mfrac>{_sub("p", "jo")}<mrow>{_sum("r")}{_sub("p", "jr")}</mrow></mfrac>')])}
 <dl class="where">
-<dt>{_m(bill)}</dt><dd>what sector <i>j</i> paid occupation <i>o</i>: employment times the mean annual wage, added up over
-the surveyed industries that cover the sector.</dd>
+<dt>{sym("P")}</dt><dd>what the surveyed industries that cover sector <i>j</i> paid occupation <i>o</i>, from the Bureau of
+Labor Statistics's survey of employment and wages.</dd>
+<dt>{_m(_ONES)}</dt><dd>a column of ones, so that {_m(P_ + "<mo>&#x2062;</mo>" + _ONES)} is each row's total: the sector's
+whole wage bill. Dividing by it turns a row of dollars into shares.</dd>
 </dl>
+<p class="note">The two lines say the same thing, for the whole matrix and for one entry. With arrays:
+<code>W = P / P.sum(axis=1, keepdims=True)</code>.</p>
 <p>So a row adds up to one, and it says nothing about how large the sector is: that comes from
 {_m(_vec("v", key))}. In the <a href="method.html#account">account</a>, a sector's whole share of the need dollar is split
 the way its wage bill is, including the part that is not wages at all.</p>
-<p>Three things to know about the match between the two sources.</p>
+<p>{len(none)} sectors have no row and pass nothing on, and {len(proxy)} are measured by a stand-in. Which they are, and
+what else to know about the survey, is on the page for {sym("P")}. The code is
+<a href="{REPO}/blob/main/plenty/occupations.py"><code>plenty/occupations.py</code></a>.</p>"""
+        heads, caption = ("Sector", "Occupation", "Share of the sector's wage bill"), "Sectors that are mostly one occupation."
+        by_rows, by_cols = "sectors", "occupations"
+        trail = ""
+    elif key == "P":
+        _, info, occ, survey = d.wage_bill
+        direct, proxy = info.index[info.source == "oews"], info.index[info.source == "oews_proxy"]
+        none = [c for c in s.values.index if not info.source[c].startswith("oews")]
+        used = pd.Series([i for x in info.oews_industries[info.oews_industries != ""] for i in x.split(";")]).value_counts()
+        dropped = info.wagebill_dropped_frac.median()
+        lede = ("What each sector paid each occupation, as far as the survey can say. The entry in row <i>j</i> and column "
+                "<i>o</i> is the millions of dollars paid in a year to occupation <i>o</i> by the surveyed industries that cover sector <i>j</i>.")
+        figures = [nonzero, ("Sectors with a row", f"{len(direct) + len(proxy)}", f"{len(direct)} directly and {len(proxy)} by a stand-in"),
+                   ("Largest entry", f"${v.max() / 1e3:.0f} billion", e(f"{occ.title[top.index[0][1]]}, in {t.names[top.index[0][0]]}".lower()))]
+        E_, M_, T_ = (f"<mi>{_bold(x)}</mi>" for x in "EMT")
+        def named(codes):
+            return "; ".join(e(t.names[c].lower()) for c in codes)
+        about = f"""<p>From the Bureau of Labor Statistics's Occupational Employment and Wage Statistics for May 2021, which gives
+employment and the mean annual wage for each occupation in each of {len(survey)} industries. Their product is what an
+industry paid an occupation in a year, and a sector's row adds up the industries that cover it:</p>
+{_eqs([(_sym("P", key), f'{T_}<mo>&#x2062;</mo><mrow><mo>(</mo>{E_}<mo>&#x2218;</mo>{M_}<mo>)</mo></mrow>'),
+       (_sub("p", "jo"), f'{_sum("i")}{_sub("t", "ji")}<mo>&#x2062;</mo>{_sub("e", "io")}<mo>&#x2062;</mo>{_sub("m", "io")}')])}
+<dl class="where">
+<dt>{_m(E_)}</dt><dd>employment: the number of people in occupation <i>o</i> in surveyed industry <i>i</i>.</dd>
+<dt>{_m(M_)}</dt><dd>their mean annual wage, in dollars.</dd>
+<dt>{_m("<mo>&#x2218;</mo>")}</dt><dd>the product entry by entry, not the matrix product.</dd>
+<dt>{_m(T_)}</dt><dd>which surveyed industries cover which sector: {_m(_sub("t", "ji"))} is one if industry <i>i</i> covers sector
+<i>j</i>, and zero if not. It comes from the crosswalk between the Bureau of Economic Analysis's sectors and industry codes.</dd>
+</dl>
+<p class="note">With arrays: <code>P = T @ (E * M)</code>.</p>
+<p>The survey has {len(survey)} industries and there are {n} sectors, so sectors share. {int((used > 1).sum())} surveyed
+industries each cover more than one sector, and one covers {int(used.max())}
+({e(survey.title[used.idxmax()].split(" (")[0].lower())}). Such an industry is counted in full in every sector it covers. So
+the rows overlap: this matrix adds up to {_trillion(v.sum())}, while the surveyed industries paid {_trillion(survey.wagebill_musd.sum())}
+in all. That does no harm to {sym("W")}, which uses only the proportions within a row, but a row here is not the sector's
+own wage bill, and rows must not be added together.</p>
 <ul>
-<li>The survey's industries are coarser than the sectors here, so sectors that share a surveyed industry have the
-same row. The survey is also four years later than the 2017 tables.</li>
+<li>The survey is four years later than the 2017 tables.</li>
 <li>Where the survey withholds an occupation's employment or wage, that occupation is left out of the row. For the
 median sector this is {dropped:.1%} of the wage bill. Wages above the survey's ceiling of ${O.OEWS_TOP_CODE:,.0f} are counted at the ceiling.</li>
 <li>{len(proxy)} sectors are measured by a stand-in: public schools and hospitals by education and hospitals of every
-ownership, other government by the survey's government industries, and farms by support activities for farming.
-{len(none)} have no row at all and pass nothing on: {named(none)}.</li>
+ownership, other government by the survey's government industries, and farms by support activities for farming.</li>
+<li>{len(none)} sectors have no row at all: {named(none)}.</li>
 </ul>
 <p>The code is <a href="{REPO}/blob/main/plenty/occupations.py"><code>plenty/occupations.py</code></a>.</p>"""
-        heads, caption = ("Sector", "Occupation", "Share of the sector's wage bill"), "Sectors that are mostly one occupation."
+        heads, caption = ("Sector", "Occupation", "$ million"), "Large occupations in large industries. The same figure appears wherever sectors share a surveyed industry."
         by_rows, by_cols = "sectors", "occupations"
+        trail = f' /\n<a href="matrix-W.html#about">{_m(_sym("W", "W"))}, who does each sector&rsquo;s work</a>'
     else:
         assert key == "D", key
         makers = (v > 0).sum(axis=0)
@@ -2146,8 +2202,8 @@ industries that make it, in proportion to how much of it each makes. This is the
         heads, caption = ("Industry", "Commodity", "Share of the commodity"), "Commodities made in part by an industry other than the one named for them."
         by_rows, by_cols, off_diagonal = "industries", "commodities", "The largest entries off the diagonal"
 
-    # W is in the account itself; the others are reached through A
-    behind_a = "" if key == "W" else f' /\n<a href="{MATRIX_A}#derivation">{_m(_sym("A", "A"))}, the direct requirements</a>{via}'
+    # W is in the account itself and P is reached through it; the others are reached through A
+    behind_a = trail if trail is not None else f' /\n<a href="{MATRIX_A}#derivation">{_m(_sym("A", "A"))}, the direct requirements</a>{via}'
     largest = ""
     if heads:
         if off_diagonal:
@@ -2259,7 +2315,7 @@ zero{f"; {none} industr{'y' if none == 1 else 'ies'} had none and so get nothing
 <p>For a government industry, the weight is its output, the sum of its row of {_m(_sym("V", "z"))}.</p>
 <p>Weights are only ever compared within a set of industries of one kind of investor, so the two measures never meet.
 They go into {_m(_sym("S", "z"))}:</p>
-{_m(f'{_sub("s", "ik")}<mo>=</mo><mfrac>{_sub("z", "k")}<mrow><munder><mo>&sum;</mo><mrow><mi>m</mi><mo>&isin;</mo>{_sub("E", "ik")}</mrow></munder>{_sub("z", "m")}</mrow></mfrac>', block=True)}
+{_m(f'{_sub("s", "ik")}<mo>=</mo><mfrac>{_sub("z", "k")}<mrow><munder><mo>&sum;</mo><mrow><mi>m</mi><mo>&isin;</mo>{_sub("&Omega;", "ik")}</mrow></munder>{_sub("z", "m")}</mrow></mfrac>', block=True)}
 
 <h2 id="table">The whole vector</h2>
 {table([th("Industry", sort="text"), th("Kind of investor", sort="text"), th("Weight is", sort="text"), th("$ million", "num", sort="num")],

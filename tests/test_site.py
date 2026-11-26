@@ -125,11 +125,13 @@ def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
     m, t = built.io, built.io.t
     purchases, capital, D = site.MX.factors(m)
     truth = {"A": m.A, "B": purchases + capital, "D": D, "U": t.U, "K": m.K, "V": t.V, "S": built.capital.shares,
-             "W": built.wages[0]}
+             "W": built.wages[0], "P": built.wage_bill[0]}
     assert set(truth) == set(site.MATRIX_PAGES) == set(built.sheets)
     a_page, k_page = (site.SITE / site.MATRIX_A).read_text(), (site.SITE / "matrix-K.html").read_text()
     method = (site.SITE / "method.html").read_text()
-    linked_from = {"S": k_page, "W": method}                      # the rest are in A's derivation
+    w_page = (site.SITE / "matrix-W.html").read_text()
+    linked_from = {"S": k_page, "W": method, "P": w_page}         # the rest are in A's derivation
+    leads_back = {"W": "method.html#account", "P": "matrix-W.html"}
     for key, X in truth.items():
         sheet = built.sheets[key]
         html = (site.SITE / sheet.href).read_text()
@@ -137,7 +139,7 @@ def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
         assert f'width="{X.shape[1]}" height="{X.shape[0]}"' in html     # the picture has the matrix's shape
         if key != "A":
             assert f'<mi><a href="{sheet.href}">' in linked_from.get(key, a_page)   # its letter in the derivation is the link
-            assert f'href="{"method.html#account" if key == "W" else site.MATRIX_A}' in html   # and the page leads back
+            assert f'href="{leads_back.get(key, site.MATRIX_A)}' in html         # and the page leads back
             assert f'<a href="{sheet.href}">' not in html            # a page does not link to itself
         text = (site.SITE / sheet.data_file).read_text()
         data = json.loads(text[text.index("{"):text.rindex("}") + 1])
@@ -211,9 +213,12 @@ def test_the_wage_matrix_page_says_how_each_sector_is_measured(built):
     measured = info.source.str.startswith("oews")
     assert np.allclose(W.sum(axis=1)[measured], 1.0) and not W[~measured].values.any()
     assert occ.title.notna().all() and set(occ.major.map(len) > 0) == {True} and occ.major.nunique() == len(site.SOC_SHORT)
-    html = (site.SITE / "matrix-W.html").read_text()
+    html = (site.SITE / "matrix-P.html").read_text()
     names = built.io.t.names
     assert all(site.e(names[c].lower()) in html for c in info.index[~measured])      # the sectors with no row are named
+    P, _, _, survey = built.wage_bill
+    assert np.allclose(P.div(P.sum(axis=1).replace(0, np.nan), axis=0).fillna(0.0).values, W.values)   # W is P by its row totals
+    assert P.values.sum() > survey.wagebill_musd.sum() > 5e6      # rows overlap: sectors share surveyed industries
     text = (site.SITE / "matrix-W-data.js").read_text()
     data = json.loads(text[text.index("{"):text.rindex("}") + 1])
     assert set(data["cols"]["groups"]) <= set(data["short"]) and len(set(data["cols"]["groups"])) == occ.major.nunique()
