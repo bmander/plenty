@@ -1709,7 +1709,7 @@ _ONE_LESS_C = f'<mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo>{_sub("c", "a")}<mo>)<
 
 
 MATRIX_A = "matrix-A.html"
-MATRIX_PAGES = "ABDUKVSWPEMT"  # the matrices with a picture page of their own: matrix-A.html, matrix-B.html and so on
+MATRIX_PAGES = "ABDUKVSWPEMTL" # the matrices with a picture page of their own: matrix-A.html, matrix-B.html and so on
 # every symbol with a page: those matrices, investment by investor (a table, being five columns wide)
 # and the vector of weights
 # and the two vectors there is one of for each need. A file is not named by a letter's case alone:
@@ -1732,6 +1732,7 @@ MATRIX_SHOWN = "221100"    # the sector A's lookup opens on: electric power
 MATRIX_PARTS = "matrix-A-parts.js"   # B and D, fetched when a cell of A is first marked
 MATRIX_PART_CUT = 1e-5     # entries of B under a thousandth of a cent are left out of that file
 MATRIX_TOP = 15            # entries in a table of the largest
+MATRIX_ROUNDS = 8          # rounds of supply that the page of the inverse sets out one by one
 MATRIX_WIDTH, MATRIX_HEIGHT = 802, 780   # the most a picture takes of the page, in CSS pixels
 # How each kind of matrix is filed and shown: the unit of its data file, the smallest entry kept in
 # it (smaller ones are blank in the picture), the two ends of the colour scale and their legend,
@@ -1795,6 +1796,20 @@ def _diag(letter: str = "", body: str = "") -> str:
 
 def _inv(base: str) -> str:
     return f"<msup>{base}<mrow><mo>&minus;</mo><mn>1</mn></mrow></msup>"
+
+
+def _inverse(here: str = "") -> str:
+    """(I - A)^-1, the total requirements, which have a page of their own under the letter L. A is
+    a link to A's page, and a link cannot hold another, so the rest of the expression, its brackets,
+    its I and its exponent, are each a link to L's page. They are set as text because an operator
+    with a link inside it loses its spacing."""
+    A_ = _sym("A", here)
+    if here == "L":
+        return _inv(f'<mrow><mo>(</mo>{_sym("I")}<mo>&minus;</mo>{A_}<mo>)</mo></mrow>')
+    def to(text, cls="inv"):
+        return f'<a href="{SYMBOL_PAGES["L"]}" class="{cls}">{text}</a>'
+    return (f'<msup><mrow><mtext>{to("(", "inv br")}</mtext><mi>{to(_bold("I"))}</mi><mo>&minus;</mo>{A_}<mtext>{to(")", "inv br")}</mtext></mrow>'
+            f'<mtext>{to("&minus;1")}</mtext></msup>')
 
 
 def _eqs(rows: list[tuple[str, str]]) -> str:
@@ -1882,6 +1897,15 @@ def sheets(d: Data) -> dict[str, Sheet]:
               caption="Each column is a commodity being made and each row an input to it. Colour is cents of the input per "
                       "dollar made, on a log scale. The diagonal blocks are groups buying from themselves.",
               second=A_capital, sums="cols"),
+        Sheet("L", "the total requirements", "per_dollar", m.L.loc[com, com], t.names, t.names,
+              row_tip="Produced", col_tip="To deliver", row_is="Row, the commodity produced:", col_is="Column, the commodity delivered:",
+              axis="Delivered: one dollar of each commodity",
+              caption="Each column is a commodity delivered and each row a commodity produced on the way to it. Colour is cents "
+                      "produced per dollar delivered, on a log scale. The diagonal is the dollar itself, with whatever more of "
+                      "the commodity its own supply uses. A bright row is something nearly everything is made with, such as "
+                      "management, real estate, research or wholesale trade. A dark row is something bought only for its own "
+                      "sake, such as a visit to the doctor.",
+              sums="cols"),
         Sheet("B", "what industries use per dollar", "per_dollar", (purchases + capital).loc[com, ind], **goods,
               row_tip="Input", col_tip="Used by", row_is="Row, the input:", col_is="Column, the industry using it:",
               axis="Industries: per dollar of their output",
@@ -2077,7 +2101,7 @@ def _trillion(x: float) -> str:
 
 
 def matrix_page(d: Data, key: str) -> str:
-    """The page of U, K, B, D or V: what it is, where it comes from, the picture, and its largest entries."""
+    """The page of any matrix but A: what it is, where it comes from, the picture, and its largest entries."""
     m, t, s = d.io, d.io.t, d.sheets[key]
     v, (n, n_cols) = s.values.values, s.values.shape
     sym = lambda x: _m(_sym(x, key))
@@ -2085,6 +2109,7 @@ def matrix_page(d: Data, key: str) -> str:
     diagonal = sum(t.V.at[c, c] for c in t.commodities if c in t.V.index) / t.V.values.sum()
     code = f'<a href="{REPO}/blob/main/plenty/model.py"><code>plenty/model.py</code></a>'
     top, off_diagonal, via, trail = s.values.stack().sort_values(ascending=False), "", "", None
+    beside = ("Of which equipment and buildings, &cent;", s.second) if s.second is not None else None   # a second figure for the largest entries
     by_rows, by_cols = "commodities", "industries"
 
     if key == "U":
@@ -2167,6 +2192,84 @@ equipment per dollar of operating surplus.</p>
                f'the one for multifamily housing is in the code, {code}.')}"""
         heads, caption = None, ""
         via = f' / <a href="matrix-K.html#about">{_m(_sym("K", "K"))}, the capital matrix</a>'
+    elif key == "L":
+        direct = m.A.loc[s.values.index, s.values.columns]
+        a, eye = direct.values, np.eye(n)
+        plain = M.build(endogenize_capital=False)                    # the same model with equipment and buildings left as final demand
+        col_total, plain_total, own = s.values.sum(), plain.L.sum(), pd.Series(np.diag(v), index=s.values.index)
+        shrink, plain_shrink = (float(np.abs(np.linalg.eigvals(x)).max()) for x in (a, plain.A.values))
+        # the inverse round by round: I, A, A squared and so on, and what is left after the rounds shown
+        rounds, power = [], eye
+        for k in range(MATRIX_ROUNDS + 1):
+            rounds.append(power.sum())
+            power = power @ a
+        said = ["the dollar delivered", "what making it uses up", "what making that uses up"]
+        def term(k):
+            return _m(_sym("I", key) if k == 0 else _sym("A", key) if k == 1 else f'<msup>{_sym("A", key)}<mn>{k}</mn></msup>')
+        rrows, run = [], 0.0
+        for k, x in enumerate(rounds):
+            run += x
+            rrows.append(f'<tr><td class="name">{term(k)}{", " + said[k] if k < len(said) else ""}</td><td class="num">{x:,.1f}</td>'
+                         f'<td class="num">{x / v.sum():.1%}</td><td class="num">{run / v.sum():.1%}</td></tr>')
+        rrows.append(f'<tr><td class="name">Every round after</td><td class="num">{v.sum() - run:,.1f}</td>'
+                     f'<td class="num">{1 - run / v.sum():.1%}</td><td class="num">100.0%</td></tr>')
+        nothing = [c for c in s.values.columns if np.allclose(s.values[c].values, eye[:, s.values.columns.get_loc(c)])]
+        negative = pd.Series((v < 0).sum(axis=1), index=s.values.index)      # negative entries, by row
+        least, most = col_total.idxmin(), col_total.idxmax()
+        lede = ("Everything it takes to deliver a dollar of each thing. The entry in row <i>i</i> and column <i>j</i> is the "
+                "dollars of commodity <i>i</i> that must be produced, at every stage of supply, for one dollar of commodity "
+                "<i>j</i> to reach whoever finally uses it.")
+        figures = [("Entries that are not zero", f"{(v != 0).mean():.0%}", f"{s.shown.mean():.0%} are a hundredth of a cent or more"),
+                   ("Output behind a dollar delivered", f"${col_total.median():.2f}", "the median column total"),
+                   ("Each round back", f"{shrink:.2f} times the last", "in the long run")]
+        A_, I_, L_ = _sym("A", key), _sym("I", key), _sym("L", key)
+        x_, d_ = _vec("x", key), _vec("d", key)
+        about = f"""<p>{_m(A_)}, what it takes to make a dollar of each thing, applied over and over. The account writes it as an
+inverse; here it is called {_m(L_)} for short:</p>
+{_eqs([(L_, _inverse(key)),
+       ("", f'{I_}<mo>+</mo>{A_}<mo>+</mo><msup>{A_}<mn>2</mn></msup><mo>+</mo><msup>{A_}<mn>3</mn></msup><mo>+</mo><mo>&hellip;</mo>')])}
+<p>The second line is the first written out round by round. To deliver a dollar of something, the economy makes that
+dollar, which is {_m(I_)}. Making it uses up inputs, which is {_m(A_)}. Making those uses up more, which is
+{_m(f"<msup>{A_}<mn>2</mn></msup>")}, and so on back. The rounds shrink, because a dollar of output almost always takes
+less than a dollar of inputs, so they add up to something finite: this matrix.</p>
+{table([th("Round"), th("Total of all its entries", "num"), th("Share of the whole", "num"), th("Running share", "num")], rrows,
+       caption=f"The inverse, round by round. Far enough back, each round is {shrink:.2f} times the one before: that figure is the "
+               f"largest eigenvalue of {_m(A_)}, and the sum settles because it is less than one.")}
+<p>It is an inverse because of what output has to cover. Everything produced for a need, {_m(x_)}, must cover what
+is used up in producing it, {_m(A_ + "<mo>&#x2062;</mo>" + x_)}, and what is delivered, {_m(d_)}. Solving for {_m(x_)}
+gives the <a href="method.html#account">first line of the account</a>:</p>
+{_eqs([(x_, f'{A_}<mo>&#x2062;</mo>{x_}<mo>+</mo>{d_}'), (x_, f'{_inverse(key)}<mo>&#x2062;</mo>{d_}')])}
+
+<h2 id="reading">How to read it</h2>
+<dl class="where">
+<dt>A column</dt><dd>everything behind a dollar of one commodity: all that is produced, anywhere, to deliver it. Its
+total is more than a dollar because output is counted each time something is sold on: the wheat, the flour and the bread
+are each somebody's output. The median is ${col_total.median():.2f}. The least is ${col_total[least]:.2f}, for
+{e(t.names[least].lower())}, and the most ${col_total[most]:.2f}, for {e(t.names[most].lower())}.</dd>
+<dt>A row</dt><dd>where one commodity ends up: how much of it is produced for a dollar of each thing delivered.</dd>
+<dt>The diagonal</dt><dd>the dollar itself, plus whatever more of the commodity its own supply uses, as steel goes into the
+machines that make steel. It is never under one, and the median is {own.median():.3f}. The largest is {own.max():.2f}, for
+{e(t.names[own.idxmax()].lower())}.</dd>
+</dl>
+<p>{len(nothing)} columns are a one on the diagonal and nothing else, because the table records no inputs for them:
+{e("; ".join(t.names[c].lower() for c in nothing))}.</p>
+<p>{_m(A_)} counts equipment and buildings as inputs, so this does too. With them left out, the median column would add up to
+${plain_total.median():.2f} instead of ${col_total.median():.2f}, and each round would be {plain_shrink:.2f} times the last
+instead of {shrink:.2f}. The <a href="method.html#capital">method page</a> says why they are counted.</p>
+<p>Three things to keep in mind. Every recipe is taken as fixed, so twice the output takes twice of every input. The
+entries are dollars at 2017 prices, standing in for quantities. And imports are counted as if made the same way, so a
+column is what the commodity takes wherever its inputs are made.</p>
+<p class="note">{int(negative.sum())} entries are negative, {int(negative.max())} of them in the row for
+{e(t.names[negative.idxmax()].lower())}, which an industry can sell more of than it buys. The largest is
+{-v.min() * 100:.1f} cents. They are blank in the picture.</p>
+<p>The code is {code}, which inverts the matrix directly; multiplying the result by {_m(f"{I_}<mo>&minus;</mo>{A_}")} gives
+the identity back to within {np.abs(v @ (eye - a) - eye).max():.0e}.</p>"""
+        heads = ("Produced", "To deliver a dollar of", "&cent; per dollar")
+        caption = (f"Much the same pairs as the largest entries of {_m(A_)}: a raw material and the plant that processes it. The "
+                   f"last column is the entry of {_m(A_)}, what the plant uses itself; the rest is used further back, by its suppliers and theirs.")
+        beside = ("Of which used directly, &cent;", direct)
+        by_rows = by_cols = "commodities"
+        off_diagonal, trail = "The largest entries off the diagonal", ""
     elif key == "B":
         totals = s.values.sum()
         lede = ("Each industry's recipe. The entry in row <i>i</i> and column <i>k</i> is the dollars of commodity <i>i</i> that "
@@ -2393,9 +2496,9 @@ industries that make it, in proportion to how much of it each makes. This is the
         top = top.head(MATRIX_TOP)
         def show(x):
             return {"per_dollar": f"{x * 100:.1f}", "share": f"{x:.1%}"}.get(s.kind, f"{x:,.0f}")
-        head = [th(heads[0]), th(heads[1]), th(heads[2], "num")] + ([th("Of which equipment and buildings, &cent;", "num")] if s.second is not None else [])
+        head = [th(heads[0]), th(heads[1]), th(heads[2], "num")] + ([th(beside[0], "num")] if beside else [])
         trows = [f'<tr><td class="name">{e(s.row_names[i])}</td><td class="name">{e(s.col_names[j])}</td><td class="num">{show(x)}</td>'
-                 + (f'<td class="num">{show(s.second.at[i, j])}</td>' if s.second is not None else "") + "</tr>" for (i, j), x in top.items()]
+                 + (f'<td class="num">{show(beside[1].at[i, j])}</td>' if beside else "") + "</tr>" for (i, j), x in top.items()]
         largest = f'<h2 id="largest">{off_diagonal or "The largest entries"}</h2>\n{table(head, trows, caption=caption)}'
     body = f"""
 <p class="crumbs"><a href="method.html">Method</a> / <a href="method.html#account">The account in three lines</a>{behind_a}</p>
@@ -2599,7 +2702,7 @@ need's dollar, not how much the need weighs.</p>
                f"Entries under {HEAT_FLOOR * 100:.2f}&cent; are blank, and so are the {len(dn) - len(shown)} commodities in no basket, which are left out.")}
 <p><a href="vector-d.csv">Download the matrix as CSV</a> ({len(dn)} rows, sector codes in the first column, dollars per dollar).</p>
 <p>It is what {_m(_sym("A"))} is applied to, to get {_m(_vec("x", "d"))}, the output behind each need:</p>
-{_m(_vec("x", "d") + "<mo>=</mo>" + _inv(f'<mrow><mo>(</mo>{_sym("I")}<mo>&minus;</mo>{_sym("A")}<mo>)</mo></mrow>') + "<mo>&#x2062;</mo>" + _vec("d", "d"), block=True)}
+{_m(_vec("x", "d") + "<mo>=</mo>" + _inverse() + "<mo>&#x2062;</mo>" + _vec("d", "d"), block=True)}
 """
     return page("d, what a dollar of each need buys", "method.html", body, long_title=True)
 
@@ -2621,8 +2724,7 @@ def requirements_page(d: Data) -> str:
     rrows = [f'<tr><th scope="row">{e(NEED_NAME[n])}</th><td class="num">{dollars(dn[n].sum())}</td><td class="num">{dollars(direct[n])}</td>'
              f'<td class="num">{dollars(total[n] - dn[n].sum() - direct[n])}</td><td class="num" data-v="{total[n]:.4f}">{dollars(total[n])}</td></tr>'
              for n in needs]
-    A_, I_ = _sym("A"), _sym("I")
-    inverse = _inv(f"<mrow><mo>(</mo>{I_}<mo>&minus;</mo>{A_}<mo>)</mo></mrow>")
+    A_, inverse = _sym("A"), _inverse()
     least, most = total.idxmin(), total.idxmax()
     (top_c, top_n), top_v = shown.stack().idxmax(), shown.values.max()
     body = f"""
@@ -2746,7 +2848,7 @@ def matrix_a_page(d: Data) -> str:
     (qi, qj), qv = next(iter(top.items()))
 
     A_, B_, D_, U_, K_, V_, I_ = (_sym(x, "A") for x in "ABDUKVI")
-    series = (f'{_inv(f"<mrow><mo>(</mo>{I_}<mo>&minus;</mo>{A_}<mo>)</mo></mrow>")}<mo>=</mo>{I_}<mo>+</mo>{A_}<mo>+</mo>'
+    series = (f'{_inverse("A")}<mo>=</mo>{I_}<mo>+</mo>{A_}<mo>+</mo>'
               f'<msup>{A_}<mn>2</mn></msup><mo>+</mo><msup>{A_}<mn>3</mn></msup><mo>+</mo><mo>&hellip;</mo>')
     derivation = _eqs([(B_, _b_from("A")), (D_, _d_from("A")), (A_, f'{B_}<mo>&#x2062;</mo>{D_}')])
     where = [
@@ -2829,9 +2931,7 @@ def account_section(d: Data) -> str:
     def row(lhs, rhs):
         return f'<mtr><mtd class="l">{lhs}</mtd><mtd><mo>=</mo></mtd><mtd class="r">{rhs}</mtd></mtr>'
     eq = _m('<mtable displaystyle="true" columnalign="right center left" columnspacing="0.3em" rowspacing="1.1em">'
-            + row(_vec("x"),
-                  f'<msup><mrow><mo>(</mo><mi>{_I}</mi><mo>&minus;</mo>{_A_LINK}<mo>)</mo></mrow><mrow><mo>&minus;</mo><mn>1</mn></mrow></msup>'
-                  f'<mo>&#x2062;</mo>{_vec("d")}')
+            + row(_vec("x"), f'{_inverse()}<mo>&#x2062;</mo>{_vec("d")}')
             + row(_sub("f", "a"),
                   f'<mfrac><mn>1</mn><mi>N</mi></mfrac><mo>&#x2062;</mo>{_sum("n")}{_sum("j")}{_elt("v", "jn", "v")}'
                   f'{_sum("o")}{_elt("w", "jo", "W")}<mo>&#x2062;</mo>{_sub("&theta;", "oa")}')
@@ -2841,6 +2941,8 @@ def account_section(d: Data) -> str:
         (_vec("d"), f"final demand for need {_m('<mi>n</mi>')}, scaled to one dollar: "
                      f'<a href="{SYMBOL_PAGES["d"]}">what each need\'s dollar buys</a>'),
         (_A_LINK, f'the input-output table, with capital counted as an input: <a href="{MATRIX_A}">the matrix and how it is derived</a>'),
+        (_inverse(), f'what must be produced, at every stage of supply, to deliver a dollar of each commodity: '
+                      f'<a href="{SYMBOL_PAGES["L"]}">the total requirements</a>'),
         (_vec("x"), f'everything the economy must produce, directly and indirectly, to deliver that dollar: '
                      f'<a href="{SYMBOL_PAGES["x"]}">the output behind each need</a> '
                         '(<a href="#requirements">total requirements</a>)'),
@@ -2895,7 +2997,8 @@ in proportion to each industry's gross operating surplus.</p>
 <p>With <i>U</i> the Use table, <i>K</i> the capital matrix, <i>V</i> the Make table, <i>g</i> industry output and <i>q</i> commodity output:</p>
 <pre><code>B = (U + K) diag(g)^-1     D = V diag(q)^-1     A = B D     L = (I - A)^-1</code></pre>
 <p><code>L[j, i]</code> is dollars of commodity <i>j</i> needed, directly and indirectly, per dollar of final demand for
-commodity <i>i</i>. Imports stay inside <i>U</i>, so <i>L</i> describes the technology required wherever it runs.</p>
+commodity <i>i</i>. Imports stay inside <i>U</i>, so <i>L</i> describes the technology required wherever it runs.
+<i>L</i> has <a href="{SYMBOL_PAGES["L"]}">a page of its own</a>.</p>
 <h3>Basket</h3>
 <p>Household plus government consumption, with every commodity assigned to one of eleven needs or left out.
 Mixed retail, wholesale and freight margins are split across needs in proportion to goods spending.

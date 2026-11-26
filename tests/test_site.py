@@ -126,23 +126,24 @@ def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
     purchases, capital, D = site.MX.factors(m)
     truth = {"A": m.A, "B": purchases + capital, "D": D, "U": t.U, "K": m.K, "V": t.V, "S": built.capital.shares,
              "W": built.wages[0], "P": built.wage_bill[0],
-             "E": built.survey[0].fillna(0.0), "M": built.survey[1].fillna(0.0), "T": built.survey[2]}
+             "E": built.survey[0].fillna(0.0), "M": built.survey[1].fillna(0.0), "T": built.survey[2], "L": m.L}
     assert set(truth) == set(site.MATRIX_PAGES) == set(built.sheets)
     a_page, k_page = (site.SITE / site.MATRIX_A).read_text(), (site.SITE / "matrix-K.html").read_text()
     method = (site.SITE / "method.html").read_text()
     w_page = (site.SITE / "matrix-W.html").read_text()
     p_page = (site.SITE / "matrix-P.html").read_text()
-    linked_from = {"S": k_page, "W": method, "P": w_page, "E": p_page, "M": p_page, "T": p_page}   # the rest are in A's derivation
-    leads_back = {"W": "method.html#account", "P": "matrix-W.html", "E": "matrix-P.html", "M": "matrix-P.html", "T": "matrix-P.html"}
+    linked_from = {"S": k_page, "W": method, "P": w_page, "E": p_page, "M": p_page, "T": p_page, "L": method}   # the rest are in A's derivation
+    leads_back = {"W": "method.html#account", "P": "matrix-W.html", "E": "matrix-P.html", "M": "matrix-P.html", "T": "matrix-P.html",
+                  "L": "method.html#account"}
     for key, X in truth.items():
         sheet = built.sheets[key]
         html = (site.SITE / sheet.href).read_text()
         assert f'src="{sheet.data_file}"' in html and 'src="matrix.js"' in html and 'id="mx-canvas"' in html
         assert f'width="{X.shape[1]}" height="{X.shape[0]}"' in html     # the picture has the matrix's shape
         if key != "A":
-            assert f'<mi><a href="{sheet.href}">' in linked_from.get(key, a_page)   # its letter in the derivation is the link
+            assert f'<mi><a href="{sheet.href}"' in linked_from.get(key, a_page)    # its letter in the derivation is the link
             assert f'href="{leads_back.get(key, site.MATRIX_A)}' in html         # and the page leads back
-            assert f'<a href="{sheet.href}">' not in html            # a page does not link to itself
+            assert f'<a href="{sheet.href}"' not in html             # a page does not link to itself
         text = (site.SITE / sheet.data_file).read_text()
         data = json.loads(text[text.index("{"):text.rindex("}") + 1])
         rows, cols, unit, step = data["rows"]["codes"], data["cols"]["codes"], data["unit"], 3 if data["second"] else 2
@@ -166,6 +167,25 @@ def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
     # a table of whole millions is filed exactly, so its blank cells hold nothing
     assert built.sheets["U"].exact and np.allclose(t.U.values, np.round(t.U.values))
     assert built.sheets["V"].exact and np.allclose(t.V.values, np.round(t.V.values))
+
+
+def test_the_inverse_has_a_page_reached_from_wherever_it_is_written(built):
+    m = built.io
+    L, A, eye = m.L.values, m.A.values, np.eye(len(m.A))
+    assert np.allclose(L @ (eye - A), eye, atol=1e-9) and np.diag(L).min() >= 1
+    # A is a link to its own page, so the rest of the expression is the link: two brackets, the I and the exponent
+    piece = f'<a href="{site.SYMBOL_PAGES["L"]}" class="inv'
+    for name in ("method.html", site.MATRIX_A, site.SYMBOL_PAGES["d"], site.SYMBOL_PAGES["x"]):
+        text = (site.SITE / name).read_text()
+        assert text.count(piece) >= 4 and text.count(piece) % 4 == 0, name
+        assert text.count(f'<mtext>{piece}">&minus;1</a></mtext></msup>') == text.count(piece) // 4, name
+    html = (site.SITE / site.SYMBOL_PAGES["L"]).read_text()
+    # the rounds the page sets out are the powers of A, and with what is left they are the whole inverse
+    rounds = [np.linalg.matrix_power(A, k).sum() for k in range(site.MATRIX_ROUNDS + 1)]
+    assert all(f'<td class="num">{x:,.1f}</td>' in html for x in rounds + [L.sum() - sum(rounds)])
+    assert 0 < L.sum() - sum(rounds) < rounds[-1] * 2
+    assert f"${m.L.sum().median():.2f}" in html and 'id="reading"' in html
+    assert max(abs(np.linalg.eigvals(A))) < 1                     # which is why the rounds add up at all
 
 
 def test_the_capital_matrix_page_leads_to_what_it_is_made_from(built):

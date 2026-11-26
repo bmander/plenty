@@ -276,6 +276,8 @@ td.h { text-align: right; font-variant-numeric: tabular-nums; background: color-
 
 /* A matrix page: the picture of every entry, and one sector's column and row */
 math a { color: inherit; }
+math a.inv.br { text-decoration-color: transparent; }   /* a bracket is part of the link, and is underlined only with the rest */
+math:has(a.inv:hover) a.inv { text-decoration-color: var(--series); }   /* the pieces of one expression that are one link light up together */
 #tip { white-space: pre-line; }
 .mx { max-width: 990px; }
 .mx-frame { display: grid; grid-template-columns: auto minmax(0, 804px); justify-content: start; }
