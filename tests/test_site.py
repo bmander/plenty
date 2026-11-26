@@ -74,6 +74,8 @@ def test_the_page_for_A_shows_the_matrix_the_model_uses(built):
     assert f'<mi><a href="{site.MATRIX_A}">' in method          # the A in the equation is the link
     html = (site.SITE / site.MATRIX_A).read_text()
     assert f'width="{len(A)}" height="{len(A)}"' in html and 'src="matrix.js"' in html
+    # what matrix.js draws into and listens to: the two margins and the zoom buttons
+    assert all(f'id="{i}"' in html for i in ("mx-top", "mx-left", "mx-zoom-in", "mx-zoom-out", "mx-zoom-all"))
     # the data file: every entry of any size, in the page's order, to within its rounding
     text = (site.SITE / "matrix-A-data.js").read_text()
     data = json.loads(text[text.index("{"):text.rindex("}") + 1])
@@ -93,6 +95,7 @@ def test_the_page_for_A_shows_the_matrix_the_model_uses(built):
     assert np.allclose(np.array(data["total"]) * unit, a.sum(axis=0), atol=unit)
     # sectors are grouped, so the picture's blocks are groups
     assert data["groups"] == sorted(data["groups"], key=site.MX.ORDER.index)
+    assert set(data["groups"]) <= set(data["short"])              # each group has a label for the margins
     # the download is the matrix itself
     csv = pd.read_csv(site.SITE / "matrix-A.csv", index_col=0, dtype={0: str})
     assert list(csv.index.astype(str)) == codes and np.allclose(csv.values, a, rtol=1e-5, atol=1e-12)

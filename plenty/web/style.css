@@ -269,29 +269,49 @@ math a { color: inherit; }
 #tip { white-space: pre-line; }
 .mx { max-width: 990px; }
 .mx-frame { display: grid; grid-template-columns: auto minmax(0, 804px); justify-content: start; }
-.mx-axis { grid-column: 2; font-size: 13px; color: var(--ink-2); padding-bottom: 4px; }
-.mx-strip { display: flex; font-size: 11px; line-height: 1.15; color: var(--ink-2); }
-.mx-strip span { min-width: 0; min-height: 0; overflow: hidden; white-space: nowrap; }
-.mx-strip span:nth-child(odd) { background: var(--bar); }
+.mx-axis { grid-column: 2; font-size: 13px; color: var(--ink-2); padding-bottom: 4px; display: flex; flex-wrap: wrap; gap: 4px 16px; justify-content: space-between; align-items: end; }
+.mx-zoom { display: flex; gap: 4px; }
+.mx-zoom button { font: inherit; line-height: 1.2; min-width: 2em; color: var(--ink); background: var(--paper); border: 1.5px solid var(--rule); border-radius: 4px; padding: 2px 8px; cursor: pointer; }
+.mx-zoom button:disabled { color: var(--ink-2); opacity: 0.55; cursor: default; }
+/* The strips name what the picture shows: groups from far off; close in (.mx-named) a narrow band of groups and each sector */
+.mx-strip { --band: 1.6em; position: relative; overflow: hidden; font-size: 11px; line-height: 1.15; color: var(--ink-2); }
+.mx-strip > span { position: absolute; box-sizing: border-box; overflow: hidden; white-space: nowrap; }
+.mx-group.alt { background: var(--bar); }
 .mx-top { grid-column: 2; height: 11em; }
-.mx-top span { writing-mode: vertical-rl; transform: rotate(180deg); padding: 4px 0; text-align: left; display: flex; align-items: center; }
-.mx-left { grid-column: 1; flex-direction: column; width: 11.5em; }
-.mx-left span { padding: 0 6px; text-align: right; display: flex; align-items: center; justify-content: flex-end; }
-.mx-plot { position: relative; grid-column: 2; aspect-ratio: 1; border: 1px solid var(--rule); }
-.mx-plot canvas { display: block; width: 100%; height: 100%; image-rendering: pixelated; cursor: crosshair; }
-.mx-lines i { position: absolute; background: var(--rule); opacity: 0.55; pointer-events: none; }
-.mx-lines i[style^="left"] { top: 0; bottom: 0; width: 1px; }
-.mx-lines i[style^="top"] { left: 0; right: 0; height: 1px; }
-#mx-h, #mx-v { position: absolute; display: none; background: var(--ink); opacity: 0.5; pointer-events: none; }
+.mx-top > span { top: 0; bottom: 0; }
+.mx-top > .mx-group { writing-mode: vertical-rl; transform: rotate(180deg); padding: 4px 0; display: flex; align-items: center; }
+.mx-left { grid-column: 1; width: 11.5em; }
+.mx-left > span { left: 0; right: 0; }
+.mx-left > .mx-group { padding: 0 6px; display: flex; align-items: center; justify-content: flex-end; }
+.mx-named > .mx-group { display: block; padding: 0 3px; text-align: center; text-overflow: ellipsis; line-height: var(--band); font-weight: 600; }
+.mx-top.mx-named > .mx-group { bottom: auto; height: var(--band); writing-mode: horizontal-tb; transform: none; }
+.mx-left.mx-named > .mx-group { right: auto; width: var(--band); padding: 3px 0; writing-mode: vertical-rl; transform: rotate(180deg); }
+.mx-top > .mx-name { top: var(--band); }
+.mx-left > .mx-name { left: var(--band); display: flex; align-items: center; justify-content: flex-end; padding: 0 6px 0 4px; text-align: right; }
+.mx-top > .mx-name.first { border-left: 1px solid var(--rule); }
+.mx-left > .mx-name.first { border-top: 1px solid var(--rule); }
+.mx-name.on { color: var(--ink); background: var(--bar); }
+.mx-turn { position: absolute; left: 0; bottom: 0; box-sizing: border-box; transform-origin: 0 100%; display: flex; align-items: center; padding: 0 2px 0 4px; }
+.mx-text { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; white-space: normal; overflow-wrap: anywhere; min-width: 0; line-height: 1.15; }
+.mx-text.one { display: block; white-space: nowrap; text-overflow: ellipsis; }
+.mx-plot { position: relative; grid-column: 2; aspect-ratio: 1; border: 1px solid var(--rule); overflow: hidden; }
+.mx-plot canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
+.mx-plot.mx-zoomed canvas { touch-action: none; }
+.mx-plot.mx-dragging canvas { cursor: grabbing; }
+#mx-h, #mx-v { position: absolute; display: none; box-sizing: border-box; background: var(--ink); opacity: 0.5; pointer-events: none; }
 #mx-h { left: 0; right: 0; height: 1px; }
 #mx-v { top: 0; bottom: 0; width: 1px; }
+#mx-h.band, #mx-v.band { background: none; border: 0 solid var(--ink); opacity: 0.7; }
+#mx-h.band { border-width: 1px 0; }
+#mx-v.band { border-width: 0 1px; }
 .mx-legend { margin: 12px 0 2px; width: min(320px, 100%); font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .mx-ramp { height: 10px; border-radius: 2px; background: linear-gradient(to right, var(--heat-0), var(--heat-1), var(--heat-2), var(--heat-3), var(--heat-4)); }
 .mx-ticks { display: flex; justify-content: space-between; margin-top: 3px; }
 @media (max-width: 900px) {
-  .mx-strip { font-size: 0; }
+  .mx-strip { --band: 8px; font-size: 0; }
   .mx-top { height: 8px; }
   .mx-left { width: 8px; }
+  .mx-name { display: none; }
 }
 .controls select { font: inherit; padding: 6px 8px; max-width: 100%; background: var(--paper); color: var(--ink); border: 1.5px solid var(--rule); border-radius: 4px; }
 .controls label[for="mx-pick"] { font-weight: 600; }

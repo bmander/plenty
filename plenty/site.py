@@ -1648,7 +1648,6 @@ MATRIX_A = "matrix-A.html"
 MATRIX_CUT = 1e-4          # entries under a hundredth of a cent per dollar are left out of the picture and the lists
 MATRIX_UNIT = 1e-5         # the unit of the page's data file: a thousandth of a cent per dollar
 MATRIX_SHOWN = "221100"    # the sector the lookup opens on: electric power
-MATRIX_LABEL_MIN = 7       # groups with fewer sectors than this get no label beside the picture
 MATRIX_TOP = 15            # entries in the table of the largest
 
 
@@ -1692,7 +1691,7 @@ def matrix_a_data(d: Data) -> str:
     group = MX.groups(A.index)
     names = d.io.t.names
     payload = {"unit": MATRIX_UNIT, "cut": MATRIX_CUT, "shown": MATRIX_SHOWN, "codes": list(A.index),
-               "names": [names[c] for c in A.index], "groups": [group[c] for c in A.index], "cols": cols,
+               "names": [names[c] for c in A.index], "groups": [group[c] for c in A.index], "short": MX.SHORT, "cols": cols,
                "total": [round(x / MATRIX_UNIT) for x in a.sum(axis=0)], "capital": [round(x / MATRIX_UNIT) for x in k.sum(axis=0)]}
     return "window.PLENTY_MATRIX = " + json.dumps(payload, separators=(",", ":")) + ";\n"
 
@@ -1706,20 +1705,10 @@ def matrix_a_page(d: Data) -> str:
     m, t = d.io, d.io.t
     A, K = matrix_a(d)
     a, n, names = A.values, len(A), t.names
-    group = MX.groups(A.index)
-    sizes = group.value_counts().reindex(MX.ORDER)
     shown = np.abs(a) >= MATRIX_CUT
     col_total = A.sum()
     over = col_total[col_total > 1]
     own = sum(t.V.at[c, c] for c in t.commodities if c in t.V.index) / t.V.values.sum()
-
-    # strips beside the picture that name the groups, and the lines between groups
-    def strip(cls):
-        return f'<div class="{cls}" aria-hidden="true">' + "".join(
-            f'<span style="flex:{c}" data-tip="{e(g)}: {c} sectors">{e(MX.SHORT[g]) if c >= MATRIX_LABEL_MIN else ""}</span>'
-            for g, c in sizes.items()) + "</div>"
-    edges = sizes.cumsum().iloc[:-1] / n * 100
-    lines = "".join(f'<i style="left:{x:.3f}%"></i><i style="top:{x:.3f}%"></i>' for x in edges)
 
     # A summed to groups
     G = MX.by_group(m.A, t.q) * 100
@@ -1792,13 +1781,14 @@ it each makes.</p>
 <h2 id="picture">The whole matrix</h2>
 <figure class="mx">
 <div class="mx-frame">
-<div class="mx-axis mx-axis-top">Made: one dollar of each commodity &rarr;</div>
-{strip("mx-strip mx-top")}
-{strip("mx-strip mx-left")}
+<div class="mx-axis mx-axis-top"><span>Made: one dollar of each commodity &rarr;</span>
+<span class="mx-zoom"><button type="button" id="mx-zoom-out" aria-label="Zoom out" disabled>&minus;</button><button
+ type="button" id="mx-zoom-in" aria-label="Zoom in">+</button><button type="button" id="mx-zoom-all" disabled>Whole matrix</button></span></div>
+<div class="mx-strip mx-top" id="mx-top" aria-hidden="true"></div>
+<div class="mx-strip mx-left" id="mx-left" aria-hidden="true"></div>
 <div class="mx-plot">
-<canvas id="mx-canvas" width="{n}" height="{n}" role="img"
+<canvas id="mx-canvas" width="{n}" height="{n}" role="img" tabindex="0"
  aria-label="Heat map of the {n} by {n} direct requirements matrix. The table of groups and the sector lookup below give the same figures."></canvas>
-<div class="mx-lines" aria-hidden="true">{lines}</div>
 <i id="mx-h" aria-hidden="true"></i><i id="mx-v" aria-hidden="true"></i>
 </div>
 </div>
@@ -1807,7 +1797,8 @@ it each makes.</p>
 <figcaption>Each column is a commodity being made and each row an input to it. Colour is cents of the input per dollar
 made, on a log scale. The {(~shown).mean():.0%} of entries under a hundredth of a cent are blank. Sectors are in the Bureau's
 order within fifteen groups, and the diagonal blocks are groups buying from themselves. Hover over a cell for its
-sectors and value, and click it to look the pair up below.</figcaption>
+sectors and value, and click it to look the pair up below. To zoom in, pinch, or scroll with &#8984; or Ctrl held, or
+use the buttons; then drag to move. Close in, the margins name each sector.</figcaption>
 </figure>
 
 <h2 id="sector">One sector's column and row</h2>

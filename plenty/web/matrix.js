@@ -20,16 +20,37 @@
 
   function cents(dollars, digits) { return (dollars * 100).toFixed(digits === undefined ? 2 : digits) + "\u00a2"; }
 
-  // --- the picture
-  function ramp() {
+  // --- the picture: the whole matrix, or a window on it
+  // The matrix is painted once, a pixel a cell, on a sheet off screen. The canvas shows the part
+  // of the sheet in view, and the strips beside it name what is in view: groups from far off,
+  // each sector once its cells are wide enough to label.
+  var MIN_SPAN = 8;          // the closest view: this many sectors across
+  var NAME_PX = 10;          // sectors are named once a cell is this wide
+  var GROUP_PX = 13;         // a group is named in the far view if it is this wide
+  var NAME_FONT = 11, LINE = 1.15;
+  var plot = canvas.parentNode, topStrip = document.getElementById("mx-top"), leftStrip = document.getElementById("mx-left");
+  var zoomIn = document.getElementById("mx-zoom-in"), zoomOut = document.getElementById("mx-zoom-out"), zoomAll = document.getElementById("mx-zoom-all");
+  var hLine = document.getElementById("mx-h"), vLine = document.getElementById("mx-v");
+  var view = { x: 0, y: 0, span: n };                 // the left and top edge of the view and its width, in cells
+  var sheet = document.createElement("canvas"), paper = "#fff", rule = "#888", pending = 0, pointer = null, lit = [];
+  sheet.width = sheet.height = n;
+
+  var runs = [];                                      // the groups, as runs of sectors
+  M.groups.forEach(function (g, j) {
+    var last = runs[runs.length - 1];
+    if (last && last.name === g) last.to = j + 1;
+    else runs.push({ name: g, label: M.short[g] || g, from: j, to: j + 1 });
+  });
+
+  function paint() {
     var css = getComputedStyle(document.documentElement);
-    return [0, 1, 2, 3, 4].map(function (i) {
+    var stops = [0, 1, 2, 3, 4].map(function (i) {
       var h = css.getPropertyValue("--heat-" + i).trim().replace("#", "");
       return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
     });
-  }
-  function draw() {
-    var ctx = canvas.getContext("2d"), img = ctx.createImageData(n, n), stops = ramp();
+    paper = css.getPropertyValue("--paper").trim() || paper;
+    rule = css.getPropertyValue("--rule").trim() || rule;
+    var ctx = sheet.getContext("2d"), img = ctx.createImageData(n, n);
     for (var p = 0; p < n * n; p++) {
       var v = value[p];
       if (v <= 0) continue;                           // zero, under the cut, or negative: left blank
@@ -42,16 +63,100 @@
     }
     ctx.putImageData(img, 0, 0);
   }
-  draw();
-  if (window.matchMedia) {
-    var dark = window.matchMedia("(prefers-color-scheme: dark)");
-    if (dark.addEventListener) dark.addEventListener("change", draw);
+
+  function cellPx() { return canvas.clientWidth / view.span; }
+  function named() { return cellPx() >= NAME_PX; }
+
+  function render() {
+    pending = 0;
+    var ratio = window.devicePixelRatio || 1, px = Math.max(1, Math.round(canvas.clientWidth * ratio));
+    if (canvas.width !== px) canvas.width = canvas.height = px;
+    var ctx = canvas.getContext("2d"), cell = px / view.span, line = Math.max(1, Math.round(ratio)), c;
+    ctx.clearRect(0, 0, px, px);
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(sheet, view.x, view.y, view.span, view.span, 0, 0, px, px);
+    if (named()) {                                    // close in, a gap of paper between cells
+      ctx.fillStyle = paper;
+      for (c = Math.ceil(view.x); c < view.x + view.span; c++) ctx.fillRect(Math.round((c - view.x) * cell), 0, line, px);
+      for (c = Math.ceil(view.y); c < view.y + view.span; c++) ctx.fillRect(0, Math.round((c - view.y) * cell), px, line);
+    }
+    ctx.fillStyle = rule;                             // and a rule between groups
+    ctx.globalAlpha = named() ? 1 : 0.55;
+    runs.forEach(function (g) {
+      if (!g.from) return;
+      ctx.fillRect(Math.round((g.from - view.x) * cell), 0, line, px);
+      ctx.fillRect(0, Math.round((g.from - view.y) * cell), px, line);
+    });
+    ctx.globalAlpha = 1;
+    strip(topStrip, view.x);
+    strip(leftStrip, view.y);
+    plot.classList.toggle("mx-zoomed", view.span < n);
+    zoomIn.disabled = view.span <= MIN_SPAN;
+    zoomOut.disabled = zoomAll.disabled = view.span >= n;
+    if (pointer) hover(pointer);
+  }
+  function schedule() { if (!pending) pending = requestAnimationFrame(render); }
+
+  // one strip: the groups in view and, close in, a narrow band of groups with each sector's name beside it
+  function strip(box, from) {
+    var across = box === topStrip, to = from + view.span, size = cellPx(), names = named();
+    function put(cls, a, b, tip) {
+      var s = el("span", cls);
+      s.style[across ? "left" : "top"] = ((a - from) / view.span * 100).toFixed(3) + "%";
+      s.style[across ? "width" : "height"] = ((b - a) / view.span * 100).toFixed(3) + "%";
+      s.setAttribute("data-tip", tip);
+      box.appendChild(s);
+      return s;
+    }
+    box.textContent = "";
+    box.classList.toggle("mx-named", names);
+    var band = null;
+    runs.forEach(function (g, i) {
+      var a = Math.max(g.from, from), b = Math.min(g.to, to);
+      if (b <= a) return;
+      band = put("mx-group" + (i % 2 ? "" : " alt"), a, b, g.name + ": " + (g.to - g.from) + " sectors");
+      if (names || (b - a) * size >= GROUP_PX) band.textContent = g.label;
+    });
+    if (!names || !band) return;
+    var font = Math.min(NAME_FONT, size / LINE), lines = Math.max(1, Math.floor(size / (font * LINE) + 0.01));
+    var length = box.clientHeight - band.offsetHeight;          // room for a name written up the top strip
+    for (var c = Math.floor(from); c < Math.min(n, Math.ceil(to)); c++) {
+      var s = put("mx-name" + (c && M.groups[c] !== M.groups[c - 1] ? " first" : ""), c, c + 1, M.names[c]);
+      var text = el("span", lines > 1 ? "mx-text" : "mx-text one", M.names[c]), holder = s;
+      text.style.fontSize = font.toFixed(2) + "px";
+      text.style.webkitLineClamp = lines;
+      if (across) {                                   // written sideways: a row of text turned a quarter turn
+        holder = el("span", "mx-turn");
+        holder.style.width = length + "px";
+        holder.style.height = size + "px";
+        holder.style.transform = "translateX(" + size + "px) rotate(-90deg)";
+        s.appendChild(holder);
+      }
+      holder.appendChild(text);
+      s.setAttribute("data-i", c);
+    }
   }
 
-  var hLine = document.getElementById("mx-h"), vLine = document.getElementById("mx-v");
+  function settle() {
+    view.span = Math.min(n, Math.max(MIN_SPAN, view.span));
+    view.x = Math.min(n - view.span, Math.max(0, view.x));
+    view.y = Math.min(n - view.span, Math.max(0, view.y));
+    schedule();
+  }
+  // zoom by a factor, keeping the point (fx, fy) of the picture, each 0 to 1, where it is
+  function zoom(factor, fx, fy) {
+    var span = Math.min(n, Math.max(MIN_SPAN, view.span / factor));
+    view.x += fx * (view.span - span);
+    view.y += fy * (view.span - span);
+    view.span = span;
+    settle();
+  }
+  function whole() { view.x = view.y = 0; view.span = n; settle(); }
+
   function cellAt(e) {
     var box = canvas.getBoundingClientRect();
-    var j = Math.floor((e.clientX - box.left) / box.width * n), i = Math.floor((e.clientY - box.top) / box.height * n);
+    var j = Math.floor(view.x + (e.clientX - box.left) / box.width * view.span);
+    var i = Math.floor(view.y + (e.clientY - box.top) / box.height * view.span);
     return (i < 0 || j < 0 || i >= n || j >= n) ? null : { i: i, j: j };
   }
   function describe(i, j) {
@@ -60,22 +165,107 @@
     if (v !== 0 && Math.abs(k) >= M.cut) amount += ", " + cents(k) + " of it equipment and buildings";
     return "Input: " + M.names[i] + "\nTo make: " + M.names[j] + "\n" + amount;
   }
-  canvas.addEventListener("pointermove", function (e) {
-    var c = cellAt(e);
-    if (!c) return;
+  // far off, a hair line through the cell's row and column; close in, a band around each
+  function hover(e) {
+    var c = cellAt(e), band = named(), pct = function (x) { return (x / view.span * 100).toFixed(3) + "%"; };
+    lit.forEach(function (x) { x.classList.remove("on"); });
+    lit = [];
+    if (!c) return unhover();
     window.plentyTip.show(describe(c.i, c.j), e);
     hLine.style.display = vLine.style.display = "block";
-    hLine.style.top = ((c.i + 0.5) / n * 100) + "%";
-    vLine.style.left = ((c.j + 0.5) / n * 100) + "%";
-  });
-  canvas.addEventListener("pointerleave", function () {
+    hLine.className = vLine.className = band ? "band" : "";
+    hLine.style.top = pct(c.i - view.y + (band ? 0 : 0.5));
+    vLine.style.left = pct(c.j - view.x + (band ? 0 : 0.5));
+    hLine.style.height = band ? pct(1) : "";
+    vLine.style.width = band ? pct(1) : "";
+    [[topStrip, c.j], [leftStrip, c.i]].forEach(function (p) {
+      var name = p[0].querySelector('[data-i="' + p[1] + '"]');
+      if (name) { name.classList.add("on"); lit.push(name); }
+    });
+  }
+  function unhover() {
+    pointer = null;
     window.plentyTip.hide();
     hLine.style.display = vLine.style.display = "none";
+  }
+
+  // pinch, or scroll with Control or Command held; a plain scroll is left to the page
+  canvas.addEventListener("wheel", function (e) {
+    if (!e.ctrlKey && !e.metaKey) return;
+    e.preventDefault();
+    var box = canvas.getBoundingClientRect();
+    var step = -e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.002) * (e.ctrlKey ? 10 : 1);
+    zoom(Math.pow(2, step), (e.clientX - box.left) / box.width, (e.clientY - box.top) / box.height);
+  }, { passive: false });
+  // Safari reports a trackpad pinch as a gesture, not a wheel
+  var pinch = null;
+  canvas.addEventListener("gesturestart", function (e) {
+    e.preventDefault();
+    var box = canvas.getBoundingClientRect();
+    pinch = { scale: 1, fx: (e.clientX - box.left) / box.width, fy: (e.clientY - box.top) / box.height };
+  });
+  canvas.addEventListener("gesturechange", function (e) {
+    e.preventDefault();
+    if (!pinch) return;
+    zoom(e.scale / pinch.scale, pinch.fx, pinch.fy);
+    pinch.scale = e.scale;
+  });
+  canvas.addEventListener("gestureend", function () { pinch = null; });
+
+  // drag to move the view; a press that does not move is a click
+  var drag = null, dragged = false;
+  canvas.addEventListener("pointerdown", function (e) {
+    dragged = false;
+    if (e.button === 0 && view.span < n) drag = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, id: e.pointerId };
+  });
+  canvas.addEventListener("pointermove", function (e) {
+    if (drag && drag.id === e.pointerId) {
+      var dx = e.clientX - drag.x, dy = e.clientY - drag.y, box = canvas.getBoundingClientRect();
+      if (dragged || dx * dx + dy * dy >= 16) {
+        if (!dragged) { dragged = true; canvas.setPointerCapture(e.pointerId); plot.classList.add("mx-dragging"); unhover(); }
+        view.x = drag.vx - dx / box.width * view.span;
+        view.y = drag.vy - dy / box.height * view.span;
+        settle();
+        return;
+      }
+    }
+    pointer = { clientX: e.clientX, clientY: e.clientY };
+    hover(pointer);
+  });
+  function drop() { drag = null; plot.classList.remove("mx-dragging"); }
+  canvas.addEventListener("pointerup", drop);
+  canvas.addEventListener("pointercancel", drop);
+  canvas.addEventListener("pointerleave", function () {
+    lit.forEach(function (x) { x.classList.remove("on"); });
+    unhover();
   });
   canvas.addEventListener("click", function (e) {
+    if (dragged) { dragged = false; return; }
     var c = cellAt(e);
     if (c) { select(c.j, c.i); document.getElementById("sector").scrollIntoView({ behavior: "smooth" }); }
   });
+
+  zoomIn.addEventListener("click", function () { zoom(2, 0.5, 0.5); });
+  zoomOut.addEventListener("click", function () { zoom(0.5, 0.5, 0.5); });
+  zoomAll.addEventListener("click", whole);
+  canvas.addEventListener("keydown", function (e) {
+    var step = view.span / 8, move = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+    if (move && view.span < n) { view.x += move[0] * step; view.y += move[1] * step; settle(); }
+    else if (e.key === "+" || e.key === "=") zoom(2, 0.5, 0.5);
+    else if (e.key === "-") zoom(0.5, 0.5, 0.5);
+    else if (e.key === "0" || e.key === "Escape") whole();
+    else return;
+    e.preventDefault();
+  });
+
+  paint();
+  render();
+  if (window.ResizeObserver) new ResizeObserver(schedule).observe(canvas);
+  else window.addEventListener("resize", schedule);
+  if (window.matchMedia) {
+    var dark = window.matchMedia("(prefers-color-scheme: dark)");
+    if (dark.addEventListener) dark.addEventListener("change", function () { paint(); schedule(); });
+  }
 
   // --- one sector's column and row
   var pick = document.getElementById("mx-pick"), inBox = document.getElementById("mx-in"), outBox = document.getElementById("mx-out");
