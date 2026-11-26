@@ -341,27 +341,33 @@
     hLine.style.display = vLine.style.display = "none";
   }
 
-  // a scroll or a pinch over the picture zooms it, and is kept from the page
-  canvas.addEventListener("wheel", function (e) {
-    e.preventDefault();
-    var box = canvas.getBoundingClientRect();
-    var step = -e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.002) * (e.ctrlKey ? 10 : 1);
-    zoom(Math.pow(2, step), (e.clientX - box.left) / box.width, (e.clientY - box.top) / box.height);
-  }, { passive: false });
-  // Safari reports a trackpad pinch as a gesture, not a wheel
+  // a scroll or a pinch over the picture or its margins zooms it, and is kept from the page.
+  // The zoom holds still the point under the pointer, or the nearest point of the picture to it.
+  function spot(e) {
+    var box = canvas.getBoundingClientRect(), unit = function (x) { return Math.min(1, Math.max(0, x)); };
+    return { fx: unit((e.clientX - box.left) / box.width), fy: unit((e.clientY - box.top) / box.height) };
+  }
   var pinch = null;
-  canvas.addEventListener("gesturestart", function (e) {
-    e.preventDefault();
-    var box = canvas.getBoundingClientRect();
-    pinch = { scale: 1, fx: (e.clientX - box.left) / box.width, fy: (e.clientY - box.top) / box.height };
+  [canvas, topStrip, leftStrip].forEach(function (target) {
+    target.addEventListener("wheel", function (e) {
+      e.preventDefault();
+      var at = spot(e), step = -e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.002) * (e.ctrlKey ? 10 : 1);
+      zoom(Math.pow(2, step), at.fx, at.fy);
+    }, { passive: false });
+    // Safari reports a trackpad pinch as a gesture, not a wheel
+    target.addEventListener("gesturestart", function (e) {
+      e.preventDefault();
+      pinch = spot(e);
+      pinch.scale = 1;
+    });
+    target.addEventListener("gesturechange", function (e) {
+      e.preventDefault();
+      if (!pinch) return;
+      zoom(e.scale / pinch.scale, pinch.fx, pinch.fy);
+      pinch.scale = e.scale;
+    });
+    target.addEventListener("gestureend", function () { pinch = null; });
   });
-  canvas.addEventListener("gesturechange", function (e) {
-    e.preventDefault();
-    if (!pinch) return;
-    zoom(e.scale / pinch.scale, pinch.fx, pinch.fy);
-    pinch.scale = e.scale;
-  });
-  canvas.addEventListener("gestureend", function () { pinch = null; });
 
   // drag to move the view; a press that does not move is a click
   var drag = null, dragged = false;
