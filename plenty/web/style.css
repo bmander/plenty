@@ -274,7 +274,7 @@ math a { color: inherit; }
 .mx-zoom button { font: inherit; line-height: 1.2; min-width: 2em; color: var(--ink); background: var(--paper); border: 1.5px solid var(--rule); border-radius: 4px; padding: 2px 8px; cursor: pointer; }
 .mx-zoom button:disabled { color: var(--ink-2); opacity: 0.55; cursor: default; }
 /* The strips name what the picture shows: groups from far off; close in (.mx-named) a narrow band of groups and each sector */
-.mx-strip { --band: 1.6em; position: relative; overflow: hidden; font-size: 11px; line-height: 1.15; color: var(--ink-2); }
+.mx-strip { --band: 1.6em; --sort: 12px; position: relative; overflow: hidden; font-size: 11px; line-height: 1.15; color: var(--ink-2); cursor: pointer; -webkit-user-select: none; user-select: none; }
 .mx-strip > span { position: absolute; box-sizing: border-box; overflow: hidden; white-space: nowrap; }
 .mx-group.alt { background: var(--bar); }
 .mx-top { grid-column: 2; height: 11em; }
@@ -290,10 +290,21 @@ math a { color: inherit; }
 .mx-left > .mx-name { left: var(--band); display: flex; align-items: center; justify-content: flex-end; padding-left: 4px; text-align: right; }
 .mx-top > .mx-name.first { border-left: 1px solid var(--rule); }
 .mx-left > .mx-name.first { border-top: 1px solid var(--rule); }
-.mx-name.on { color: var(--ink); background: var(--bar); }
-.mx-turn { position: absolute; left: 0; bottom: 0; box-sizing: border-box; transform-origin: 0 100%; display: flex; align-items: center; padding: 0 2px 0 4px; }
+.mx-name.on, .mx-name:hover, .mx-name.sel { color: var(--ink); background: var(--bar); }
+.mx-name.sel { font-weight: 600; }
+/* an axis sorted by one line of the other says so where its groups were */
+.mx-sorted { color: var(--ink); background: var(--bar); }
+.mx-strip:not(.mx-named) > .mx-sorted { display: flex; align-items: center; justify-content: center; padding: 6px; text-align: center; white-space: normal; writing-mode: horizontal-tb; transform: none; font-weight: 600; }
+/* each sector's sort button, at the end of its name next to the picture; quiet until wanted */
+.mx-name .mx-sort { position: absolute; box-sizing: border-box; display: flex; align-items: center; justify-content: center; padding: 0; border: 0; overflow: hidden; font: inherit; font-size: 10px; line-height: 1; color: var(--ink-2); background: var(--paper); cursor: pointer; opacity: 0; }
+.mx-left .mx-sort { top: 0; bottom: 0; right: 0; width: var(--sort); }
+.mx-top .mx-sort { left: 0; right: 0; bottom: 0; height: var(--sort); }
+.mx-name:hover .mx-sort, .mx-name.on .mx-sort, .mx-name.sel .mx-sort, .mx-name .mx-sort.active { opacity: 1; }
+.mx-name:hover .mx-sort, .mx-name.on .mx-sort, .mx-name.sel .mx-sort { background: var(--bar); }
+.mx-name .mx-sort:hover, .mx-name .mx-sort.active { color: var(--ink); font-weight: 700; }
+.mx-turn { position: absolute; left: 0; bottom: var(--sort); box-sizing: border-box; transform-origin: 0 100%; display: flex; align-items: center; padding: 0 2px 0 4px; }
 .mx-text { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; white-space: normal; overflow-wrap: anywhere; min-width: 0; line-height: 1.15; }
-.mx-left .mx-text { padding-right: 9px; }   /* room for the ellipsis, which Chrome hangs past a right-aligned last line */
+.mx-left .mx-text { padding-right: calc(var(--sort) + 1px); }   /* room for the sort button, and for the ellipsis Chrome hangs past a right-aligned last line */
 .mx-text.one { display: block; white-space: nowrap; text-overflow: ellipsis; }
 .mx-plot { position: relative; grid-column: 2; aspect-ratio: 1; border: 1px solid var(--rule); overflow: hidden; }
 .mx-plot canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }
@@ -305,6 +316,15 @@ math a { color: inherit; }
 #mx-h.band, #mx-v.band { background: none; border: 0 solid var(--ink); opacity: 0.7; }
 #mx-h.band { border-width: 1px 0; }
 #mx-v.band { border-width: 0 1px; }
+/* what is marked: a row, a column, or a cell with both */
+.mx-sel { position: absolute; display: none; pointer-events: none; outline: 1px solid var(--ink); }
+.mx-sel-row { left: 0; right: 0; }
+.mx-sel-col { top: 0; bottom: 0; }
+.mx-sel-cell { outline-width: 2px; }
+.mx-note { margin: 10px 0 0; min-height: 1.6em; font-size: 13.5px; }
+.mx-note p { margin: 0 0 4px; max-width: none; }
+.mx-note .mx-sort { font: inherit; font-size: 12.5px; line-height: 1.2; margin-left: 8px; color: var(--ink); background: var(--paper); border: 1.5px solid var(--rule); border-radius: 4px; padding: 1px 8px; cursor: pointer; }
+.mx-note .mx-sort.active { border-color: var(--ink-2); font-weight: 600; }
 .mx-legend { margin: 12px 0 2px; width: min(320px, 100%); font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .mx-ramp { height: 10px; border-radius: 2px; background: linear-gradient(to right, var(--heat-0), var(--heat-1), var(--heat-2), var(--heat-3), var(--heat-4)); }
 .mx-ticks { display: flex; justify-content: space-between; margin-top: 3px; }

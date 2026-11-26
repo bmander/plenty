@@ -1783,23 +1783,27 @@ it each makes.</p>
 <div class="mx-frame">
 <div class="mx-axis mx-axis-top"><span>Made: one dollar of each commodity &rarr;</span>
 <span class="mx-zoom"><button type="button" id="mx-zoom-out" aria-label="Zoom out" disabled>&minus;</button><button
- type="button" id="mx-zoom-in" aria-label="Zoom in">+</button><button type="button" id="mx-zoom-all" disabled>Whole matrix</button></span></div>
-<div class="mx-strip mx-top" id="mx-top" aria-hidden="true"></div>
-<div class="mx-strip mx-left" id="mx-left" aria-hidden="true"></div>
+ type="button" id="mx-zoom-in" aria-label="Zoom in">+</button><button type="button" id="mx-zoom-all" disabled>Whole matrix</button><button
+ type="button" id="mx-unsort" disabled>Default order</button></span></div>
+<div class="mx-strip mx-top" id="mx-top"></div>
+<div class="mx-strip mx-left" id="mx-left"></div>
 <div class="mx-plot">
 <canvas id="mx-canvas" width="{n}" height="{n}" role="img" tabindex="0"
  aria-label="Heat map of the {n} by {n} direct requirements matrix. The table of groups and the sector lookup below give the same figures."></canvas>
 <i id="mx-h" aria-hidden="true"></i><i id="mx-v" aria-hidden="true"></i>
 </div>
 </div>
+<div class="mx-note" id="mx-note" aria-live="polite"></div>
 <div class="mx-legend" aria-hidden="true"><div class="mx-ramp"></div>
 <div class="mx-ticks"><span>0.01&cent;</span><span>0.1&cent;</span><span>1&cent;</span><span>10&cent;</span><span>$1</span></div></div>
 <figcaption>Each column is a commodity being made and each row an input to it. Colour is cents of the input per dollar
 made, on a log scale. The {(~shown).mean():.0%} of entries under a hundredth of a cent are blank. Sectors are in the Bureau's
 order within fifteen groups, and the diagonal blocks are groups buying from themselves. Hover over a cell for its
-sectors and value, and click it to look the pair up below. To zoom in, pinch, or scroll with &#8984; or Ctrl held, or
-use the buttons; then drag to move. Close in, the margins name each sector, and closer still each cell shows its
-value in cents.</figcaption>
+sectors and value. Click a cell to mark it with its row and column, or click in a margin to mark one row or one
+column. To zoom in, pinch, or scroll with &#8984; or Ctrl held, or use the buttons; then drag to move. Close in, the
+margins name each sector, and closer still each cell shows its value in cents. The arrows beside a sector's name, and
+the buttons under the picture for whatever is marked, sort the whole matrix by that row or column: largest first,
+then smallest first, then back to the Bureau's order.</figcaption>
 </figure>
 
 <h2 id="sector">One sector's column and row</h2>

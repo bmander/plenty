@@ -74,8 +74,8 @@ def test_the_page_for_A_shows_the_matrix_the_model_uses(built):
     assert f'<mi><a href="{site.MATRIX_A}">' in method          # the A in the equation is the link
     html = (site.SITE / site.MATRIX_A).read_text()
     assert f'width="{len(A)}" height="{len(A)}"' in html and 'src="matrix.js"' in html
-    # what matrix.js draws into and listens to: the two margins and the zoom buttons
-    assert all(f'id="{i}"' in html for i in ("mx-top", "mx-left", "mx-zoom-in", "mx-zoom-out", "mx-zoom-all"))
+    # what matrix.js draws into and listens to: the margins, the buttons, and the line that says what is marked
+    assert all(f'id="{i}"' in html for i in ("mx-top", "mx-left", "mx-zoom-in", "mx-zoom-out", "mx-zoom-all", "mx-unsort", "mx-note"))
     # the data file: every entry of any size, in the page's order, to within its rounding
     text = (site.SITE / "matrix-A-data.js").read_text()
     data = json.loads(text[text.index("{"):text.rindex("}") + 1])

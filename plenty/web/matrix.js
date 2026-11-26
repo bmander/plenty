@@ -24,18 +24,37 @@
   // The matrix is painted once, a pixel a cell, on a sheet off screen. The canvas shows the part
   // of the sheet in view, and the strips beside it name what is in view: groups from far off,
   // each sector once its cells are wide enough to label. Closer still, each cell carries its number.
+  // Either axis can be put in the order of one line of the other, and a cell, a row or a column marked.
   var MIN_SPAN = 8;          // the closest view: this many sectors across
   var NAME_PX = 10;          // sectors are named once a cell is this wide
   var VALUE_PX = 32;         // and each cell shows its value, in cents, once it is this wide
   var GROUP_PX = 13;         // a group is named in the far view if it is this wide
   var NAME_FONT = 11, LINE = 1.15;
+  var SORT_PX = 12;          // room in a sector's label for its sort button
+  var GLYPH = { "0": "\u21c5", "-1": "\u2193", "1": "\u2191" };
   var plot = canvas.parentNode, topStrip = document.getElementById("mx-top"), leftStrip = document.getElementById("mx-left");
   var zoomIn = document.getElementById("mx-zoom-in"), zoomOut = document.getElementById("mx-zoom-out"), zoomAll = document.getElementById("mx-zoom-all");
+  var unsort = document.getElementById("mx-unsort"), note = document.getElementById("mx-note");
   var hLine = document.getElementById("mx-h"), vLine = document.getElementById("mx-v");
   var view = { x: 0, y: 0, span: n };                 // the left and top edge of the view and its width, in cells
   var sheet = document.createElement("canvas"), pending = 0, pointer = null, lit = [];
   var stops = [], paper = "#fff", rule = "#888", faint = "#888", onLight = "#000", onDark = "#fff", face = "sans-serif";
   sheet.width = sheet.height = n;
+
+  // The picture's two axes. at[p] is the sector drawn at place p, and pos the other way round.
+  // by is the line of the other axis this one is sorted by, as {k, dir} with dir 1 for smallest
+  // first; sel is the sector marked on it.
+  function axis(box) {
+    var a = { box: box, at: [], pos: [], by: null, sel: null };
+    for (var k = 0; k < n; k++) { a.at.push(k); a.pos.push(k); }
+    box.style.setProperty("--sort", SORT_PX + "px");
+    return a;
+  }
+  var rows = axis(leftStrip), cols = axis(topStrip);
+  rows.other = cols;
+  cols.other = rows;
+  var selRow = plot.appendChild(el("i", "mx-sel mx-sel-row")), selCol = plot.appendChild(el("i", "mx-sel mx-sel-col"));
+  var selCell = plot.appendChild(el("i", "mx-sel mx-sel-cell"));
 
   var runs = [];                                      // the groups, as runs of sectors
   M.groups.forEach(function (g, j) {
@@ -68,13 +87,16 @@
     onDark = inkIsDark ? paper : ink;
     face = getComputedStyle(document.body).fontFamily;
     var ctx = sheet.getContext("2d"), img = ctx.createImageData(n, n);
-    for (var p = 0; p < n * n; p++) {
-      if (value[p] <= 0) continue;                    // zero, under the cut, or negative: left blank
-      var c = shade(value[p]);
-      img.data[4 * p] = c[0];
-      img.data[4 * p + 1] = c[1];
-      img.data[4 * p + 2] = c[2];
-      img.data[4 * p + 3] = 255;
+    for (var i = 0; i < n; i++) {
+      for (var j = 0; j < n; j++) {
+        var v = value[rows.at[i] * n + cols.at[j]], p = 4 * (i * n + j);
+        if (v <= 0) continue;                         // zero, under the cut, or negative: left blank
+        var c = shade(v);
+        img.data[p] = c[0];
+        img.data[p + 1] = c[1];
+        img.data[p + 2] = c[2];
+        img.data[p + 3] = 255;
+      }
     }
     ctx.putImageData(img, 0, 0);
   }
@@ -101,12 +123,12 @@
       for (c = Math.ceil(view.x); c < view.x + view.span; c++) ctx.fillRect(Math.round((c - view.x) * cell), 0, line, px);
       for (c = Math.ceil(view.y); c < view.y + view.span; c++) ctx.fillRect(0, Math.round((c - view.y) * cell), px, line);
     }
-    ctx.fillStyle = rule;                             // and a rule between groups
+    ctx.fillStyle = rule;                             // and a rule between groups, on an axis still in groups
     ctx.globalAlpha = named() ? 1 : 0.55;
     runs.forEach(function (g) {
       if (!g.from) return;
-      ctx.fillRect(Math.round((g.from - view.x) * cell), 0, line, px);
-      ctx.fillRect(0, Math.round((g.from - view.y) * cell), px, line);
+      if (!cols.by) ctx.fillRect(Math.round((g.from - view.x) * cell), 0, line, px);
+      if (!rows.by) ctx.fillRect(0, Math.round((g.from - view.y) * cell), px, line);
     });
     ctx.globalAlpha = 1;
     if (cellPx() >= VALUE_PX) {                       // closest in, the number on each cell
@@ -115,29 +137,37 @@
       ctx.textBaseline = "middle";
       for (var i = Math.floor(view.y); i < Math.min(n, view.y + view.span); i++) {
         for (var j = Math.floor(view.x); j < Math.min(n, view.x + view.span); j++) {
-          var v = value[i * n + j];
+          var v = value[rows.at[i] * n + cols.at[j]];
           if (!v) continue;
           ctx.fillStyle = v < 0 ? faint : luminance(shade(v)) > 0.2 ? onLight : onDark;
           ctx.fillText(figure(v), (j + 0.5 - view.x) * cell, (i + 0.5 - view.y) * cell);
         }
       }
     }
-    strip(topStrip, view.x);
-    strip(leftStrip, view.y);
+    strip(cols, view.x);
+    strip(rows, view.y);
+    var pct = function (x) { return (x / view.span * 100).toFixed(3) + "%"; };
+    selRow.style.display = rows.sel === null ? "none" : "block";
+    selCol.style.display = cols.sel === null ? "none" : "block";
+    selCell.style.display = rows.sel === null || cols.sel === null ? "none" : "block";
+    if (rows.sel !== null) { selRow.style.top = selCell.style.top = pct(rows.pos[rows.sel] - view.y); selRow.style.height = selCell.style.height = pct(1); }
+    if (cols.sel !== null) { selCol.style.left = selCell.style.left = pct(cols.pos[cols.sel] - view.x); selCol.style.width = selCell.style.width = pct(1); }
     plot.classList.toggle("mx-zoomed", view.span < n);
     zoomIn.disabled = view.span <= MIN_SPAN;
     zoomOut.disabled = zoomAll.disabled = view.span >= n;
+    unsort.disabled = !rows.by && !cols.by;
     if (pointer) hover(pointer);
   }
   function schedule() { if (!pending) pending = requestAnimationFrame(render); }
 
-  // one strip: the groups in view and, close in, a narrow band of groups with each sector's name beside it
-  function strip(box, from) {
-    var across = box === topStrip, to = from + view.span, size = cellPx(), names = named();
-    function put(cls, a, b, tip) {
+  // one strip: the groups in view and, close in, a narrow band of groups with each sector's name
+  // beside it. An axis that is sorted has no groups to show, and says what it is sorted by instead.
+  function strip(a, from) {
+    var box = a.box, across = a === cols, to = from + view.span, size = cellPx(), names = named();
+    function put(cls, lo, hi, tip) {
       var s = el("span", cls);
-      s.style[across ? "left" : "top"] = ((a - from) / view.span * 100).toFixed(3) + "%";
-      s.style[across ? "width" : "height"] = ((b - a) / view.span * 100).toFixed(3) + "%";
+      s.style[across ? "left" : "top"] = ((lo - from) / view.span * 100).toFixed(3) + "%";
+      s.style[across ? "width" : "height"] = ((hi - lo) / view.span * 100).toFixed(3) + "%";
       s.setAttribute("data-tip", tip);
       box.appendChild(s);
       return s;
@@ -145,17 +175,21 @@
     box.textContent = "";
     box.classList.toggle("mx-named", names);
     var band = null;
-    runs.forEach(function (g, i) {
-      var a = Math.max(g.from, from), b = Math.min(g.to, to);
-      if (b <= a) return;
-      band = put("mx-group" + (i % 2 ? "" : " alt"), a, b, g.name + ": " + (g.to - g.from) + " sectors");
-      if (names || (b - a) * size >= GROUP_PX) band.textContent = g.label;
+    if (a.by) {
+      band = put("mx-group mx-sorted", from, to, sortedBy(a));
+      band.textContent = sortedBy(a);
+    } else runs.forEach(function (g, i) {
+      var lo = Math.max(g.from, from), hi = Math.min(g.to, to);
+      if (hi <= lo) return;
+      band = put("mx-group" + (i % 2 ? "" : " alt"), lo, hi, g.name + ": " + (g.to - g.from) + " sectors");
+      if (names || (hi - lo) * size >= GROUP_PX) band.textContent = g.label;
     });
     if (!names || !band) return;
     var font = Math.min(NAME_FONT, size / LINE), lines = Math.max(1, Math.floor(size / (font * LINE) + 0.01));
-    var length = box.clientHeight - band.offsetHeight;          // room for a name written up the top strip
-    for (var c = Math.floor(from); c < Math.min(n, Math.ceil(to)); c++) {
-      var s = put("mx-name" + (c && M.groups[c] !== M.groups[c - 1] ? " first" : ""), c, c + 1, M.names[c]);
+    var length = box.clientHeight - band.offsetHeight - SORT_PX;   // room for a name written up the top strip
+    for (var p = Math.floor(from); p < Math.min(n, Math.ceil(to)); p++) {
+      var c = a.at[p], first = !a.by && c && M.groups[c] !== M.groups[c - 1];
+      var s = put("mx-name" + (first ? " first" : "") + (a.sel === c ? " sel" : ""), p, p + 1, M.names[c]);
       var text = el("span", lines > 1 ? "mx-text" : "mx-text one", M.names[c]), holder = s;
       text.style.fontSize = font.toFixed(2) + "px";
       text.style.webkitLineClamp = lines;
@@ -168,8 +202,87 @@
       }
       holder.appendChild(text);
       s.setAttribute("data-i", c);
+      s.appendChild(sortButton(a.other, c, true));    // a row's button orders the columns, and a column's the rows
     }
   }
+
+  // --- sorting: one row puts the columns in order, one column the rows
+  function direction(a, k) { return a.by && a.by.k === k ? a.by.dir : 0; }
+  function sortedBy(a) {
+    var name = M.names[a.by.k], how = a.by.dir < 0 ? ", largest first" : ", smallest first";
+    return (a === cols ? "Columns sorted by their use of " + name : "Rows sorted by how much of each goes into " + name) + how;
+  }
+  // what pressing the button for line k would say about axis a, the one it reorders
+  function sortText(a, k) {
+    var what = a === cols ? ["Columns", "row"] : ["Rows", "column"], d = direction(a, k);
+    if (!d) return "Sort the " + what[0].toLowerCase() + " by this " + what[1];
+    return what[0] + " sorted by this " + what[1] + (d < 0 ? ", largest first" : ", smallest first");
+  }
+  function sortButton(a, k, small) {
+    var d = direction(a, k), b = el("button", "mx-sort" + (d ? " active" : ""), GLYPH[d] + (small ? "" : " " + sortText(a, k)));
+    b.type = "button";
+    b.setAttribute("data-axis", a === cols ? "cols" : "rows");
+    b.setAttribute("data-k", k);
+    if (small) { b.tabIndex = -1; b.setAttribute("data-tip", sortText(a, k)); }
+    return b;
+  }
+  function order(a, by) {
+    a.by = by;
+    var key = function (x) { return a === rows ? value[x * n + by.k] : value[by.k * n + x]; };
+    a.at.sort(function (x, y) { return (by ? by.dir * (key(x) - key(y)) : 0) || x - y; });   // ties keep the Bureau's order
+    a.at.forEach(function (x, p) { a.pos[x] = p; });
+    if (by) view[a === rows ? "y" : "x"] = 0;         // a new order is read from its start
+    paint();
+    remark();
+    settle();
+  }
+  // largest first, then smallest first, then back to the Bureau's order
+  function toggle(a, k) {
+    var d = direction(a, k);
+    order(a, d === 0 ? { k: k, dir: -1 } : d < 0 ? { k: k, dir: 1 } : null);
+  }
+  plot.closest("figure").addEventListener("click", function (e) {
+    var b = e.target.closest("button.mx-sort");
+    if (b) toggle(b.getAttribute("data-axis") === "cols" ? cols : rows, +b.getAttribute("data-k"));
+  });
+  unsort.addEventListener("click", function () { order(rows, null); order(cols, null); });
+
+  // --- marking: a cell with its row and column, or a row or a column alone (null for neither)
+  function mark(i, j) {
+    var same = rows.sel === i && cols.sel === j;      // marking the same thing again clears it
+    rows.sel = same ? null : i;
+    cols.sel = same ? null : j;
+    remark();
+    schedule();
+  }
+  // the line under the picture that says what is marked, with a way to the lookup and the sort buttons
+  function remark() {
+    var i = rows.sel, j = cols.sel;
+    function line(label, k, a) {
+      var p = el("p"), link = el("a", "", M.names[k]);
+      link.href = "#sector";
+      link.setAttribute("data-sector", M.codes[k]);
+      p.appendChild(el("span", "dim", label + " "));
+      p.appendChild(link);
+      p.appendChild(sortButton(a, k, false));
+      note.appendChild(p);
+    }
+    note.textContent = "";
+    if (i === null && j === null) note.appendChild(el("p", "dim", "Nothing is marked."));
+    if (i !== null) line("Row, the input:", i, cols);
+    if (j !== null) line("Column, the thing made:", j, rows);
+    if (i !== null && j !== null) note.appendChild(el("p", "", "Cell: " + amount(i, j)));
+  }
+  [rows, cols].forEach(function (a) {
+    a.box.addEventListener("click", function (e) {
+      if (e.target.closest("button")) return;
+      var box = a.box.getBoundingClientRect();
+      var p = Math.floor(a === rows ? view.y + (e.clientY - box.top) / box.height * view.span
+                                    : view.x + (e.clientX - box.left) / box.width * view.span);
+      if (p < 0 || p >= n) return;
+      if (a === rows) mark(a.at[p], null); else mark(null, a.at[p]);
+    });
+  });
 
   function settle() {
     view.span = Math.min(n, Math.max(MIN_SPAN, view.span));
@@ -189,16 +302,16 @@
 
   function cellAt(e) {
     var box = canvas.getBoundingClientRect();
-    var j = Math.floor(view.x + (e.clientX - box.left) / box.width * view.span);
-    var i = Math.floor(view.y + (e.clientY - box.top) / box.height * view.span);
-    return (i < 0 || j < 0 || i >= n || j >= n) ? null : { i: i, j: j };
+    var x = Math.floor(view.x + (e.clientX - box.left) / box.width * view.span);
+    var y = Math.floor(view.y + (e.clientY - box.top) / box.height * view.span);
+    return (x < 0 || y < 0 || x >= n || y >= n) ? null : { i: rows.at[y], j: cols.at[x], x: x, y: y };   // the sectors, and their places
   }
-  function describe(i, j) {
+  function amount(i, j) {
     var v = value[i * n + j], k = capital[i * n + j];
-    var amount = v === 0 ? "under " + cents(M.cut) + " per dollar" : cents(v) + " per dollar";
-    if (v !== 0 && Math.abs(k) >= M.cut) amount += ", " + cents(k) + " of it equipment and buildings";
-    return "Input: " + M.names[i] + "\nTo make: " + M.names[j] + "\n" + amount;
+    if (v === 0) return "under " + cents(M.cut) + " per dollar";
+    return cents(v) + " per dollar" + (Math.abs(k) >= M.cut ? ", " + cents(k) + " of it equipment and buildings" : "");
   }
+  function describe(i, j) { return "Input: " + M.names[i] + "\nTo make: " + M.names[j] + "\n" + amount(i, j); }
   // far off, a hair line through the cell's row and column; close in, a band around each
   function hover(e) {
     var c = cellAt(e), band = named(), pct = function (x) { return (x / view.span * 100).toFixed(3) + "%"; };
@@ -208,8 +321,8 @@
     window.plentyTip.show(describe(c.i, c.j), e);
     hLine.style.display = vLine.style.display = "block";
     hLine.className = vLine.className = band ? "band" : "";
-    hLine.style.top = pct(c.i - view.y + (band ? 0 : 0.5));
-    vLine.style.left = pct(c.j - view.x + (band ? 0 : 0.5));
+    hLine.style.top = pct(c.y - view.y + (band ? 0 : 0.5));
+    vLine.style.left = pct(c.x - view.x + (band ? 0 : 0.5));
     hLine.style.height = band ? pct(1) : "";
     vLine.style.width = band ? pct(1) : "";
     [[topStrip, c.j], [leftStrip, c.i]].forEach(function (p) {
@@ -276,7 +389,7 @@
   canvas.addEventListener("click", function (e) {
     if (dragged) { dragged = false; return; }
     var c = cellAt(e);
-    if (c) { select(c.j, c.i); document.getElementById("sector").scrollIntoView({ behavior: "smooth" }); }
+    if (c) mark(c.i, c.j);
   });
 
   zoomIn.addEventListener("click", function () { zoom(2, 0.5, 0.5); });
@@ -293,6 +406,7 @@
   });
 
   paint();
+  remark();
   render();
   if (window.ResizeObserver) new ResizeObserver(schedule).observe(canvas);
   else window.addEventListener("resize", schedule);
