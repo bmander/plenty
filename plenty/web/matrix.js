@@ -280,7 +280,7 @@
   }
   [rows, cols].forEach(function (a) {
     a.box.addEventListener("click", function (e) {
-      if (e.target.closest("button")) return;
+      if (slid(e) || e.target.closest("button")) return;
       var box = a.box.getBoundingClientRect();
       var p = Math.floor(a === rows ? view.y + (e.clientY - box.top) / box.height * view.span
                                     : view.x + (e.clientX - box.left) / box.width * view.span);
@@ -369,35 +369,57 @@
     target.addEventListener("gestureend", function () { pinch = null; });
   });
 
-  // drag to move the view; a press that does not move is a click
-  var drag = null, dragged = false;
-  canvas.addEventListener("pointerdown", function (e) {
+  // Dragging moves the view. With a mouse it takes the wheel button, or Control and the main
+  // button, so that a plain press stays a click; a finger or a pen drags as it is.
+  var drag = null, dragged = false, press = null;
+  // whether the click that ends a press was really a drag, of the view or of nothing
+  function slid(e) {
+    var far = press && Math.pow(e.clientX - press.x, 2) + Math.pow(e.clientY - press.y, 2) >= 16, was = dragged || far;
     dragged = false;
-    if (e.button === 0 && view.span < n) drag = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, id: e.pointerId };
-  });
-  canvas.addEventListener("pointermove", function (e) {
-    if (drag && drag.id === e.pointerId) {
+    return was;
+  }
+  function pans(e) {
+    if (e.pointerType !== "mouse") return e.button === 0;
+    return e.button === 1 || e.ctrlKey;               // on a Mac, Control can make the main button report as the second
+  }
+  [canvas, topStrip, leftStrip].forEach(function (target) {
+    target.addEventListener("pointerdown", function (e) {
+      dragged = false;
+      press = { x: e.clientX, y: e.clientY };
+      if (pans(e) && view.span < n) drag = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, id: e.pointerId };
+    });
+    target.addEventListener("pointermove", function (e) {
+      if (!drag || drag.id !== e.pointerId) return;
       var dx = e.clientX - drag.x, dy = e.clientY - drag.y, box = canvas.getBoundingClientRect();
-      if (dragged || dx * dx + dy * dy >= 16) {
-        if (!dragged) { dragged = true; canvas.setPointerCapture(e.pointerId); plot.classList.add("mx-dragging"); unhover(); }
-        view.x = drag.vx - dx / box.width * view.span;
-        view.y = drag.vy - dy / box.height * view.span;
-        settle();
-        return;
+      if (!dragged && dx * dx + dy * dy < 16) return;                 // not yet a drag
+      if (!dragged) {
+        dragged = true;
+        try { target.setPointerCapture(e.pointerId); } catch (err) { /* the pointer has gone; the drag still follows it over the picture */ }
+        plot.classList.add("mx-dragging");
+        unhover();
       }
-    }
+      view.x = drag.vx - dx / box.width * view.span;
+      view.y = drag.vy - dy / box.height * view.span;
+      settle();
+    });
+    target.addEventListener("pointerup", drop);
+    target.addEventListener("pointercancel", drop);
+    // the wheel button must not start the browser's own scrolling, nor Control and a click open the menu on a Mac
+    target.addEventListener("mousedown", function (e) { if (e.button === 1) e.preventDefault(); });
+    target.addEventListener("contextmenu", function (e) { if (e.ctrlKey) e.preventDefault(); });
+  });
+  function drop() { drag = null; plot.classList.remove("mx-dragging"); }
+  canvas.addEventListener("pointermove", function (e) {
+    if (dragged && drag) return;
     pointer = { clientX: e.clientX, clientY: e.clientY };
     hover(pointer);
   });
-  function drop() { drag = null; plot.classList.remove("mx-dragging"); }
-  canvas.addEventListener("pointerup", drop);
-  canvas.addEventListener("pointercancel", drop);
   canvas.addEventListener("pointerleave", function () {
     lit.forEach(function (x) { x.classList.remove("on"); });
     unhover();
   });
   canvas.addEventListener("click", function (e) {
-    if (dragged) { dragged = false; return; }
+    if (slid(e)) return;
     var c = cellAt(e);
     if (c) mark(c.i, c.j);
   });
