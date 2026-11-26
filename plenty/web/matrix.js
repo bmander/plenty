@@ -238,8 +238,9 @@
   }
   // largest first, then smallest first, then back to the Bureau's order
   function toggle(a, k) {
-    var d = direction(a, k);
-    order(a, d === 0 ? { k: k, dir: -1 } : d < 0 ? { k: k, dir: 1 } : null);
+    var d = direction(a, k), by = d === 0 ? { k: k, dir: -1 } : d < 0 ? { k: k, dir: 1 } : null;
+    if (by) a.other.sel = k;                          // the line sorted by is marked, so unmarking it is what lets go of the sort
+    order(a, by);
   }
   plot.closest("figure").addEventListener("click", function (e) {
     var b = e.target.closest("button.mx-sort");

@@ -1803,7 +1803,7 @@ sectors and value. Click a cell to mark it with its row and column, or click in 
 column. To zoom, scroll or pinch over the picture, or use the buttons; then drag to move. Close in, the
 margins name each sector, and closer still each cell shows its value in cents. The arrows beside a sector's name, and
 the buttons under the picture for whatever is marked, sort the whole matrix by that row or column: largest first,
-then smallest first, then back to the Bureau's order. Unmarking a row or column also lets go of its sort.</figcaption>
+then smallest first, then back to the Bureau's order. Sorting by a row or column marks it, and unmarking it lets go of the sort.</figcaption>
 </figure>
 
 <h2 id="sector">One sector's column and row</h2>
