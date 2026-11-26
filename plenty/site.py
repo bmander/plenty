@@ -1834,6 +1834,7 @@ class Sheet:
     row_groups: pd.Series | None = None    # and the same for rows
     blanks: tuple[str, str] | None = None  # what a blank cell holds, as a hover tip says it and as the caption does
     marked: str = ""               # for a matrix of ones and zeros: what a one says
+    sums: str = ""                 # which totals mean something and are shown beside the picture: "both", "cols" or ""
     short: dict | None = None      # short labels for those groups
     order: str = "Sectors are in the Bureau's order within fifteen groups."
 
@@ -1880,13 +1881,13 @@ def sheets(d: Data) -> dict[str, Sheet]:
               axis="Made: one dollar of each commodity",
               caption="Each column is a commodity being made and each row an input to it. Colour is cents of the input per "
                       "dollar made, on a log scale. The diagonal blocks are groups buying from themselves.",
-              second=A_capital),
+              second=A_capital, sums="cols"),
         Sheet("B", "what industries use per dollar", "per_dollar", (purchases + capital).loc[com, ind], **goods,
               row_tip="Input", col_tip="Used by", row_is="Row, the input:", col_is="Column, the industry using it:",
               axis="Industries: per dollar of their output",
               caption="Each column is an industry and each row a commodity it uses. Colour is cents of the commodity per "
                       "dollar of the industry's output, on a log scale.",
-              second=capital.loc[com, ind]),
+              second=capital.loc[com, ind], sums="cols"),
         Sheet("D", "who makes each commodity", "share", D.loc[ind, com], **makers,
               row_tip="Industry", col_tip="Its share of", row_is="Row, the industry:", col_is="Column, the commodity made:",
               axis="Commodities: who makes each",
@@ -1896,12 +1897,12 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Bought", col_tip="By", row_is="Row, the commodity bought:", col_is="Column, the industry buying:",
               axis="Industries buying",
               caption="Each column is an industry and each row a commodity it bought. Colour is millions of dollars in 2017, "
-                      "on a log scale.", exact=True),
+                      "on a log scale.", exact=True, sums="both"),
         Sheet("K", "the capital matrix", "dollars", m.K.loc[com, ind], **goods,
               row_tip="Capital good", col_tip="Placed on", row_is="Row, the capital good:",
               col_is="Column, the industry it is placed on:", axis="Industries using the capital",
               caption="Each column is an industry and each row a kind of equipment, building or software placed on it. Colour "
-                      "is millions of dollars in 2017, on a log scale. Most rows are empty: few commodities are capital goods."),
+                      "is millions of dollars in 2017, on a log scale. Most rows are empty: few commodities are capital goods.", sums="both"),
         Sheet("S", "where each capital good is placed", "share", d.capital.shares.loc[com, ind], **goods,
               row_tip="Capital good", col_tip="Share placed on", row_is="Row, the capital good:",
               col_is="Column, the industry it is placed on:", axis="Industries: their share of each capital good",
@@ -1919,12 +1920,12 @@ def sheets(d: Data) -> dict[str, Sheet]:
               axis="Occupations: what each sector's industries paid them",
               caption="Each row is a sector and each column an occupation. Colour is millions of dollars paid in a year, on a "
                       "log scale. Rows are as bright as the surveyed industries behind them are large, which is what "
-                      "dividing by the row's total takes away.", **by_occupation),
+                      "dividing by the row's total takes away.", **by_occupation, sums="both"),
         Sheet("E", "how many work in each occupation", "people", E.fillna(0.0), surveyed.title, occ.title,
               row_tip="Surveyed industry", col_tip="Occupation", row_is="Row, the surveyed industry:", col_is="Column, the occupation:",
               axis="Occupations: how many people each industry employs in them",
               caption="Each row is an industry of the survey and each column an occupation. Colour is the number of jobs, "
-                      "on a log scale.", row_groups=surveyed.group, blanks=not_published, **by_occupation_only),
+                      "on a log scale.", row_groups=surveyed.group, blanks=not_published, **by_occupation_only, sums="both"),
         Sheet("M", "what each occupation is paid", "wage", wage.fillna(0.0), surveyed.title, occ.title,
               row_tip="Surveyed industry", col_tip="Occupation", row_is="Row, the surveyed industry:", col_is="Column, the occupation:",
               axis="Occupations: their mean annual wage in each industry",
@@ -1939,12 +1940,12 @@ def sheets(d: Data) -> dict[str, Sheet]:
                       "the sector. Both are in the same order, so the filled cells run down the diagonal; a vertical run is "
                       "one surveyed industry shared by several sectors.",
               col_groups=surveyed.group, blanks=("does not cover it", "zero"), marked="covers it",
-              order="Sectors and surveyed industries are each in code order within the same fifteen groups."),
+              order="Sectors and surveyed industries are each in code order within the same fifteen groups.", sums="both"),
         Sheet("V", "the Make table", "dollars", t.V.loc[ind, com], **makers,
               row_tip="Industry", col_tip="Made", row_is="Row, the industry:", col_is="Column, the commodity made:",
               axis="Commodities made",
               caption="Each column is a commodity and each row an industry that might make it. Colour is millions of dollars "
-                      "made in 2017, on a log scale. The bright diagonal is industries making what they are named for.", exact=True),
+                      "made in 2017, on a log scale. The bright diagonal is industries making what they are named for.", exact=True, sums="both"),
     ]
     return {s.key: s for s in out}
 
@@ -1967,8 +1968,22 @@ def sheet_data(s: Sheet, **extra) -> str:
                "short": {**MX.SHORT, **(s.short or {})},
                "rows": side(s.values.index, s.row_names, s.row_groups), "cols": side(s.values.columns, s.col_names, s.col_groups),
                "rowTip": s.row_tip, "colTip": s.col_tip, "rowIs": s.row_is, "colIs": s.col_is,
-               "second": w is not None, "cells": [[int(x) for x in col] for col in cells], **extra}
+               "second": w is not None, "cells": [[int(x) for x in col] for col in cells], **sheet_sums(s), **extra}
     return "window.PLENTY_MATRIX = " + json.dumps(payload, separators=(",", ":")) + ";\n"
+
+
+def sheet_sums(s: Sheet) -> dict:
+    """The totals a picture shows in its margins, of the whole matrix and not only of what is filed:
+    each column's, and for a matrix whose rows add up to something each row's and the whole."""
+    def six(x):
+        return float(f"{x:.6g}")
+    out = {}
+    if s.sums:
+        out["colSums"] = [six(x) for x in s.values.values.sum(axis=0)]
+    if s.sums == "both":
+        out["rowSums"] = [six(x) for x in s.values.values.sum(axis=1)]
+        out["total"] = six(s.values.values.sum())
+    return out
 
 
 def matrix_data(d: Data, key: str) -> str:
@@ -2011,28 +2026,40 @@ def sheet_picture(s: Sheet, also: str = "", extra: str = "") -> str:
     kind, (nr, nc) = MATRIX_KINDS[s.kind], s.values.shape
     blank = s.blanks[1] if s.blanks else "zero" if s.exact else f"zero or {kind['small']}"
     width = min(MATRIX_WIDTH, round(MATRIX_HEIGHT * nc / nr))       # a tall matrix is drawn narrower, to stay on the screen
+    # totals in the margins: rows down the right, columns along the bottom, the whole matrix in the corner
+    both = s.sums == "both"
+    row_head = '\n<div class="mx-sumhead" aria-hidden="true">Row totals</div>' if both else ""
+    row_sums = '\n<div class="mx-sums mx-rowsums"><canvas id="mx-row-sums" aria-hidden="true"></canvas></div>' if both else ""
+    col_sums = ('\n<div class="mx-sumfoot" aria-hidden="true">Column totals</div>'
+                '\n<div class="mx-sums mx-colsums"><canvas id="mx-col-sums" aria-hidden="true"></canvas></div>'
+                + ('\n<div class="mx-corner" id="mx-total"></div>' if both else "")) if s.sums else ""
+    summed = {"both": " The bars along the right and the bottom are the totals of each row and column, and the figure in the "
+                      "corner is the total of the whole matrix. They sort and zoom with the picture, and the longest bar is the largest "
+                      "total in view.",
+              "cols": " The bars along the bottom are the totals of each column. They sort and zoom with the picture, and the longest "
+                      "bar is the largest total in view.", "": ""}[s.sums]
     legend = (f'<div class="mx-legend" aria-hidden="true"><div class="mx-ramp"></div>\n<div class="mx-ticks">'
               + "".join(f"<span>{x}</span>" for x in kind["ticks"]) + "</div></div>") if kind["ticks"] else ""
     return f"""<figure class="mx">
-<div class="mx-frame" style="grid-template-columns: auto minmax(0, {width + 2}px)">
+<div class="mx-frame" style="grid-template-columns: auto minmax(0, {width + 2}px) auto">
 <div class="mx-axis mx-axis-top"><span>{e(s.axis)} &rarr;</span>
 <span class="mx-zoom"><button type="button" id="mx-zoom-out" aria-label="Zoom out" disabled>&minus;</button><button
  type="button" id="mx-zoom-in" aria-label="Zoom in">+</button><button type="button" id="mx-zoom-all" disabled>Whole matrix</button><button
  type="button" id="mx-unsort" disabled>Default order</button></span></div>
-<div class="mx-strip mx-top" id="mx-top"></div>
+<div class="mx-strip mx-top" id="mx-top"></div>{row_head}
 <div class="mx-strip mx-left" id="mx-left"></div>
 <div class="mx-plot" style="aspect-ratio: {nc} / {nr}">
 <canvas id="mx-canvas" width="{nc}" height="{nr}" role="img" tabindex="0"
  aria-label="Heat map of the {nr} by {nc} matrix {s.key}, {e(s.name)}. The tables on this page and the CSV file give the same figures."></canvas>
 <i id="mx-h" aria-hidden="true"></i><i id="mx-v" aria-hidden="true"></i>
-</div>
+</div>{row_sums}{col_sums}
 </div>
 <div class="mx-note" id="mx-note" aria-live="polite"></div>
 {extra}{legend}
 <figcaption>{s.caption} The {(~s.shown).mean():.0%} of entries that are {blank} are blank. {s.order}</figcaption>
 </figure>
 <p class="note mx-how">Hover over a cell for its row, its column and its value. Click a cell to mark it with its row and
-column, or click in a margin to mark one row or one column.{" " + also if also else ""} To zoom, scroll or pinch over the picture or its
+column, or click in a margin to mark one row or one column.{" " + also if also else ""}{summed} To zoom, scroll or pinch over the picture or its
 margins, or use the buttons. To move, drag with the mouse wheel pressed or with Ctrl held, or with a finger on a touch
 screen. Close in, the margins name each sector, and closer still each cell shows its value, {kind["in_cell"]}. The
 arrows beside a sector's name, and the buttons under the picture for whatever is marked, sort the whole matrix by that
@@ -2281,18 +2308,13 @@ smallest is {int(E.min().min())}.</p>
 occupation. {sym("T")} then adds up the industries that cover a sector:</p>
 {product}
 
-<h2 id="total">What it adds up to</h2>
-<p>The entries add up to {E.sum().sum() / 1e6:.1f} million. The survey's own totals for its {len(surveyed)} industries add up to
-{totals / 1e6:.1f} million. The {(totals - E.sum().sum()) / 1e6:.1f} million between them are the counts the survey withholds
-and the {int(left_out.emp.sum()):,} in the occupations left out.</p>
-<p>That is fewer than everyone at work, and far fewer than the labour force, and it is meant to be. The survey counts
-wage and salary jobs at nonfarm employers. By its
-<a href="https://www.bls.gov/oes/2021/may/oes_tec.htm">technical notes</a> it does not cover the self-employed, owners
-and partners of unincorporated firms, household workers or unpaid family workers, and it leaves out most of farming. The
-labour force also counts people looking for work. And the survey counts jobs, not people: someone with two jobs is in
-it twice.</p>
-<p>So this matrix cannot say how much work a sector takes. Here it is only used for the mix of occupations within an
-industry, through {sym("W")}.</p>"""
+<p>The survey counts wage and salary jobs at nonfarm employers, so it is fewer than everyone at work and far fewer than
+the labour force. By its <a href="https://www.bls.gov/oes/2021/may/oes_tec.htm">technical notes</a> it does not cover the
+self-employed, owners and partners of unincorporated firms, household workers or unpaid family workers, and it leaves
+out most of farming. It counts jobs, not people: someone with two jobs is in it twice. The total in the corner of the
+picture, {E.sum().sum() / 1e6:.1f} million, is short of the survey's own {totals / 1e6:.1f} million for these industries by what
+it withholds and the {int(left_out.emp.sum()):,} jobs in the occupations left out. Here the matrix is only used for the mix of
+occupations within an industry, through {sym("W")}.</p>"""
             heads, caption = ("Surveyed industry", "Occupation", "Jobs"), "The largest counts in the survey."
         elif key == "M":
             known = wage.values[~np.isnan(wage.values)]

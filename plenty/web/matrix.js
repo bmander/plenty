@@ -25,18 +25,36 @@
   function hundredths(x) { x *= 100; return x.toFixed(x >= 99.95 ? 0 : x >= 9.995 ? 1 : 2); }
   function thousands(x) { return x >= 99500 ? Math.round(x / 1000) + "k" : x >= 999.5 ? (x / 1000).toFixed(1) + "k" : String(Math.round(x)); }
   var KINDS = {
-    per_dollar: { say: function (v) { return cents(v) + " per dollar"; }, cell: hundredths },
+    per_dollar: {
+      say: function (v) { return cents(v) + " per dollar"; }, cell: hundredths,
+      sum: function (v) { return cents(v, 1) + " per dollar"; }, brief: function (v) { return cents(v, 0); }
+    },
     share: { say: function (v) { return hundredths(v) + "%"; }, cell: hundredths },
     dollars: {
       say: function (v) { return (v < 0 ? "\u2212$" : "$") + Math.round(Math.abs(v)).toLocaleString("en-US") + " million"; },
-      cell: thousands
+      cell: thousands,
+      sum: function (v) {
+        var a = Math.abs(v), sign = v < 0 ? "\u2212$" : "$";
+        return sign + (a >= 1e6 ? (a / 1e6).toFixed(1) + " trillion" : a >= 1e3 ? (a / 1e3).toFixed(1) + " billion" : Math.round(a) + " million");
+      },
+      brief: function (v) {
+        var a = Math.abs(v), sign = v < 0 ? "\u2212$" : "$";
+        return sign + (a >= 1e6 ? (a / 1e6).toFixed(1) + "T" : a >= 1e3 ? (a / 1e3).toFixed(a >= 1e4 ? 0 : 1) + "B" : Math.round(a) + "M");
+      }
     },
-    people: { say: function (v) { return Math.round(v).toLocaleString("en-US") + " jobs"; }, cell: thousands },
+    people: {
+      say: function (v) { return Math.round(v).toLocaleString("en-US") + " jobs"; }, cell: thousands,
+      sum: function (v) { return Math.round(v).toLocaleString("en-US") + " jobs"; },
+      brief: function (v) { return v >= 999500 ? (v / 1e6).toFixed(1) + "M" : v >= 999.5 ? Math.round(v / 1000) + "k" : String(Math.round(v)); }
+    },
     wage: {
       say: function (v) { return "$" + Math.round(v).toLocaleString("en-US") + " a year"; },
       cell: function (x) { return Math.round(x / 1000) + "k"; }
     },
-    mark: { say: function () { return M.marked; }, cell: function () { return "1"; } }
+    mark: {
+      say: function () { return M.marked; }, cell: function () { return "1"; },
+      sum: function (v) { return Math.round(v) + " in all"; }, brief: function (v) { return String(Math.round(v)); }
+    }
   }, kind = KINDS[M.kind];
 
   // --- the picture: the whole matrix, or a window on it
@@ -61,7 +79,7 @@
   function down() { return view.span * nr / nc; }
   plot.style.aspectRatio = nc + " / " + nr;
   var sheet = document.createElement("canvas"), pending = 0, pointer = null, lit = [];
-  var stops = [], paper = "#fff", rule = "#888", faint = "#888", onLight = "#000", onDark = "#fff", face = "sans-serif";
+  var stops = [], paper = "#fff", rule = "#888", faint = "#888", series = "#36c", onLight = "#000", onDark = "#fff", face = "sans-serif";
   sheet.width = nc;
   sheet.height = nr;
 
@@ -81,6 +99,19 @@
     return a;
   }
   var rows = axis(leftStrip, M.rows), cols = axis(topStrip, M.cols);
+  // Totals, where the page has them: each row's in a strip down the right and each column's in one
+  // along the bottom, as bars, with the whole matrix's in the corner between them.
+  rows.sums = M.rowSums || null;
+  cols.sums = M.colSums || null;
+  rows.sumBox = document.getElementById("mx-row-sums");
+  cols.sumBox = document.getElementById("mx-col-sums");
+  var corner = document.getElementById("mx-total");
+  if (corner && M.total !== undefined) {
+    corner.textContent = kind.brief(M.total);
+    corner.setAttribute("data-tip", "The whole matrix: " + kind.sum(M.total));
+  }
+  // every surface that zooms, moves and marks: the picture and whatever is in its margins
+  var surfaces = [canvas, topStrip, leftStrip, rows.sumBox, cols.sumBox].filter(Boolean);
   rows.other = cols;
   cols.other = rows;
   var selRow = plot.appendChild(el("i", "mx-sel mx-sel-row")), selCol = plot.appendChild(el("i", "mx-sel mx-sel-col"));
@@ -105,6 +136,7 @@
     paper = get("--paper") || paper;
     rule = get("--rule") || rule;
     faint = get("--ink-2") || faint;
+    series = get("--series") || series;
     var ink = get("--ink") || onLight, inkIsDark = luminance(rgb(ink)) < luminance(rgb(paper));
     onLight = inkIsDark ? ink : paper;                // the darker of ink and paper, for numbers on light cells
     onDark = inkIsDark ? paper : ink;
@@ -167,6 +199,8 @@
     }
     strip(cols, view.x);
     strip(rows, view.y);
+    totals(rows, view.y);
+    totals(cols, view.x);
     selRow.style.display = rows.sel === null ? "none" : "block";
     selCol.style.display = cols.sel === null ? "none" : "block";
     selCell.style.display = rows.sel === null || cols.sel === null ? "none" : "block";
@@ -179,6 +213,60 @@
     if (pointer) hover(pointer);
   }
   function schedule() { if (!pending) pending = requestAnimationFrame(render); }
+
+  // one strip of totals: a bar for each row or column in view, as long as its total is to the largest
+  // total in view, and close in the figure itself
+  function totals(a, from) {
+    var box = a.sumBox;
+    if (!box || !a.sums || !box.clientWidth) return;
+    var across = a === cols, ratio = window.devicePixelRatio || 1, span = across ? view.span : down();
+    var w = Math.round(box.clientWidth * ratio), h = Math.round(box.clientHeight * ratio);
+    if (box.width !== w || box.height !== h) { box.width = w; box.height = h; }
+    var ctx = box.getContext("2d"), cell = (across ? w : h) / span, room = (across ? h : w) - 2 * ratio, close = named();
+    var gap = close ? Math.max(1, Math.round(ratio)) : 0, most = 0, p, v, at0, length;
+    for (p = Math.floor(from); p < Math.min(a.n, from + span); p++) most = Math.max(most, a.sums[a.at[p]]);
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = series;
+    ctx.globalAlpha = close ? 0.4 : 0.75;
+    for (p = Math.floor(from); p < Math.min(a.n, from + span); p++) {
+      v = a.sums[a.at[p]];
+      at0 = Math.round((p - from) * cell) + gap;
+      length = most > 0 ? Math.max(0, v) / most * room : 0;
+      if (across) ctx.fillRect(at0, 0, Math.max(1, cell - gap), length); else ctx.fillRect(0, at0, length, Math.max(1, cell - gap));
+    }
+    ctx.globalAlpha = 1;
+    if (!close) return;
+    ctx.fillStyle = faint;
+    ctx.font = Math.round(Math.min(11, cellPx() - 1) * ratio) + "px " + face;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    for (p = Math.floor(from); p < Math.min(a.n, from + span); p++) {
+      var mid = (p + 0.5 - from) * cell, text = kind.brief(a.sums[a.at[p]]);
+      if (!across) { ctx.fillText(text, 4 * ratio, mid); continue; }
+      ctx.save();                                     // a column's figure is written down the strip
+      ctx.translate(mid, 4 * ratio);
+      ctx.rotate(Math.PI / 2);
+      ctx.fillText(text, 0, 0);
+      ctx.restore();
+    }
+  }
+  // which row or column of an axis a pointer is over, in the axis's own strip or its strip of totals
+  function placeOn(a, target, e) {
+    var box = target.getBoundingClientRect();
+    var p = Math.floor(a === rows ? view.y + (e.clientY - box.top) / box.height * down()
+                                  : view.x + (e.clientX - box.left) / box.width * view.span);
+    return p < 0 || p >= a.n ? null : a.at[p];
+  }
+  [rows, cols].forEach(function (a) {
+    if (!a.sumBox || !a.sums) return;
+    a.sumBox.addEventListener("pointermove", function (e) {
+      var k = placeOn(a, a.sumBox, e);
+      pointer = null;                                 // the pointer is no longer over a cell
+      if (k === null) return window.plentyTip.hide();
+      window.plentyTip.show((a === rows ? "Total of the row: " : "Total of the column: ") + a.names[k] + "\n" + kind.sum(a.sums[k]), e);
+    });
+    a.sumBox.addEventListener("pointerleave", function () { window.plentyTip.hide(); });
+  });
 
   // one strip: the groups in view and, close in, a narrow band of groups with each sector's name
   // beside it. An axis that is sorted has no groups to show, and says what it is sorted by instead.
@@ -366,13 +454,13 @@
     return box;
   }
   [rows, cols].forEach(function (a) {
-    a.box.addEventListener("click", function (e) {
-      if (slid(e) || e.target.closest("button")) return;
-      var box = a.box.getBoundingClientRect();
-      var p = Math.floor(a === rows ? view.y + (e.clientY - box.top) / box.height * down()
-                                    : view.x + (e.clientX - box.left) / box.width * view.span);
-      if (p < 0 || p >= a.n) return;
-      if (a === rows) mark(a.at[p], null); else mark(null, a.at[p]);
+    [a.box, a.sumBox].filter(Boolean).forEach(function (target) {
+      target.addEventListener("click", function (e) {
+        if (slid(e) || e.target.closest("button")) return;
+        var k = placeOn(a, target, e);
+        if (k === null) return;
+        if (a === rows) mark(k, null); else mark(null, k);
+      });
     });
   });
 
@@ -435,7 +523,7 @@
     return { fx: unit((e.clientX - box.left) / box.width), fy: unit((e.clientY - box.top) / box.height) };
   }
   var pinch = null;
-  [canvas, topStrip, leftStrip].forEach(function (target) {
+  surfaces.forEach(function (target) {
     target.addEventListener("wheel", function (e) {
       e.preventDefault();
       var at = spot(e), step = -e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.002) * (e.ctrlKey ? 10 : 1);
@@ -469,7 +557,7 @@
     if (e.pointerType !== "mouse") return e.button === 0;
     return e.button === 1 || e.ctrlKey;               // on a Mac, Control can make the main button report as the second
   }
-  [canvas, topStrip, leftStrip].forEach(function (target) {
+  surfaces.forEach(function (target) {
     target.addEventListener("pointerdown", function (e) {
       dragged = false;
       press = { x: e.clientX, y: e.clientY };

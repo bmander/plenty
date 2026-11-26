@@ -154,6 +154,13 @@ def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
         kept = np.abs(x) >= data["cut"]
         assert not got[~kept].any() and np.abs(got - x)[kept].max() <= unit / 2 + 1e-9, key
         assert kept.sum() > 500 and data["scale"][0] < data["scale"][1]
+        # totals in the margins are of the whole matrix, and the page has a place for each one it is given
+        assert ("colSums" in data) == bool(sheet.sums) == ('id="mx-col-sums"' in html)
+        assert ("rowSums" in data) == ("total" in data) == (sheet.sums == "both") == ('id="mx-row-sums"' in html) == ('id="mx-total"' in html)
+        if sheet.sums:
+            assert np.allclose(data["colSums"], x.sum(axis=0), rtol=1e-5, atol=1e-9), key
+        if sheet.sums == "both":
+            assert np.allclose(data["rowSums"], x.sum(axis=1), rtol=1e-5, atol=1e-9) and np.isclose(data["total"], x.sum(), rtol=1e-5), key
         csv = pd.read_csv(site.SITE / sheet.csv_file, index_col=0, dtype={0: str})
         assert list(csv.index.astype(str)) == rows and np.allclose(csv.values, x, rtol=1e-5, atol=1e-9), key
     # a table of whole millions is filed exactly, so its blank cells hold nothing
@@ -241,6 +248,7 @@ def test_the_wage_bill_is_the_survey_added_up_over_the_industries_that_cover_a_s
     assert f"withholds the employment of\n{int(listed.emp.isna().sum()):,} of them" in e_html
     totals = o.emp[o.OCC_CODE == "00-0000"].sum()
     assert E.sum().sum() < totals and f"{E.sum().sum() / 1e6:.1f} million" in e_html and f"{totals / 1e6:.1f} million" in e_html
+    assert "What it adds up to" not in e_html and built.sheets["E"].sums == "both"     # the total is in the picture's corner
     assert listed.emp.sum() - E.sum().sum() == listed.emp[~listed.OCC_CODE.isin(E.columns)].sum() > 0   # the occupations left out
     # a tall matrix is drawn narrower than a wide one
     t_page, e_page = ((site.SITE / f"matrix-{k}.html").read_text() for k in "TE")
