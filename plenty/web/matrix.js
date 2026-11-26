@@ -250,8 +250,12 @@
   // --- marking: a cell with its row and column, or a row or a column alone (null for neither)
   function mark(i, j) {
     var same = rows.sel === i && cols.sel === j;      // marking the same thing again clears it
+    var wasRow = rows.sel, wasCol = cols.sel;
     rows.sel = same ? null : i;
     cols.sel = same ? null : j;
+    // a row or column that is no longer marked lets go of the order it gave the other axis
+    if (wasRow !== null && wasRow !== rows.sel && direction(cols, wasRow)) order(cols, null);
+    if (wasCol !== null && wasCol !== cols.sel && direction(rows, wasCol)) order(rows, null);
     remark();
     schedule();
   }
@@ -336,9 +340,8 @@
     hLine.style.display = vLine.style.display = "none";
   }
 
-  // pinch, or scroll with Control or Command held; a plain scroll is left to the page
+  // a scroll or a pinch over the picture zooms it, and is kept from the page
   canvas.addEventListener("wheel", function (e) {
-    if (!e.ctrlKey && !e.metaKey) return;
     e.preventDefault();
     var box = canvas.getBoundingClientRect();
     var step = -e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.002) * (e.ctrlKey ? 10 : 1);

@@ -1800,10 +1800,10 @@ it each makes.</p>
 made, on a log scale. The {(~shown).mean():.0%} of entries under a hundredth of a cent are blank. Sectors are in the Bureau's
 order within fifteen groups, and the diagonal blocks are groups buying from themselves. Hover over a cell for its
 sectors and value. Click a cell to mark it with its row and column, or click in a margin to mark one row or one
-column. To zoom in, pinch, or scroll with &#8984; or Ctrl held, or use the buttons; then drag to move. Close in, the
+column. To zoom, scroll or pinch over the picture, or use the buttons; then drag to move. Close in, the
 margins name each sector, and closer still each cell shows its value in cents. The arrows beside a sector's name, and
 the buttons under the picture for whatever is marked, sort the whole matrix by that row or column: largest first,
-then smallest first, then back to the Bureau's order.</figcaption>
+then smallest first, then back to the Bureau's order. Unmarking a row or column also lets go of its sort.</figcaption>
 </figure>
 
 <h2 id="sector">One sector's column and row</h2>
