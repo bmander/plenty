@@ -1745,7 +1745,7 @@ MATRIX_KINDS = {
                 "blank": "under $0.5 million", "small": "under half a million dollars",
                 "in_cell": "in millions of dollars, with k for thousands"},
     "people": {"unit": 1.0, "cut": 0.5, "scale": (10.0, 1e7), "ticks": ("10", "100", "1k", "10k", "100k", "1M", "10M"),
-               "blank": "none published", "small": "not published", "in_cell": "in people, with k for thousands"},
+               "blank": "none published", "small": "not published", "in_cell": "in jobs, with k for thousands"},
     # a wage's scale is narrow, so its ticks are doublings; wages beyond either end take the end's colour
     "wage": {"unit": 1.0, "cut": 0.5, "scale": (25e3, 2e5), "ticks": ("$25k", "$50k", "$100k", "$200k"),
              "blank": "none published", "small": "not published", "in_cell": "in thousands of dollars a year"},
@@ -1923,8 +1923,8 @@ def sheets(d: Data) -> dict[str, Sheet]:
         Sheet("E", "how many work in each occupation", "people", E.fillna(0.0), surveyed.title, occ.title,
               row_tip="Surveyed industry", col_tip="Occupation", row_is="Row, the surveyed industry:", col_is="Column, the occupation:",
               axis="Occupations: how many people each industry employs in them",
-              caption="Each row is an industry of the survey and each column an occupation. Colour is the number of people "
-                      "employed, on a log scale.", row_groups=surveyed.group, blanks=not_published, **by_occupation_only),
+              caption="Each row is an industry of the survey and each column an occupation. Colour is the number of jobs, "
+                      "on a log scale.", row_groups=surveyed.group, blanks=not_published, **by_occupation_only),
         Sheet("M", "what each occupation is paid", "wage", wage.fillna(0.0), surveyed.title, occ.title,
               row_tip="Surveyed industry", col_tip="Occupation", row_is="Row, the surveyed industry:", col_is="Column, the occupation:",
               axis="Occupations: their mean annual wage in each industry",
@@ -2248,43 +2248,64 @@ ownership, other government by the survey's government industries, and farms by 
         E, wage, T, surveyed = d.survey
         _, info, occ, survey = d.wage_bill
         o = O.oews()
-        pairs = int((o.O_GROUP.str.lower() == "detailed").sum())        # (industry, occupation) pairs the survey lists
+        listed = o[o.O_GROUP.str.lower() == "detailed"]              # the (industry, occupation) pairs the survey lists
+        pairs = len(listed)
+        # occupations with no pair that has both a count and a wage give nothing to P, and are not among the columns
+        left_out = listed[~listed.OCC_CODE.isin(E.columns)]
+        left_names = "; ".join(e(x.lower()) for x in left_out.drop_duplicates("OCC_CODE").OCC_TITLE)
         grouped = int((~surveyed.index.str.isdigit()).sum())
         product = _eqs([(_sym("P", key), f'{_sym("T", key)}<mo>&#x2062;</mo><mrow><mo>(</mo>{_sym("E", key)}<mo>&#x2218;</mo>{_sym("M", key)}<mo>)</mo></mrow>')])
         source = ("the Bureau of Labor Statistics's Occupational Employment and Wage Statistics for May 2021, in the national "
                   "table by industry")
         axes = (f"<p>The rows are the survey's {len(surveyed)} industries. Most are one four-digit industry code; {grouped} are groupings "
-                f"the survey makes of several, and three are government. The columns are its {E.shape[1]} detailed occupations; the "
-                f"survey's summary lines for groups of occupations are not used.</p>")
+                f"the survey makes of several, and three are government. The columns are {E.shape[1]} of its "
+                f"{listed.OCC_CODE.nunique()} detailed occupations; the survey's summary lines for groups of occupations are not used. "
+                f"{left_out.OCC_CODE.nunique()} occupations are left out because no industry has both a count and an annual wage for "
+                f"them, so they could add nothing to what was paid: {left_names}.</p>")
         trail = (f' /\n<a href="matrix-W.html#about">{_m(_sym("W", "W"))}, who does each sector&rsquo;s work</a> / '
                  f'<a href="matrix-P.html#about">{_m(_sym("P", "P"))}, what was paid</a>')
         by_rows, by_cols = "surveyed industries", "occupations"
         if key == "E":
-            lede = ("How many people work in each occupation in each surveyed industry. The entry in row <i>i</i> and column <i>o</i> "
-                    "is the number of people employed in occupation <i>o</i> in industry <i>i</i> in May 2021.")
-            figures = [("Entries published", f"{int(E.notna().sum().sum()):,}", f"of {v.size:,}; the survey lists {pairs:,} pairs"),
-                       ("People counted", f"{E.sum().sum() / 1e6:.1f} million", "in the entries published"),
+            lede = ("How many work in each occupation in each surveyed industry. The entry in row <i>i</i> and column <i>o</i> "
+                    "is the number of wage and salary jobs in occupation <i>o</i> in industry <i>i</i> in May 2021.")
+            totals = o.emp[o.OCC_CODE == "00-0000"].sum()                  # the survey's own total for each industry, added up
+            figures = [("Entries published", f"{int(E.notna().sum().sum()):,}", f"of {v.size:,} cells"),
+                       ("Jobs counted", f"{E.sum().sum() / 1e6:.1f} million", f"of {totals / 1e6:.1f} million in the survey's totals for these industries"),
                        ("Largest entry", f"{v.max() / 1e6:.1f} million", e(f"{occ.title[top.index[0][1]]}, in {surveyed.title[top.index[0][0]]}".lower()))]
             about = f"""<p>This is the Bureau's own count, from {source}. Nothing is done to it here.</p>
 {axes}
-<p>The survey lists {pairs:,} pairs of an industry and an occupation, and withholds the employment of {pairs - int(E.notna().sum().sum()):,} of
-them. Those are blank here and count as nobody. Every figure is a multiple of ten, and the smallest is {int(E.min().min())}.</p>
+<p>The survey lists {pairs:,} pairs of an industry and an occupation, and withholds the employment of
+{int(listed.emp.isna().sum()):,} of them. Those are blank here and count as nobody. Every figure is a multiple of ten, and the
+smallest is {int(E.min().min())}.</p>
 <p>It is multiplied, entry by entry, by {sym("M")}, the mean annual wage, to get what each industry paid each
 occupation. {sym("T")} then adds up the industries that cover a sector:</p>
-{product}"""
-            heads, caption = ("Surveyed industry", "Occupation", "People"), "The occupations an industry is mostly made of."
+{product}
+
+<h2 id="total">What it adds up to</h2>
+<p>The entries add up to {E.sum().sum() / 1e6:.1f} million. The survey's own totals for its {len(surveyed)} industries add up to
+{totals / 1e6:.1f} million. The {(totals - E.sum().sum()) / 1e6:.1f} million between them are the counts the survey withholds
+and the {int(left_out.emp.sum()):,} in the occupations left out.</p>
+<p>That is fewer than everyone at work, and far fewer than the labour force, and it is meant to be. The survey counts
+wage and salary jobs at nonfarm employers. By its
+<a href="https://www.bls.gov/oes/2021/may/oes_tec.htm">technical notes</a> it does not cover the self-employed, owners
+and partners of unincorporated firms, household workers or unpaid family workers, and it leaves out most of farming. The
+labour force also counts people looking for work. And the survey counts jobs, not people: someone with two jobs is in
+it twice.</p>
+<p>So this matrix cannot say how much work a sector takes. Here it is only used for the mix of occupations within an
+industry, through {sym("W")}.</p>"""
+            heads, caption = ("Surveyed industry", "Occupation", "Jobs"), "The largest counts in the survey."
         elif key == "M":
             known = wage.values[~np.isnan(wage.values)]
             capped = int((o.A_MEAN[o.O_GROUP.str.lower() == "detailed"] == "#").sum())
             paid = (E * wage).sum().sum() / E.where(wage.notna()).sum().sum()
             lede = ("What each occupation is paid in each surveyed industry. The entry in row <i>i</i> and column <i>o</i> is the "
                     "mean annual wage, in dollars, of occupation <i>o</i> in industry <i>i</i> in May 2021.")
-            figures = [("Entries published", f"{len(known):,}", f"of {v.size:,}; the survey lists {pairs:,} pairs"),
+            figures = [("Entries published", f"{len(known):,}", f"of {v.size:,} cells"),
                        ("Mean over everyone", f"${paid:,.0f}", "total pay over total employment, where both are published"),
                        ("Range", f"${known.min() / 1e3:.0f}k to ${known.max() / 1e3:.0f}k", "the lowest and highest mean wage published")]
             about = f"""<p>This is the Bureau's own figure, from {source}. It is used as published, with one exception.</p>
 {axes}
-<p>The survey withholds the wage of {pairs - len(known):,} of its {pairs:,} pairs; those are blank here. For {capped} it prints only
+<p>The survey withholds the wage of {int(listed.wage.isna().sum()):,} of its {pairs:,} pairs; those are blank here. For {capped} it prints only
 that the wage is ${O.OEWS_TOP_CODE:,.0f} or more, and those are counted as ${O.OEWS_TOP_CODE:,.0f}, which is the exception.</p>
 <p>It is multiplied, entry by entry, by {sym("E")}, employment, to get what each industry paid each occupation in a
 year. {sym("T")} then adds up the industries that cover a sector:</p>

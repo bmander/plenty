@@ -31,7 +31,7 @@
       say: function (v) { return (v < 0 ? "\u2212$" : "$") + Math.round(Math.abs(v)).toLocaleString("en-US") + " million"; },
       cell: thousands
     },
-    people: { say: function (v) { return Math.round(v).toLocaleString("en-US") + " people"; }, cell: thousands },
+    people: { say: function (v) { return Math.round(v).toLocaleString("en-US") + " jobs"; }, cell: thousands },
     wage: {
       say: function (v) { return "$" + Math.round(v).toLocaleString("en-US") + " a year"; },
       cell: function (x) { return Math.round(x / 1000) + "k"; }

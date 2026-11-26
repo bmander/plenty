@@ -234,6 +234,14 @@ def test_the_wage_bill_is_the_survey_added_up_over_the_industries_that_cover_a_s
     assert set(np.unique(T.values)) == {0.0, 1.0} and set(surveyed.group) <= set(site.MX.ORDER)
     groups = list(surveyed.group)
     assert groups == sorted(groups, key=site.MX.ORDER.index)                          # in the page's groups, like sectors
+    # the employment page gives the survey's own counts of what is withheld, and what the matrix adds up to
+    o = site.O.oews()
+    listed = o[o.O_GROUP.str.lower() == "detailed"]
+    e_html = (site.SITE / "matrix-E.html").read_text()
+    assert f"withholds the employment of\n{int(listed.emp.isna().sum()):,} of them" in e_html
+    totals = o.emp[o.OCC_CODE == "00-0000"].sum()
+    assert E.sum().sum() < totals and f"{E.sum().sum() / 1e6:.1f} million" in e_html and f"{totals / 1e6:.1f} million" in e_html
+    assert listed.emp.sum() - E.sum().sum() == listed.emp[~listed.OCC_CODE.isin(E.columns)].sum() > 0   # the occupations left out
     # a tall matrix is drawn narrower than a wide one
     t_page, e_page = ((site.SITE / f"matrix-{k}.html").read_text() for k in "TE")
     assert f"minmax(0, {site.MATRIX_WIDTH + 2}px)" in e_page and f"minmax(0, {site.MATRIX_WIDTH + 2}px)" not in t_page
