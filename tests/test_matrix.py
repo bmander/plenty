@@ -33,6 +33,14 @@ def test_direct_requirements_split_into_purchases_and_capital(m):
     assert np.allclose(p0.values, purchases.values, atol=1e-12)
 
 
+def test_a_cell_is_a_row_of_B_against_a_column_of_D(m):
+    purchases, capital, D = MX.factors(m)
+    assert list(purchases.columns) == list(D.index) == m.t.industries and list(D.columns) == m.t.commodities
+    assert np.allclose((purchases.values + capital.values) @ D.values, m.A.values, atol=1e-12)
+    made = D.sum()
+    assert np.allclose(made[made > 0], 1.0)             # an industry's shares of a commodity that is made sum to one
+
+
 def test_group_sums_keep_the_economy_wide_total(m):
     q = m.t.q
     G = MX.by_group(m.A, q)

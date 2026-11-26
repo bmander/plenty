@@ -1646,7 +1646,9 @@ _ONE_LESS_C = f'<mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo>{_sub("c", "a")}<mo>)<
 
 MATRIX_A = "matrix-A.html"
 MATRIX_CUT = 1e-4          # entries under a hundredth of a cent per dollar are left out of the picture and the lists
-MATRIX_UNIT = 1e-5         # the unit of the page's data file: a thousandth of a cent per dollar
+MATRIX_UNIT = 1e-5         # the unit of the page's data files: a thousandth of a cent per dollar
+MATRIX_PARTS = "matrix-A-parts.js"   # B and D, fetched when a cell is first marked
+MATRIX_PART_CUT = 1e-5     # entries of B under a thousandth of a cent are left out of that file
 MATRIX_SHOWN = "221100"    # the sector the lookup opens on: electric power
 MATRIX_TOP = 15            # entries in the table of the largest
 
@@ -1691,9 +1693,28 @@ def matrix_a_data(d: Data) -> str:
     group = MX.groups(A.index)
     names = d.io.t.names
     payload = {"unit": MATRIX_UNIT, "cut": MATRIX_CUT, "shown": MATRIX_SHOWN, "codes": list(A.index),
-               "names": [names[c] for c in A.index], "groups": [group[c] for c in A.index], "short": MX.SHORT, "cols": cols,
+               "names": [names[c] for c in A.index], "groups": [group[c] for c in A.index], "short": MX.SHORT, "parts": MATRIX_PARTS, "cols": cols,
                "total": [round(x / MATRIX_UNIT) for x in a.sum(axis=0)], "capital": [round(x / MATRIX_UNIT) for x in k.sum(axis=0)]}
     return "window.PLENTY_MATRIX = " + json.dumps(payload, separators=(",", ":")) + ";\n"
+
+
+def matrix_a_parts(d: Data) -> str:
+    """What a cell of A is made of, for the page to show when a cell is marked: B by industry as
+    (commodity, value, capital part), each entry of at least MATRIX_PART_CUT, and D by commodity as
+    (industry, share). Commodities are numbered in the page's order and industries in the model's."""
+    m = d.io
+    order = list(matrix_a(d)[0].index)
+    purchases, capital, D = MX.factors(m)
+    b, k, shares = (purchases + capital).loc[order].values, capital.loc[order].values, D[order].values
+    def units(x):
+        return round(x / MATRIX_UNIT)
+    B = [[int(x) for i in np.flatnonzero(np.abs(b[:, c]) >= MATRIX_PART_CUT) for x in (i, units(b[i, c]), units(k[i, c]))]
+         for c in range(b.shape[1])]
+    made_by = [[int(x) for i in np.flatnonzero(shares[:, j]) if units(shares[i, j]) for x in (i, units(shares[i, j]))]
+               for j in range(shares.shape[1])]
+    payload = {"unit": MATRIX_UNIT, "cut": MATRIX_PART_CUT, "industries": [m.t.ind_names[c] for c in m.t.industries],
+               "B": B, "D": made_by}
+    return "window.PLENTY_MATRIX_PARTS = " + json.dumps(payload, separators=(",", ":")) + ";\n"
 
 
 def matrix_a_csv(d: Data) -> str:
@@ -1794,13 +1815,17 @@ it each makes.</p>
 </div>
 </div>
 <div class="mx-note" id="mx-note" aria-live="polite"></div>
+<template id="mx-why"><h3>How the cell is made up</h3>
+<p>{_m(A_)} is {_m(B_)} times {_m(D_)}, so a cell is one row of {_m(B_)} against one column of {_m(D_)}. Each industry
+that makes the column's commodity brings what it uses of the row's, in proportion to its share:</p>
+{_m(f'{_sub("a", "ij")}<mo>=</mo>{_sum("k")}{_sub("b", "ik")}<mo>&#x2062;</mo>{_sub("d", "kj")}', block=True)}</template>
 <div class="mx-legend" aria-hidden="true"><div class="mx-ramp"></div>
 <div class="mx-ticks"><span>0.01&cent;</span><span>0.1&cent;</span><span>1&cent;</span><span>10&cent;</span><span>$1</span></div></div>
 <figcaption>Each column is a commodity being made and each row an input to it. Colour is cents of the input per dollar
 made, on a log scale. The {(~shown).mean():.0%} of entries under a hundredth of a cent are blank. Sectors are in the Bureau's
 order within fifteen groups, and the diagonal blocks are groups buying from themselves. Hover over a cell for its
 sectors and value. Click a cell to mark it with its row and column, or click in a margin to mark one row or one
-column. To zoom, scroll or pinch over the picture or its margins, or use the buttons. To move, drag with the mouse wheel
+column. A marked cell is taken apart under the picture, into the industries that make the column's commodity. To zoom, scroll or pinch over the picture or its margins, or use the buttons. To move, drag with the mouse wheel
 pressed or with Ctrl held, or with a finger on a touch screen. Close in, the
 margins name each sector, and closer still each cell shows its value in cents. The arrows beside a sector's name, and
 the buttons under the picture for whatever is marked, sort the whole matrix by that row or column: largest first,
@@ -1970,6 +1995,7 @@ def main():
     for name, fn in pages.items():
         (SITE / name).write_text(fn(d), encoding="utf-8")
     (SITE / "matrix-A-data.js").write_text(matrix_a_data(d), encoding="utf-8")
+    (SITE / MATRIX_PARTS).write_text(matrix_a_parts(d), encoding="utf-8")
     (SITE / "matrix-A.csv").write_text(matrix_a_csv(d), encoding="utf-8")
     (SITE / ".nojekyll").write_text("")
     print(f"wrote {len(pages)} pages to {SITE}")

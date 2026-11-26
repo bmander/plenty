@@ -276,7 +276,73 @@
     if (i === null && j === null) note.appendChild(el("p", "dim", "Nothing is marked."));
     if (i !== null) line("Row, the input:", i, cols);
     if (j !== null) line("Column, the thing made:", j, rows);
-    if (i !== null && j !== null) note.appendChild(el("p", "", "Cell: " + amount(i, j)));
+    if (i !== null && j !== null) {
+      note.appendChild(el("p", "", "Cell: " + amount(i, j)));
+      note.appendChild(derivation(i, j));
+    }
+  }
+
+  // --- how a marked cell is made up. A = B D, so the cell is row i of B against column j of D:
+  // a term for each industry that makes commodity j. B and D come in a file of their own,
+  // fetched when a cell is first marked.
+  var WHY = 8;                                        // terms listed before "show all"
+  var parts = null, asked = false;                    // parts is false if the file could not be had
+  function fetchParts() {
+    if (asked) return;
+    asked = true;
+    var s = document.createElement("script");
+    s.src = M.parts;
+    s.onload = function () {
+      var P = window.PLENTY_MATRIX_PARTS, m = P.industries.length;
+      parts = { names: P.industries, m: m, makers: P.D, unit: P.unit, cut: P.cut, use: new Float32Array(n * m), capital: new Float32Array(n * m) };
+      P.B.forEach(function (col, k) {
+        for (var x = 0; x < col.length; x += 3) {
+          parts.use[col[x] * m + k] = col[x + 1] * P.unit;
+          parts.capital[col[x] * m + k] = col[x + 2] * P.unit;
+        }
+      });
+      remark();
+    };
+    s.onerror = function () { parts = false; remark(); };
+    document.head.appendChild(s);
+  }
+  function derivation(i, j) {
+    var box = el("div", "mx-why"), fine = function (x) { return (x * 100).toFixed(3); };
+    box.appendChild(document.getElementById("mx-why").content.cloneNode(true));
+    if (!parts) {
+      if (parts === null) fetchParts();
+      box.appendChild(el("p", "dim", parts === null ? "Fetching the two tables..." : "The two tables could not be fetched."));
+      return box;
+    }
+    var makers = parts.makers[j], terms = [], sum = 0, v = value[i * n + j];
+    for (var x = 0; x < makers.length; x += 2) {
+      var k = makers[x], share = makers[x + 1] * parts.unit, use = parts.use[i * parts.m + k];
+      terms.push({ name: parts.names[k], share: share, use: use, capital: parts.capital[i * parts.m + k], term: share * use });
+      sum += share * use;
+    }
+    terms.sort(function (a, b) { return Math.abs(b.term) - Math.abs(a.term) || b.share - a.share; });
+    box.appendChild(el("p", "", "Row i is " + M.names[i] + " and column j is " + M.names[j] + ", which " +
+      (terms.length === 1 ? "one industry makes." : terms.length + " industries make.")));
+    var wrap = el("div", "scroll"), table = el("table", "ledger"), body = el("tbody");
+    table.appendChild(headRow(["Industry k that makes it", "Its share of the commodity", "\u00a2 of the input per dollar of its output",
+                               "Of it, equipment and buildings", "Share \u00d7 use, \u00a2"]));
+    terms.forEach(function (t) {
+      var row = el("tr"), name = el("th", "", t.name);
+      name.scope = "row";
+      row.appendChild(name);
+      [(t.share * 100).toFixed(t.share < 0.0995 ? 2 : 1) + "%", t.use ? fine(t.use) : "under " + fine(parts.cut),
+       t.use ? fine(t.capital) : "", fine(t.term)].forEach(function (c) { row.appendChild(el("td", "num", c)); });
+      body.appendChild(row);
+    });
+    table.appendChild(body);
+    var foot = [];
+    if (v !== 0 && Math.abs(v - sum) >= 0.5 * unit) foot.push(["Smaller terms and rounding", "", "", "", fine(v - sum)]);
+    foot.push([v !== 0 ? "The cell" : "The cell, which is under " + cents(M.cut), "", "", "", fine(v !== 0 ? v : sum)]);
+    table.appendChild(footRows(foot));
+    wrap.appendChild(table);
+    box.appendChild(wrap);
+    fold(box, body, WHY);
+    return box;
   }
   [rows, cols].forEach(function (a) {
     a.box.addEventListener("click", function (e) {
@@ -484,53 +550,60 @@
     td.appendChild(cell);
     return td;
   }
-  // rows: [{j, v, k?, marked}], largest first; the list is cut to LIST until "show all" is pressed
-  function listTable(box, heads, rows, foot) {
-    box.textContent = "";
-    var wrap = el("div", "scroll"), table = el("table", "ledger"), thead = el("thead"), tr = el("tr"), body = el("tbody");
+  function headRow(heads) {
+    var thead = el("thead"), tr = el("tr");
     heads.forEach(function (h, i) { var th = el("th", i ? "num" : "", h); th.scope = "col"; tr.appendChild(th); });
     thead.appendChild(tr);
-    table.appendChild(thead);
+    return thead;
+  }
+  function footRows(rows) {
+    var tfoot = el("tfoot");
+    rows.forEach(function (cells) {
+      var tr = el("tr");
+      cells.forEach(function (c, i) { tr.appendChild(el("td", i ? "num" : "", c)); });
+      tfoot.appendChild(tr);
+    });
+    return tfoot;
+  }
+  // hide a table body's rows after the first few, behind a button that shows them all
+  function fold(box, body, shown) {
+    if (body.rows.length <= shown) return;
+    Array.prototype.forEach.call(body.rows, function (r, i) { r.hidden = i >= shown; });
+    var more = el("button", "more", "Show all " + body.rows.length);
+    more.type = "button";
+    more.addEventListener("click", function () {
+      Array.prototype.forEach.call(body.rows, function (r) { r.hidden = false; });
+      more.remove();
+    });
+    box.appendChild(more);
+  }
+  // rows: [{j, v, k?}], largest first; the list is cut to LIST until "show all" is pressed
+  function listTable(box, heads, rows, foot) {
+    box.textContent = "";
+    var wrap = el("div", "scroll"), table = el("table", "ledger"), body = el("tbody");
+    table.appendChild(headRow(heads));
     var vmax = rows.length ? Math.max(rows[0].v, 0) || 1 : 1;
-    rows.forEach(function (r, i) {
+    rows.forEach(function (r) {
       var row = el("tr"), name = el("th");
       name.scope = "row";
       name.appendChild(sectorButton(r.j));
-      if (r.marked) name.appendChild(el("span", "dim", "  \u2190 the cell you clicked"));
       row.appendChild(name);
       row.appendChild(barCell(r.v, vmax));
       if (r.k !== undefined) row.appendChild(el("td", "num", (r.k * 100).toFixed(2)));
-      row.hidden = i >= LIST && !r.marked;
       body.appendChild(row);
     });
     table.appendChild(body);
-    if (foot) {
-      var tfoot = el("tfoot");
-      foot.forEach(function (cells) {
-        var fr = el("tr");
-        cells.forEach(function (c, i) { fr.appendChild(el("td", i ? "num" : "", c)); });
-        tfoot.appendChild(fr);
-      });
-      table.appendChild(tfoot);
-    }
+    if (foot) table.appendChild(footRows(foot));
     wrap.appendChild(table);
     box.appendChild(wrap);
-    if (rows.length > LIST) {
-      var more = el("button", "more", "Show all " + rows.length);
-      more.type = "button";
-      more.addEventListener("click", function () {
-        Array.prototype.forEach.call(body.rows, function (r) { r.hidden = false; });
-        more.remove();
-      });
-      box.appendChild(more);
-    }
+    fold(box, body, LIST);
   }
 
-  function select(j, markRow) {
+  function select(j) {
     pick.value = j;
     var name = M.names[j], col = M.cols[j], inputs = [], users = [], listed = 0, k;
     for (k = 0; k < col.length; k += 3) {
-      inputs.push({ j: col[k], v: col[k + 1] * unit, k: col[k + 2] * unit, marked: col[k] === markRow });
+      inputs.push({ j: col[k], v: col[k + 1] * unit, k: col[k + 2] * unit });
       listed += col[k + 1];
     }
     inputs.sort(function (a, b) { return b.v - a.v; });

@@ -46,15 +46,25 @@ def ordered(codes) -> list[str]:
     return [c for name in ORDER for c in codes if g[c] == name]
 
 
+def factors(m: M.Model) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """(purchases, capital, D) with A = (purchases + capital) D. The first two are the parts of B,
+    commodity x industry: what each industry buys, and what it uses of equipment and buildings,
+    per dollar of its output. D, industry x commodity, is each industry's share of each commodity.
+    The capital part is zero when capital is not endogenized."""
+    t = m.t
+    def per_dollar(X):
+        return pd.DataFrame(X.values / t.g.values[None, :], index=t.commodities, columns=t.industries)
+    purchases = per_dollar(t.U)
+    capital = per_dollar(m.K) if m.K is not None else purchases * 0.0
+    return purchases, capital, pd.DataFrame(M.market_shares(t), index=t.industries, columns=t.commodities)
+
+
 def direct_parts(m: M.Model) -> tuple[pd.DataFrame, pd.DataFrame]:
     """A = purchases + capital: the part of each entry that comes from the Use table and the part
-    that comes from the capital matrix. The second is zero when capital is not endogenized."""
-    t, com = m.t, m.t.commodities
-    D = M.market_shares(t)
-    def per_dollar(X):
-        return pd.DataFrame((X.values / t.g.values[None, :]) @ D, index=com, columns=com)
-    purchases = per_dollar(t.U)
-    return purchases, (per_dollar(m.K) if m.K is not None else purchases * 0.0)
+    that comes from the capital matrix."""
+    purchases, capital, D = factors(m)
+    com = m.t.commodities
+    return tuple(pd.DataFrame(X.values @ D.values, index=com, columns=com) for X in (purchases, capital))
 
 
 def by_group(A: pd.DataFrame, q: pd.Series) -> pd.DataFrame:

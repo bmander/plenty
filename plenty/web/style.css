@@ -325,6 +325,12 @@ math a { color: inherit; }
 .mx-note p { margin: 0 0 4px; max-width: none; }
 .mx-note .mx-sort { font: inherit; font-size: 12.5px; line-height: 1.2; margin-left: 8px; color: var(--ink); background: var(--paper); border: 1.5px solid var(--rule); border-radius: 4px; padding: 1px 8px; cursor: pointer; }
 .mx-note .mx-sort.active { border-color: var(--ink-2); font-weight: 600; }
+/* a marked cell taken apart into the industries that make its column's commodity */
+.mx-why { margin-top: 14px; max-width: 860px; }
+.mx-why h3 { margin: 0 0 6px; }
+.mx-why .eq { margin: 10px 0; }
+.mx-why thead th.num { white-space: normal; max-width: 15ch; vertical-align: bottom; }
+.mx-why button.more { font: inherit; font-size: 14px; color: var(--ink-2); background: none; border: 1.5px solid var(--rule); border-radius: 4px; padding: 4px 10px; margin-top: 8px; cursor: pointer; }
 .mx-legend { margin: 12px 0 2px; width: min(320px, 100%); font-size: 12px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
 .mx-ramp { height: 10px; border-radius: 2px; background: linear-gradient(to right, var(--heat-0), var(--heat-1), var(--heat-2), var(--heat-3), var(--heat-4)); }
 .mx-ticks { display: flex; justify-content: space-between; margin-top: 3px; }

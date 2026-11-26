@@ -96,6 +96,23 @@ def test_the_page_for_A_shows_the_matrix_the_model_uses(built):
     # sectors are grouped, so the picture's blocks are groups
     assert data["groups"] == sorted(data["groups"], key=site.MX.ORDER.index)
     assert set(data["groups"]) <= set(data["short"])              # each group has a label for the margins
+    # the file behind a cell's derivation: B, of which each entry of any size is kept, and D; together they give A back
+    text = (site.SITE / data["parts"]).read_text()
+    parts = json.loads(text[text.index("{"):text.rindex("}") + 1])
+    purchases, capital, D = site.MX.factors(built.io)
+    b, kb, dm = (purchases + capital).loc[codes].values, capital.loc[codes].values, D[codes].values
+    got_b, got_kb, got_d = np.zeros_like(b), np.zeros_like(b), np.zeros_like(dm)
+    for i_, col in enumerate(parts["B"]):
+        got_b[col[0::3], i_] = np.array(col[1::3]) * unit
+        got_kb[col[0::3], i_] = np.array(col[2::3]) * unit
+    for j, col in enumerate(parts["D"]):
+        got_d[col[0::2], j] = np.array(col[1::2]) * unit
+    kept_b = np.abs(b) >= parts["cut"]
+    assert ((got_b != 0) == kept_b).all() and np.abs(got_b - b)[kept_b].max() <= unit / 2 + 1e-12
+    assert np.abs(got_kb - kb)[kept_b].max() <= unit / 2 + 1e-12 and np.abs(got_d - dm).max() <= unit / 2 + 1e-12
+    assert len(parts["industries"]) == b.shape[1] and all(isinstance(x, str) and x for x in parts["industries"])
+    assert np.abs(got_b @ got_d - a)[kept].max() < 2e-4          # the terms a reader is shown add up to the cell, nearly
+    assert 'id="mx-why"' in html
     # the download is the matrix itself
     csv = pd.read_csv(site.SITE / "matrix-A.csv", index_col=0, dtype={0: str})
     assert list(csv.index.astype(str)) == codes and np.allclose(csv.values, a, rtol=1e-5, atol=1e-12)
