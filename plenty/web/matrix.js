@@ -106,9 +106,9 @@
   rows.sumBox = document.getElementById("mx-row-sums");
   cols.sumBox = document.getElementById("mx-col-sums");
   var corner = document.getElementById("mx-total");
-  if (corner && M.total !== undefined) {
-    corner.textContent = kind.brief(M.total);
-    corner.setAttribute("data-tip", "The whole matrix: " + kind.sum(M.total));
+  if (corner && M.grand !== undefined) {
+    corner.textContent = kind.brief(M.grand);
+    corner.setAttribute("data-tip", "The whole matrix: " + kind.sum(M.grand));
   }
   // every surface that zooms, moves and marks: the picture and whatever is in its margins
   var surfaces = [canvas, topStrip, leftStrip, rows.sumBox, cols.sumBox].filter(Boolean);

@@ -156,11 +156,11 @@ def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
         assert kept.sum() > 500 and data["scale"][0] < data["scale"][1]
         # totals in the margins are of the whole matrix, and the page has a place for each one it is given
         assert ("colSums" in data) == bool(sheet.sums) == ('id="mx-col-sums"' in html)
-        assert ("rowSums" in data) == ("total" in data) == (sheet.sums == "both") == ('id="mx-row-sums"' in html) == ('id="mx-total"' in html)
+        assert ("rowSums" in data) == ("grand" in data) == (sheet.sums == "both") == ('id="mx-row-sums"' in html) == ('id="mx-total"' in html)
         if sheet.sums:
             assert np.allclose(data["colSums"], x.sum(axis=0), rtol=1e-5, atol=1e-9), key
         if sheet.sums == "both":
-            assert np.allclose(data["rowSums"], x.sum(axis=1), rtol=1e-5, atol=1e-9) and np.isclose(data["total"], x.sum(), rtol=1e-5), key
+            assert np.allclose(data["rowSums"], x.sum(axis=1), rtol=1e-5, atol=1e-9) and np.isclose(data["grand"], x.sum(), rtol=1e-5), key
         csv = pd.read_csv(site.SITE / sheet.csv_file, index_col=0, dtype={0: str})
         assert list(csv.index.astype(str)) == rows and np.allclose(csv.values, x, rtol=1e-5, atol=1e-9), key
     # a table of whole millions is filed exactly, so its blank cells hold nothing

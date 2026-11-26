@@ -1982,7 +1982,7 @@ def sheet_sums(s: Sheet) -> dict:
         out["colSums"] = [six(x) for x in s.values.values.sum(axis=0)]
     if s.sums == "both":
         out["rowSums"] = [six(x) for x in s.values.values.sum(axis=1)]
-        out["total"] = six(s.values.values.sum())
+        out["grand"] = six(s.values.values.sum())      # not "total": A's lookup has its columns' totals under that name
     return out
 
 
