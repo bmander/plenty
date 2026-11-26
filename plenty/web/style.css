@@ -287,12 +287,13 @@ math a { color: inherit; }
 .mx-top.mx-named > .mx-group { bottom: auto; height: var(--band); writing-mode: horizontal-tb; transform: none; }
 .mx-left.mx-named > .mx-group { right: auto; width: var(--band); padding: 3px 0; writing-mode: vertical-rl; transform: rotate(180deg); }
 .mx-top > .mx-name { top: var(--band); }
-.mx-left > .mx-name { left: var(--band); display: flex; align-items: center; justify-content: flex-end; padding: 0 6px 0 4px; text-align: right; }
+.mx-left > .mx-name { left: var(--band); display: flex; align-items: center; justify-content: flex-end; padding-left: 4px; text-align: right; }
 .mx-top > .mx-name.first { border-left: 1px solid var(--rule); }
 .mx-left > .mx-name.first { border-top: 1px solid var(--rule); }
 .mx-name.on { color: var(--ink); background: var(--bar); }
 .mx-turn { position: absolute; left: 0; bottom: 0; box-sizing: border-box; transform-origin: 0 100%; display: flex; align-items: center; padding: 0 2px 0 4px; }
 .mx-text { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; white-space: normal; overflow-wrap: anywhere; min-width: 0; line-height: 1.15; }
+.mx-left .mx-text { padding-right: 9px; }   /* room for the ellipsis, which Chrome hangs past a right-aligned last line */
 .mx-text.one { display: block; white-space: nowrap; text-overflow: ellipsis; }
 .mx-plot { position: relative; grid-column: 2; aspect-ratio: 1; border: 1px solid var(--rule); overflow: hidden; }
 .mx-plot canvas { display: block; width: 100%; height: 100%; cursor: crosshair; }

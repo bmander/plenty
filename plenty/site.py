@@ -1798,7 +1798,8 @@ it each makes.</p>
 made, on a log scale. The {(~shown).mean():.0%} of entries under a hundredth of a cent are blank. Sectors are in the Bureau's
 order within fifteen groups, and the diagonal blocks are groups buying from themselves. Hover over a cell for its
 sectors and value, and click it to look the pair up below. To zoom in, pinch, or scroll with &#8984; or Ctrl held, or
-use the buttons; then drag to move. Close in, the margins name each sector.</figcaption>
+use the buttons; then drag to move. Close in, the margins name each sector, and closer still each cell shows its
+value in cents.</figcaption>
 </figure>
 
 <h2 id="sector">One sector's column and row</h2>

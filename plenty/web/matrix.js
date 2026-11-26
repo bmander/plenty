@@ -23,16 +23,18 @@
   // --- the picture: the whole matrix, or a window on it
   // The matrix is painted once, a pixel a cell, on a sheet off screen. The canvas shows the part
   // of the sheet in view, and the strips beside it name what is in view: groups from far off,
-  // each sector once its cells are wide enough to label.
+  // each sector once its cells are wide enough to label. Closer still, each cell carries its number.
   var MIN_SPAN = 8;          // the closest view: this many sectors across
   var NAME_PX = 10;          // sectors are named once a cell is this wide
+  var VALUE_PX = 32;         // and each cell shows its value, in cents, once it is this wide
   var GROUP_PX = 13;         // a group is named in the far view if it is this wide
   var NAME_FONT = 11, LINE = 1.15;
   var plot = canvas.parentNode, topStrip = document.getElementById("mx-top"), leftStrip = document.getElementById("mx-left");
   var zoomIn = document.getElementById("mx-zoom-in"), zoomOut = document.getElementById("mx-zoom-out"), zoomAll = document.getElementById("mx-zoom-all");
   var hLine = document.getElementById("mx-h"), vLine = document.getElementById("mx-v");
   var view = { x: 0, y: 0, span: n };                 // the left and top edge of the view and its width, in cells
-  var sheet = document.createElement("canvas"), paper = "#fff", rule = "#888", pending = 0, pointer = null, lit = [];
+  var sheet = document.createElement("canvas"), pending = 0, pointer = null, lit = [];
+  var stops = [], paper = "#fff", rule = "#888", faint = "#888", onLight = "#000", onDark = "#fff", face = "sans-serif";
   sheet.width = sheet.height = n;
 
   var runs = [];                                      // the groups, as runs of sectors
@@ -42,26 +44,45 @@
     else runs.push({ name: g, label: M.short[g] || g, from: j, to: j + 1 });
   });
 
+  function rgb(hex) {
+    var h = hex.trim().replace("#", "");
+    return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
+  }
+  function luminance(c) {                             // relative luminance, 0 black to 1 white
+    var l = c.map(function (x) { x /= 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); });
+    return 0.2126 * l[0] + 0.7152 * l[1] + 0.0722 * l[2];
+  }
+  function shade(v) {                                 // the colour of a positive value, on the log scale
+    var t = Math.min(1, Math.max(0, (Math.log10(v) - LO) / (HI - LO))) * (stops.length - 1);
+    var a = stops[Math.floor(t)], b = stops[Math.min(stops.length - 1, Math.floor(t) + 1)], f = t - Math.floor(t);
+    return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
+  }
   function paint() {
-    var css = getComputedStyle(document.documentElement);
-    var stops = [0, 1, 2, 3, 4].map(function (i) {
-      var h = css.getPropertyValue("--heat-" + i).trim().replace("#", "");
-      return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)];
-    });
-    paper = css.getPropertyValue("--paper").trim() || paper;
-    rule = css.getPropertyValue("--rule").trim() || rule;
+    var css = getComputedStyle(document.documentElement), get = function (k) { return css.getPropertyValue(k).trim(); };
+    stops = [0, 1, 2, 3, 4].map(function (i) { return rgb(get("--heat-" + i)); });
+    paper = get("--paper") || paper;
+    rule = get("--rule") || rule;
+    faint = get("--ink-2") || faint;
+    var ink = get("--ink") || onLight, inkIsDark = luminance(rgb(ink)) < luminance(rgb(paper));
+    onLight = inkIsDark ? ink : paper;                // the darker of ink and paper, for numbers on light cells
+    onDark = inkIsDark ? paper : ink;
+    face = getComputedStyle(document.body).fontFamily;
     var ctx = sheet.getContext("2d"), img = ctx.createImageData(n, n);
     for (var p = 0; p < n * n; p++) {
-      var v = value[p];
-      if (v <= 0) continue;                           // zero, under the cut, or negative: left blank
-      var t = Math.min(1, Math.max(0, (Math.log10(v) - LO) / (HI - LO))) * (stops.length - 1);
-      var a = stops[Math.floor(t)], b = stops[Math.min(stops.length - 1, Math.floor(t) + 1)], f = t - Math.floor(t);
-      img.data[4 * p] = a[0] + (b[0] - a[0]) * f;
-      img.data[4 * p + 1] = a[1] + (b[1] - a[1]) * f;
-      img.data[4 * p + 2] = a[2] + (b[2] - a[2]) * f;
+      if (value[p] <= 0) continue;                    // zero, under the cut, or negative: left blank
+      var c = shade(value[p]);
+      img.data[4 * p] = c[0];
+      img.data[4 * p + 1] = c[1];
+      img.data[4 * p + 2] = c[2];
       img.data[4 * p + 3] = 255;
     }
     ctx.putImageData(img, 0, 0);
+  }
+
+  // a cell's value in cents, as short as it can be said
+  function figure(v) {
+    var c = Math.abs(v) * 100;
+    return (v < 0 ? "\u2212" : "") + c.toFixed(c >= 9.995 ? 1 : 2);
   }
 
   function cellPx() { return canvas.clientWidth / view.span; }
@@ -88,6 +109,19 @@
       ctx.fillRect(0, Math.round((g.from - view.y) * cell), px, line);
     });
     ctx.globalAlpha = 1;
+    if (cellPx() >= VALUE_PX) {                       // closest in, the number on each cell
+      ctx.font = "500 " + Math.round(Math.min(14, cellPx() / 3) * ratio) + "px " + face;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      for (var i = Math.floor(view.y); i < Math.min(n, view.y + view.span); i++) {
+        for (var j = Math.floor(view.x); j < Math.min(n, view.x + view.span); j++) {
+          var v = value[i * n + j];
+          if (!v) continue;
+          ctx.fillStyle = v < 0 ? faint : luminance(shade(v)) > 0.2 ? onLight : onDark;
+          ctx.fillText(figure(v), (j + 0.5 - view.x) * cell, (i + 0.5 - view.y) * cell);
+        }
+      }
+    }
     strip(topStrip, view.x);
     strip(leftStrip, view.y);
     plot.classList.toggle("mx-zoomed", view.span < n);
