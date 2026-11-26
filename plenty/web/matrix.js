@@ -5,17 +5,17 @@
   "use strict";
   var M = window.PLENTY_MATRIX, canvas = document.getElementById("mx-canvas");
   if (!M || !canvas) return;
-  // every matrix shown is n by n, though its rows and its columns may be different things
-  var n = M.rows.names.length, unit = M.unit, LIST = 12, STEP = M.second ? 3 : 2;
+  // nr rows by nc columns; the rows and the columns may be different things, and of different number
+  var nr = M.rows.names.length, nc = M.cols.names.length, unit = M.unit, LIST = 12, STEP = M.second ? 3 : 2;
   var LO = Math.log10(M.scale[0]), HI = Math.log10(M.scale[1]);   // the two ends of the colour scale
 
   // dense copies for the pointer, and each row's entries for "who uses it"
-  var value = new Float32Array(n * n), capital = new Float32Array(n * n), byRow = [];
-  for (var r = 0; r < n; r++) byRow.push([]);
+  var value = new Float32Array(nr * nc), capital = new Float32Array(nr * nc), byRow = [];
+  for (var r = 0; r < nr; r++) byRow.push([]);
   M.cells.forEach(function (col, j) {
     for (var k = 0; k < col.length; k += STEP) {
-      value[col[k] * n + j] = col[k + 1] * unit;
-      if (M.second) capital[col[k] * n + j] = col[k + 2] * unit;   // the part that is equipment and buildings
+      value[col[k] * nc + j] = col[k + 1] * unit;
+      if (M.second) capital[col[k] * nc + j] = col[k + 2] * unit;   // the part that is equipment and buildings
       byRow[col[k]].push(j, col[k + 1]);
     }
   });
@@ -48,18 +48,23 @@
   var zoomIn = document.getElementById("mx-zoom-in"), zoomOut = document.getElementById("mx-zoom-out"), zoomAll = document.getElementById("mx-zoom-all");
   var unsort = document.getElementById("mx-unsort"), note = document.getElementById("mx-note");
   var hLine = document.getElementById("mx-h"), vLine = document.getElementById("mx-v");
-  var view = { x: 0, y: 0, span: n };                 // the left and top edge of the view and its width, in cells
+  // The view: its left and top edge and its width, in cells. Cells are square and the picture has
+  // the matrix's shape, so its height in cells follows from its width.
+  var view = { x: 0, y: 0, span: nc };
+  function down() { return view.span * nr / nc; }
+  plot.style.aspectRatio = nc + " / " + nr;
   var sheet = document.createElement("canvas"), pending = 0, pointer = null, lit = [];
   var stops = [], paper = "#fff", rule = "#888", faint = "#888", onLight = "#000", onDark = "#fff", face = "sans-serif";
-  sheet.width = sheet.height = n;
+  sheet.width = nc;
+  sheet.height = nr;
 
   // The picture's two axes. at[p] is the sector drawn at place p, and pos the other way round.
   // by is the line of the other axis this one is sorted by, as {k, dir} with dir 1 for smallest
   // first; sel is the sector marked on it.
   // names, codes and groups are its sectors', in the Bureau's order, and runs the groups as stretches of them.
   function axis(box, side) {
-    var a = { box: box, names: side.names, codes: side.codes, groups: side.groups, runs: [], at: [], pos: [], by: null, sel: null };
-    for (var k = 0; k < n; k++) { a.at.push(k); a.pos.push(k); }
+    var a = { box: box, n: side.names.length, names: side.names, codes: side.codes, groups: side.groups, runs: [], at: [], pos: [], by: null, sel: null };
+    for (var k = 0; k < a.n; k++) { a.at.push(k); a.pos.push(k); }
     side.groups.forEach(function (g, j) {
       var last = a.runs[a.runs.length - 1];
       if (last && last.name === g) last.to = j + 1;
@@ -97,10 +102,10 @@
     onLight = inkIsDark ? ink : paper;                // the darker of ink and paper, for numbers on light cells
     onDark = inkIsDark ? paper : ink;
     face = getComputedStyle(document.body).fontFamily;
-    var ctx = sheet.getContext("2d"), img = ctx.createImageData(n, n);
-    for (var i = 0; i < n; i++) {
-      for (var j = 0; j < n; j++) {
-        var v = value[rows.at[i] * n + cols.at[j]], p = 4 * (i * n + j);
+    var ctx = sheet.getContext("2d"), img = ctx.createImageData(nc, nr);
+    for (var i = 0; i < nr; i++) {
+      for (var j = 0; j < nc; j++) {
+        var v = value[rows.at[i] * nc + cols.at[j]], p = 4 * (i * nc + j);
         if (v <= 0) continue;                         // zero, under the cut, or negative: left blank
         var c = shade(v);
         img.data[p] = c[0];
@@ -116,33 +121,37 @@
   function figure(v) { return (v < 0 ? "\u2212" : "") + kind.cell(Math.abs(v)); }
 
   function cellPx() { return canvas.clientWidth / view.span; }
+  // a number of cells as a share of the picture's width, and of its height
+  function wide(cells) { return (cells / view.span * 100).toFixed(3) + "%"; }
+  function tall(cells) { return (cells / down() * 100).toFixed(3) + "%"; }
   function named() { return cellPx() >= NAME_PX; }
 
   function render() {
     pending = 0;
     var ratio = window.devicePixelRatio || 1, px = Math.max(1, Math.round(canvas.clientWidth * ratio));
-    if (canvas.width !== px) canvas.width = canvas.height = px;
+    var py = Math.max(1, Math.round(canvas.clientWidth * ratio * nr / nc));
+    if (canvas.width !== px || canvas.height !== py) { canvas.width = px; canvas.height = py; }
     var ctx = canvas.getContext("2d"), cell = px / view.span, line = Math.max(1, Math.round(ratio)), c;
-    ctx.clearRect(0, 0, px, px);
+    ctx.clearRect(0, 0, px, py);
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(sheet, view.x, view.y, view.span, view.span, 0, 0, px, px);
+    ctx.drawImage(sheet, view.x, view.y, view.span, down(), 0, 0, px, py);
     if (named()) {                                    // close in, a gap of paper between cells
       ctx.fillStyle = paper;
-      for (c = Math.ceil(view.x); c < view.x + view.span; c++) ctx.fillRect(Math.round((c - view.x) * cell), 0, line, px);
-      for (c = Math.ceil(view.y); c < view.y + view.span; c++) ctx.fillRect(0, Math.round((c - view.y) * cell), px, line);
+      for (c = Math.ceil(view.x); c < view.x + view.span; c++) ctx.fillRect(Math.round((c - view.x) * cell), 0, line, py);
+      for (c = Math.ceil(view.y); c < view.y + down(); c++) ctx.fillRect(0, Math.round((c - view.y) * cell), px, line);
     }
     ctx.fillStyle = rule;                             // and a rule between groups, on an axis still in groups
     ctx.globalAlpha = named() ? 1 : 0.55;
-    if (!cols.by) cols.runs.forEach(function (g) { if (g.from) ctx.fillRect(Math.round((g.from - view.x) * cell), 0, line, px); });
+    if (!cols.by) cols.runs.forEach(function (g) { if (g.from) ctx.fillRect(Math.round((g.from - view.x) * cell), 0, line, py); });
     if (!rows.by) rows.runs.forEach(function (g) { if (g.from) ctx.fillRect(0, Math.round((g.from - view.y) * cell), px, line); });
     ctx.globalAlpha = 1;
     if (cellPx() >= VALUE_PX) {                       // closest in, the number on each cell
       ctx.font = "500 " + Math.round(Math.min(14, cellPx() / 3) * ratio) + "px " + face;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      for (var i = Math.floor(view.y); i < Math.min(n, view.y + view.span); i++) {
-        for (var j = Math.floor(view.x); j < Math.min(n, view.x + view.span); j++) {
-          var v = value[rows.at[i] * n + cols.at[j]];
+      for (var i = Math.floor(view.y); i < Math.min(nr, view.y + down()); i++) {
+        for (var j = Math.floor(view.x); j < Math.min(nc, view.x + view.span); j++) {
+          var v = value[rows.at[i] * nc + cols.at[j]];
           if (!v) continue;
           ctx.fillStyle = v < 0 ? faint : luminance(shade(v)) > 0.2 ? onLight : onDark;
           ctx.fillText(figure(v), (j + 0.5 - view.x) * cell, (i + 0.5 - view.y) * cell);
@@ -151,15 +160,14 @@
     }
     strip(cols, view.x);
     strip(rows, view.y);
-    var pct = function (x) { return (x / view.span * 100).toFixed(3) + "%"; };
     selRow.style.display = rows.sel === null ? "none" : "block";
     selCol.style.display = cols.sel === null ? "none" : "block";
     selCell.style.display = rows.sel === null || cols.sel === null ? "none" : "block";
-    if (rows.sel !== null) { selRow.style.top = selCell.style.top = pct(rows.pos[rows.sel] - view.y); selRow.style.height = selCell.style.height = pct(1); }
-    if (cols.sel !== null) { selCol.style.left = selCell.style.left = pct(cols.pos[cols.sel] - view.x); selCol.style.width = selCell.style.width = pct(1); }
-    plot.classList.toggle("mx-zoomed", view.span < n);
+    if (rows.sel !== null) { selRow.style.top = selCell.style.top = tall(rows.pos[rows.sel] - view.y); selRow.style.height = selCell.style.height = tall(1); }
+    if (cols.sel !== null) { selCol.style.left = selCell.style.left = wide(cols.pos[cols.sel] - view.x); selCol.style.width = selCell.style.width = wide(1); }
+    plot.classList.toggle("mx-zoomed", view.span < nc);
     zoomIn.disabled = view.span <= MIN_SPAN;
-    zoomOut.disabled = zoomAll.disabled = view.span >= n;
+    zoomOut.disabled = zoomAll.disabled = view.span >= nc;
     unsort.disabled = !rows.by && !cols.by;
     if (pointer) hover(pointer);
   }
@@ -168,11 +176,12 @@
   // one strip: the groups in view and, close in, a narrow band of groups with each sector's name
   // beside it. An axis that is sorted has no groups to show, and says what it is sorted by instead.
   function strip(a, from) {
-    var box = a.box, across = a === cols, to = from + view.span, size = cellPx(), names = named();
+    var box = a.box, across = a === cols, share = across ? wide : tall, to = from + (across ? view.span : down());
+    var size = cellPx(), names = named();
     function put(cls, lo, hi, tip) {
       var s = el("span", cls);
-      s.style[across ? "left" : "top"] = ((lo - from) / view.span * 100).toFixed(3) + "%";
-      s.style[across ? "width" : "height"] = ((hi - lo) / view.span * 100).toFixed(3) + "%";
+      s.style[across ? "left" : "top"] = share(lo - from);
+      s.style[across ? "width" : "height"] = share(hi - lo);
       s.setAttribute("data-tip", tip);
       box.appendChild(s);
       return s;
@@ -192,7 +201,7 @@
     if (!names || !band) return;
     var font = Math.min(NAME_FONT, size / LINE), lines = Math.max(1, Math.floor(size / (font * LINE) + 0.01));
     var length = box.clientHeight - band.offsetHeight - SORT_PX;   // room for a name written up the top strip
-    for (var p = Math.floor(from); p < Math.min(n, Math.ceil(to)); p++) {
+    for (var p = Math.floor(from); p < Math.min(a.n, Math.ceil(to)); p++) {
       var c = a.at[p], first = !a.by && c && a.groups[c] !== a.groups[c - 1];
       var s = put("mx-name" + (first ? " first" : "") + (a.sel === c ? " sel" : ""), p, p + 1, a.names[c]);
       var text = el("span", lines > 1 ? "mx-text" : "mx-text one", a.names[c]), holder = s;
@@ -233,7 +242,7 @@
   }
   function order(a, by) {
     a.by = by;
-    var key = function (x) { return a === rows ? value[x * n + by.k] : value[by.k * n + x]; };
+    var key = function (x) { return a === rows ? value[x * nc + by.k] : value[by.k * nc + x]; };
     a.at.sort(function (x, y) { return (by ? by.dir * (key(x) - key(y)) : 0) || x - y; });   // ties keep the Bureau's order
     a.at.forEach(function (x, p) { a.pos[x] = p; });
     if (by) view[a === rows ? "y" : "x"] = 0;         // a new order is read from its start
@@ -299,7 +308,7 @@
     s.src = M.parts;
     s.onload = function () {
       var P = window.PLENTY_MATRIX_PARTS, m = P.industries.length;
-      parts = { names: P.industries, m: m, makers: P.D, unit: P.unit, cut: P.cut, use: new Float32Array(n * m), capital: new Float32Array(n * m) };
+      parts = { names: P.industries, m: m, makers: P.D, unit: P.unit, cut: P.cut, use: new Float32Array(nr * m), capital: new Float32Array(nr * m) };
       P.B.forEach(function (col, k) {
         for (var x = 0; x < col.length; x += 3) {
           parts.use[col[x] * m + k] = col[x + 1] * P.unit;
@@ -319,7 +328,7 @@
       box.appendChild(el("p", "dim", parts === null ? "Fetching the two tables..." : "The two tables could not be fetched."));
       return box;
     }
-    var makers = parts.makers[j], terms = [], sum = 0, v = value[i * n + j];
+    var makers = parts.makers[j], terms = [], sum = 0, v = value[i * nc + j];
     for (var x = 0; x < makers.length; x += 2) {
       var k = makers[x], share = makers[x + 1] * parts.unit, use = parts.use[i * parts.m + k];
       terms.push({ name: parts.names[k], share: share, use: use, capital: parts.capital[i * parts.m + k], term: share * use });
@@ -353,54 +362,54 @@
     a.box.addEventListener("click", function (e) {
       if (slid(e) || e.target.closest("button")) return;
       var box = a.box.getBoundingClientRect();
-      var p = Math.floor(a === rows ? view.y + (e.clientY - box.top) / box.height * view.span
+      var p = Math.floor(a === rows ? view.y + (e.clientY - box.top) / box.height * down()
                                     : view.x + (e.clientX - box.left) / box.width * view.span);
-      if (p < 0 || p >= n) return;
+      if (p < 0 || p >= a.n) return;
       if (a === rows) mark(a.at[p], null); else mark(null, a.at[p]);
     });
   });
 
   function settle() {
-    view.span = Math.min(n, Math.max(MIN_SPAN, view.span));
-    view.x = Math.min(n - view.span, Math.max(0, view.x));
-    view.y = Math.min(n - view.span, Math.max(0, view.y));
+    view.span = Math.min(nc, Math.max(MIN_SPAN, view.span));
+    view.x = Math.min(nc - view.span, Math.max(0, view.x));
+    view.y = Math.min(nr - down(), Math.max(0, view.y));
     schedule();
   }
   // zoom by a factor, keeping the point (fx, fy) of the picture, each 0 to 1, where it is
   function zoom(factor, fx, fy) {
-    var span = Math.min(n, Math.max(MIN_SPAN, view.span / factor));
+    var span = Math.min(nc, Math.max(MIN_SPAN, view.span / factor));
     view.x += fx * (view.span - span);
-    view.y += fy * (view.span - span);
+    view.y += fy * (view.span - span) * nr / nc;
     view.span = span;
     settle();
   }
-  function whole() { view.x = view.y = 0; view.span = n; settle(); }
+  function whole() { view.x = view.y = 0; view.span = nc; settle(); }
 
   function cellAt(e) {
     var box = canvas.getBoundingClientRect();
     var x = Math.floor(view.x + (e.clientX - box.left) / box.width * view.span);
-    var y = Math.floor(view.y + (e.clientY - box.top) / box.height * view.span);
-    return (x < 0 || y < 0 || x >= n || y >= n) ? null : { i: rows.at[y], j: cols.at[x], x: x, y: y };   // the sectors, and their places
+    var y = Math.floor(view.y + (e.clientY - box.top) / box.height * down());
+    return (x < 0 || y < 0 || x >= nc || y >= nr) ? null : { i: rows.at[y], j: cols.at[x], x: x, y: y };   // the sectors, and their places
   }
   function amount(i, j) {
-    var v = value[i * n + j], k = capital[i * n + j];
+    var v = value[i * nc + j], k = capital[i * nc + j];
     if (v === 0) return M.blank;
     return kind.say(v) + (M.second && Math.abs(k) >= M.cut ? ", " + cents(k) + " of it equipment and buildings" : "");
   }
   function describe(i, j) { return M.rowTip + ": " + rows.names[i] + "\n" + M.colTip + ": " + cols.names[j] + "\n" + amount(i, j); }
   // far off, a hair line through the cell's row and column; close in, a band around each
   function hover(e) {
-    var c = cellAt(e), band = named(), pct = function (x) { return (x / view.span * 100).toFixed(3) + "%"; };
+    var c = cellAt(e), band = named();
     lit.forEach(function (x) { x.classList.remove("on"); });
     lit = [];
     if (!c) return unhover();
     window.plentyTip.show(describe(c.i, c.j), e);
     hLine.style.display = vLine.style.display = "block";
     hLine.className = vLine.className = band ? "band" : "";
-    hLine.style.top = pct(c.y - view.y + (band ? 0 : 0.5));
-    vLine.style.left = pct(c.x - view.x + (band ? 0 : 0.5));
-    hLine.style.height = band ? pct(1) : "";
-    vLine.style.width = band ? pct(1) : "";
+    hLine.style.top = tall(c.y - view.y + (band ? 0 : 0.5));
+    vLine.style.left = wide(c.x - view.x + (band ? 0 : 0.5));
+    hLine.style.height = band ? tall(1) : "";
+    vLine.style.width = band ? wide(1) : "";
     [[topStrip, c.j], [leftStrip, c.i]].forEach(function (p) {
       var name = p[0].querySelector('[data-i="' + p[1] + '"]');
       if (name) { name.classList.add("on"); lit.push(name); }
@@ -457,7 +466,7 @@
     target.addEventListener("pointerdown", function (e) {
       dragged = false;
       press = { x: e.clientX, y: e.clientY };
-      if (pans(e) && view.span < n) drag = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, id: e.pointerId };
+      if (pans(e) && view.span < nc) drag = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, id: e.pointerId };
     });
     target.addEventListener("pointermove", function (e) {
       if (!drag || drag.id !== e.pointerId) return;
@@ -470,7 +479,7 @@
         unhover();
       }
       view.x = drag.vx - dx / box.width * view.span;
-      view.y = drag.vy - dy / box.height * view.span;
+      view.y = drag.vy - dy / box.height * down();
       settle();
     });
     target.addEventListener("pointerup", drop);
@@ -500,7 +509,7 @@
   zoomAll.addEventListener("click", whole);
   canvas.addEventListener("keydown", function (e) {
     var step = view.span / 8, move = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
-    if (move && view.span < n) { view.x += move[0] * step; view.y += move[1] * step; settle(); }
+    if (move && view.span < nc) { view.x += move[0] * step; view.y += move[1] * step; settle(); }
     else if (e.key === "+" || e.key === "=") zoom(2, 0.5, 0.5);
     else if (e.key === "-") zoom(0.5, 0.5, 0.5);
     else if (e.key === "0" || e.key === "Escape") whole();

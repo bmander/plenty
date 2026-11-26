@@ -124,16 +124,20 @@ def test_the_page_for_A_shows_the_matrix_the_model_uses(built):
 def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
     m, t = built.io, built.io.t
     purchases, capital, D = site.MX.factors(m)
-    truth = {"A": m.A, "B": purchases + capital, "D": D, "U": t.U, "K": m.K, "V": t.V, "S": built.capital.shares}
+    truth = {"A": m.A, "B": purchases + capital, "D": D, "U": t.U, "K": m.K, "V": t.V, "S": built.capital.shares,
+             "W": built.wages[0]}
     assert set(truth) == set(site.MATRIX_PAGES) == set(built.sheets)
     a_page, k_page = (site.SITE / site.MATRIX_A).read_text(), (site.SITE / "matrix-K.html").read_text()
+    method = (site.SITE / "method.html").read_text()
+    linked_from = {"S": k_page, "W": method}                      # the rest are in A's derivation
     for key, X in truth.items():
         sheet = built.sheets[key]
         html = (site.SITE / sheet.href).read_text()
         assert f'src="{sheet.data_file}"' in html and 'src="matrix.js"' in html and 'id="mx-canvas"' in html
+        assert f'width="{X.shape[1]}" height="{X.shape[0]}"' in html     # the picture has the matrix's shape
         if key != "A":
-            assert f'<mi><a href="{sheet.href}">' in (k_page if key == "S" else a_page)   # its letter in the derivation is the link
-            assert f'href="{site.MATRIX_A}' in html                  # and the page leads back
+            assert f'<mi><a href="{sheet.href}">' in linked_from.get(key, a_page)   # its letter in the derivation is the link
+            assert f'href="{"method.html#account" if key == "W" else site.MATRIX_A}' in html   # and the page leads back
             assert f'<a href="{sheet.href}">' not in html            # a page does not link to itself
         text = (site.SITE / sheet.data_file).read_text()
         data = json.loads(text[text.index("{"):text.rindex("}") + 1])
@@ -159,7 +163,7 @@ def test_the_capital_matrix_page_leads_to_what_it_is_made_from(built):
     s_page = (site.SITE / "matrix-S.html").read_text()
     for letter in "FS":                                           # K = F times S, each a link
         assert f'<mi><a href="{site.SYMBOL_PAGES[letter]}">' in k_page
-    assert f'<mi><a href="{site.SYMBOL_PAGES["w"]}">' in s_page and 'id="rules"' in s_page
+    assert f'<mi><a href="{site.SYMBOL_PAGES["z"]}">' in s_page and 'id="rules"' in s_page
     # every pairing that placed something is listed, and every investor's remainder
     rules = [x for x in cap.steps if x["note"]]
     assert s_page.count("Everything else it invests in") == len(cap.steps) - len(rules) == len(site.INVESTOR_NAME)
@@ -171,25 +175,27 @@ def test_the_capital_matrix_page_leads_to_what_it_is_made_from(built):
     assert f"{shown.values.sum():,.0f}" in f_page and np.isclose(shown.values.sum(), built.io.K.values.sum())
     csv = pd.read_csv(site.SITE / "matrix-F.csv", index_col=0, dtype={0: str})
     assert list(csv.columns) == list(site.INVESTOR_NAME) and np.allclose(csv.values, cap.investment.values)
-    # w: every industry, with the measure its kind of investor shares by
-    w_page = (site.SITE / site.SYMBOL_PAGES["w"]).read_text()
+    # z: every industry, with the measure its kind of investor shares by
+    w_page = (site.SITE / site.SYMBOL_PAGES["z"]).read_text()
     assert w_page.count('<tr><th scope="row">') == len(t.industries)
     assert w_page.count(">Output</td>") == cap.group.isin(["fed_defense", "fed_nondefense", "state_local"]).sum()
-    csv = pd.read_csv(site.SITE / "vector-w.csv", index_col=0, dtype={0: str})
+    csv = pd.read_csv(site.SITE / "vector-z.csv", index_col=0, dtype={0: str})
     assert np.allclose(csv.weight.values, cap.weight.values)
 
 
 def test_the_need_vectors_of_the_account_have_pages(built):
     dn, x = built.need_dollars
     method = (site.SITE / "method.html").read_text()
-    for letter, frame in (("d", dn), ("x", x)):
+    v = built.need_value_added
+    assert np.allclose(v.sum(), 1.0)                              # each need's value added is shared out whole
+    for letter, frame in (("d", dn), ("x", x), ("v", v)):
         href = site.SYMBOL_PAGES[letter]
         assert f'<mi><a href="{href}">' in method                     # the letter in the account is the link
         html = (site.SITE / href).read_text()
         assert f'<a href="{href}">' not in html and 'href="method.html#account"' in html
         assert html.count('<th scope="col" class="grp" data-sort="num">') == len(site.NEED_NAME) == frame.shape[1]
         rows = html[html.index('id="table"'):].count('<tr><th scope="row">')
-        assert rows == (frame.abs() >= site.HEAT_FLOOR).any(axis=1).sum() if letter == "x" else rows == (frame != 0).any(axis=1).sum()
+        assert rows == ((frame != 0).any(axis=1).sum() if letter == "d" else (frame.abs() >= site.HEAT_FLOOR).any(axis=1).sum())
         csv = pd.read_csv(site.SITE / f"vector-{letter}.csv", index_col=0, dtype={0: str})
         assert list(csv.columns) == list(site.NEED_NAME) and np.allclose(csv.values, frame.values, rtol=1e-5, atol=1e-9)
     # the round-by-round table on x's page adds up to the column totals
@@ -198,6 +204,19 @@ def test_the_need_vectors_of_the_account_have_pages(built):
     # what is left out of the basket is listed, and the page's two totals are the model's
     d_page = (site.SITE / site.SYMBOL_PAGES["d"]).read_text()
     assert all(site.e(name) in d_page for name in site.LEFT_OUT_NAME.values())
+
+
+def test_the_wage_matrix_page_says_how_each_sector_is_measured(built):
+    W, info, occ = built.wages
+    measured = info.source.str.startswith("oews")
+    assert np.allclose(W.sum(axis=1)[measured], 1.0) and not W[~measured].values.any()
+    assert occ.title.notna().all() and set(occ.major.map(len) > 0) == {True} and occ.major.nunique() == len(site.SOC_SHORT)
+    html = (site.SITE / "matrix-W.html").read_text()
+    names = built.io.t.names
+    assert all(site.e(names[c].lower()) in html for c in info.index[~measured])      # the sectors with no row are named
+    text = (site.SITE / "matrix-W-data.js").read_text()
+    data = json.loads(text[text.index("{"):text.rindex("}") + 1])
+    assert set(data["cols"]["groups"]) <= set(data["short"]) and len(set(data["cols"]["groups"])) == occ.major.nunique()
 
 
 def test_ai_use_sits_beside_the_work(built):
