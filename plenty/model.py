@@ -76,53 +76,69 @@ def _match(codes, prefixes):
     return [c for c in codes if any(c.startswith(p) for p in prefixes)]
 
 
-def capital_matrix(t: Tables, use_rules: bool = True) -> pd.DataFrame:
-    """K[c, j]: $M of capital good c bought by industry j in 2017 (allocated, not observed).
+# The one pairing that holds whether or not config/capital_allocation.csv is used.
+HOUSING_RULE = {"group": "residential", "commodity_prefixes": "233412", "user_industry_prefixes": "531HST",
+                "note": "Multifamily residential structures -> tenant-occupied housing"}
 
-    BEA publishes investment by commodity but not by purchasing industry at this level,
-    so each investment column is spread over plausible buyers:
-      * capital goods with an evident user (config/capital_allocation.csv) go to that user set
-      * everything else goes to all eligible industries
-    Within a set, private industries share by gross operating surplus (a proxy for capital
-    income) and government industries by output.
+
+@dataclass
+class Capital:
+    """How investment is placed on industries: K[c, j] = investment[c, group of j] * shares[c, j]."""
+    investment: pd.DataFrame     # commodity x investor group, $M bought as investment in 2017
+    shares: pd.DataFrame         # commodity x industry: the share of its group's investment in c placed on j
+    weight: pd.Series            # industry -> what industries of a group share by, $M
+    group: pd.Series             # industry -> its investor group (a key of CAPITAL_COLUMNS)
+    steps: list[dict]            # what was placed where, in order: group, note ("" for the rest), commodities, users
+
+    @property
+    def K(self) -> pd.DataFrame:
+        return self.shares * self.investment[self.group[self.shares.columns]].values
+
+
+def capital_allocation(t: Tables, use_rules: bool = True) -> Capital:
+    """BEA publishes investment by commodity and by kind of investor, but not by purchasing
+    industry at this level, so each investor group's purchases of a capital good are spread over
+    that group's industries:
+      * a capital good with an evident user (config/capital_allocation.csv) goes to that user set
+      * everything else goes to all the group's industries
+    Within a set, private and housing industries share by gross operating surplus (a proxy for
+    capital income) and government industries by output. A commodity a group did not invest in
+    has no shares in that group.
     """
     ind, com = t.industries, t.commodities
+    members = {"private": [i for i in ind if i not in HOUSING + GOVERNMENT], "residential": HOUSING,
+               "fed_defense": FED_DEFENSE, "fed_nondefense": FED_NONDEF, "state_local": STATE_LOCAL}
+    group = pd.Series({i: h for h, users in members.items() for i in users}).reindex(ind)
     gos = t.VA.loc["V00300"].clip(lower=0.0)
-    g = t.g
-    rules = pd.read_csv(CONFIG / "capital_allocation.csv")
-    K = pd.DataFrame(0.0, index=com, columns=ind)
+    weight = gos.where(group.isin(["private", "residential"]), t.g)
+    rules = pd.concat([pd.read_csv(CONFIG / "capital_allocation.csv").iloc[:None if use_rules else 0],
+                       pd.DataFrame([HOUSING_RULE])], ignore_index=True)
+    investment = pd.DataFrame({h: t.F[cols].sum(axis=1) for h, cols in CAPITAL_COLUMNS.items()})
+    shares = pd.DataFrame(0.0, index=com, columns=ind)
+    steps = []
 
-    def spread(amounts: pd.Series, users: list[str], weight: pd.Series):
+    def place(h, note, cs, users):
         w = weight.reindex(users).fillna(0.0)
         if w.sum() <= 0:
             raise ValueError(f"no weight for users {users[:5]}")
-        K.loc[amounts.index, users] += np.outer(amounts.values, (w / w.sum()).values)
+        shares.loc[cs, users] = (w / w.sum()).values
+        steps.append({"group": h, "note": note, "commodities": cs, "users": users})
 
-    def allocate(group, columns, eligible, weight):
-        inv = t.F[columns].sum(axis=1)
-        inv = inv[inv != 0]   # negatives (sales of used equipment, scrap) are kept so accounts balance
-        done = set()
-        for _, r in rules[(rules.group == group) & use_rules].iterrows():
-            cs = [c for c in _match(inv.index, r.commodity_prefixes.split(";")) if c not in done]
-            users = _match(eligible, r.user_industry_prefixes.split(";"))
+    for h, eligible in members.items():
+        inv = investment[h]
+        todo = list(inv.index[inv != 0])   # negatives (sales of used equipment, scrap) are kept so accounts balance
+        for r in rules[rules.group == h].itertuples():
+            cs = _match(todo, r.commodity_prefixes.split(";"))
             if cs:
-                spread(inv[cs], users, weight)
-                done.update(cs)
-        rest = [c for c in inv.index if c not in done]
-        spread(inv[rest], eligible, weight)
+                place(h, r.note, cs, _match(eligible, r.user_industry_prefixes.split(";")))
+                todo = [c for c in todo if c not in cs]
+        place(h, "", todo, eligible)
+    return Capital(investment=investment, shares=shares, weight=weight, group=group, steps=steps)
 
-    private = [i for i in ind if i not in HOUSING + GOVERNMENT]
-    allocate("private", CAPITAL_COLUMNS["private"], private, gos)
-    # Residential investment is the capital of the housing industries. Multifamily -> tenant.
-    res = t.F[CAPITAL_COLUMNS["residential"]].sum(axis=1)
-    res = res[res != 0]
-    multi = [c for c in res.index if c == "233412"]
-    spread(res[multi], ["531HST"], gos)
-    spread(res.drop(multi), HOUSING, gos)
-    allocate("fed_defense", CAPITAL_COLUMNS["fed_defense"], FED_DEFENSE, g)
-    allocate("fed_nondefense", CAPITAL_COLUMNS["fed_nondefense"], FED_NONDEF, g)
-    allocate("state_local", CAPITAL_COLUMNS["state_local"], STATE_LOCAL, g)
-    return K
+
+def capital_matrix(t: Tables, use_rules: bool = True) -> pd.DataFrame:
+    """K[c, j]: $M of capital good c bought by industry j in 2017 (allocated, not observed)."""
+    return capital_allocation(t, use_rules).K
 
 
 def market_shares(t: Tables) -> np.ndarray:

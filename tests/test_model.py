@@ -29,6 +29,25 @@ def test_capital_matrix_conserves_investment(t, m):
     assert np.allclose(m.K.sum(axis=1), inv, atol=1e-6)
 
 
+def test_capital_is_investment_times_shares(t, m):
+    cap = M.capital_allocation(t)
+    assert np.allclose(cap.K.values, m.K.values) and list(cap.K.columns) == t.industries
+    assert np.allclose(cap.investment.sum(axis=1), t.F[M.INVESTMENT_COLUMNS].sum(axis=1))
+    assert set(cap.group) == set(M.CAPITAL_COLUMNS) and (cap.weight >= 0).all()
+    for h in cap.investment.columns:
+        placed = cap.shares.loc[:, cap.group == h].sum(axis=1)
+        bought = cap.investment[h] != 0
+        assert np.allclose(placed[bought], 1.0) and not placed[~bought].any(), h   # all of a purchase is placed, and only purchases
+    # each commodity an investor bought is in exactly one of that investor's sets
+    for h in cap.investment.columns:
+        listed = [c for x in cap.steps if x["group"] == h for c in x["commodities"]]
+        assert sorted(listed) == sorted(cap.investment.index[cap.investment[h] != 0])
+    # without the pairings only the housing one remains, and K still adds up
+    plain = M.capital_allocation(t, use_rules=False)
+    assert [x["note"] for x in plain.steps if x["note"]] == [M.HOUSING_RULE["note"]]
+    assert np.allclose(plain.K.sum(axis=1), cap.K.sum(axis=1))
+
+
 @pytest.mark.parametrize("endo", [False, True])
 def test_leontief_reproduces_observed_output(endo):
     """L applied to all final demand left outside the model must return observed output."""

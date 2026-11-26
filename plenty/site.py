@@ -129,6 +129,11 @@ class Data:
         return M.build()
 
     @functools.cached_property
+    def capital(self) -> M.Capital:
+        """How investment is placed on industries: what the capital matrix is made from."""
+        return M.capital_allocation(self.io.t)
+
+    @functools.cached_property
     def sheets(self) -> dict:
         """The model's matrices that have a page, by letter."""
         return sheets(self)
@@ -1651,7 +1656,12 @@ _ONE_LESS_C = f'<mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo>{_sub("c", "a")}<mo>)<
 
 
 MATRIX_A = "matrix-A.html"
-MATRIX_PAGES = "ABDUKV"    # the matrices with a page of their own: matrix-A.html, matrix-B.html and so on
+MATRIX_PAGES = "ABDUKVS"   # the matrices with a picture page of their own: matrix-A.html, matrix-B.html and so on
+# every symbol with a page: those matrices, investment by investor (a table, being five columns wide)
+# and the vector of weights
+SYMBOL_PAGES = {**{k: f"matrix-{k}.html" for k in MATRIX_PAGES}, "F": "matrix-F.html", "w": "vector-w.html"}
+INVESTOR_NAME = {"private": "Private business", "residential": "Housing", "fed_defense": "Federal defense",
+                 "fed_nondefense": "Federal nondefense", "state_local": "State and local government"}
 MATRIX_SHOWN = "221100"    # the sector A's lookup opens on: electric power
 MATRIX_PARTS = "matrix-A-parts.js"   # B and D, fetched when a cell of A is first marked
 MATRIX_PART_CUT = 1e-5     # entries of B under a thousandth of a cent are left out of that file
@@ -1678,8 +1688,8 @@ def _bold(letter: str) -> str:
 
 def _sym(letter: str, here: str = "") -> str:
     """A matrix or vector by its letter. One with a page of its own links to it, except from that page."""
-    if letter in MATRIX_PAGES and letter != here:
-        return f'<mi><a href="matrix-{letter}.html">{_bold(letter)}</a></mi>'
+    if letter in SYMBOL_PAGES and letter != here:
+        return f'<mi><a href="{SYMBOL_PAGES[letter]}">{_bold(letter)}</a></mi>'
     return f"<mi>{_bold(letter)}</mi>"
 
 
@@ -1783,6 +1793,12 @@ def sheets(d: Data) -> dict[str, Sheet]:
               col_is="Column, the industry it is placed on:", axis="Industries using the capital",
               caption="Each column is an industry and each row a kind of equipment, building or software placed on it. Colour "
                       "is millions of dollars in 2017, on a log scale. Most rows are empty: few commodities are capital goods."),
+        Sheet("S", "where each capital good is placed", "share", d.capital.shares.loc[com, ind], **goods,
+              row_tip="Capital good", col_tip="Share placed on", row_is="Row, the capital good:",
+              col_is="Column, the industry it is placed on:", axis="Industries: their share of each capital good",
+              caption="Each column is an industry and each row a capital good. Colour is the share of an investor's purchases of "
+                      "the good that is placed on the industry, on a log scale. A short bright run is a good with few users; "
+                      "a long faint one is a good spread over every industry of its kind."),
         Sheet("V", "the Make table", "dollars", t.V.loc[ind, com], **makers,
               row_tip="Industry", col_tip="Made", row_is="Row, the industry:", col_is="Column, the commodity made:",
               axis="Commodities made",
@@ -1898,7 +1914,7 @@ def matrix_page(d: Data, key: str) -> str:
     nonzero = ("Entries that are not zero", f"{(v != 0).mean():.0%}", f"{int((v != 0).sum()):,} of {v.size:,}")
     diagonal = sum(t.V.at[c, c] for c in t.commodities if c in t.V.index) / t.V.values.sum()
     code = f'<a href="{REPO}/blob/main/plenty/model.py"><code>plenty/model.py</code></a>'
-    top, off_diagonal = s.values.stack().sort_values(ascending=False), ""
+    top, off_diagonal, via = s.values.stack().sort_values(ascending=False), "", ""
     by_rows, by_cols = "commodities", "industries"
 
     if key == "U":
@@ -1916,26 +1932,71 @@ are negative, where an industry sold more of a commodity, as scrap or used goods
 {_eqs([(_sym("B", key), _b_from(key))])}"""
         heads, caption = ("Commodity bought", "By industry", "$ million"), "Oil going to refineries is the largest. Most of the rest are finance, insurance and real estate."
     elif key == "K":
-        goods = int((v != 0).any(axis=1).sum())
+        cap = d.capital
+        goods, members = int((v != 0).any(axis=1).sum()), cap.group.value_counts()
+        kinds = ", ".join(f"{INVESTOR_NAME[h].lower()} ({members[h]})" for h in cap.investment.columns)
         lede = ("What each industry used of equipment, buildings and software, estimated. The entry in row <i>i</i> and column "
                 "<i>k</i> is the millions of dollars of capital good <i>i</i> bought in 2017 and placed on industry <i>k</i>.")
         figures = [nonzero, ("Total", _trillion(v.sum()), "of investment in 2017"),
                    ("Capital goods", f"{goods}", f"of {n} commodities are bought as investment")]
-        about = f"""<p>The Bureau of Economic Analysis publishes what was bought as investment, commodity by commodity, but not
-which industry bought it at this level of detail. So this matrix is built here: each kind of investment is spread over the
-industries that plausibly bought it.</p>
-<ul>
-<li>A capital good with an evident user goes to that set of industries. The pairings are in
-<a href="{REPO}/blob/main/config/capital_allocation.csv"><code>config/capital_allocation.csv</code></a>.</li>
-<li>Everything else goes to all the industries eligible for that kind of investment (private, housing, federal, state and local).</li>
-<li>Within a set, private industries share in proportion to their gross operating surplus, a stand-in for how much capital
-they hold, and government industries in proportion to their output.</li>
-</ul>
-<p>{int((v < 0).sum())} entries are negative: sales of used equipment and scrap, kept so that the accounts balance. The
+        about = f"""<p>The Bureau of Economic Analysis publishes what was bought as investment, commodity by commodity and by five
+kinds of investor, but not which industry bought it at this level of detail. So this matrix is built here. Each investor's
+purchases of a capital good are split among that investor's industries:</p>
+{_m(f'{_sub("k", "ik")}<mo>=</mo>{_sub("f", "ih")}<mo>&#x2062;</mo>{_sub("s", "ik")}', block=True)}
+<dl class="where">
+<dt>{sym("F")}</dt><dd>what was bought as investment: the millions of dollars of capital good <i>i</i> bought in 2017 by
+investor <i>h</i>, {_trillion(cap.investment.values.sum())} in all. It is read from the Bureau's Use table.</dd>
+<dt>{_m("<mi>h</mi>")}</dt><dd>the kind of investor that industry <i>k</i> is. Industries of each kind: {kinds}.</dd>
+<dt>{sym("S")}</dt><dd>the share of that purchase placed on industry <i>k</i>. This is where the judgment is:
+{sum(1 for x in cap.steps if x["note"])} pairings of a capital good with its evident users, and a weight for sharing within a
+set of users.</dd>
+</dl>
+<p>Each row of {sym("K")} adds up to what was invested in that capital good, so nothing is made or lost. {int((v < 0).sum())}
+entries are negative: sales of used equipment and scrap, shared out the same way so that the accounts balance. The
 <a href="method.html#capital">method page</a> says why capital is counted as an input at all, and the code is {code}.</p>
 <p>It is added to {sym("U")} to make {sym("B")}:</p>
 {_eqs([(_sym("B", key), _b_from(key))])}"""
         heads, caption = ("Capital good", "Placed on industry", "$ million"), "Mostly structures: houses, roads and schools. Research and development is counted as investment too."
+    elif key == "S":
+        cap = d.capital
+        goods = int((v != 0).any(axis=1).sum())
+        rules = [x for x in cap.steps if x["note"]]
+        lede = ("How each capital good is shared out. The entry in row <i>i</i> and column <i>k</i> is the share of an investor's "
+                "purchases of capital good <i>i</i> that is placed on industry <i>k</i>, the investor being the kind that <i>k</i> is.")
+        figures = [nonzero, ("Capital goods", f"{goods}", f"of {n} commodities are bought as investment"),
+                   ("Pairings", f"{len(rules)}", "of a capital good with its evident users")]
+        among = (f'<munder><mo>&sum;</mo><mrow><mi>m</mi><mo>&isin;</mo>{_sub("E", "ik")}</mrow></munder>')
+        def step_row(x):
+            placed = cap.investment.loc[x["commodities"], x["group"]].sum()
+            what = ("; ".join(e(t.names[c]) for c in x["commodities"]) if x["note"]
+                    else f'<span class="dim">Everything else it invests in ({len(x["commodities"])} commodities)</span>')
+            where = e(x["note"].split("->")[-1].strip()) if x["note"] else '<span class="dim">all its industries</span>'
+            return (f'<tr><td class="name">{e(INVESTOR_NAME[x["group"]])}</td><td class="name">{what}</td><td class="name">{where}</td>'
+                    f'<td class="num">{len(x["users"])}</td><td class="num">{placed:,.0f}</td></tr>'.replace(">-", ">&minus;"))
+        about = f"""<p>An investor's purchase of a capital good is shared among the industries that could have bought it, in proportion to a weight:</p>
+{_m(f'{_sub("s", "ik")}<mo>=</mo><mfrac>{_sub("w", "k")}<mrow>{among}{_sub("w", "m")}</mrow></mfrac>', block=True)}
+<dl class="where">
+<dt>{sym("w")}</dt><dd>each industry's weight: its gross operating surplus if it is a private business or housing, and its
+output if it is government.</dd>
+<dt>{_m(_sub("E", "ik"))}</dt><dd>the industries that could have bought capital good <i>i</i>, among those of the same kind of
+investor as <i>k</i>: the ones a pairing below names for it, or all of that kind if none does. If <i>k</i> is not one of
+them, or its kind of investor bought none of <i>i</i>, the share is zero.</dd>
+</dl>
+<p>So within one kind of investor a row adds up to one: the whole purchase is placed. Every industry in a set gets the
+same mix of what the set shares, which is the crude part: with no pairing, a law office and a steel mill get the same
+equipment per dollar of operating surplus.</p>
+<p>It multiplies {sym("F")} to make {sym("K")}:</p>
+{_m(f'{_sub("k", "ik")}<mo>=</mo>{_sub("f", "ih")}<mo>&#x2062;</mo>{_sub("s", "ik")}', block=True)}
+
+<h2 id="rules">Who could have bought it</h2>
+{table([th("Investor"), th("Capital goods"), th("Placed on"), th("Industries", "num"), th("$ million", "num")],
+       [step_row(x) for x in cap.steps],
+       caption=f'Each line is one set: the investor&rsquo;s purchases of the capital goods on the left are shared among the industries '
+               f'on the right. A capital good takes the first pairing that names it. The pairings are judgment, kept in '
+               f'<a href="{REPO}/blob/main/config/capital_allocation.csv"><code>config/capital_allocation.csv</code></a>; '
+               f'the one for multifamily housing is in the code, {code}.')}"""
+        heads, caption = None, ""
+        via = f' / <a href="matrix-K.html#about">{_m(_sym("K", "K"))}, the capital matrix</a>'
     elif key == "B":
         totals = s.values.sum()
         lede = ("Each industry's recipe. The entry in row <i>i</i> and column <i>k</i> is the dollars of commodity <i>i</i> that "
@@ -1966,6 +2027,7 @@ the commodity's output, {_m(f"<mi>{_bold('q')}</mi>")}, which turns this table i
         heads, caption = ("Industry", "Commodity made", "$ million"), "Commodities made by an industry other than the one named for them."
         by_rows, by_cols, off_diagonal = "industries", "commodities", "The largest entries off the diagonal"
     else:
+        assert key == "D", key
         makers = (v > 0).sum(axis=0)
         lede = ("Which industries make each commodity. The entry in row <i>k</i> and column <i>j</i> is the share of commodity "
                 "<i>j</i> that industry <i>k</i> made in 2017.")
@@ -1982,17 +2044,20 @@ industries that make it, in proportion to how much of it each makes. This is the
         heads, caption = ("Industry", "Commodity", "Share of the commodity"), "Commodities made in part by an industry other than the one named for them."
         by_rows, by_cols, off_diagonal = "industries", "commodities", "The largest entries off the diagonal"
 
-    if off_diagonal:
-        top = top[[i != j for i, j in top.index]]
-    top = top.head(MATRIX_TOP)
-    def show(x):
-        return {"per_dollar": f"{x * 100:.1f}", "share": f"{x:.1%}", "dollars": f"{x:,.0f}"}[s.kind]
-    head = [th(heads[0]), th(heads[1]), th(heads[2], "num")] + ([th("Of which equipment and buildings, &cent;", "num")] if s.second is not None else [])
-    trows = [f'<tr><td class="name">{e(s.row_names[i])}</td><td class="name">{e(s.col_names[j])}</td><td class="num">{show(x)}</td>'
-             + (f'<td class="num">{show(s.second.at[i, j])}</td>' if s.second is not None else "") + "</tr>" for (i, j), x in top.items()]
+    largest = ""
+    if heads:
+        if off_diagonal:
+            top = top[[i != j for i, j in top.index]]
+        top = top.head(MATRIX_TOP)
+        def show(x):
+            return {"per_dollar": f"{x * 100:.1f}", "share": f"{x:.1%}", "dollars": f"{x:,.0f}"}[s.kind]
+        head = [th(heads[0]), th(heads[1]), th(heads[2], "num")] + ([th("Of which equipment and buildings, &cent;", "num")] if s.second is not None else [])
+        trows = [f'<tr><td class="name">{e(s.row_names[i])}</td><td class="name">{e(s.col_names[j])}</td><td class="num">{show(x)}</td>'
+                 + (f'<td class="num">{show(s.second.at[i, j])}</td>' if s.second is not None else "") + "</tr>" for (i, j), x in top.items()]
+        largest = f'<h2 id="largest">{off_diagonal or "The largest entries"}</h2>\n{table(head, trows, caption=caption)}'
     body = f"""
 <p class="crumbs"><a href="method.html">Method</a> / <a href="method.html#account">The account in three lines</a> /
-<a href="{MATRIX_A}#derivation">{_m(_sym("A", "A"))}, the direct requirements</a></p>
+<a href="{MATRIX_A}#derivation">{_m(_sym("A", "A"))}, the direct requirements</a>{via}</p>
 <h1 class="long">{_m(_sym(key, key))}, {e(s.name)}</h1>
 <p class="lede">{lede}</p>
 {_figures([("Size", f"{n} &times; {n}", f"{by_rows} by {by_cols}")] + figures)}
@@ -2003,11 +2068,102 @@ industries that make it, in proportion to how much of it each makes. This is the
 <h2 id="picture">The whole matrix</h2>
 {sheet_picture(s)}
 
-<h2 id="largest">{off_diagonal or "The largest entries"}</h2>
-{table(head, trows, caption=caption)}
+{largest}
 <p><a href="{s.csv_file}">Download the matrix as CSV</a> ({n} rows and columns, sector codes as headings).</p>
 """
     return page(s.title, "method.html", body, long_title=True, scripts=(s.data_file, "matrix.js"))
+
+
+def _capital_crumbs() -> str:
+    return (f'<p class="crumbs"><a href="method.html">Method</a> / <a href="method.html#account">The account in three lines</a> /\n'
+            f'<a href="{MATRIX_A}#derivation">{_m(_sym("A", "A"))}, the direct requirements</a> / '
+            f'<a href="matrix-K.html#about">{_m(_sym("K", "K"))}, the capital matrix</a></p>')
+
+
+def _millions(x: float) -> str:
+    """A whole number of millions for a table cell, blank for none."""
+    return f"{x:,.0f}".replace("-", "&minus;") if round(x) else ""
+
+
+def investment(d: Data) -> pd.DataFrame:
+    """F: what each kind of investor bought of each capital good, $M, for the commodities bought at all."""
+    inv = d.capital.investment
+    return inv[(inv != 0).any(axis=1)]
+
+
+def investment_page(d: Data) -> str:
+    """The page of F. It is five columns wide, so it is a table to sort and not a picture."""
+    t, inv = d.io.t, investment(d)
+    kinds, total = list(inv.columns), inv.values.sum()
+    columns = ", ".join(f"<code>{c}</code>" for h in kinds for c in M.CAPITAL_COLUMNS[h])
+    rows = [f'<tr><th scope="row">{e(t.names[c])}</th>'
+            + "".join(f'<td class="num" data-v="{r[h]:.0f}">{_millions(r[h])}</td>' for h in kinds)
+            + f'<td class="num" data-v="{r.sum():.0f}">{_millions(r.sum())}</td></tr>' for c, r in inv.iterrows()]
+    foot = ("<tr><td>All capital goods</td>" + "".join(f'<td class="num">{_millions(inv[h].sum())}</td>' for h in kinds)
+            + f'<td class="num">{_millions(total)}</td></tr>')
+    body = f"""
+{_capital_crumbs()}
+<h1 class="long">{_m(_sym("F", "F"))}, what was bought as investment</h1>
+<p class="lede">The equipment, buildings and software bought to keep. The entry in row <i>i</i> and column <i>h</i> is the
+millions of dollars of commodity <i>i</i> that investor <i>h</i> bought in 2017 as investment.</p>
+{_figures([("Size", f"{len(d.capital.investment)} &times; {len(kinds)}", "commodities by kinds of investor"),
+           ("Capital goods", f"{len(inv)}", f"of {len(d.capital.investment)} commodities were bought as investment"),
+           ("Total", _trillion(total), "of investment in 2017"),
+           ("By private business", f"{inv['private'].sum() / total:.0%}", "of the total")])}
+
+<h2 id="about">What it is</h2>
+<p>This is the Bureau of Economic Analysis's own figure, from the final-demand side of its 2017 Use table. The Bureau
+records investment in separate columns for each kind of investor ({columns}), covering equipment, structures and
+intellectual property. The columns for one kind of investor are added together here, and nothing else is done to them.</p>
+<p>What it does not say is which industry each purchase was for. That is the job of {_m(_sym("S", "F"))}, which shares each
+entry out among the industries of its kind of investor to make {_m(_sym("K", "F"))}:</p>
+{_m(f'{_sub("k", "ik")}<mo>=</mo>{_sub("f", "ih")}<mo>&#x2062;</mo>{_sub("s", "ik")}', block=True)}
+<p>{int((inv.values < 0).sum())} entries are negative: an investor sold more used equipment or scrap than it bought of
+that commodity.</p>
+
+<h2 id="table">The whole matrix</h2>
+{table([th("Capital good", sort="text")] + [th(e(INVESTOR_NAME[h]), "num", sort="num") for h in kinds] + [th("All investors", "num", sort="num")],
+       rows, foot=foot, caption="Millions of dollars in 2017. Click a heading to sort. Commodities nobody bought as investment are left out.")}
+<p><a href="matrix-F.csv">Download the matrix as CSV</a> ({len(d.capital.investment)} rows, sector codes as headings).</p>
+"""
+    return page("F, what was bought as investment", "method.html", body, long_title=True)
+
+
+def weights_page(d: Data) -> str:
+    """The page of w, the weight industries of a set share a capital good by."""
+    t, cap = d.io.t, d.capital
+    by_surplus = cap.group.isin(["private", "residential"])
+    def kind(c):
+        return "Gross operating surplus" if by_surplus[c] else "Output"
+    order = MX.ordered(t.industries)
+    rows = [f'<tr><th scope="row">{e(t.ind_names[c])}</th><td class="name">{e(INVESTOR_NAME[cap.group[c]])}</td>'
+            f'<td class="name">{kind(c)}</td><td class="num" data-v="{cap.weight[c]:.0f}">{cap.weight[c]:,.0f}</td></tr>' for c in order]
+    none = int((cap.weight[by_surplus] <= 0).sum())
+    body = f"""
+{_capital_crumbs()}
+<h1 class="long">{_m(_sym("w", "w"))}, the weight of each industry</h1>
+<p class="lede">What industries share a capital good by. When a purchase is shared among a set of industries, each gets a
+part in proportion to its weight.</p>
+{_figures([("Size", f"{len(order)}", "industries"),
+           ("By gross operating surplus", f"{int(by_surplus.sum())}", "private business and housing"),
+           ("By output", f"{int((~by_surplus).sum())}", "government industries")])}
+
+<h2 id="about">What it is</h2>
+<p>For a private business or housing industry, the weight is its gross operating surplus in 2017: what it had left of
+its value added after wages and taxes on production. It stands in for how much capital the industry holds, since that is
+what capital earns. It is a row of the Bureau of Economic Analysis's Use table, with a loss counted as
+zero{f"; {none} industr{'y' if none == 1 else 'ies'} had none and so get nothing that is shared by weight" if none else ""}.</p>
+<p>For a government industry, the weight is its output, the sum of its row of {_m(_sym("V", "w"))}.</p>
+<p>Weights are only ever compared within a set of industries of one kind of investor, so the two measures never meet.
+They go into {_m(_sym("S", "w"))}:</p>
+{_m(f'{_sub("s", "ik")}<mo>=</mo><mfrac>{_sub("w", "k")}<mrow><munder><mo>&sum;</mo><mrow><mi>m</mi><mo>&isin;</mo>{_sub("E", "ik")}</mrow></munder>{_sub("w", "m")}</mrow></mfrac>', block=True)}
+
+<h2 id="table">The whole vector</h2>
+{table([th("Industry", sort="text"), th("Kind of investor", sort="text"), th("Weight is", sort="text"), th("$ million", "num", sort="num")],
+       rows, caption="Millions of dollars in 2017. Click a heading to sort.")}
+<p><a href="vector-w.csv">Download the vector as CSV</a> (sector codes in the first column).</p>
+"""
+    return page("w, the weight of each industry", "method.html", body, long_title=True)
 
 
 def matrix_a_page(d: Data) -> str:
@@ -2252,12 +2408,15 @@ def main():
     pages[MATRIX_A] = matrix_a_page
     for key in MATRIX_PAGES.replace("A", ""):
         pages[f"matrix-{key}.html"] = lambda d, key=key: matrix_page(d, key)
+    pages[SYMBOL_PAGES["F"]], pages[SYMBOL_PAGES["w"]] = investment_page, weights_page
     for name, fn in pages.items():
         (SITE / name).write_text(fn(d), encoding="utf-8")
     for key, sheet in d.sheets.items():
         (SITE / sheet.data_file).write_text(matrix_data(d, key), encoding="utf-8")
         (SITE / sheet.csv_file).write_text(sheet_csv(sheet), encoding="utf-8")
     (SITE / MATRIX_PARTS).write_text(matrix_a_parts(d), encoding="utf-8")
+    (SITE / "matrix-F.csv").write_text(d.capital.investment.to_csv(float_format="%.6g"), encoding="utf-8")
+    (SITE / "vector-w.csv").write_text(d.capital.weight.rename("weight").to_csv(float_format="%.6g"), encoding="utf-8")
     (SITE / ".nojekyll").write_text("")
     print(f"wrote {len(pages)} pages to {SITE}")
 

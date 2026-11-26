@@ -20,7 +20,7 @@ def test_site_builds_and_links_resolve(built):
     activity_pages = [site.act_href(a) for a in built.act.index[built.act.level == "intermediate"]]
     assert len(set(activity_pages)) == len(activity_pages) == 332
     assert pages == sorted(["activities.html", "capabilities.html", "gaps.html", "index.html", "method.html", "needs.html",
-                            "sectors.html", "work.html"] + [f"matrix-{k}.html" for k in site.MATRIX_PAGES]
+                            "sectors.html", "work.html"] + sorted(set(site.SYMBOL_PAGES.values()))
                            + capability_pages + flow_pages + activity_pages)
     for name in pages:
         text = (site.SITE / name).read_text()
@@ -124,15 +124,15 @@ def test_the_page_for_A_shows_the_matrix_the_model_uses(built):
 def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
     m, t = built.io, built.io.t
     purchases, capital, D = site.MX.factors(m)
-    truth = {"A": m.A, "B": purchases + capital, "D": D, "U": t.U, "K": m.K, "V": t.V}
+    truth = {"A": m.A, "B": purchases + capital, "D": D, "U": t.U, "K": m.K, "V": t.V, "S": built.capital.shares}
     assert set(truth) == set(site.MATRIX_PAGES) == set(built.sheets)
-    a_page = (site.SITE / site.MATRIX_A).read_text()
+    a_page, k_page = (site.SITE / site.MATRIX_A).read_text(), (site.SITE / "matrix-K.html").read_text()
     for key, X in truth.items():
         sheet = built.sheets[key]
         html = (site.SITE / sheet.href).read_text()
         assert f'src="{sheet.data_file}"' in html and 'src="matrix.js"' in html and 'id="mx-canvas"' in html
         if key != "A":
-            assert f'<mi><a href="{sheet.href}">' in a_page          # its letter in A's derivation is the link
+            assert f'<mi><a href="{sheet.href}">' in (k_page if key == "S" else a_page)   # its letter in the derivation is the link
             assert f'href="{site.MATRIX_A}' in html                  # and the page leads back
             assert f'<a href="{sheet.href}">' not in html            # a page does not link to itself
         text = (site.SITE / sheet.data_file).read_text()
@@ -151,6 +151,32 @@ def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
     # a table of whole millions is filed exactly, so its blank cells hold nothing
     assert built.sheets["U"].exact and np.allclose(t.U.values, np.round(t.U.values))
     assert built.sheets["V"].exact and np.allclose(t.V.values, np.round(t.V.values))
+
+
+def test_the_capital_matrix_page_leads_to_what_it_is_made_from(built):
+    cap, t = built.capital, built.io.t
+    k_page = (site.SITE / "matrix-K.html").read_text()
+    s_page = (site.SITE / "matrix-S.html").read_text()
+    for letter in "FS":                                           # K = F times S, each a link
+        assert f'<mi><a href="{site.SYMBOL_PAGES[letter]}">' in k_page
+    assert f'<mi><a href="{site.SYMBOL_PAGES["w"]}">' in s_page and 'id="rules"' in s_page
+    # every pairing that placed something is listed, and every investor's remainder
+    rules = [x for x in cap.steps if x["note"]]
+    assert s_page.count("Everything else it invests in") == len(cap.steps) - len(rules) == len(site.INVESTOR_NAME)
+    assert all(site.e(x["note"].split("->")[-1].strip()) in s_page for x in rules)
+    # F: the investment the Bureau publishes, one row for each capital good, and the same totals as K
+    f_page = (site.SITE / site.SYMBOL_PAGES["F"]).read_text()
+    shown = site.investment(built)
+    assert f_page.count('<tr><th scope="row">') == len(shown) == (built.io.K != 0).any(axis=1).sum()
+    assert f"{shown.values.sum():,.0f}" in f_page and np.isclose(shown.values.sum(), built.io.K.values.sum())
+    csv = pd.read_csv(site.SITE / "matrix-F.csv", index_col=0, dtype={0: str})
+    assert list(csv.columns) == list(site.INVESTOR_NAME) and np.allclose(csv.values, cap.investment.values)
+    # w: every industry, with the measure its kind of investor shares by
+    w_page = (site.SITE / site.SYMBOL_PAGES["w"]).read_text()
+    assert w_page.count('<tr><th scope="row">') == len(t.industries)
+    assert w_page.count(">Output</td>") == cap.group.isin(["fed_defense", "fed_nondefense", "state_local"]).sum()
+    csv = pd.read_csv(site.SITE / "vector-w.csv", index_col=0, dtype={0: str})
+    assert np.allclose(csv.weight.values, cap.weight.values)
 
 
 def test_ai_use_sits_beside_the_work(built):
