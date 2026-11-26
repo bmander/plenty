@@ -20,7 +20,8 @@ def test_site_builds_and_links_resolve(built):
     activity_pages = [site.act_href(a) for a in built.act.index[built.act.level == "intermediate"]]
     assert len(set(activity_pages)) == len(activity_pages) == 332
     assert pages == sorted(["activities.html", "capabilities.html", "gaps.html", "index.html", "method.html", "needs.html",
-                            "sectors.html", "work.html", site.MATRIX_A] + capability_pages + flow_pages + activity_pages)
+                            "sectors.html", "work.html"] + [f"matrix-{k}.html" for k in site.MATRIX_PAGES]
+                           + capability_pages + flow_pages + activity_pages)
     for name in pages:
         text = (site.SITE / name).read_text()
         assert ">nan<" not in text and "nan%" not in text, name
@@ -79,12 +80,13 @@ def test_the_page_for_A_shows_the_matrix_the_model_uses(built):
     # the data file: every entry of any size, in the page's order, to within its rounding
     text = (site.SITE / "matrix-A-data.js").read_text()
     data = json.loads(text[text.index("{"):text.rindex("}") + 1])
-    codes, unit = data["codes"], data["unit"]
-    assert sorted(codes) == sorted(A.index) and len(data["cols"]) == len(codes)
+    codes, unit = data["rows"]["codes"], data["unit"]
+    assert data["cols"] == data["rows"]                           # commodities both ways
+    assert sorted(codes) == sorted(A.index) and len(data["cells"]) == len(codes)
     a = A.loc[codes, codes].values
     k = site.MX.direct_parts(built.io)[1].loc[codes, codes].values
     got, got_k = np.zeros_like(a), np.zeros_like(a)
-    for j, col in enumerate(data["cols"]):
+    for j, col in enumerate(data["cells"]):
         got[col[0::3], j] = np.array(col[1::3]) * unit
         got_k[col[0::3], j] = np.array(col[2::3]) * unit
     kept = np.abs(a) >= data["cut"]
@@ -94,8 +96,9 @@ def test_the_page_for_A_shows_the_matrix_the_model_uses(built):
     assert np.allclose(np.array(data["capital"]) * unit, k.sum(axis=0), atol=unit)
     assert np.allclose(np.array(data["total"]) * unit, a.sum(axis=0), atol=unit)
     # sectors are grouped, so the picture's blocks are groups
-    assert data["groups"] == sorted(data["groups"], key=site.MX.ORDER.index)
-    assert set(data["groups"]) <= set(data["short"])              # each group has a label for the margins
+    groups = data["rows"]["groups"]
+    assert groups == sorted(groups, key=site.MX.ORDER.index)
+    assert set(groups) <= set(data["short"])                      # each group has a label for the margins
     # the file behind a cell's derivation: B, of which each entry of any size is kept, and D; together they give A back
     text = (site.SITE / data["parts"]).read_text()
     parts = json.loads(text[text.index("{"):text.rindex("}") + 1])
@@ -116,6 +119,38 @@ def test_the_page_for_A_shows_the_matrix_the_model_uses(built):
     # the download is the matrix itself
     csv = pd.read_csv(site.SITE / "matrix-A.csv", index_col=0, dtype={0: str})
     assert list(csv.index.astype(str)) == codes and np.allclose(csv.values, a, rtol=1e-5, atol=1e-12)
+
+
+def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
+    m, t = built.io, built.io.t
+    purchases, capital, D = site.MX.factors(m)
+    truth = {"A": m.A, "B": purchases + capital, "D": D, "U": t.U, "K": m.K, "V": t.V}
+    assert set(truth) == set(site.MATRIX_PAGES) == set(built.sheets)
+    a_page = (site.SITE / site.MATRIX_A).read_text()
+    for key, X in truth.items():
+        sheet = built.sheets[key]
+        html = (site.SITE / sheet.href).read_text()
+        assert f'src="{sheet.data_file}"' in html and 'src="matrix.js"' in html and 'id="mx-canvas"' in html
+        if key != "A":
+            assert f'<mi><a href="{sheet.href}">' in a_page          # its letter in A's derivation is the link
+            assert f'href="{site.MATRIX_A}' in html                  # and the page leads back
+            assert f'<a href="{sheet.href}">' not in html            # a page does not link to itself
+        text = (site.SITE / sheet.data_file).read_text()
+        data = json.loads(text[text.index("{"):text.rindex("}") + 1])
+        rows, cols, unit, step = data["rows"]["codes"], data["cols"]["codes"], data["unit"], 3 if data["second"] else 2
+        assert sorted(rows) == sorted(X.index) and sorted(cols) == sorted(X.columns)
+        assert all(len(side[k]) == len(side["codes"]) for side in (data["rows"], data["cols"]) for k in ("names", "groups"))
+        x, got = X.loc[rows, cols].values, np.zeros(X.shape)
+        for j, col in enumerate(data["cells"]):
+            got[col[0::step], j] = np.array(col[1::step]) * unit
+        kept = np.abs(x) >= data["cut"]
+        assert not got[~kept].any() and np.abs(got - x)[kept].max() <= unit / 2 + 1e-9, key
+        assert kept.sum() > 1000 and data["scale"][0] < data["scale"][1]
+        csv = pd.read_csv(site.SITE / sheet.csv_file, index_col=0, dtype={0: str})
+        assert list(csv.index.astype(str)) == rows and np.allclose(csv.values, x, rtol=1e-5, atol=1e-9), key
+    # a table of whole millions is filed exactly, so its blank cells hold nothing
+    assert built.sheets["U"].exact and np.allclose(t.U.values, np.round(t.U.values))
+    assert built.sheets["V"].exact and np.allclose(t.V.values, np.round(t.V.values))
 
 
 def test_ai_use_sits_beside_the_work(built):

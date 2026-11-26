@@ -9,6 +9,7 @@ so the site works from any path (GitHub Pages serves it under /plenty/).
 """
 from __future__ import annotations
 import functools
+from dataclasses import dataclass
 import html
 import json
 import math
@@ -126,6 +127,11 @@ class Data:
     def io(self) -> M.Model:
         """The input-output model itself, for the pages that show its matrices."""
         return M.build()
+
+    @functools.cached_property
+    def sheets(self) -> dict:
+        """The model's matrices that have a page, by letter."""
+        return sheets(self)
 
     def cap_name(self, k):
         return self.caps.at[k, "name"]
@@ -1645,17 +1651,36 @@ _ONE_LESS_C = f'<mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo>{_sub("c", "a")}<mo>)<
 
 
 MATRIX_A = "matrix-A.html"
-MATRIX_CUT = 1e-4          # entries under a hundredth of a cent per dollar are left out of the picture and the lists
-MATRIX_UNIT = 1e-5         # the unit of the page's data files: a thousandth of a cent per dollar
-MATRIX_PARTS = "matrix-A-parts.js"   # B and D, fetched when a cell is first marked
+MATRIX_PAGES = "ABDUKV"    # the matrices with a page of their own: matrix-A.html, matrix-B.html and so on
+MATRIX_SHOWN = "221100"    # the sector A's lookup opens on: electric power
+MATRIX_PARTS = "matrix-A-parts.js"   # B and D, fetched when a cell of A is first marked
 MATRIX_PART_CUT = 1e-5     # entries of B under a thousandth of a cent are left out of that file
-MATRIX_SHOWN = "221100"    # the sector the lookup opens on: electric power
-MATRIX_TOP = 15            # entries in the table of the largest
+MATRIX_TOP = 15            # entries in a table of the largest
+# How each kind of matrix is filed and shown: the unit of its data file, the smallest entry kept in
+# it (smaller ones are blank in the picture), the two ends of the colour scale and their legend,
+# what a blank cell is said to hold, and how a cell's printed value is described.
+MATRIX_KINDS = {
+    "per_dollar": {"unit": 1e-5, "cut": 1e-4, "scale": (1e-4, 1.0), "ticks": ("0.01&cent;", "0.1&cent;", "1&cent;", "10&cent;", "$1"),
+                   "blank": "under 0.01¢ per dollar", "small": "under a hundredth of a cent", "in_cell": "in cents"},
+    "share": {"unit": 1e-5, "cut": 1e-4, "scale": (1e-4, 1.0), "ticks": ("0.01%", "0.1%", "1%", "10%", "100%"),
+              "blank": "under 0.01%", "small": "under a hundredth of a percent", "in_cell": "in percent"},
+    "dollars": {"unit": 1.0, "cut": 0.5, "scale": (1.0, 1e6), "ticks": ("$1M", "$10M", "$100M", "$1B", "$10B", "$100B", "$1T"),
+                "blank": "under $0.5 million", "small": "under half a million dollars",
+                "in_cell": "in millions of dollars, with k for thousands"},
+}
+MATRIX_CUT, MATRIX_UNIT = MATRIX_KINDS["per_dollar"]["cut"], MATRIX_KINDS["per_dollar"]["unit"]
 
 
 def _bold(letter: str) -> str:
     """A capital or small Latin letter as Unicode's mathematical bold."""
     return f"&#x{0x1D400 + ord(letter) - ord('A') if letter.isupper() else 0x1D41A + ord(letter) - ord('a'):X};"
+
+
+def _sym(letter: str, here: str = "") -> str:
+    """A matrix or vector by its letter. One with a page of its own links to it, except from that page."""
+    if letter in MATRIX_PAGES and letter != here:
+        return f'<mi><a href="matrix-{letter}.html">{_bold(letter)}</a></mi>'
+    return f"<mi>{_bold(letter)}</mi>"
 
 
 def _diag(letter: str) -> str:
@@ -1674,6 +1699,47 @@ def _eqs(rows: list[tuple[str, str]]) -> str:
               + "</mtable>", block=True)
 
 
+def _b_from(here: str) -> str:
+    return f'<mrow><mo>(</mo>{_sym("U", here)}<mo>+</mo>{_sym("K", here)}<mo>)</mo></mrow><mo>&#x2062;</mo>{_inv(_diag("g"))}'
+
+
+def _d_from(here: str) -> str:
+    return f'{_sym("V", here)}<mo>&#x2062;</mo>{_inv(_diag("q"))}'
+
+
+@dataclass
+class Sheet:
+    """One of the model's matrices, arranged for a page of its own: sectors in the page's order,
+    and the words its picture uses for a row, a column and a cell."""
+    key: str                       # its letter
+    name: str                      # after the letter in the page's title
+    kind: str                      # a key of MATRIX_KINDS
+    values: pd.DataFrame
+    row_names: pd.Series
+    col_names: pd.Series
+    row_tip: str                   # before a row's name, and a column's, in a cell's hover tip
+    col_tip: str
+    row_is: str                    # the same under the picture, for what is marked
+    col_is: str
+    axis: str                      # over the picture: what the columns are
+    caption: str                   # the start of the picture's caption
+    second: pd.DataFrame | None = None     # the part of each entry that is equipment and buildings
+    exact: bool = False            # entries are whole units, so a blank cell holds nothing at all
+
+    @property
+    def href(self) -> str: return f"matrix-{self.key}.html"
+    @property
+    def data_file(self) -> str: return f"matrix-{self.key}-data.js"
+    @property
+    def csv_file(self) -> str: return f"matrix-{self.key}.csv"
+    @property
+    def title(self) -> str: return f"{self.key}, {self.name}"
+    @property
+    def shown(self) -> np.ndarray:
+        """Which entries the picture and the data file hold."""
+        return np.abs(self.values.values) >= MATRIX_KINDS[self.kind]["cut"]
+
+
 def matrix_a(d: Data):
     """(A, the part of it that is capital), both with sectors in the order the page shows them."""
     m = d.io
@@ -1681,21 +1747,81 @@ def matrix_a(d: Data):
     return m.A.loc[order, order], MX.direct_parts(m)[1].loc[order, order]
 
 
-def matrix_a_data(d: Data) -> str:
-    """The page's data file: every entry of at least MATRIX_CUT in size, by column, as
-    (row, value, capital part) in units of MATRIX_UNIT, with each column's exact totals."""
-    A, K = matrix_a(d)
-    a, k = A.values, K.values
-    cols = []
-    for j in range(len(A)):
-        rows = np.flatnonzero(np.abs(a[:, j]) >= MATRIX_CUT)
-        cols.append([int(x) for i in rows for x in (i, round(a[i, j] / MATRIX_UNIT), round(k[i, j] / MATRIX_UNIT))])
-    group = MX.groups(A.index)
-    names = d.io.t.names
-    payload = {"unit": MATRIX_UNIT, "cut": MATRIX_CUT, "shown": MATRIX_SHOWN, "codes": list(A.index),
-               "names": [names[c] for c in A.index], "groups": [group[c] for c in A.index], "short": MX.SHORT, "parts": MATRIX_PARTS, "cols": cols,
-               "total": [round(x / MATRIX_UNIT) for x in a.sum(axis=0)], "capital": [round(x / MATRIX_UNIT) for x in k.sum(axis=0)]}
+def sheets(d: Data) -> dict[str, Sheet]:
+    """The matrices that have a page, by letter. Commodities and industries are each put in groups."""
+    m, t = d.io, d.io.t
+    com, ind = MX.ordered(t.commodities), MX.ordered(t.industries)
+    purchases, capital, D = MX.factors(m)
+    A, A_capital = matrix_a(d)
+    goods = dict(row_names=t.names, col_names=t.ind_names)       # commodities down, industries across
+    makers = dict(row_names=t.ind_names, col_names=t.names)      # industries down, commodities across
+    out = [
+        Sheet("A", "the direct requirements", "per_dollar", A, t.names, t.names,
+              row_tip="Input", col_tip="To make", row_is="Row, the input:", col_is="Column, the thing made:",
+              axis="Made: one dollar of each commodity",
+              caption="Each column is a commodity being made and each row an input to it. Colour is cents of the input per "
+                      "dollar made, on a log scale. The diagonal blocks are groups buying from themselves.",
+              second=A_capital),
+        Sheet("B", "what industries use per dollar", "per_dollar", (purchases + capital).loc[com, ind], **goods,
+              row_tip="Input", col_tip="Used by", row_is="Row, the input:", col_is="Column, the industry using it:",
+              axis="Industries: per dollar of their output",
+              caption="Each column is an industry and each row a commodity it uses. Colour is cents of the commodity per "
+                      "dollar of the industry's output, on a log scale.",
+              second=capital.loc[com, ind]),
+        Sheet("D", "who makes each commodity", "share", D.loc[ind, com], **makers,
+              row_tip="Industry", col_tip="Its share of", row_is="Row, the industry:", col_is="Column, the commodity made:",
+              axis="Commodities: who makes each",
+              caption="Each column is a commodity and each row an industry that might make it. Colour is the industry's "
+                      "share of the commodity, on a log scale. The bright diagonal is industries making what they are named for."),
+        Sheet("U", "the Use table", "dollars", t.U.loc[com, ind], **goods,
+              row_tip="Bought", col_tip="By", row_is="Row, the commodity bought:", col_is="Column, the industry buying:",
+              axis="Industries buying",
+              caption="Each column is an industry and each row a commodity it bought. Colour is millions of dollars in 2017, "
+                      "on a log scale.", exact=True),
+        Sheet("K", "the capital matrix", "dollars", m.K.loc[com, ind], **goods,
+              row_tip="Capital good", col_tip="Placed on", row_is="Row, the capital good:",
+              col_is="Column, the industry it is placed on:", axis="Industries using the capital",
+              caption="Each column is an industry and each row a kind of equipment, building or software placed on it. Colour "
+                      "is millions of dollars in 2017, on a log scale. Most rows are empty: few commodities are capital goods."),
+        Sheet("V", "the Make table", "dollars", t.V.loc[ind, com], **makers,
+              row_tip="Industry", col_tip="Made", row_is="Row, the industry:", col_is="Column, the commodity made:",
+              axis="Commodities made",
+              caption="Each column is a commodity and each row an industry that might make it. Colour is millions of dollars "
+                      "made in 2017, on a log scale. The bright diagonal is industries making what they are named for.", exact=True),
+    ]
+    return {s.key: s for s in out}
+
+
+def sheet_data(s: Sheet, **extra) -> str:
+    """A matrix page's data file: what the picture needs to name rows, columns and cells, and
+    every entry of at least the kind's cut, by column, as (row, value) in the kind's unit, or
+    (row, value, capital part) for a matrix that has one."""
+    kind = MATRIX_KINDS[s.kind]
+    v, w, keep = s.values.values, s.second.values if s.second is not None else None, s.shown
+    def units(x):
+        return int(round(x / kind["unit"]))
+    cells = [[x for i in np.flatnonzero(keep[:, j]) for x in ((i, units(v[i, j])) if w is None else (i, units(v[i, j]), units(w[i, j])))]
+             for j in range(v.shape[1])]
+    def side(codes, names):
+        g = MX.groups(codes)
+        return {"codes": list(codes), "names": [names[c] for c in codes], "groups": [g[c] for c in codes]}
+    payload = {"key": s.key, "kind": s.kind, "unit": kind["unit"], "cut": kind["cut"], "scale": kind["scale"],
+               "blank": "nothing" if s.exact else kind["blank"], "short": MX.SHORT,
+               "rows": side(s.values.index, s.row_names), "cols": side(s.values.columns, s.col_names),
+               "rowTip": s.row_tip, "colTip": s.col_tip, "rowIs": s.row_is, "colIs": s.col_is,
+               "second": w is not None, "cells": [[int(x) for x in col] for col in cells], **extra}
     return "window.PLENTY_MATRIX = " + json.dumps(payload, separators=(",", ":")) + ";\n"
+
+
+def matrix_data(d: Data, key: str) -> str:
+    """The data file of one matrix page. A's also carries what its sector lookup and its cells' derivation need."""
+    s = d.sheets[key]
+    if key != "A":
+        return sheet_data(s)
+    unit = MATRIX_UNIT
+    return sheet_data(s, shown=MATRIX_SHOWN, parts=MATRIX_PARTS,
+                      total=[round(x / unit) for x in s.values.values.sum(axis=0)],
+                      capital=[round(x / unit) for x in s.second.values.sum(axis=0)])
 
 
 def matrix_a_parts(d: Data) -> str:
@@ -1717,16 +1843,178 @@ def matrix_a_parts(d: Data) -> str:
     return "window.PLENTY_MATRIX_PARTS = " + json.dumps(payload, separators=(",", ":")) + ";\n"
 
 
-def matrix_a_csv(d: Data) -> str:
-    A, _ = matrix_a(d)
-    return A.to_csv(float_format="%.6g")
+def sheet_csv(s: Sheet) -> str:
+    return s.values.to_csv(float_format="%.6g")
+
+
+def sheet_picture(s: Sheet, also: str = "", extra: str = "") -> str:
+    """The picture of a matrix with its margins, buttons and legend, drawn by web/matrix.js.
+    also: a sentence for the caption about this picture alone; extra: markup the script uses."""
+    kind, n = MATRIX_KINDS[s.kind], len(s.values)
+    blank = "zero" if s.exact else f"zero or {kind['small']}"
+    return f"""<figure class="mx">
+<div class="mx-frame">
+<div class="mx-axis mx-axis-top"><span>{e(s.axis)} &rarr;</span>
+<span class="mx-zoom"><button type="button" id="mx-zoom-out" aria-label="Zoom out" disabled>&minus;</button><button
+ type="button" id="mx-zoom-in" aria-label="Zoom in">+</button><button type="button" id="mx-zoom-all" disabled>Whole matrix</button><button
+ type="button" id="mx-unsort" disabled>Default order</button></span></div>
+<div class="mx-strip mx-top" id="mx-top"></div>
+<div class="mx-strip mx-left" id="mx-left"></div>
+<div class="mx-plot">
+<canvas id="mx-canvas" width="{n}" height="{n}" role="img" tabindex="0"
+ aria-label="Heat map of the {n} by {n} matrix {s.key}, {e(s.name)}. The tables on this page and the CSV file give the same figures."></canvas>
+<i id="mx-h" aria-hidden="true"></i><i id="mx-v" aria-hidden="true"></i>
+</div>
+</div>
+<div class="mx-note" id="mx-note" aria-live="polite"></div>
+{extra}<div class="mx-legend" aria-hidden="true"><div class="mx-ramp"></div>
+<div class="mx-ticks">{"".join(f"<span>{x}</span>" for x in kind["ticks"])}</div></div>
+<figcaption>{s.caption} The {(~s.shown).mean():.0%} of entries that are {blank} are blank. Sectors are in the
+Bureau's order within fifteen groups.</figcaption>
+</figure>
+<p class="note mx-how">Hover over a cell for its row, its column and its value. Click a cell to mark it with its row and
+column, or click in a margin to mark one row or one column.{" " + also if also else ""} To zoom, scroll or pinch over the picture or its
+margins, or use the buttons. To move, drag with the mouse wheel pressed or with Ctrl held, or with a finger on a touch
+screen. Close in, the margins name each sector, and closer still each cell shows its value, {kind["in_cell"]}. The
+arrows beside a sector's name, and the buttons under the picture for whatever is marked, sort the whole matrix by that
+row or column: largest first, then smallest first, then back to the Bureau's order. Sorting by a row or column marks
+it, and unmarking it lets go of the sort.</p>"""
+
+
+def _figures(items) -> str:
+    return '<dl class="figures">' + "".join(
+        f'<div><dt>{a}</dt><dd>{b}</dd><dd class="dim">{c}</dd></div>' for a, b, c in items) + "</dl>"
+
+
+def _trillion(x: float) -> str:
+    return f"${x / 1e6:.1f} trillion"
+
+
+def matrix_page(d: Data, key: str) -> str:
+    """The page of U, K, B, D or V: what it is, where it comes from, the picture, and its largest entries."""
+    m, t, s = d.io, d.io.t, d.sheets[key]
+    v, n = s.values.values, len(s.values)
+    sym = lambda x: _m(_sym(x, key))
+    nonzero = ("Entries that are not zero", f"{(v != 0).mean():.0%}", f"{int((v != 0).sum()):,} of {v.size:,}")
+    diagonal = sum(t.V.at[c, c] for c in t.commodities if c in t.V.index) / t.V.values.sum()
+    code = f'<a href="{REPO}/blob/main/plenty/model.py"><code>plenty/model.py</code></a>'
+    top, off_diagonal = s.values.stack().sort_values(ascending=False), ""
+    by_rows, by_cols = "commodities", "industries"
+
+    if key == "U":
+        lede = ("What each industry bought to use up. The entry in row <i>i</i> and column <i>k</i> is the millions of dollars of "
+                "commodity <i>i</i> that industry <i>k</i> bought in 2017 as an input to what it made.")
+        figures = [nonzero, ("Total", _trillion(v.sum()), "bought by industries in 2017"),
+                   ("Largest entry", f"${v.max() / 1e3:.0f} billion", e(f"{t.names[top.index[0][0]]}, bought by {t.ind_names[top.index[0][1]]}".lower()))]
+        about = f"""<p>This is the Bureau of Economic Analysis's Use table for 2017 at its finest level, as published, less the
+columns for final demand and the rows for wages, taxes and profits. What households, governments and foreigners buy for
+their own use, and what is bought to keep as equipment or buildings, is final demand; equipment and buildings come back
+into the account through {sym("K")}.</p>
+<p>Imports are included: a purchase counts whether the commodity was made here or abroad. {int((v < 0).sum())} entries
+are negative, where an industry sold more of a commodity, as scrap or used goods, than it bought.</p>
+<p>It goes into {sym("B")}, and from there into {sym("A")}:</p>
+{_eqs([(_sym("B", key), _b_from(key))])}"""
+        heads, caption = ("Commodity bought", "By industry", "$ million"), "Oil going to refineries is the largest. Most of the rest are finance, insurance and real estate."
+    elif key == "K":
+        goods = int((v != 0).any(axis=1).sum())
+        lede = ("What each industry used of equipment, buildings and software, estimated. The entry in row <i>i</i> and column "
+                "<i>k</i> is the millions of dollars of capital good <i>i</i> bought in 2017 and placed on industry <i>k</i>.")
+        figures = [nonzero, ("Total", _trillion(v.sum()), "of investment in 2017"),
+                   ("Capital goods", f"{goods}", f"of {n} commodities are bought as investment")]
+        about = f"""<p>The Bureau of Economic Analysis publishes what was bought as investment, commodity by commodity, but not
+which industry bought it at this level of detail. So this matrix is built here: each kind of investment is spread over the
+industries that plausibly bought it.</p>
+<ul>
+<li>A capital good with an evident user goes to that set of industries. The pairings are in
+<a href="{REPO}/blob/main/config/capital_allocation.csv"><code>config/capital_allocation.csv</code></a>.</li>
+<li>Everything else goes to all the industries eligible for that kind of investment (private, housing, federal, state and local).</li>
+<li>Within a set, private industries share in proportion to their gross operating surplus, a stand-in for how much capital
+they hold, and government industries in proportion to their output.</li>
+</ul>
+<p>{int((v < 0).sum())} entries are negative: sales of used equipment and scrap, kept so that the accounts balance. The
+<a href="method.html#capital">method page</a> says why capital is counted as an input at all, and the code is {code}.</p>
+<p>It is added to {sym("U")} to make {sym("B")}:</p>
+{_eqs([(_sym("B", key), _b_from(key))])}"""
+        heads, caption = ("Capital good", "Placed on industry", "$ million"), "Mostly structures: houses, roads and schools. Research and development is counted as investment too."
+    elif key == "B":
+        totals = s.values.sum()
+        lede = ("Each industry's recipe. The entry in row <i>i</i> and column <i>k</i> is the dollars of commodity <i>i</i> that "
+                "industry <i>k</i> uses per dollar of what it makes, with equipment and buildings counted as inputs.")
+        figures = [("Entries that are not zero", f"{(v != 0).mean():.0%}", f"{s.shown.mean():.0%} are a hundredth of a cent or more"),
+                   ("Inputs per dollar of output", f"{totals.median() * 100:.0f}&cent;", "the median column total"),
+                   ("Equipment and buildings", f"{s.second.values.sum() / v.sum():.0%}", "of the total of all entries")]
+        about = f"""<p>What industries bought, plus the equipment and buildings placed on them, divided by what each industry made:</p>
+{_eqs([(_sym("B", key), _b_from(key)),
+       (_sub("b", "ik"), f'<mfrac><mrow>{_sub("u", "ik")}<mo>+</mo>{_sub("k", "ik")}</mrow>{_sub("g", "k")}</mfrac>')])}
+<p>{_m(f"<mi>{_bold('g')}</mi>")} is each industry's output, {_trillion(t.g.sum())} in all, which is the sum of its row of {sym("V")}.
+A column of {sym("B")} adds up to what the industry spends per dollar of output on inputs, equipment and buildings; the
+rest of the dollar is wages, taxes, and whatever owners keep after investing.</p>
+<p>{sym("B")} is by industry, but needs are for commodities. Multiplying by {sym("D")} gives {sym("A")}, which is by commodity
+on both sides. The code is {code}.</p>"""
+        heads, caption = ("Input", "Industry using it", "&cent; per dollar of its output"), "Many are a raw material going into the plant that processes it."
+    elif key == "V":
+        lede = ("What each industry made. The entry in row <i>k</i> and column <i>j</i> is the millions of dollars of commodity "
+                "<i>j</i> that industry <i>k</i> made in 2017.")
+        figures = [nonzero, ("Total", _trillion(v.sum()), "made in 2017"),
+                   ("On the diagonal", f"{diagonal:.0%}", "made by the industry named for the commodity")]
+        about = f"""<p>This is the Bureau of Economic Analysis's Make table for 2017 at its finest level, as published. An industry
+mostly makes the commodity it is named for, but not only that: a refinery also makes petrochemicals, and a broadcaster also sells
+advertising. The entries off the diagonal are those secondary products.</p>
+<p>Summing a row gives the industry's output, {_m(f"<mi>{_bold('g')}</mi>")}, which {sym("B")} divides by. Summing a column gives
+the commodity's output, {_m(f"<mi>{_bold('q')}</mi>")}, which turns this table into shares:</p>
+{_eqs([(_sym("D", key), _d_from(key))])}"""
+        heads, caption = ("Industry", "Commodity made", "$ million"), "Commodities made by an industry other than the one named for them."
+        by_rows, by_cols, off_diagonal = "industries", "commodities", "The largest entries off the diagonal"
+    else:
+        makers = (v > 0).sum(axis=0)
+        lede = ("Which industries make each commodity. The entry in row <i>k</i> and column <i>j</i> is the share of commodity "
+                "<i>j</i> that industry <i>k</i> made in 2017.")
+        figures = [nonzero, ("On the diagonal", f"{diagonal:.0%}", "of output is made by the industry named for the commodity"),
+                   ("Commodities with one maker", f"{int((makers == 1).sum())}", f"of {n}; the most any has is {int(makers.max())}")]
+        nobody = [t.names[c].lower() for c in s.values.columns[makers == 0]]
+        about = f"""<p>The Make table with each column divided by its total, so that a column says who makes the commodity:</p>
+{_eqs([(_sym("D", key), _d_from(key)),
+       (_sub("d", "kj"), f'<mfrac>{_sub("v", "kj")}{_sub("q", "j")}</mfrac>')])}
+<p>{_m(f"<mi>{_bold('q')}</mi>")} is the output of each commodity, the sum of its column of {sym("V")}. Each column here adds up to
+one{f", except for {e(' and '.join(nobody))}, which no industry makes and whose columns are empty" if nobody else ""}.</p>
+<p>It is what turns {sym("B")}, which is by industry, into {sym("A")}, which is by commodity: each commodity gets the recipe of the
+industries that make it, in proportion to how much of it each makes. This is the industry-technology assumption. The code is {code}.</p>"""
+        heads, caption = ("Industry", "Commodity", "Share of the commodity"), "Commodities made in part by an industry other than the one named for them."
+        by_rows, by_cols, off_diagonal = "industries", "commodities", "The largest entries off the diagonal"
+
+    if off_diagonal:
+        top = top[[i != j for i, j in top.index]]
+    top = top.head(MATRIX_TOP)
+    def show(x):
+        return {"per_dollar": f"{x * 100:.1f}", "share": f"{x:.1%}", "dollars": f"{x:,.0f}"}[s.kind]
+    head = [th(heads[0]), th(heads[1]), th(heads[2], "num")] + ([th("Of which equipment and buildings, &cent;", "num")] if s.second is not None else [])
+    trows = [f'<tr><td class="name">{e(s.row_names[i])}</td><td class="name">{e(s.col_names[j])}</td><td class="num">{show(x)}</td>'
+             + (f'<td class="num">{show(s.second.at[i, j])}</td>' if s.second is not None else "") + "</tr>" for (i, j), x in top.items()]
+    body = f"""
+<p class="crumbs"><a href="method.html">Method</a> / <a href="method.html#account">The account in three lines</a> /
+<a href="{MATRIX_A}#derivation">{_m(_sym("A", "A"))}, the direct requirements</a></p>
+<h1 class="long">{_m(_sym(key, key))}, {e(s.name)}</h1>
+<p class="lede">{lede}</p>
+{_figures([("Size", f"{n} &times; {n}", f"{by_rows} by {by_cols}")] + figures)}
+
+<h2 id="about">What it is</h2>
+{about}
+
+<h2 id="picture">The whole matrix</h2>
+{sheet_picture(s)}
+
+<h2 id="largest">{off_diagonal or "The largest entries"}</h2>
+{table(head, trows, caption=caption)}
+<p><a href="{s.csv_file}">Download the matrix as CSV</a> ({n} rows and columns, sector codes as headings).</p>
+"""
+    return page(s.title, "method.html", body, long_title=True, scripts=(s.data_file, "matrix.js"))
 
 
 def matrix_a_page(d: Data) -> str:
-    m, t = d.io, d.io.t
-    A, K = matrix_a(d)
+    m, t, s = d.io, d.io.t, d.sheets["A"]
+    A, K = s.values, s.second
     a, n, names = A.values, len(A), t.names
-    shown = np.abs(a) >= MATRIX_CUT
+    shown = s.shown
     col_total = A.sum()
     over = col_total[col_total > 1]
     own = sum(t.V.at[c, c] for c in t.commodities if c in t.V.index) / t.V.values.sum()
@@ -1750,38 +2038,37 @@ def matrix_a_page(d: Data) -> str:
              f'<td class="num">{K.at[i, j] * 100:.1f}</td></tr>' for (i, j), v in top.items()]
     (qi, qj), qv = next(iter(top.items()))
 
-    A_, B_, D_, U_, K_, V_, I_ = (f"<mi>{_bold(x)}</mi>" for x in "ABDUKVI")
+    A_, B_, D_, U_, K_, V_, I_ = (_sym(x, "A") for x in "ABDUKVI")
     series = (f'{_inv(f"<mrow><mo>(</mo>{I_}<mo>&minus;</mo>{A_}<mo>)</mo></mrow>")}<mo>=</mo>{I_}<mo>+</mo>{A_}<mo>+</mo>'
               f'<msup>{A_}<mn>2</mn></msup><mo>+</mo><msup>{A_}<mn>3</mn></msup><mo>+</mo><mo>&hellip;</mo>')
-    derivation = _eqs([
-        (B_, f'<mrow><mo>(</mo>{U_}<mo>+</mo>{K_}<mo>)</mo></mrow><mo>&#x2062;</mo>{_inv(_diag("g"))}'),
-        (D_, f'{V_}<mo>&#x2062;</mo>{_inv(_diag("q"))}'),
-        (A_, f'{B_}<mo>&#x2062;</mo>{D_}')])
-    trillion = lambda x: f"${x / 1e6:.1f} trillion"
+    derivation = _eqs([(B_, _b_from("A")), (D_, _d_from("A")), (A_, f'{B_}<mo>&#x2062;</mo>{D_}')])
     where = [
         (U_, f"the Use table: what each of {len(t.industries)} industries bought of each of {n} commodities in 2017, "
-             f"{trillion(t.U.values.sum())} in all. Imports are included."),
-        (K_, f'the capital matrix: {trillion(m.K.values.sum())} of equipment, buildings and software bought that year, placed on the '
+             f"{_trillion(t.U.values.sum())} in all. Imports are included."),
+        (K_, f'the capital matrix: {_trillion(m.K.values.sum())} of equipment, buildings and software bought that year, placed on the '
              f'industries that use them. The Bureau of Economic Analysis does not publish who bought what at this level, so '
              f'<a href="method.html#capital">this is estimated</a>.'),
         (V_, "the Make table: how much of each commodity each industry made."),
-        (f"<mi>{_bold('g')}</mi>", f"each industry's output, {trillion(t.g.sum())} in all. Dividing by it turns purchases into purchases per dollar."),
+        (f"<mi>{_bold('g')}</mi>", f"each industry's output, {_trillion(t.g.sum())} in all. Dividing by it turns purchases into purchases per dollar."),
         (f"<mi>{_bold('q')}</mi>", "the output of each commodity."),
         (B_, "what each industry buys per dollar of what it makes."),
         (D_, f"which industries make each commodity. An industry mostly makes the commodity it is named for "
              f"({own:.0%} of output), so {_m(D_)} is close to the identity."),
     ]
+    why = f"""<template id="mx-why"><h3>How the cell is made up</h3>
+<p>{_m(A_)} is {_m(B_)} times {_m(D_)}, so a cell is one row of {_m(B_)} against one column of {_m(D_)}. Each industry
+that makes the column's commodity brings what it uses of the row's, in proportion to its share:</p>
+{_m(f'{_sub("a", "ij")}<mo>=</mo>{_sum("k")}{_sub("b", "ik")}<mo>&#x2062;</mo>{_sub("d", "kj")}', block=True)}</template>
+"""
     body = f"""
 <p class="crumbs"><a href="method.html">Method</a> / <a href="method.html#account">The account in three lines</a></p>
 <h1 class="long">{_m(A_)}, the direct requirements</h1>
 <p class="lede">What it takes to make a dollar of each thing. The entry in row <i>i</i> and column <i>j</i> is the dollars of
 commodity <i>i</i> used up in making one dollar of commodity <i>j</i>, with equipment and buildings counted as inputs.</p>
-<dl class="figures">
-<div><dt>Size</dt><dd>{n} &times; {n}</dd><dd class="dim">commodities by commodities</dd></div>
-<div><dt>Entries that are not zero</dt><dd>{(a != 0).mean():.0%}</dd><dd class="dim">{shown.mean():.0%} are a hundredth of a cent or more</dd></div>
-<div><dt>Inputs per dollar of output</dt><dd>{col_total.median() * 100:.0f}&cent;</dd><dd class="dim">the median column total</dd></div>
-<div><dt>Equipment and buildings</dt><dd>{K.values.sum() / a.sum():.0%}</dd><dd class="dim">of the total of all entries</dd></div>
-</dl>
+{_figures([("Size", f"{n} &times; {n}", "commodities by commodities"),
+           ("Entries that are not zero", f"{(a != 0).mean():.0%}", f"{shown.mean():.0%} are a hundredth of a cent or more"),
+           ("Inputs per dollar of output", f"{col_total.median() * 100:.0f}&cent;", "the median column total"),
+           ("Equipment and buildings", f"{K.values.sum() / a.sum():.0%}", "of the total of all entries")])}
 
 <h2 id="use">What it is for</h2>
 <p>To deliver a dollar of something, the economy must make that dollar, then the inputs to it, then the inputs to
@@ -1790,7 +2077,8 @@ those, and so on. Each round is another multiplication by {_m(A_)}, and the roun
 {_m(series, block=True)}
 
 <h2 id="derivation">How it is derived</h2>
-<p>From the Bureau of Economic Analysis's 2017 benchmark tables and one matrix built here:</p>
+<p>From the Bureau of Economic Analysis's 2017 benchmark tables and one matrix built here. Each matrix has a page of its
+own: follow its letter.</p>
 {derivation}
 <dl class="where">{"".join(f"<dt>{_m(k)}</dt><dd>{v}</dd>" for k, v in where)}</dl>
 <p>The Use table says what industries buy, but people need commodities, and some industries make more than one.
@@ -1800,41 +2088,11 @@ it each makes.</p>
 <a href="{REPO}/blob/main/plenty/model.py"><code>plenty/model.py</code></a>.</p>
 
 <h2 id="picture">The whole matrix</h2>
-<figure class="mx">
-<div class="mx-frame">
-<div class="mx-axis mx-axis-top"><span>Made: one dollar of each commodity &rarr;</span>
-<span class="mx-zoom"><button type="button" id="mx-zoom-out" aria-label="Zoom out" disabled>&minus;</button><button
- type="button" id="mx-zoom-in" aria-label="Zoom in">+</button><button type="button" id="mx-zoom-all" disabled>Whole matrix</button><button
- type="button" id="mx-unsort" disabled>Default order</button></span></div>
-<div class="mx-strip mx-top" id="mx-top"></div>
-<div class="mx-strip mx-left" id="mx-left"></div>
-<div class="mx-plot">
-<canvas id="mx-canvas" width="{n}" height="{n}" role="img" tabindex="0"
- aria-label="Heat map of the {n} by {n} direct requirements matrix. The table of groups and the sector lookup below give the same figures."></canvas>
-<i id="mx-h" aria-hidden="true"></i><i id="mx-v" aria-hidden="true"></i>
-</div>
-</div>
-<div class="mx-note" id="mx-note" aria-live="polite"></div>
-<template id="mx-why"><h3>How the cell is made up</h3>
-<p>{_m(A_)} is {_m(B_)} times {_m(D_)}, so a cell is one row of {_m(B_)} against one column of {_m(D_)}. Each industry
-that makes the column's commodity brings what it uses of the row's, in proportion to its share:</p>
-{_m(f'{_sub("a", "ij")}<mo>=</mo>{_sum("k")}{_sub("b", "ik")}<mo>&#x2062;</mo>{_sub("d", "kj")}', block=True)}</template>
-<div class="mx-legend" aria-hidden="true"><div class="mx-ramp"></div>
-<div class="mx-ticks"><span>0.01&cent;</span><span>0.1&cent;</span><span>1&cent;</span><span>10&cent;</span><span>$1</span></div></div>
-<figcaption>Each column is a commodity being made and each row an input to it. Colour is cents of the input per dollar
-made, on a log scale. The {(~shown).mean():.0%} of entries under a hundredth of a cent are blank. Sectors are in the Bureau's
-order within fifteen groups, and the diagonal blocks are groups buying from themselves. Hover over a cell for its
-sectors and value. Click a cell to mark it with its row and column, or click in a margin to mark one row or one
-column. A marked cell is taken apart under the picture, into the industries that make the column's commodity. To zoom, scroll or pinch over the picture or its margins, or use the buttons. To move, drag with the mouse wheel
-pressed or with Ctrl held, or with a finger on a touch screen. Close in, the
-margins name each sector, and closer still each cell shows its value in cents. The arrows beside a sector's name, and
-the buttons under the picture for whatever is marked, sort the whole matrix by that row or column: largest first,
-then smallest first, then back to the Bureau's order. Sorting by a row or column marks it, and unmarking it lets go of the sort.</figcaption>
-</figure>
+{sheet_picture(s, also="A marked cell is taken apart under the picture, into the industries that make the column's commodity.", extra=why)}
 
 <h2 id="sector">One sector's column and row</h2>
 <div class="controls"><label for="mx-pick">Sector</label><select id="mx-pick"></select></div>
-<noscript><p class="note">This lookup needs JavaScript. The whole matrix is in <a href="matrix-A.csv">the CSV file</a>.</p></noscript>
+<noscript><p class="note">This lookup needs JavaScript. The whole matrix is in <a href="{s.csv_file}">the CSV file</a>.</p></noscript>
 <div class="mx-lookup">
 <section><h3 id="mx-in-title">What a dollar of it uses</h3><div id="mx-in"></div></section>
 <section><h3 id="mx-out-title">Who uses it</h3><div id="mx-out"></div></section>
@@ -1854,9 +2112,9 @@ wages, taxes, and whatever owners keep after investing.{f" {len(over)} column{'s
 of {e(names[qj].lower())}, is in the Use table itself and looks like a quirk of how that industry's leases are recorded.</p>
 <p class="note">{int((a < 0).sum())} entries are negative, nearly all in the rows for used goods and scrap, where an industry
 sold more than it bought. They are small (the largest is {-a.min() * 100:.1f} cents) and blank in the picture.</p>
-<p><a href="matrix-A.csv">Download the matrix as CSV</a> ({n} rows and columns, sector codes as headings).</p>
+<p><a href="{s.csv_file}">Download the matrix as CSV</a> ({n} rows and columns, sector codes as headings).</p>
 """
-    return page("A, the direct requirements", "method.html", body, long_title=True, scripts=("matrix-A-data.js", "matrix.js"))
+    return page(s.title, "method.html", body, long_title=True, scripts=(s.data_file, "matrix.js"))
 
 
 def account_section(d: Data) -> str:
@@ -1992,11 +2250,14 @@ def main():
     for a in d.act.index[d.act.level == "intermediate"]:
         pages[act_href(a)] = lambda d, a=a: activity_page(d, a)
     pages[MATRIX_A] = matrix_a_page
+    for key in MATRIX_PAGES.replace("A", ""):
+        pages[f"matrix-{key}.html"] = lambda d, key=key: matrix_page(d, key)
     for name, fn in pages.items():
         (SITE / name).write_text(fn(d), encoding="utf-8")
-    (SITE / "matrix-A-data.js").write_text(matrix_a_data(d), encoding="utf-8")
+    for key, sheet in d.sheets.items():
+        (SITE / sheet.data_file).write_text(matrix_data(d, key), encoding="utf-8")
+        (SITE / sheet.csv_file).write_text(sheet_csv(sheet), encoding="utf-8")
     (SITE / MATRIX_PARTS).write_text(matrix_a_parts(d), encoding="utf-8")
-    (SITE / "matrix-A.csv").write_text(matrix_a_csv(d), encoding="utf-8")
     (SITE / ".nojekyll").write_text("")
     print(f"wrote {len(pages)} pages to {SITE}")
 

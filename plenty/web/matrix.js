@@ -1,24 +1,36 @@
-// A matrix page: paints every entry on a canvas and lists one sector's column and row.
-// The data file sets window.PLENTY_MATRIX (written by plenty/site.py). No dependencies.
+// A matrix page: paints every entry of one of the model's matrices on a canvas, to be zoomed,
+// marked and sorted. On the page for A it also takes a marked cell apart and lists one sector's
+// column and row. The data file sets window.PLENTY_MATRIX (written by plenty/site.py). No dependencies.
 (function () {
   "use strict";
   var M = window.PLENTY_MATRIX, canvas = document.getElementById("mx-canvas");
   if (!M || !canvas) return;
-  var n = M.names.length, unit = M.unit, LIST = 12;
-  var LO = Math.log10(M.cut), HI = 0;                 // the colour scale runs from the cut to one dollar
+  // every matrix shown is n by n, though its rows and its columns may be different things
+  var n = M.rows.names.length, unit = M.unit, LIST = 12, STEP = M.second ? 3 : 2;
+  var LO = Math.log10(M.scale[0]), HI = Math.log10(M.scale[1]);   // the two ends of the colour scale
 
   // dense copies for the pointer, and each row's entries for "who uses it"
   var value = new Float32Array(n * n), capital = new Float32Array(n * n), byRow = [];
   for (var r = 0; r < n; r++) byRow.push([]);
-  M.cols.forEach(function (col, j) {
-    for (var k = 0; k < col.length; k += 3) {
+  M.cells.forEach(function (col, j) {
+    for (var k = 0; k < col.length; k += STEP) {
       value[col[k] * n + j] = col[k + 1] * unit;
-      capital[col[k] * n + j] = col[k + 2] * unit;
+      if (M.second) capital[col[k] * n + j] = col[k + 2] * unit;   // the part that is equipment and buildings
       byRow[col[k]].push(j, col[k + 1]);
     }
   });
 
   function cents(dollars, digits) { return (dollars * 100).toFixed(digits === undefined ? 2 : digits) + "\u00a2"; }
+  // For each kind of matrix: a value said in full, and a size (never negative) printed short on a cell.
+  function hundredths(x) { x *= 100; return x.toFixed(x >= 99.95 ? 0 : x >= 9.995 ? 1 : 2); }
+  var KINDS = {
+    per_dollar: { say: function (v) { return cents(v) + " per dollar"; }, cell: hundredths },
+    share: { say: function (v) { return hundredths(v) + "%"; }, cell: hundredths },
+    dollars: {
+      say: function (v) { return (v < 0 ? "\u2212$" : "$") + Math.round(Math.abs(v)).toLocaleString("en-US") + " million"; },
+      cell: function (x) { return x >= 99500 ? Math.round(x / 1000) + "k" : x >= 999.5 ? (x / 1000).toFixed(1) + "k" : String(Math.round(x)); }
+    }
+  }, kind = KINDS[M.kind];
 
   // --- the picture: the whole matrix, or a window on it
   // The matrix is painted once, a pixel a cell, on a sheet off screen. The canvas shows the part
@@ -44,24 +56,23 @@
   // The picture's two axes. at[p] is the sector drawn at place p, and pos the other way round.
   // by is the line of the other axis this one is sorted by, as {k, dir} with dir 1 for smallest
   // first; sel is the sector marked on it.
-  function axis(box) {
-    var a = { box: box, at: [], pos: [], by: null, sel: null };
+  // names, codes and groups are its sectors', in the Bureau's order, and runs the groups as stretches of them.
+  function axis(box, side) {
+    var a = { box: box, names: side.names, codes: side.codes, groups: side.groups, runs: [], at: [], pos: [], by: null, sel: null };
     for (var k = 0; k < n; k++) { a.at.push(k); a.pos.push(k); }
+    side.groups.forEach(function (g, j) {
+      var last = a.runs[a.runs.length - 1];
+      if (last && last.name === g) last.to = j + 1;
+      else a.runs.push({ name: g, label: M.short[g] || g, from: j, to: j + 1 });
+    });
     box.style.setProperty("--sort", SORT_PX + "px");
     return a;
   }
-  var rows = axis(leftStrip), cols = axis(topStrip);
+  var rows = axis(leftStrip, M.rows), cols = axis(topStrip, M.cols);
   rows.other = cols;
   cols.other = rows;
   var selRow = plot.appendChild(el("i", "mx-sel mx-sel-row")), selCol = plot.appendChild(el("i", "mx-sel mx-sel-col"));
   var selCell = plot.appendChild(el("i", "mx-sel mx-sel-cell"));
-
-  var runs = [];                                      // the groups, as runs of sectors
-  M.groups.forEach(function (g, j) {
-    var last = runs[runs.length - 1];
-    if (last && last.name === g) last.to = j + 1;
-    else runs.push({ name: g, label: M.short[g] || g, from: j, to: j + 1 });
-  });
 
   function rgb(hex) {
     var h = hex.trim().replace("#", "");
@@ -101,11 +112,8 @@
     ctx.putImageData(img, 0, 0);
   }
 
-  // a cell's value in cents, as short as it can be said
-  function figure(v) {
-    var c = Math.abs(v) * 100;
-    return (v < 0 ? "\u2212" : "") + c.toFixed(c >= 9.995 ? 1 : 2);
-  }
+  // a cell's value as short as it can be said
+  function figure(v) { return (v < 0 ? "\u2212" : "") + kind.cell(Math.abs(v)); }
 
   function cellPx() { return canvas.clientWidth / view.span; }
   function named() { return cellPx() >= NAME_PX; }
@@ -125,11 +133,8 @@
     }
     ctx.fillStyle = rule;                             // and a rule between groups, on an axis still in groups
     ctx.globalAlpha = named() ? 1 : 0.55;
-    runs.forEach(function (g) {
-      if (!g.from) return;
-      if (!cols.by) ctx.fillRect(Math.round((g.from - view.x) * cell), 0, line, px);
-      if (!rows.by) ctx.fillRect(0, Math.round((g.from - view.y) * cell), px, line);
-    });
+    if (!cols.by) cols.runs.forEach(function (g) { if (g.from) ctx.fillRect(Math.round((g.from - view.x) * cell), 0, line, px); });
+    if (!rows.by) rows.runs.forEach(function (g) { if (g.from) ctx.fillRect(0, Math.round((g.from - view.y) * cell), px, line); });
     ctx.globalAlpha = 1;
     if (cellPx() >= VALUE_PX) {                       // closest in, the number on each cell
       ctx.font = "500 " + Math.round(Math.min(14, cellPx() / 3) * ratio) + "px " + face;
@@ -178,7 +183,7 @@
     if (a.by) {
       band = put("mx-group mx-sorted", from, to, sortedBy(a));
       band.textContent = sortedBy(a);
-    } else runs.forEach(function (g, i) {
+    } else a.runs.forEach(function (g, i) {
       var lo = Math.max(g.from, from), hi = Math.min(g.to, to);
       if (hi <= lo) return;
       band = put("mx-group" + (i % 2 ? "" : " alt"), lo, hi, g.name + ": " + (g.to - g.from) + " sectors");
@@ -188,9 +193,9 @@
     var font = Math.min(NAME_FONT, size / LINE), lines = Math.max(1, Math.floor(size / (font * LINE) + 0.01));
     var length = box.clientHeight - band.offsetHeight - SORT_PX;   // room for a name written up the top strip
     for (var p = Math.floor(from); p < Math.min(n, Math.ceil(to)); p++) {
-      var c = a.at[p], first = !a.by && c && M.groups[c] !== M.groups[c - 1];
-      var s = put("mx-name" + (first ? " first" : "") + (a.sel === c ? " sel" : ""), p, p + 1, M.names[c]);
-      var text = el("span", lines > 1 ? "mx-text" : "mx-text one", M.names[c]), holder = s;
+      var c = a.at[p], first = !a.by && c && a.groups[c] !== a.groups[c - 1];
+      var s = put("mx-name" + (first ? " first" : "") + (a.sel === c ? " sel" : ""), p, p + 1, a.names[c]);
+      var text = el("span", lines > 1 ? "mx-text" : "mx-text one", a.names[c]), holder = s;
       text.style.fontSize = font.toFixed(2) + "px";
       text.style.webkitLineClamp = lines;
       if (across) {                                   // written sideways: a row of text turned a quarter turn
@@ -209,8 +214,8 @@
   // --- sorting: one row puts the columns in order, one column the rows
   function direction(a, k) { return a.by && a.by.k === k ? a.by.dir : 0; }
   function sortedBy(a) {
-    var name = M.names[a.by.k], how = a.by.dir < 0 ? ", largest first" : ", smallest first";
-    return (a === cols ? "Columns sorted by their use of " + name : "Rows sorted by how much of each goes into " + name) + how;
+    var name = a.other.names[a.by.k], how = a.by.dir < 0 ? ", largest first" : ", smallest first";
+    return (a === cols ? "Columns sorted by the row " : "Rows sorted by the column ") + name + how;
   }
   // what pressing the button for line k would say about axis a, the one it reorders
   function sortText(a, k) {
@@ -260,29 +265,29 @@
     remark();
     schedule();
   }
-  // the line under the picture that says what is marked, with a way to the lookup and the sort buttons
+  // the lines under the picture that say what is marked, each with its sort button, and on a page
+  // with a sector lookup a way to it
   function remark() {
-    var i = rows.sel, j = cols.sel;
-    function line(label, k, a) {
-      var p = el("p"), link = el("a", "", M.names[k]);
-      link.href = "#sector";
-      link.setAttribute("data-sector", M.codes[k]);
+    var i = rows.sel, j = cols.sel, lookup = document.getElementById("mx-pick");
+    function line(label, a, k) {                      // sector k of axis a, whose button sorts the other axis
+      var p = el("p"), name = el(lookup ? "a" : "b", "", a.names[k]);
+      if (lookup) { name.href = "#sector"; name.setAttribute("data-sector", a.codes[k]); }
       p.appendChild(el("span", "dim", label + " "));
-      p.appendChild(link);
-      p.appendChild(sortButton(a, k, false));
+      p.appendChild(name);
+      p.appendChild(sortButton(a.other, k, false));
       note.appendChild(p);
     }
     note.textContent = "";
     if (i === null && j === null) note.appendChild(el("p", "dim", "Nothing is marked."));
-    if (i !== null) line("Row, the input:", i, cols);
-    if (j !== null) line("Column, the thing made:", j, rows);
+    if (i !== null) line(M.rowIs, rows, i);
+    if (j !== null) line(M.colIs, cols, j);
     if (i !== null && j !== null) {
       note.appendChild(el("p", "", "Cell: " + amount(i, j)));
-      note.appendChild(derivation(i, j));
+      if (M.parts) note.appendChild(derivation(i, j));
     }
   }
 
-  // --- how a marked cell is made up. A = B D, so the cell is row i of B against column j of D:
+  // --- how a marked cell of A is made up. A = B D, so the cell is row i of B against column j of D:
   // a term for each industry that makes commodity j. B and D come in a file of their own,
   // fetched when a cell is first marked.
   var WHY = 8;                                        // terms listed before "show all"
@@ -321,7 +326,7 @@
       sum += share * use;
     }
     terms.sort(function (a, b) { return Math.abs(b.term) - Math.abs(a.term) || b.share - a.share; });
-    box.appendChild(el("p", "", "Row i is " + M.names[i] + " and column j is " + M.names[j] + ", which " +
+    box.appendChild(el("p", "", "Row i is " + rows.names[i] + " and column j is " + cols.names[j] + ", which " +
       (terms.length === 1 ? "one industry makes." : terms.length + " industries make.")));
     var wrap = el("div", "scroll"), table = el("table", "ledger"), body = el("tbody");
     table.appendChild(headRow(["Industry k that makes it", "Its share of the commodity", "\u00a2 of the input per dollar of its output",
@@ -379,10 +384,10 @@
   }
   function amount(i, j) {
     var v = value[i * n + j], k = capital[i * n + j];
-    if (v === 0) return "under " + cents(M.cut) + " per dollar";
-    return cents(v) + " per dollar" + (Math.abs(k) >= M.cut ? ", " + cents(k) + " of it equipment and buildings" : "");
+    if (v === 0) return M.blank;
+    return kind.say(v) + (M.second && Math.abs(k) >= M.cut ? ", " + cents(k) + " of it equipment and buildings" : "");
   }
-  function describe(i, j) { return "Input: " + M.names[i] + "\nTo make: " + M.names[j] + "\n" + amount(i, j); }
+  function describe(i, j) { return M.rowTip + ": " + rows.names[i] + "\n" + M.colTip + ": " + cols.names[j] + "\n" + amount(i, j); }
   // far off, a hair line through the cell's row and column; close in, a band around each
   function hover(e) {
     var c = cellAt(e), band = named(), pct = function (x) { return (x / view.span * 100).toFixed(3) + "%"; };
@@ -513,12 +518,15 @@
     if (dark.addEventListener) dark.addEventListener("change", function () { paint(); schedule(); });
   }
 
-  // --- one sector's column and row
+  // --- one sector's column and row, on the page for A, where rows and columns are the same sectors.
+  // The helpers below are used by the picture too; what follows this line runs only with a lookup.
   var pick = document.getElementById("mx-pick"), inBox = document.getElementById("mx-in"), outBox = document.getElementById("mx-out");
+  if (!pick) return;
+  var names = rows.names, groups = rows.groups, codes = rows.codes;
   var group = null, og = null;
-  M.names.forEach(function (name, j) {
-    if (M.groups[j] !== group) {
-      group = M.groups[j];
+  names.forEach(function (name, j) {
+    if (groups[j] !== group) {
+      group = groups[j];
       og = document.createElement("optgroup");
       og.label = group;
       pick.appendChild(og);
@@ -536,7 +544,7 @@
     return x;
   }
   function sectorButton(j) {
-    var b = el("button", "pick", M.names[j]);
+    var b = el("button", "pick", names[j]);
     b.type = "button";
     b.addEventListener("click", function () { select(j); });
     return b;
@@ -601,7 +609,7 @@
 
   function select(j) {
     pick.value = j;
-    var name = M.names[j], col = M.cols[j], inputs = [], users = [], listed = 0, k;
+    var name = names[j], col = M.cells[j], inputs = [], users = [], listed = 0, k;
     for (k = 0; k < col.length; k += 3) {
       inputs.push({ j: col[k], v: col[k + 1] * unit, k: col[k + 2] * unit });
       listed += col[k + 1];
@@ -617,13 +625,13 @@
     ]);
     listTable(outBox, ["Sector that uses it", "\u00a2 per dollar of that sector's output"], users, null);
     if (!users.length) outBox.appendChild(el("p", "note", "No sector uses as much as " + cents(M.cut) + " of it per dollar of output."));
-    if (history.replaceState) history.replaceState(null, "", "#sector=" + M.codes[j]);
+    if (history.replaceState) history.replaceState(null, "", "#sector=" + codes[j]);
   }
   pick.addEventListener("change", function () { select(+pick.value); });
 
   // links elsewhere on the page that name a sector, and a sector in the address
   function fromHash() {
-    var m = /^#sector=(.+)$/.exec(location.hash), j = m ? M.codes.indexOf(decodeURIComponent(m[1])) : -1;
+    var m = /^#sector=(.+)$/.exec(location.hash), j = m ? codes.indexOf(decodeURIComponent(m[1])) : -1;
     if (j >= 0) select(j);
     return j >= 0;
   }
@@ -631,13 +639,13 @@
     var a = e.target.closest && e.target.closest("a[data-sector]");
     if (!a) return;
     e.preventDefault();
-    select(M.codes.indexOf(a.getAttribute("data-sector")));
+    select(codes.indexOf(a.getAttribute("data-sector")));
     document.getElementById("sector").scrollIntoView({ behavior: "smooth" });
   });
   window.addEventListener("hashchange", fromHash);
   if (!fromHash()) {
     var keep = location.hash;                          // opening on the default sector should not move the page
-    select(Math.max(0, M.codes.indexOf(M.shown)));
+    select(Math.max(0, codes.indexOf(M.shown)));
     if (history.replaceState) history.replaceState(null, "", keep || location.pathname + location.search);
   }
 })();
