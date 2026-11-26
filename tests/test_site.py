@@ -179,6 +179,27 @@ def test_the_capital_matrix_page_leads_to_what_it_is_made_from(built):
     assert np.allclose(csv.weight.values, cap.weight.values)
 
 
+def test_the_need_vectors_of_the_account_have_pages(built):
+    dn, x = built.need_dollars
+    method = (site.SITE / "method.html").read_text()
+    for letter, frame in (("d", dn), ("x", x)):
+        href = site.SYMBOL_PAGES[letter]
+        assert f'<mi><a href="{href}">' in method                     # the letter in the account is the link
+        html = (site.SITE / href).read_text()
+        assert f'<a href="{href}">' not in html and 'href="method.html#account"' in html
+        assert html.count('<th scope="col" class="grp" data-sort="num">') == len(site.NEED_NAME) == frame.shape[1]
+        rows = html[html.index('id="table"'):].count('<tr><th scope="row">')
+        assert rows == (frame.abs() >= site.HEAT_FLOOR).any(axis=1).sum() if letter == "x" else rows == (frame != 0).any(axis=1).sum()
+        csv = pd.read_csv(site.SITE / f"vector-{letter}.csv", index_col=0, dtype={0: str})
+        assert list(csv.columns) == list(site.NEED_NAME) and np.allclose(csv.values, frame.values, rtol=1e-5, atol=1e-9)
+    # the round-by-round table on x's page adds up to the column totals
+    x_page = (site.SITE / site.SYMBOL_PAGES["x"]).read_text()
+    assert all(f'data-v="{v:.4f}">${v:.2f}</td>' in x_page for v in x.sum())
+    # what is left out of the basket is listed, and the page's two totals are the model's
+    d_page = (site.SITE / site.SYMBOL_PAGES["d"]).read_text()
+    assert all(site.e(name) in d_page for name in site.LEFT_OUT_NAME.values())
+
+
 def test_ai_use_sits_beside_the_work(built):
     d = built
     I = d.ai[d.ai.level == "intermediate"]

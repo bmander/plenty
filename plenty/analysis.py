@@ -36,6 +36,15 @@ def need_demand(t: M.Tables) -> pd.DataFrame:
     return Dn
 
 
+def need_dollars(m: M.Model) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """(d, x) for the included needs, commodity x need. d[i, n] is the part of a dollar of need n
+    spent on commodity i: final demand scaled so each need adds up to one. x = L d: x[j, n] is the
+    output of commodity j it takes, directly and indirectly, to deliver that dollar."""
+    Dn = need_demand(m.t)[included_needs()]
+    d = Dn / Dn.sum()
+    return d, pd.DataFrame(m.L.values @ d.values, index=d.index, columns=d.columns)
+
+
 def included_needs() -> list[str]:
     needs = pd.read_csv(M.CONFIG / "needs.csv")
     return list(needs.need[needs.include == 1])

@@ -264,6 +264,15 @@ ul.tasklist li { break-inside: avoid; margin: 0 0 5px; }
 ul.tasklist .pill { font-size: 12px; font-weight: 600; margin-left: 4px; }
 .ledger[data-tree] tr.kind > td:first-child { min-width: 30ch; }
 
+/* A table with a column for each need, each cell shaded by its size (--h, 0 to 60) */
+table[data-heatgrid] tbody tr { background: none; }
+table[data-heatgrid] th, table[data-heatgrid] td { padding: 5px 8px; }
+table[data-heatgrid] thead th, table[data-heatgrid] td { width: 1%; white-space: nowrap; }   /* the columns of figures take what they need, */
+table[data-heatgrid] thead th:first-child { width: auto; }                                    /* and the names take the rest */
+table[data-heatgrid] tbody th { min-width: 28ch; }
+math a sub { font-size: 0.72em; }
+td.h { text-align: right; font-variant-numeric: tabular-nums; background: color-mix(in srgb, var(--series) calc(var(--h, 0) * 1%), transparent); }
+
 /* A matrix page: the picture of every entry, and one sector's column and row */
 math a { color: inherit; }
 #tip { white-space: pre-line; }

@@ -129,6 +129,11 @@ class Data:
         return M.build()
 
     @functools.cached_property
+    def need_dollars(self) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """(d, x): what a dollar of each need buys, and the output it takes."""
+        return A.need_dollars(self.io)
+
+    @functools.cached_property
     def capital(self) -> M.Capital:
         """How investment is placed on industries: what the capital matrix is made from."""
         return M.capital_allocation(self.io.t)
@@ -1649,7 +1654,7 @@ def _sum(i: str) -> str:
 
 
 # bold letters are Unicode's mathematical bold: browsers do not all honour mathvariant
-_X, _I, _A, _D = "&#x1D431;", "&#x1D408;", "&#x1D400;", "&#x1D41D;"
+_I, _A = "&#x1D408;", "&#x1D400;"
 # a symbol that has a page of its own is a link to it; HTML is allowed inside a MathML identifier
 _A_LINK = f'<mi><a href="matrix-A.html">{_A}</a></mi>'
 _ONE_LESS_C = f'<mrow><mo>(</mo><mn>1</mn><mo>&minus;</mo>{_sub("c", "a")}<mo>)</mo></mrow>'
@@ -1659,7 +1664,14 @@ MATRIX_A = "matrix-A.html"
 MATRIX_PAGES = "ABDUKVS"   # the matrices with a picture page of their own: matrix-A.html, matrix-B.html and so on
 # every symbol with a page: those matrices, investment by investor (a table, being five columns wide)
 # and the vector of weights
-SYMBOL_PAGES = {**{k: f"matrix-{k}.html" for k in MATRIX_PAGES}, "F": "matrix-F.html", "w": "vector-w.html"}
+# and the two vectors there is one of for each need. A file is not named by a letter's case alone:
+# some file systems cannot tell matrix-D from matrix-d.
+SYMBOL_PAGES = {**{k: f"matrix-{k}.html" for k in MATRIX_PAGES}, "F": "matrix-F.html", "w": "vector-w.html",
+                "d": "vector-d.html", "x": "vector-x.html"}
+HEAT_FLOOR = 5e-4          # a need's table shades entries from a twentieth of a cent up, and leaves smaller ones blank
+LEFT_OUT_NAME = {"defense": "Federal defense", "federal_civil": "Federal nondefense government",
+                 "finance_legal": "Finance and legal services", "discretionary": "Discretionary",
+                 "accounting": "Accounting entries"}
 INVESTOR_NAME = {"private": "Private business", "residential": "Housing", "fed_defense": "Federal defense",
                  "fed_nondefense": "Federal nondefense", "state_local": "State and local government"}
 MATRIX_SHOWN = "221100"    # the sector A's lookup opens on: electric power
@@ -1691,6 +1703,15 @@ def _sym(letter: str, here: str = "") -> str:
     if letter in SYMBOL_PAGES and letter != here:
         return f'<mi><a href="{SYMBOL_PAGES[letter]}">{_bold(letter)}</a></mi>'
     return f"<mi>{_bold(letter)}</mi>"
+
+
+def _vec(letter: str, here: str = "", sub: str = "n") -> str:
+    """A vector there is one of for each need (or whatever sub counts). One with a page links to it,
+    letter and subscript together: browsers misplace a MathML subscript on a base that is a link, so
+    the subscript of a linked vector is set as HTML inside the link."""
+    if letter in SYMBOL_PAGES and letter != here:
+        return f'<mi><a href="{SYMBOL_PAGES[letter]}">{_bold(letter)}<sub><i>{sub}</i></sub></a></mi>'
+    return f"<msub><mi>{_bold(letter)}</mi><mrow>{''.join(f'<mi>{c}</mi>' for c in sub)}</mrow></msub>"
 
 
 def _diag(letter: str) -> str:
@@ -2166,6 +2187,158 @@ They go into {_m(_sym("S", "w"))}:</p>
     return page("w, the weight of each industry", "method.html", body, long_title=True)
 
 
+def _need_heads() -> list[str]:
+    return [th(f"<span>{e(v)}</span>", "grp", sort="num") for v in NEED_NAME.values()]
+
+
+def _heat_cells(row, digits: int = 1) -> str:
+    """One table cell for each need: cents of the need's dollar, shaded on a log scale from HEAT_FLOOR to a dollar."""
+    out = []
+    for x in row:
+        if abs(x) < HEAT_FLOOR:
+            out.append('<td class="h" data-v="0"></td>')
+            continue
+        shade = 0 if x < 0 else round(60 * min(1.0, math.log10(x / HEAT_FLOOR) / -math.log10(HEAT_FLOOR)))
+        text = f"{x * 100:.{digits}f}".replace("-", "&minus;")
+        out.append(f'<td class="h" style="--h:{shade}" data-v="{x * 100:.4g}">{text}</td>')
+    return "".join(out)
+
+
+def _account_crumbs() -> str:
+    return '<p class="crumbs"><a href="method.html">Method</a> / <a href="method.html#account">The account in three lines</a></p>'
+
+
+def basket_page(d: Data) -> str:
+    """The page of d: what a dollar of each need buys."""
+    t, (dn, _) = d.io.t, d.need_dollars
+    needs = list(dn.columns)
+    assert needs == list(NEED_NAME), needs
+    basket = pd.read_csv(CONFIG / "basket.csv", dtype={"commodity": str}).set_index("commodity").need
+    spent = A.need_demand(t)                       # $M by commodity and by every need in the config
+    bought = t.F["F01000"] + t.F[A.GOV_CONSUMPTION].sum(axis=1)
+    total = spent[needs].sum()
+    margins = [c for c in dn.index if basket[c] == "margin"]
+    def under(c):
+        return "Margin, split" if basket[c] == "margin" else NEED_NAME.get(basket[c], LEFT_OUT_NAME.get(basket[c], basket[c]))
+    # rows: the commodities bought for one of the needs, need by need and largest first, the margins last
+    shown = dn[(dn != 0).any(axis=1)]
+    place = {n: i for i, n in enumerate(needs)}
+    order = sorted(shown.index, key=lambda c: (place.get(basket[c], len(needs)), -shown.loc[c].max()))
+    rows = [f'<tr><th scope="row">{e(t.names[c])}</th><td class="name">{e(under(c))}</td>'
+            f'<td class="num" data-v="{spent.loc[c, needs].sum():.0f}">{spent.loc[c, needs].sum():,.0f}</td>{_heat_cells(dn.loc[c])}</tr>'
+            for c in order]
+    foot = ('<tr><td>All commodities</td><td></td>' + f'<td class="num">{total.sum():,.0f}</td>'
+            + "".join('<td class="num">100.0</td>' for _ in needs) + "</tr>")
+    def biggest(n):
+        return "; ".join(f"{e(t.names[c].lower())} ({v * 100:.0f}&cent;)" for c, v in dn[n].nlargest(3).items())
+    nrows = [f'<tr><th scope="row">{e(NEED_NAME[n])}</th><td class="num">{int((dn[n] != 0).sum())}</td>'
+             f'<td class="num">{total[n] / 1e3:,.0f}</td><td class="wrap">{biggest(n)}</td></tr>' for n in needs]
+    out = [n for n in spent.columns if n not in needs]
+    orows = [f'<tr><th scope="row">{e(LEFT_OUT_NAME[n])}</th><td class="wrap dim">{e(d.needs_cfg.at[n, "description"].replace("; ", ", "))}</td>'
+             f'<td class="num">{spent[n].sum() / 1e3:,.0f}</td></tr>'.replace(">-", ">&minus;") for n in out]
+    y = f'<msub><mi>y</mi><mrow><mi>i</mi><mi>n</mi></mrow></msub>'
+    body = f"""
+{_account_crumbs()}
+<h1 class="long">{_m(_vec("d", "d"))}, what a dollar of each need buys</h1>
+<p class="lede">The basket. There is one {_m(_vec("d", "d"))} for each of the {len(needs)} needs: a dollar of that need, split
+over the commodities households and governments bought for it in 2017.</p>
+{_figures([("Size", f"{len(dn)} &times; {len(needs)}", "commodities by needs"),
+           ("In a basket", f"{len(shown)}", f"of {len(dn)} commodities are bought for one of the needs"),
+           ("Spending counted", _trillion(total.sum()), f"of {_trillion(bought.sum())} bought by households and governments"),
+           ("Left out", f"{1 - total.sum() / bought.sum():.0%}", "of that spending is for none of the needs")])}
+
+<h2 id="about">How it is derived</h2>
+<p>It starts from what households and governments bought to use in 2017, on the final-demand side of the Bureau of
+Economic Analysis's Use table: personal consumption (<code>F01000</code>) and government consumption
+({", ".join(f"<code>{c}</code>" for c in A.GOV_CONSUMPTION)}). Investment is not in it, because equipment and buildings
+are counted as inputs, through {_m(_sym("K"))}. Nor are exports.</p>
+<p>Each commodity is counted under one need, or under none, by a list made by hand
+(<a href="{REPO}/blob/main/config/basket.csv"><code>config/basket.csv</code></a>). Each need's column is then divided
+by its total, so that it adds up to one dollar:</p>
+{_m(f'{_sub("d", "in")}<mo>=</mo><mfrac>{y}<mrow>{_sum("m")}<msub><mi>y</mi><mrow><mi>m</mi><mi>n</mi></mrow></msub></mrow></mfrac>', block=True)}
+<dl class="where">
+<dt>{_m(y)}</dt><dd>what was spent on commodity <i>i</i> and counted under need <i>n</i>, in millions of dollars. For most
+commodities that is all of the spending on it, under one need.</dd>
+</dl>
+<p>{len(margins)} commodities are trade and freight margins: what was paid to wholesalers, general stores and truckers
+for getting goods to the buyer. They belong to no one need, so each is split over the needs in proportion to what
+each need spent on goods (farm, mine and factory products).</p>
+<p>Dividing by the total is what makes <a href="needs.html">every need count equally</a>: spending decides what is in a
+need's dollar, not how much the need weighs.</p>
+{table([th("Need"), th("Commodities", "num"), th("Spending, $ billion", "num"), th("The largest parts of its dollar")], nrows,
+       caption="Each need's column: how many commodities are in it, the total it is divided by, and where most of the dollar goes.")}
+
+<h2 id="left-out">What is left out</h2>
+{table([th("Spending on"), th("What it covers"), th("$ billion", "num")], orows,
+       caption="Household and government spending counted under none of the needs. It still counts wherever the needs buy from it.")}
+
+<h2 id="table">The whole matrix</h2>
+{table([th("Commodity", sort="text"), th("Counted under", sort="text"), th("Spending, $ million", "num", sort="num")] + _need_heads(),
+       rows, attrs=" data-heatgrid", foot=foot,
+       caption=f"Cents of each need's dollar. Each column adds up to 100. Click a heading to sort; sorting by a need shows its basket. "
+               f"Entries under {HEAT_FLOOR * 100:.2f}&cent; are blank, and so are the {len(dn) - len(shown)} commodities in no basket, which are left out.")}
+<p><a href="vector-d.csv">Download the matrix as CSV</a> ({len(dn)} rows, sector codes in the first column, dollars per dollar).</p>
+<p>It is what {_m(_sym("A"))} is applied to, to get {_m(_vec("x", "d"))}, the output behind each need:</p>
+{_m(_vec("x", "d") + "<mo>=</mo>" + _inv(f'<mrow><mo>(</mo>{_sym("I")}<mo>&minus;</mo>{_sym("A")}<mo>)</mo></mrow>') + "<mo>&#x2062;</mo>" + _vec("d", "d"), block=True)}
+"""
+    return page("d, what a dollar of each need buys", "method.html", body, long_title=True)
+
+
+def requirements_page(d: Data) -> str:
+    """The page of x: the output it takes to deliver a dollar of each need."""
+    t, (dn, x) = d.io.t, d.need_dollars
+    needs = list(x.columns)
+    direct = pd.Series((d.io.A.values @ dn.values).sum(axis=0), index=needs)
+    total = x.sum()
+    shown = x[(x.abs() >= HEAT_FLOOR).any(axis=1)]
+    mean = shown.mean(axis=1).sort_values(ascending=False)
+    rows = [f'<tr><th scope="row">{e(t.names[c])}</th><td class="num" data-v="{mean[c] * 100:.4g}">{mean[c] * 100:.1f}</td>'
+            f'{_heat_cells(shown.loc[c])}</tr>' for c in mean.index]
+    foot = ('<tr><td>All commodities</td>' + f'<td class="num">{total.mean() * 100:.0f}</td>'
+            + "".join(f'<td class="num">{v * 100:.0f}</td>' for v in total) + "</tr>")
+    def dollars(v):
+        return f"${v:.2f}"
+    rrows = [f'<tr><th scope="row">{e(NEED_NAME[n])}</th><td class="num">{dollars(dn[n].sum())}</td><td class="num">{dollars(direct[n])}</td>'
+             f'<td class="num">{dollars(total[n] - dn[n].sum() - direct[n])}</td><td class="num" data-v="{total[n]:.4f}">{dollars(total[n])}</td></tr>'
+             for n in needs]
+    A_, I_ = _sym("A"), _sym("I")
+    inverse = _inv(f"<mrow><mo>(</mo>{I_}<mo>&minus;</mo>{A_}<mo>)</mo></mrow>")
+    least, most = total.idxmin(), total.idxmax()
+    (top_c, top_n), top_v = shown.stack().idxmax(), shown.values.max()
+    body = f"""
+{_account_crumbs()}
+<h1 class="long">{_m(_vec("x", "x"))}, the output behind each need</h1>
+<p class="lede">Everything the economy must produce to deliver a dollar of a need: the dollar itself, the inputs to it,
+the inputs to those, and the equipment and buildings used up along the way. There is one {_m(_vec("x", "x"))} for each need.</p>
+{_figures([("Size", f"{len(x)} &times; {len(needs)}", "commodities by needs"),
+           ("Output behind a dollar", f"${total.min():.2f} to ${total.max():.2f}", e(f"from {NEED_NAME[least].lower()} to {NEED_NAME[most].lower()}")),
+           ("Commodities drawn on", f"{len(shown)}", f"of {len(x)} supply {HEAT_FLOOR * 100:.2f}&cent; or more to some need"),
+           ("Largest entry", f"{top_v * 100:.0f}&cent;", e(f"{t.names[top_c]}, for {NEED_NAME[top_n]}".lower()))])}
+
+<h2 id="about">How it is derived</h2>
+<p>From {_m(_vec("d", "x"))}, what the need's dollar buys, and {_m(A_)}, what it takes to make a dollar of each thing:</p>
+{_eqs([(_vec("x", "x"), f'{inverse}<mo>&#x2062;</mo>{_vec("d", "x")}'),
+       ("", f'{_vec("d", "x")}<mo>+</mo>{A_}<mo>&#x2062;</mo>{_vec("d", "x")}<mo>+</mo><msup>{A_}<mn>2</mn></msup><mo>&#x2062;</mo>{_vec("d", "x")}<mo>+</mo><mo>&hellip;</mo>')])}
+<p>The second line is the first written out round by round. The first term is the basket itself. The second is what
+is used up in making it, {_m(A_)} applied once. The third is what is used up in making that, and so on. The inverse adds up
+every round.</p>
+{table([th("Need"), th("The dollar itself", "num"), th("Its direct inputs", "num"), th("Everything further back", "num"), th("All output", "num")], rrows,
+       caption="Dollars of output, of all commodities together, behind one dollar of each need, by round.")}
+<p>A column adds up to more than a dollar because output is counted every time something is sold on: the wheat, the flour
+and the bread are each somebody's output. Counting equipment and buildings as inputs adds to it again.
+<a href="method.html#requirements">Total requirements</a> on the method page has the formulas, and
+<a href="sectors.html">the sector table</a> has more about each commodity.</p>
+
+<h2 id="table">The whole matrix</h2>
+{table([th("Commodity", sort="text"), th("Mean of the needs", "num", sort="num")] + _need_heads(), rows, attrs=" data-heatgrid", foot=foot,
+       caption=f"Cents of each commodity's output behind a dollar of each need. Click a heading to sort; sorting by a need shows what it "
+               f"draws on most. Entries under {HEAT_FLOOR * 100:.2f}&cent; are blank, and the {len(x) - len(shown)} commodities with no larger entry are left out.")}
+<p><a href="vector-x.csv">Download the matrix as CSV</a> ({len(x)} rows, sector codes in the first column, dollars per dollar).</p>
+<p class="note">{int((x.values < 0).sum())} entries are negative, all small: scrap and used goods, which a sector can sell more of than it buys.</p>
+"""
+    return page("x, the output behind each need", "method.html", body, long_title=True)
+
+
 def matrix_a_page(d: Data) -> str:
     m, t, s = d.io, d.io.t, d.sheets["A"]
     A, K = s.values, s.second
@@ -2278,20 +2451,22 @@ def account_section(d: Data) -> str:
     def row(lhs, rhs):
         return f'<mtr><mtd class="l">{lhs}</mtd><mtd><mo>=</mo></mtd><mtd class="r">{rhs}</mtd></mtr>'
     eq = _m('<mtable displaystyle="true" columnalign="right center left" columnspacing="0.3em" rowspacing="1.1em">'
-            + row(_sub(_X, "n"),
+            + row(_vec("x"),
                   f'<msup><mrow><mo>(</mo><mi>{_I}</mi><mo>&minus;</mo>{_A_LINK}<mo>)</mo></mrow><mrow><mo>&minus;</mo><mn>1</mn></mrow></msup>'
-                  f'<mo>&#x2062;</mo>{_sub(_D, "n")}')
+                  f'<mo>&#x2062;</mo>{_vec("d")}')
             + row(_sub("f", "a"),
                   f'<mfrac><mn>1</mn><mi>N</mi></mfrac><mo>&#x2062;</mo>{_sum("n")}{_sum("j")}{_sub("v", "jn")}'
                   f'{_sum("o")}{_sub("w", "jo")}<mo>&#x2062;</mo>{_sub("&theta;", "oa")}')
             + row("<mi>gap</mi>", f'{_sum("a")}{_sub("f", "a")}<mo>&#x2062;</mo>{_ONE_LESS_C}')
             + "</mtable>", block=True)
     where = [
-        (_sub(_D, "n"), f"final demand for need {_m('<mi>n</mi>')}, scaled to one dollar"),
+        (_vec("d"), f"final demand for need {_m('<mi>n</mi>')}, scaled to one dollar: "
+                     f'<a href="{SYMBOL_PAGES["d"]}">what each need\'s dollar buys</a>'),
         (_A_LINK, f'the input-output table, with capital counted as an input: <a href="{MATRIX_A}">the matrix and how it is derived</a>'),
-        (_sub(_X, "n"), 'everything the economy must produce, directly and indirectly, to deliver that dollar '
+        (_vec("x"), f'everything the economy must produce, directly and indirectly, to deliver that dollar: '
+                     f'<a href="{SYMBOL_PAGES["x"]}">the output behind each need</a> '
                         '(<a href="#requirements">total requirements</a>)'),
-        (_sub("v", "jn"), f"sector {_m('<mi>j</mi>')}'s share of the value added in {_m(_sub(_X, 'n'))}"),
+        (_sub("v", "jn"), f"sector {_m('<mi>j</mi>')}'s share of the value added in {_m(_vec('x'))}"),
         (_sub("w", "jo"), f"occupation {_m('<mi>o</mi>')}'s share of sector {_m('<mi>j</mi>')}'s wage bill"),
         (_sub("&theta;", "oa"), f"the share of occupation {_m('<mi>o</mi>')}'s work that is activity {_m('<mi>a</mi>')}"),
         ("<mi>N</mi>", f"the number of needs, {len(NEED_NAME)}, each counted equally"),
@@ -2409,6 +2584,7 @@ def main():
     for key in MATRIX_PAGES.replace("A", ""):
         pages[f"matrix-{key}.html"] = lambda d, key=key: matrix_page(d, key)
     pages[SYMBOL_PAGES["F"]], pages[SYMBOL_PAGES["w"]] = investment_page, weights_page
+    pages[SYMBOL_PAGES["d"]], pages[SYMBOL_PAGES["x"]] = basket_page, requirements_page
     for name, fn in pages.items():
         (SITE / name).write_text(fn(d), encoding="utf-8")
     for key, sheet in d.sheets.items():
@@ -2417,6 +2593,8 @@ def main():
     (SITE / MATRIX_PARTS).write_text(matrix_a_parts(d), encoding="utf-8")
     (SITE / "matrix-F.csv").write_text(d.capital.investment.to_csv(float_format="%.6g"), encoding="utf-8")
     (SITE / "vector-w.csv").write_text(d.capital.weight.rename("weight").to_csv(float_format="%.6g"), encoding="utf-8")
+    for letter, frame in zip("dx", d.need_dollars):
+        (SITE / f"vector-{letter}.csv").write_text(frame.to_csv(float_format="%.6g"), encoding="utf-8")
     (SITE / ".nojekyll").write_text("")
     print(f"wrote {len(pages)} pages to {SITE}")
 

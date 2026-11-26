@@ -77,6 +77,15 @@ def test_need_demand_adds_up(t):
     assert fd[basket.reindex(fd.index) == "none"].abs().sum() < 1e-6 * fd.sum()
 
 
+def test_a_need_dollar_and_the_output_behind_it(m):
+    d, x = A.need_dollars(m)
+    assert list(d.columns) == A.included_needs() and list(d.index) == m.t.commodities
+    assert np.allclose(d.sum(), 1.0) and (d.values >= 0).all()          # each need is one dollar
+    assert np.allclose(x.values, m.L.values @ d.values)
+    assert np.allclose(x.values, A.run(m).sector_by_need.values)        # the same figures the measures are built on
+    assert (x.sum() > 1.5).all() and (x.sum() < 3).all()                # output behind a dollar, counting every sale
+
+
 def test_configs_are_consistent(t):
     arch = pd.read_csv(M.CONFIG / "sector_archetypes.csv")
     caps = pd.read_csv(M.CONFIG / "archetype_capabilities.csv").set_index("archetype")
