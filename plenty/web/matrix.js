@@ -81,7 +81,7 @@
   function down() { return view.span * nr / nc; }
   plot.style.aspectRatio = nc + " / " + nr;
   var sheet = document.createElement("canvas"), pending = 0, pointer = null, lit = [];
-  var stops = [], paper = "#fff", rule = "#888", faint = "#888", series = "#36c", onLight = "#000", onDark = "#fff", face = "sans-serif";
+  var stops = [], paper = "#fff", off = "#eee", rule = "#888", faint = "#888", series = "#36c", onLight = "#000", onDark = "#fff", face = "sans-serif";
   sheet.width = nc;
   sheet.height = nr;
 
@@ -136,6 +136,7 @@
     var css = getComputedStyle(document.documentElement), get = function (k) { return css.getPropertyValue(k).trim(); };
     stops = [0, 1, 2, 3, 4].map(function (i) { return rgb(get("--heat-" + i)); });
     paper = get("--paper") || paper;
+    off = get("--bar") || off;
     rule = get("--rule") || rule;
     faint = get("--ink-2") || faint;
     series = get("--series") || series;
@@ -166,6 +167,18 @@
   function wide(cells) { return (cells / view.span * 100).toFixed(3) + "%"; }
   function tall(cells) { return (cells / down() * 100).toFixed(3) + "%"; }
   function named() { return cellPx() >= NAME_PX; }
+  // The view can run past the matrix's edges. This is the part of the matrix in it, in cells.
+  function seen() {
+    return { x0: Math.max(0, view.x), x1: Math.min(nc, view.x + view.span), y0: Math.max(0, view.y), y1: Math.min(nr, view.y + down()) };
+  }
+  // a line across the picture, and one down it, reach only as far as the matrix does
+  function fit(acrossIt, downIt) {
+    var s = seen();
+    acrossIt.style.left = wide(s.x0 - view.x);
+    acrossIt.style.right = wide(view.x + view.span - s.x1);
+    downIt.style.top = tall(s.y0 - view.y);
+    downIt.style.bottom = tall(view.y + down() - s.y1);
+  }
 
   function render() {
     pending = 0;
@@ -173,25 +186,33 @@
     var py = Math.max(1, Math.round(canvas.clientWidth * ratio * nr / nc));
     if (canvas.width !== px || canvas.height !== py) { canvas.width = px; canvas.height = py; }
     var ctx = canvas.getContext("2d"), cell = px / view.span, line = Math.max(1, Math.round(ratio)), c;
-    ctx.clearRect(0, 0, px, py);
+    var s = seen(), X = function (c) { return Math.round((c - view.x) * cell); }, Y = function (c) { return Math.round((c - view.y) * cell); };
+    var x0 = X(s.x0), y0 = Y(s.y0), w = X(s.x1) - x0, h = Y(s.y1) - y0;   // the matrix in the picture
+    ctx.fillStyle = off;                              // whatever of the picture is off the matrix is tinted
+    ctx.fillRect(0, 0, px, py);
+    ctx.clearRect(x0, y0, w, h);
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(sheet, view.x, view.y, view.span, down(), 0, 0, px, py);
+    ctx.drawImage(sheet, s.x0, s.y0, s.x1 - s.x0, s.y1 - s.y0, (s.x0 - view.x) * cell, (s.y0 - view.y) * cell, (s.x1 - s.x0) * cell, (s.y1 - s.y0) * cell);
     if (named()) {                                    // close in, a gap of paper between cells
       ctx.fillStyle = paper;
-      for (c = Math.ceil(view.x); c < view.x + view.span; c++) ctx.fillRect(Math.round((c - view.x) * cell), 0, line, py);
-      for (c = Math.ceil(view.y); c < view.y + down(); c++) ctx.fillRect(0, Math.round((c - view.y) * cell), px, line);
+      for (c = Math.ceil(s.x0); c < s.x1; c++) ctx.fillRect(X(c), y0, line, h);
+      for (c = Math.ceil(s.y0); c < s.y1; c++) ctx.fillRect(x0, Y(c), w, line);
     }
     ctx.fillStyle = rule;                             // and a rule between groups, on an axis still in groups
     ctx.globalAlpha = named() ? 1 : 0.55;
-    if (!cols.by) cols.runs.forEach(function (g) { if (g.from) ctx.fillRect(Math.round((g.from - view.x) * cell), 0, line, py); });
-    if (!rows.by) rows.runs.forEach(function (g) { if (g.from) ctx.fillRect(0, Math.round((g.from - view.y) * cell), px, line); });
+    if (!cols.by) cols.runs.forEach(function (g) { if (g.from) ctx.fillRect(X(g.from), y0, line, h); });
+    if (!rows.by) rows.runs.forEach(function (g) { if (g.from) ctx.fillRect(x0, Y(g.from), w, line); });
     ctx.globalAlpha = 1;
+    ctx.fillRect(x0 - line, y0 - line, line, h + 2 * line);           // an edge of the matrix that is in the picture is ruled;
+    ctx.fillRect(x0 + w, y0 - line, line, h + 2 * line);              // one at the picture's own edge falls outside it
+    ctx.fillRect(x0, y0 - line, w, line);
+    ctx.fillRect(x0, y0 + h, w, line);
     if (cellPx() >= VALUE_PX) {                       // closest in, the number on each cell
       ctx.font = "500 " + Math.round(Math.min(14, cellPx() / 3) * ratio) + "px " + face;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      for (var i = Math.floor(view.y); i < Math.min(nr, view.y + down()); i++) {
-        for (var j = Math.floor(view.x); j < Math.min(nc, view.x + view.span); j++) {
+      for (var i = Math.floor(s.y0); i < s.y1; i++) {
+        for (var j = Math.floor(s.x0); j < s.x1; j++) {
           var v = value[rows.at[i] * nc + cols.at[j]];
           if (!v) continue;
           ctx.fillStyle = v < 0 ? faint : luminance(shade(v)) > 0.2 ? onLight : onDark;
@@ -206,6 +227,7 @@
     selRow.style.display = rows.sel === null ? "none" : "block";
     selCol.style.display = cols.sel === null ? "none" : "block";
     selCell.style.display = rows.sel === null || cols.sel === null ? "none" : "block";
+    fit(selRow, selCol);
     if (rows.sel !== null) { selRow.style.top = selCell.style.top = tall(rows.pos[rows.sel] - view.y); selRow.style.height = selCell.style.height = tall(1); }
     if (cols.sel !== null) { selCol.style.left = selCell.style.left = wide(cols.pos[cols.sel] - view.x); selCol.style.width = selCell.style.width = wide(1); }
     plot.classList.toggle("mx-zoomed", view.span < nc);
@@ -226,11 +248,12 @@
     if (box.width !== w || box.height !== h) { box.width = w; box.height = h; }
     var ctx = box.getContext("2d"), cell = (across ? w : h) / span, room = (across ? h : w) - 2 * ratio, close = named();
     var gap = close ? Math.max(1, Math.round(ratio)) : 0, most = 0, p, v, at0, length;
-    for (p = Math.floor(from); p < Math.min(a.n, from + span); p++) most = Math.max(most, a.sums[a.at[p]]);
+    var first = Math.max(0, Math.floor(from)), end = Math.min(a.n, from + span);
+    for (p = first; p < end; p++) most = Math.max(most, a.sums[a.at[p]]);
     ctx.clearRect(0, 0, w, h);
     ctx.fillStyle = series;
     ctx.globalAlpha = close ? 0.4 : 0.75;
-    for (p = Math.floor(from); p < Math.min(a.n, from + span); p++) {
+    for (p = first; p < end; p++) {
       v = a.sums[a.at[p]];
       at0 = Math.round((p - from) * cell) + gap;
       length = most > 0 ? Math.max(0, v) / most * room : 0;
@@ -242,7 +265,7 @@
     ctx.font = Math.round(Math.min(11, cellPx() - 1) * ratio) + "px " + face;
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
-    for (p = Math.floor(from); p < Math.min(a.n, from + span); p++) {
+    for (p = first; p < end; p++) {
       var mid = (p + 0.5 - from) * cell, text = kind.brief(a.sums[a.at[p]]);
       if (!across) { ctx.fillText(text, 4 * ratio, mid); continue; }
       ctx.save();                                     // a column's figure is written down the strip
@@ -287,7 +310,7 @@
     box.classList.toggle("mx-named", names);
     var band = null;
     if (a.by) {
-      band = put("mx-group mx-sorted", from, to, sortedBy(a));
+      band = put("mx-group mx-sorted", Math.max(0, from), Math.min(a.n, to), sortedBy(a));
       band.textContent = sortedBy(a);
     } else a.runs.forEach(function (g, i) {
       var lo = Math.max(g.from, from), hi = Math.min(g.to, to);
@@ -298,7 +321,7 @@
     if (!names || !band) return;
     var font = Math.min(NAME_FONT, size / LINE), lines = Math.max(1, Math.floor(size / (font * LINE) + 0.01));
     var length = box.clientHeight - band.offsetHeight - SORT_PX;   // room for a name written up the top strip
-    for (var p = Math.floor(from); p < Math.min(a.n, Math.ceil(to)); p++) {
+    for (var p = Math.max(0, Math.floor(from)); p < Math.min(a.n, Math.ceil(to)); p++) {
       var c = a.at[p], first = !a.by && c && a.groups[c] !== a.groups[c - 1];
       var s = put("mx-name" + (first ? " first" : "") + (a.sel === c ? " sel" : ""), p, p + 1, a.names[c]);
       var text = el("span", lines > 1 ? "mx-text" : "mx-text one", a.names[c]), holder = s;
@@ -466,10 +489,14 @@
     });
   });
 
+  // The view may run past an edge of the matrix by half its own width, so that a cell at the edge
+  // can be brought to the middle of the picture. It may not run past by more than it is zoomed in
+  // by, so that the whole matrix, once it is all in view, sits square in the picture.
   function settle() {
     view.span = Math.min(nc, Math.max(MIN_SPAN, view.span));
-    view.x = Math.min(nc - view.span, Math.max(0, view.x));
-    view.y = Math.min(nr - down(), Math.max(0, view.y));
+    var past = Math.min(view.span / 2, nc - view.span), pastDown = past * nr / nc;
+    view.x = Math.min(nc - view.span + past, Math.max(-past, view.x));
+    view.y = Math.min(nr - down() + pastDown, Math.max(-pastDown, view.y));
     schedule();
   }
   // zoom by a factor, keeping the point (fx, fy) of the picture, each 0 to 1, where it is
@@ -503,6 +530,7 @@
     window.plentyTip.show(describe(c.i, c.j), e);
     hLine.style.display = vLine.style.display = "block";
     hLine.className = vLine.className = band ? "band" : "";
+    fit(hLine, vLine);
     hLine.style.top = tall(c.y - view.y + (band ? 0 : 0.5));
     vLine.style.left = wide(c.x - view.x + (band ? 0 : 0.5));
     hLine.style.height = band ? tall(1) : "";
