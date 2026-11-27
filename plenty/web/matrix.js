@@ -424,9 +424,10 @@
     if (j !== null) line(M.colIs, cols, j);
     if (i !== null && j !== null) {
       note.appendChild(el("p", "", "Cell: " + amount(i, j)));
-      if (M.parts && M.why !== "tasks") note.appendChild(derivation(i, j));
+      if (M.parts && !M.why) note.appendChild(derivation(i, j));
     }
     if (M.why === "tasks" && i !== null) note.appendChild(rowParts(i));
+    if (M.why === "activity" && i !== null) note.appendChild(activityParts(i));
   }
 
   // --- what is marked, taken apart. What it is made of comes in a file of its own (M.parts),
@@ -440,7 +441,7 @@
     var s = document.createElement("script");
     s.src = M.parts;
     s.onload = function () {
-      parts = M.why === "tasks" ? window.PLENTY_MATRIX_PARTS : cellParts(window.PLENTY_MATRIX_PARTS);
+      parts = M.why ? window.PLENTY_MATRIX_PARTS : cellParts(window.PLENTY_MATRIX_PARTS);
       remark();
     };
     s.onerror = function () { parts = false; remark(); };
@@ -555,6 +556,52 @@
     wrap.appendChild(table);
     box.appendChild(wrap);
     fold(box, body, Math.max(WHY, whole + half));
+    return box;
+  }
+  // How a marked row of h is made up. h = f m (1 - e), entry by entry: the activity's row of f, and
+  // the two things judged of it, said in words with what the open implementation is. Under them, the
+  // detailed activities O*NET files under this one, which say what the work is.
+  var KIND = { information: "information work", physical: "work that needs a body to act through", people: "work in which the person doing it is the point" };
+  var IS_DEFINED = { yes: "well defined: its result could be checked", partly: "partly well defined: part of its result could be checked", no: "not well defined: no test would settle its result" };
+  function activityParts(i) {
+    var got = partsBox("the activities"), box = got.box;
+    if (!got.ready) return box;
+    var m = DEFINED[parts.defined[i]], e = DEFINED[parts.open[i]];
+    var wrap = el("div", "scroll"), table = el("table", "ledger"), body = el("tbody");
+    table.appendChild(headRow([M.colTip, "f, \u00a2", "m", "1 \u2212 e", "h, \u00a2"]));
+    parts.f[i].forEach(function (f, n) {
+      var row = el("tr"), name = el("th", "", cols.names[n]);
+      name.scope = "row";
+      row.appendChild(name);
+      [fine(f), m.toFixed(1), (1 - e).toFixed(1), fine(f * m * (1 - e))].forEach(function (x) { row.appendChild(el("td", "num", x)); });
+      body.appendChild(row);
+    });
+    table.appendChild(body);
+    wrap.appendChild(table);
+    box.appendChild(wrap);
+    var said = "It is " + KIND[parts.kind[i]] + ", and is judged " + IS_DEFINED[parts.defined[i]] + ". ";
+    said += parts.open[i] === "no" ? "No open implementation of it is known." :
+      (parts.open[i] === "yes" ? "An open implementation is known: " : "An open implementation is known for part of it: ") + parts.basis[i] + ".";
+    if (parts.unpaid[i] > 0) said += " Of the " + fine(parts.f[i][0]) + "\u00a2 with the needs counted equally, " + fine(parts.unpaid[i]) + "\u00a2 is unpaid work at home.";
+    box.appendChild(el("p", "", said));
+    var under = parts.detailed[i];
+    if (!under.length) return box;
+    box.appendChild(el("p", "", "O*NET files " + count(under.length, "detailed activity", "detailed activities") + " under it. Their paid work, with the needs counted equally:"));
+    wrap = el("div", "scroll");
+    table = el("table", "ledger");
+    body = el("tbody");
+    table.appendChild(headRow(["Detailed activity", "\u00a2 of a need dollar"]));
+    under.forEach(function (x) {
+      var row = el("tr"), name = el("th", "", x[0]);
+      name.scope = "row";
+      row.appendChild(name);
+      row.appendChild(el("td", "num", fine(x[1])));
+      body.appendChild(row);
+    });
+    table.appendChild(body);
+    wrap.appendChild(table);
+    box.appendChild(wrap);
+    fold(box, body, WHY);
     return box;
   }
   [rows, cols].forEach(function (a) {

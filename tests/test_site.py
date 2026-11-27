@@ -99,7 +99,7 @@ def test_every_unit_has_a_page_and_every_term_links_to_its_units(built):
             for term in terms:
                 assert f'<a href="{built.sheets[term].href}"' in page.split(f"<dt>{how}</dt>")[1].split("</dd>")[0], (key, how, term)
     x = site.unit_users(built, units["need-dollar"])
-    assert x["Entries of"] == list("xpkodfGb") and not x["Rows of"] and not x["Columns of"]
+    assert x["Entries of"] == list("xpfhdGbko") and not x["Rows of"] and not x["Columns of"]
     assert site.unit_users(built, units["need"]) == {"Rows of": [site.OMEGA], "Columns of": ["x", "d", "Y", "v"], "Entries of": []}
 
 
@@ -108,9 +108,13 @@ def test_the_account_is_five_equations_and_a_table_of_every_term(built):
     account = html[:html.index('id="order"')]
     assert account.count('<math display="block"') == 1 and account.count("<mtr>") == 5
     # what the lines come to is said under them, for each way of weighing the needs
-    k, b, gap = (built.sheets[key].values.sum() for key in "kbo")
-    assert f"{k.equal * 100:.1f} cents" in html and f"{b.equal * 100:.1f} cents" in html and f"{len(built.sheets['k'].values)}\nsoftware capabilities" in html
+    f, gap, o = (built.sheets[key].values.sum() for key in "fho")
+    assert f"{f.equal * 100:.0f} cents of work" in html and f"{len(built.sheets['f'].values)} work activities" in html
     assert all(f"{x * 100:.1f}" in html for x in gap) and (site.gap(built) == gap).all()
+    # how much of the gap is information work and how much needs a body, and what the same question comes to for software
+    thought = (built.sheets["h"].values.equal * built.sheets["s"].values.iloc[:, 0]).sum()
+    assert f"{thought * 100:.1f} are information work" in html and f"{(gap.equal - thought) * 100:.1f} are work that needs a\nbody" in html
+    assert f"{o.equal * 100:.1f} cents" in html and f"{len(built.sheets['k'].values)} software capabilities" in html
     assert f"{built.sheets['G'].values.values.sum() * 100:.0f} cents" in html
     table = html[html.index('id="terms"'):]
     for key, sheet in built.sheets.items():
@@ -219,9 +223,16 @@ def test_the_equations_the_pages_print_hold_of_the_matrices_they_show(built):
     assert np.allclose(c, (N.values @ has.values) / N.values.sum(axis=1))
     lacking = N.values @ (1 - has.values)
     assert np.allclose(a[lacking > 0], (N.values @ (defined.values * (1 - has.values)))[lacking > 0] / lacking[lacking > 0]) and (a[lacking == 0] == 0).all()
-    o = k * (a.values * (1 - c.values))[:, None]                                 # the fourth line, and the fifth
-    assert np.allclose(o, v["o"].loc[phi.columns].values, atol=1e-12)
-    assert np.allclose(site.gap(built), o.sum(axis=0)) and (0 < o.sum(axis=0)).all() and (o.sum(axis=0) < k.sum(axis=0)).all()
+    o = k * (a.values * (1 - c.values))[:, None]                                 # the overhang of software capabilities
+    assert np.allclose(o, v["o"].loc[phi.columns].values, atol=1e-12) and (0 < o.sum(axis=0)).all() and (o.sum(axis=0) < k.sum(axis=0)).all()
+    # the fourth line of the account, and the fifth: what is judged of each activity, from the file of judgments
+    m, e = col("m")[theta.columns], col("e")[theta.columns]
+    judged = built.judged.loc[theta.columns]
+    assert set(judged.well_defined) == set(judged.open) == set(site.DEFINED) and (judged.open_basis != "").eq(judged.open != "no").all()
+    assert (m == judged.well_defined.map(site.DEFINED)).all() and (e == judged.open.map(site.DEFINED)).all()
+    h = f.T * (m.values * (1 - e.values))[:, None]
+    assert np.allclose(h, v["h"].loc[theta.columns].values, atol=1e-12)
+    assert np.allclose(site.gap(built), h.sum(axis=0)) and (o.sum(axis=0) < h.sum(axis=0)).all() and (h.sum(axis=0) < f.sum(axis=1)).all()
 
 
 def test_every_term_has_a_page_with_its_picture_and_its_data(built):
@@ -240,7 +251,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
         for made_from in site.USES.get(key, ()):
             assert f'href="{site.SYMBOL_PAGES[made_from]}"' in spec, (key, made_from)
         users = [k for k in site.TERMS if key in site.USES.get(k, ())]
-        assert ("<dt>Used in</dt>" in spec) == bool(users or key == "o"), key
+        assert ("<dt>Used in</dt>" in spec) == bool(users or key == "h"), key
         for user in users:
             assert f'href="{site.SYMBOL_PAGES[user]}"' in spec, (key, user)
         assert f'href="{site.HOME}"' in html and f'<a href="{sheet.href}"' not in html     # it leads back, and not to itself
@@ -280,7 +291,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert (at[0] >= 0).all() and (at[1] >= 0).all() and len(csv) == (x != 0).sum(), key
             got[at] = csv.value
             assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRu")
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhme")
     assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == ["R"]
     assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
@@ -336,21 +347,51 @@ def test_a_cell_of_A_can_be_taken_apart(built):
     assert len(parts["industries"]) == b.shape[1] and all(isinstance(x, str) and x for x in parts["industries"])
     assert np.abs(got_b @ got_d - a)[kept].max() < 2e-4          # the terms a reader is shown add up to the cell, nearly
     assert 'id="mx-why"' in html
-    assert not any('id="mx-why"' in (site.SITE / s.href).read_text() for key, s in built.sheets.items() if key not in "Ao")
+    assert not any('id="mx-why"' in (site.SITE / s.href).read_text() for key, s in built.sheets.items() if key not in "Aoh")
 
 
 def test_the_order_to_work_in_is_shown_and_a_row_of_it_can_be_taken_apart(built):
-    sheet = built.sheets["o"]
+    sheet = built.sheets["h"]
     data = _data(sheet)
-    # the picture opens sorted by its first column, largest first, on its first rows; no other term's does
-    assert data["start"] == {"sort": 0, "rows": site.ORDER_ROWS} and data["why"] == "tasks" and data["lock"]
-    assert not any("start" in _data(s) or "why" in _data(s) for key, s in built.sheets.items() if key != "o")
+    # the picture opens sorted by its first column, largest first, on its first rows, as that of software capabilities does and no other
+    opening = {"sort": 0, "rows": site.ORDER_ROWS}
+    assert data["start"] == opening and data["why"] == "activity" and data["lock"]
+    assert _data(built.sheets["o"])["start"] == opening and _data(built.sheets["o"])["why"] == "tasks"
+    assert not any("start" in _data(s) or "why" in _data(s) for key, s in built.sheets.items() if key not in "ho")
     # it is on the home page, under the equations and over the table of terms, and on its own page, with the words for a row's parts
     home = (site.SITE / site.HOME).read_text()
     assert home.index("</math>") < home.index('id="order"') < home.index('id="mx-canvas"') < home.index('id="terms"')
     assert f'<script src="{sheet.data_file}"></script><script src="matrix.js"></script>' in home
     for text in (home, (site.SITE / sheet.href).read_text()):
         assert text.count('id="mx-why"') == 1 and text.count('id="mx-canvas"') == 1
+    # the file behind a row's parts: its row of f and the unpaid part of it, what is judged of it, and the detailed activities under it
+    text = (site.SITE / data["parts"]).read_text()
+    parts = json.loads(text[text.index("{"):text.rindex("}") + 1])
+    acts = data["rows"]["codes"]
+    f, h = built.sheets["f"].values.loc[acts].values, sheet.values.loc[acts].values
+    m, e = (np.array([site.DEFINED[x] for x in parts[key]]) for key in ("defined", "open"))
+    assert np.allclose(parts["f"], f, atol=1e-8) and np.allclose(np.array(parts["f"]) * (m * (1 - e))[:, None], h, atol=1e-7)
+    assert np.allclose(parts["unpaid"], built.unpaid[0].sum()[acts], atol=1e-8) and (np.array(parts["unpaid"]) <= f[:, 0] + 1e-8).all()
+    judged = built.judged.loc[acts]
+    assert parts["kind"] == list(judged.kind) and parts["basis"] == list(judged.open_basis)
+    assert all(bool(b) == (o != "no") for b, o in zip(parts["basis"], parts["open"]))
+    fine = built.act[built.act.level == "detailed"]
+    assert sum(len(x) for x in parts["detailed"]) == len(fine)
+    for i, a in enumerate(acts):
+        mine = fine[fine.parent == a]
+        assert {x[0] for x in parts["detailed"][i]} == set(mine.name.str.rstrip(".")), a
+        flows = [x[1] for x in parts["detailed"][i]]
+        assert flows == sorted(flows, reverse=True) and sum(flows) == pytest.approx(mine.flow.sum(), abs=1e-6), a
+    # the first of the order, with the needs counted equally
+    first = int(np.argmax(h[:, 0]))
+    assert data["rows"]["names"][first] == "Clean tools, equipment, facilities, or work areas."
+    assert (parts["defined"][first], parts["open"][first], parts["kind"][first]) == ("yes", "no", "physical")
+
+
+def test_a_row_of_the_software_order_can_be_taken_apart_into_its_tasks(built):
+    sheet = built.sheets["o"]
+    data = _data(sheet)
+    assert 'id="mx-why"' in (site.SITE / sheet.href).read_text()
     # the file behind a row's parts: its row of k, its a and c, and its tasks as the taxonomy has them
     text = (site.SITE / data["parts"]).read_text()
     parts = json.loads(text[text.index("{"):text.rindex("}") + 1])
@@ -368,7 +409,7 @@ def test_the_order_to_work_in_is_shown_and_a_row_of_it_can_be_taken_apart(built)
         closed = [x for x in parts["tasks"][i] if not x[1]]
         assert c[i] == pytest.approx(1 - len(closed) / len(mine), abs=1e-6), cap
         assert a[i] == pytest.approx(sum(score[x[2]] for x in closed) / len(closed) if closed else 0.0, abs=1e-6), cap
-    # the first of the order, with the needs counted equally, and what there is to build in it
+    # the first of that order, with the needs counted equally, and what there is to build in it
     first = int(np.argmax(o[:, 0]))
     assert data["rows"]["names"][first] == "Medical coding, billing and claims"
     assert [x[0] for x in parts["tasks"][first] if not x[1] and x[2] == "yes"] == [

@@ -355,9 +355,14 @@ goes into, and shows the whole of it as a picture that can be zoomed, sorted and
 Every unit has a page too: what a row or a column is one of (a commodity, an occupation), and
 what an entry is measured in (a need dollar, a work dollar). A term's page links to its units.
 
-The home page ends with the last term sorted, which is the order to work in: the capabilities
-with the most well-defined work and no known open tool. A marked row is taken apart under the
-picture, into the terms it is made from and the capability's tasks, the ones to build first.
+The home page ends with the last term sorted, which is the order to work in: O*NET's work
+activities with the most well-defined work and no known open implementation, whatever would
+carry one out: software, a written procedure or a mechanism. Whether an activity is well
+defined, and whether an open implementation of it is known, are judged one activity at a time
+in `config/activities.csv`. A marked row is taken apart under the picture, into the terms it
+is made from, what is judged of it, and the detailed activities filed under it. The same
+question put to the software that information work is done with today is beside it, as a
+term of its own.
 
 `.github/workflows/site.yml` rebuilds and publishes it on every push to `main`. GitHub Pages
 must be set to deploy from GitHub Actions (Settings > Pages > Source).

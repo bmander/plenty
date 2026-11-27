@@ -49,7 +49,9 @@ class Data:
         self.cap_acct = pd.read_csv(RESULTS / "capability_flow_accounting.csv", index_col=0).flow
         # Which work software could do at all: each activity is information work, or needs a body, or
         # is work in which the person is the point. Judgment, made by hand.
-        self.kinds = pd.read_csv(M.CONFIG / "activity_kinds.csv", index_col=0).kind
+        # and of each: whether doing it has a result that could be checked, and whether an open implementation of it is known
+        self.judged = pd.read_csv(M.CONFIG / "activities.csv", index_col=0).fillna({"open_basis": ""})
+        self.kinds = self.judged.kind
         # Households (data/households): how people spend their time, and what households at each level of income spend
         households = M.ROOT / "data" / "households"
         self.time_use = pd.read_csv(households / "time_use_2017.csv").drop_duplicates("activity", keep=False).set_index("activity").hours_per_day
@@ -307,20 +309,20 @@ GREEK = {THETA: ("Theta", "&#x1D6AF;"), PHI: ("Phi", "&#x1D6BD;"), OMEGA: ("omeg
 HOURS_A_YEAR = 2080                   # a year of full-time work, which turns a yearly wage into an hourly one
 # the terms, in the order the account's table lists them
 GROUPS = [
-    ("The account", ["x", "p", "k", "o"]),
+    ("The account", ["x", "p", "f", "h"]),
     ("Needs", ["d", "Y", OMEGA]),
     ("The input-output model", ["L", "A", "B", "D", "U", "V", "g", "q"]),
     ("Capital", ["K", "F", "H", "S", "z"]),
     ("Value added", ["v", "r", "y"]),
     ("Work", ["W", "P", "T", "E", "M"]),
-    ("Software capabilities", [PHI, "J", "Q", "R", "u", "a", "c", "N", "t", "w"]),
-    ("Work activities", ["f", THETA, "G", "s", "b"]),
+    ("Work activities", [THETA, "G", "m", "e", "s", "b"]),
+    ("Software capabilities", ["k", "o", PHI, "J", "Q", "R", "u", "a", "c", "N", "t", "w"]),
 ]
 TERMS = [k for _, keys in GROUPS for k in keys]
 DEFINED = {"yes": 1.0, "partly": 0.5, "no": 0.0}     # how far a task the taxonomy calls benchmarkable counts as well defined
 PER_NEED = "dxv"                      # the vectors there is one of for each need, written with a subscript n
 # what each computed term is made from; a term that is not here is data
-USES = {"x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "o": ["k", "a", "c"], PHI: ["J", "Q", "R", "u"], "u": ["Q", "R"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
+USES = {"x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "h": ["f", "m", "e"], "o": ["k", "a", "c"], PHI: ["J", "Q", "R", "u"], "u": ["Q", "R"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
         "f": ["p", THETA, "G"], "G": ["E", "M", "Y"], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
         "D": ["V", "q"], "g": ["V"], "q": ["V"], "K": ["F", "H", "S"], "S": ["z", "H"], "z": ["g", "H"],
         "v": ["r", "x"], "r": ["y", "g", "D"], "W": ["P"], "P": ["T", "E", "M"]}
@@ -342,7 +344,8 @@ SOC_SHORT = {"11": "Management", "13": "Business, finance", "15": "Computing, ma
 INVESTOR_NAME = {"private": "Private business", "residential": "Housing", "fed_defense": "Federal defense",
                  "fed_nondefense": "Federal nondefense", "state_local": "State and local government"}
 MATRIX_PARTS = "matrix-A-parts.js"   # B and D, fetched when a cell of A is first marked
-ORDER_PARTS = "vector-o-parts.js"    # k, a, c and the tasks of each capability, fetched when a row of o is first marked
+ORDER_PARTS = "vector-h-parts.js"    # what each activity is made of and what is judged of it, fetched when a row of h is first marked
+TASK_PARTS = "vector-o-parts.js"     # k, a, c and the tasks of each capability, fetched when a row of o is first marked
 ORDER_ROWS = 25                      # the rows of o in view when its picture opens: the first of the order to work in
 MATRIX_PART_CUT = 1e-5     # entries of B under a thousandth of a cent are left out of that file
 MATRIX_WIDTH, MATRIX_HEIGHT = 802, 780   # the most a picture takes of the page, in CSS pixels
@@ -425,7 +428,8 @@ def _elt(shown: str, sub: str, page: str = "", here: str = "") -> str:
     term it is an entry of (page, a key of SYMBOL_PAGES) except on that page."""
     if not page or page == here:
         return _sub(shown, sub)
-    italic = f"&#x{0x1D44E + ord(shown) - ord('a'):X};"
+    # Unicode's mathematical italic letters, among which h has a place of its own
+    italic = "&#x210E;" if shown == "h" else f"&#x{0x1D44E + ord(shown) - ord('a'):X};"
     return f'<mi><a href="{SYMBOL_PAGES[page]}">{italic}<sub><i>{sub}</i></sub></a></mi>'
 
 
@@ -481,6 +485,8 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     if key == "k":        # and the information work in it, paid and unpaid, by the software it is done with
         work = f'{S("p")}{_HADAMARD}{S(THETA)}{_TIMES}{S("s")}<mo>+</mo>{S("G")}{_TIMES}{S("s")}'
         return S("k", T=True), f'<msup>{_paren(work)}{_TR}</msup>{_TIMES}{S(PHI)}'
+    if key == "h":        # entry by entry: what goes to an activity, that is well defined, and has no open implementation
+        return S("h"), f'{S("f")}{_HADAMARD}{S("m")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("e")}")}'
     if key == "o":        # entry by entry: what is paid for work with a capability, that is well defined, and is not open
         return S("o"), f'{S("k")}{_HADAMARD}{S("a")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("c")}")}'
     if key == PHI:        # an occupation's products in each capability, weighted by how specific the capability is, as shares of a row
@@ -500,7 +506,7 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     if key == "b":        # what software could not do: the work that needs a body or a person
         return S("b"), f'{S("f")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("s")}")}'
     if key == "gap":      # and the whole of it
-        return "<mi>gap</mi>", f'<msup>{_ONES}{_TR}</msup>{_TIMES}{S("o")}'
+        return "<mi>gap</mi>", f'<msup>{_ONES}{_TR}</msup>{_TIMES}{S("h")}'
     if key == "d":        # the matrix whose columns are the d of each need
         first, last = _vec("d", here, sub="1"), _vec("d", here, sub="N")
         return (f"<mrow><mo>[</mo>{first}<mspace width=\"0.3em\"/><mo>&#x22EF;</mo><mspace width=\"0.3em\"/>{last}<mo>]</mo></mrow>",
@@ -534,7 +540,7 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     raise KeyError(key)
 
 
-EQUATIONS = ["x", "p", "k", "o", PHI, "u", "a", "c", "f", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
+EQUATIONS = ["x", "p", "f", "h", "k", "o", PHI, "u", "a", "c", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
 # What one entry of each term is measured in, in a few words. A unit that has a page is written
 # [as it reads here|the name its page is filed under], and is a link wherever this is set as HTML.
@@ -542,7 +548,9 @@ _WORK = "[work dollars|work-dollar] per [need dollar|need-dollar]"
 _MILLIONS, _MARK = "[millions of dollars|million-dollars], in 2017", "[one or zero|one-or-zero]"
 MEASURED_IN = {
     "x": "[commodity dollars|commodity-dollar] produced per [need dollar|need-dollar]",
-    "p": _WORK, "k": _WORK, "o": _WORK, "f": _WORK, "b": _WORK, "G": _WORK,
+    "p": _WORK, "k": _WORK, "o": _WORK, "f": _WORK, "h": _WORK, "b": _WORK, "G": _WORK,
+    "m": "the well-defined part of the activity, a [share|share] of one",
+    "e": "the part of the activity that has an open implementation, a [share|share] of one",
     "d": "[commodity dollars|commodity-dollar] bought per [need dollar|need-dollar]",
     "Y": _MILLIONS, "U": _MILLIONS, "V": _MILLIONS, "g": _MILLIONS, "q": _MILLIONS, "K": _MILLIONS, "F": _MILLIONS,
     "z": _MILLIONS, "y": _MILLIONS,
@@ -718,6 +726,8 @@ def sheets(d: Data) -> dict[str, Sheet]:
     information = by_occ.mul(d.theta.values @ info.values, axis=0).add(unpaid.values @ info.values, axis=0)
     flow = frame(d.phi.values.T @ information.values, caps)                                 # k
     overhang = flow.mul(d.defined_share * (1 - d.open_share), axis=0)                       # o
+    defined, opened = (d.judged[c].map(DEFINED).reindex(act.index) for c in ("well_defined", "open"))      # m, e
+    by_activity_overhang = to_activity.mul(defined * (1 - opened), axis=0)                 # h
     out = [
         # --- the account
         Sheet("x", "the output behind a dollar of each need", "per_dollar", xn.loc[com], t.names,
@@ -738,12 +748,20 @@ def sheets(d: Data) -> dict[str, Sheet]:
               note="Only information work is placed here. Work that needs a body or a person is not, and nor is the work of "
                    "occupations that list no software, or software the taxonomy does not place.",
               row_tip="Capability", code="plenty/flows.py", sums="cols", order=capability_order),
-        Sheet("o", "the overhang of each capability", "per_dollar", overhang,
+        Sheet("h", "the overhang of each work activity", "per_dollar", by_activity_overhang, **by_activity, **by_weighing,
+              rows="O*NET's intermediate work activities",
+              entries="Dollars per need dollar, paid and unpaid, that go to the activity, times the part of it that is well "
+                      "defined, times the part that has no known open implementation.",
+              note=f"A column adds up to the gap. Sorted, it is the order to work in, as far as the two judgments it rests on "
+                   f"can be trusted. Work that needs a body is in it: {_m(_sym('s'))} says which, and a capability of that "
+                   "kind needs a machine to act through as well as the processing.",
+              row_tip="Activity", code="plenty/site.py", sums="cols", order=activity_order),
+        Sheet("o", "the overhang of each software capability", "per_dollar", overhang,
               **by_capability, **by_weighing, rows="the taxonomy's software capabilities",
               entries="Dollars per need dollar: what is paid for information work done with the capability, times the share of "
                       "its tasks that have no known open tool, times the share of those that is well defined.",
-              note="A column adds up to the gap. Sorted, it is the order to work in, as far as the terms it is made from can be "
-                   "trusted.",
+              note=f"It is the same question as {_m(_sym('h'))} asks, put to the software that information work is done with "
+                   "today and not to the work itself. Work that needs a body is not in it.",
               row_tip="Capability", code="plenty/site.py", sums="cols", order=capability_order),
         # --- needs
         Sheet("d", "the commodities a dollar of each need buys", "per_dollar", dn.loc[com], t.names,
@@ -1045,11 +1063,33 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Occupation", col_tip="Activity", axis="Work activities", code="plenty/site.py",
               row_groups=occ.major, col_groups=act.parent.map(d.act.name), short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
               sums="both", order=f"Occupations are in {occupation_order[len('occupations in '):]}. {activity_order}"),
+        Sheet("m", "the well-defined part of each activity", "share", **lone(defined, "m", "Well defined", "share"), **by_activity,
+              rows="O*NET's intermediate work activities",
+              entries="One where doing the activity has a result that could be checked: a record that is right, an amount "
+                      "that is correct, a part within its tolerance, a surface that is clean. A half where part of the result "
+                      "could be checked and the rest is a judgment of quality. Zero where the result rests on taste, trust, "
+                      "authority or a relationship, and no test would settle it.",
+              source=f"Judgment, made by hand, one activity at a time: {_file('config/activities.csv')}.",
+              note="An activity is broad, and the judgment is of the ordinary run of it. It says the result could be checked, "
+                   "not that anyone yet knows how to produce it.",
+              row_tip="Activity", code="plenty/site.py", order=activity_order),
+        Sheet("e", "the part of each activity that has an open implementation", "share",
+              **lone(opened, "e", "Open implementation", "share"), **by_activity,
+              rows="O*NET's intermediate work activities",
+              entries="One where something open is known that does the ordinary run of the activity by itself, a half where "
+                      "it does a recognizable part of it or works only in narrow conditions, and zero where nothing is known. "
+                      "The implementation may be software, a published procedure or the design of a mechanism. A tool that a "
+                      "person does the work with does not count.",
+              source=f"Judgment, made by hand, one activity at a time, with what the implementation is: "
+                     f"{_file('config/activities.csv')}.",
+              note=f"The implementations were named from memory and have not been checked. {int((opened > 0).sum())} of the "
+                   f"{len(opened)} activities have one, all but {int((opened == 1).sum())} of them in part.",
+              row_tip="Activity", code="plenty/site.py", order=activity_order),
         Sheet("s", "the activities that are information work", "mark", **lone(info, "s", "Information work", "one or zero"), **by_activity,
               rows="O*NET's intermediate work activities",
               entries="One where the activity is information work, which software could do, and zero where it needs a body or is "
                       "work in which the person is the point.",
-              source=f"Judgment, made by hand, one activity at a time: {_file('config/activity_kinds.csv')}.",
+              source=f"Judgment, made by hand, one activity at a time: {_file('config/activities.csv')}.",
               row_tip="Activity", code="plenty/site.py", blanks=("needs a body or a person", "zero"), marked="is information work",
               order=activity_order),
         Sheet("b", "the part of a need dollar that pays for work that needs a body", "per_dollar",
@@ -1059,8 +1099,9 @@ def sheets(d: Data) -> dict[str, Sheet]:
                       "software capability reaches it without a machine to act through.",
               row_tip="Activity", code="plenty/site.py", sums="cols", order=activity_order),
     ]
-    assert [s.key for s in out] == TERMS, "the terms and their pages have fallen out of step"
-    return {s.key: s for s in out}
+    by_key = {s.key: s for s in out}
+    assert len(by_key) == len(out) and set(by_key) == set(TERMS), "the terms and their pages have fallen out of step"
+    return {key: by_key[key] for key in TERMS}
 
 
 def sheet_data(s: Sheet, **extra) -> str:
@@ -1107,12 +1148,41 @@ def matrix_data(d: Data, key: str) -> str:
     s = d.sheets[key]
     if key == "A":
         return sheet_data(s, parts=MATRIX_PARTS)
-    if key == "o":      # its picture opens in order: sorted by its first column, largest first, with the first row marked
-        return sheet_data(s, parts=ORDER_PARTS, why="tasks", start={"sort": 0, "rows": ORDER_ROWS})
+    start = {"sort": 0, "rows": ORDER_ROWS}       # a picture that opens in order: sorted by its first column, largest first, the first row marked
+    if key == "h":
+        return sheet_data(s, parts=ORDER_PARTS, why="activity", start=start)
+    if key == "o":
+        return sheet_data(s, parts=TASK_PARTS, why="tasks", start=start)
     return sheet_data(s)
 
 
 def order_parts(d: Data) -> str:
+    """What a row of h is made of, for the page to show when a row is marked: the activity's row of f
+    and how much of it is unpaid work at home, what is judged of it, and the detailed work activities
+    O*NET files under it, each with its part of the paid need dollar, needs counted equally."""
+    acts = d.sheets["h"].values.index
+    j, unpaid = d.judged.loc[acts], d.unpaid[0].sum()[acts]
+    fine = d.act[d.act.level == "detailed"]
+    under = {a: g.sort_values("flow", ascending=False) for a, g in fine.groupby("parent")}
+    payload = {"f": [[round(float(x), 8) for x in row] for row in d.sheets["f"].values.loc[acts].values],
+               "unpaid": [round(float(x), 8) for x in unpaid],
+               "defined": list(j.well_defined), "open": list(j.open), "basis": list(j.open_basis), "kind": list(j.kind),
+               "detailed": [[[n.rstrip("."), round(float(x), 8)] for n, x in zip(under[a].name, under[a].flow)] if a in under else [] for a in acts]}
+    return "window.PLENTY_MATRIX_PARTS = " + json.dumps(payload, separators=(",", ":")) + ";\n"
+
+
+def order_template(here: str = "") -> str:
+    """What the script writes over the parts of a marked row of h."""
+    i = lambda letter: _elt(letter, "i", letter, here)
+    parts = f'{i("h")}<mo>=</mo>{i("f")}{_TIMES}{i("m")}{_TIMES}{_paren(f"<mn>1</mn><mo>&minus;</mo>{i('e')}")}'
+    return f"""<template id="mx-why"><h3>The parts of the row</h3>
+<p>A row of {_m(_sym("h", here))} is the activity's row of {_m(_sym("f"))}, times the part of the activity that is well
+defined, {_m(_sym("m"))}, times the part that has no open implementation:</p>
+{_m(parts, block=True)}</template>
+"""
+
+
+def task_parts(d: Data) -> str:
     """What a row of o is made of, for the page to show when a row is marked: the capability's row
     of k, its a and its c, and its tasks, each as (name, the open tools known for it, whether it is
     benchmarkable). Capabilities are in the page's order."""
@@ -1125,7 +1195,7 @@ def order_parts(d: Data) -> str:
     return "window.PLENTY_MATRIX_PARTS = " + json.dumps(payload, separators=(",", ":")) + ";\n"
 
 
-def order_template(here: str = "") -> str:
+def task_template(here: str = "") -> str:
     """What the script writes over the parts of a marked row of o."""
     i = lambda letter, page: _elt(letter, "i", page, here)
     parts = f'{i("o", "o")}<mo>=</mo>{i("k", "k")}{_TIMES}{i("a", "a")}{_TIMES}{_paren(f"<mn>1</mn><mo>&minus;</mo>{i('c', 'c')}")}'
@@ -1538,7 +1608,8 @@ def term_links(d: Data, keys, here: str = "") -> str:
     return "; ".join(f'{_m(_term(k, here))}, {e(d.sheets[k].name)}' for k in keys)
 
 
-ORDER_ALSO = "A marked row is taken apart under the picture, into what it is made from and the capability's tasks."
+ORDER_ALSO = "A marked row is taken apart under the picture, into what it is made from and the detailed activities filed under it."
+TASK_ALSO = "A marked row is taken apart under the picture, into what it is made from and the capability's tasks."
 
 
 def term_page(d: Data, key: str) -> str:
@@ -1557,7 +1628,7 @@ def term_page(d: Data, key: str) -> str:
     if key in USES:
         spec.append(("Made from", term_links(d, USES[key], key)))
     users = [k for k in TERMS if key in USES.get(k, ())]
-    into = [equation(k, key) for k in users if k in EQUATIONS] + ([equation("gap", key)] if key == "o" else [])
+    into = [equation(k, key) for k in users if k in EQUATIONS] + ([equation("gap", key)] if key == "h" else [])
     plain = [k for k in users if k not in EQUATIONS]
     if into or plain:
         spec.append(("Used in", (_eqs(into) if into else "") + (f"<p>{term_links(d, plain, key)}</p>" if plain else "")))
@@ -1574,8 +1645,10 @@ def term_page(d: Data, key: str) -> str:
 {_m(_sym("D"))}. Each industry that makes the column's commodity brings what it uses of the row's, in proportion to its share:</p>
 {_m(f'{_sub("a", "ij")}<mo>=</mo>{_sum("k")}{_sub("b", "ik")}{_TIMES}{_sub("d", "kj")}', block=True)}</template>
 """
-    if key == "o":      # a marked row is taken apart into what it is made from and the capability's tasks
+    if key == "h":      # a marked row is taken apart into what it is made from and the detailed activities under it
         also, why = ORDER_ALSO, order_template(key)
+    if key == "o":      # and one of o into what it is made from and the capability's tasks
+        also, why = TASK_ALSO, task_template(key)
     body = f"""
 <p class="crumbs"><a href="{HOME}">The account</a></p>
 <h1 class="long">{_m(_term(key, key))}, {e(s.name)}</h1>
@@ -1604,30 +1677,35 @@ def account_table(d: Data) -> str:
 def gap(d: Data) -> pd.Series:
     """The last line of the account, for each way of weighing the needs: the part of a need dollar that
     pays for information work that is well defined and done with software that has no known open tool."""
-    return d.sheets["o"].values.sum()
+    return d.sheets["h"].values.sum()
 
 
 def account_section(d: Data) -> str:
     """The whole account as five equations, what they come to, and every term in them."""
-    k, b = (d.sheets[key].values.sum() for key in "kb")
+    f, h = (d.sheets[key].values for key in "fh")
     unpaid = d.sheets["G"].values.values.sum()
-    g = gap(d) * 100
-    return f"""{_eqs([equation(key) for key in ("x", "p", "k", "o", "gap")])}
+    info = d.sheets["s"].values.iloc[:, 0]
+    g, thought = gap(d) * 100, h.mul(info, axis=0).sum() * 100
+    return f"""{_eqs([equation(key) for key in ("x", "p", "f", "h", "gap")])}
 <p>{_m(_sym(OMEGA))} weighs the needs, in three ways, and every term from {_m(_sym("p"))} on has a column for each.
-{_m(_sym("G"))} is the unpaid work done at home, {unpaid * 100:.0f} cents for every dollar spent on the needs, and
-{_m(_sym("s"))} marks the work that is information work. {_m(_ONES)} is a column of ones.</p>
-<p>With the needs counted equally, the third line places {k.equal * 100:.1f} cents of a need dollar on {len(d.sheets["k"].values)}
-software capabilities: the information work of each occupation, by the software it is done with. Another
-{b.equal * 100:.1f} cents is work that needs a body or a person, {_m(_sym("b"))}. The fourth line keeps the part of each
-capability's work that is well defined and has no known open tool, and the fifth adds it up: {g.equal:.1f} cents. Weighing
-the needs by what is spent on each it is {g.spending:.1f} cents, and by the poorest fifth's budget {g.poorest:.1f}. Sorted,
-a column of {_m(_sym("o"))} is the order to work in.</p>
+{_m(_sym(THETA))} says what each occupation's work is, as {len(f)} work activities, and {_m(_sym("G"))} is the unpaid work
+done at home, {unpaid * 100:.0f} cents for every dollar spent on the needs. {_m(_ONES)} is a column of ones.</p>
+<p>With the needs counted equally, the third line places {f.equal.sum() * 100:.0f} cents of work, paid and unpaid, on the
+activities it consists of. The fourth keeps the part of each activity that is well defined, {_m(_sym("m"))}, and has no
+known open implementation, {_m(_sym("e"))}, and the fifth adds it up: {g.equal:.1f} cents. Weighing the needs by what is
+spent on each it is {g.spending:.1f} cents, and by the poorest fifth's budget {g.poorest:.1f}.</p>
+<p>An activity is a capability whatever carries it out: software, a written procedure or a mechanism. Of the
+{g.equal:.1f} cents, {thought.equal:.1f} are information work, and {g.equal - thought.equal:.1f} are work that needs a
+body, where the processing needs a machine to act through as well.</p>
 <h2 id="order">The order to work in</h2>
-<p>This is {_m(_sym("o"))}, sorted by its first column: the capabilities with the most well-defined work and no known open
-tool, with the needs counted equally. Its first {ORDER_ROWS} rows are in view, and the other two columns weigh the needs
-the other two ways. The first row is marked, and under the picture it is taken apart, down to the
-{_unit("task", "tasks")} there are to build. Click another row to take that one apart.</p>
-{sheet_picture(d.sheets["o"], also=ORDER_ALSO, extra=order_template())}
+<p>This is {_m(_sym("h"))}, sorted by its first column: the activities with the most well-defined work and no known open
+implementation, with the needs counted equally. Its first {ORDER_ROWS} rows are in view, and the other two columns weigh
+the needs the other two ways. The first row is marked, and under the picture it is taken apart: into what it is made
+from, what is judged of it, and the detailed activities filed under it. Click another row to take that one apart.</p>
+{sheet_picture(d.sheets["h"], also=ORDER_ALSO, extra=order_template())}
+<p>The same question can be put to the software that information work is done with today:
+{_m(_sym("k"))} places that work on {len(d.sheets["k"].values)} software capabilities, and {_m(_sym("o"))} keeps the part
+with no open tool, {d.sheets["o"].values.equal.sum() * 100:.1f} cents.</p>
 <h2 id="terms">Every term</h2>
 {account_table(d)}
 <h2 id="units">Every unit</h2>
@@ -1640,10 +1718,10 @@ def index(d: Data) -> str:
     body = f"""
 <h1>The account</h1>
 <p class="lede">A dollar of each need is traced to the commodities it buys, to everything the economy produces to
-deliver them, to the sectors whose income it becomes, to the occupations they pay, and to the software those
-occupations work with. Every term is a link to its matrix.</p>
+deliver them, to the sectors whose income it becomes, to the occupations they pay, and to the activities their
+work consists of. Every term is a link to its matrix.</p>
 {account_section(d)}"""
-    return page("The account", body, home=True, scripts=(d.sheets["o"].data_file, "matrix.js"))
+    return page("The account", body, home=True, scripts=(d.sheets["h"].data_file, "matrix.js"))
 
 
 def main():
@@ -1660,6 +1738,7 @@ def main():
         (SITE / sheet.csv_file).write_text(sheet_csv(sheet), encoding="utf-8")
     (SITE / MATRIX_PARTS).write_text(matrix_a_parts(d), encoding="utf-8")
     (SITE / ORDER_PARTS).write_text(order_parts(d), encoding="utf-8")
+    (SITE / TASK_PARTS).write_text(task_parts(d), encoding="utf-8")
     (SITE / ".nojekyll").write_text("")
     print(f"wrote {len(pages)} pages to {SITE}")
 
