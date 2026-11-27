@@ -364,6 +364,10 @@ is made from, what is judged of it, and the detailed activities filed under it. 
 question put to the software that information work is done with today is beside it, as a
 term of its own.
 
+Under the order, the gap is divided among the 52 abilities O*NET rates occupations by, which
+say what the work demands of a person, and a judgment of how far machines already match a
+person in each (`config/abilities.csv`) leaves what machines still lack.
+
 `.github/workflows/site.yml` rebuilds and publishes it on every push to `main`. GitHub Pages
 must be set to deploy from GitHub Actions (Settings > Pages > Source).
 

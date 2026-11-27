@@ -99,7 +99,7 @@ def test_every_unit_has_a_page_and_every_term_links_to_its_units(built):
             for term in terms:
                 assert f'<a href="{built.sheets[term].href}"' in page.split(f"<dt>{how}</dt>")[1].split("</dd>")[0], (key, how, term)
     x = site.unit_users(built, units["need-dollar"])
-    assert x["Entries of"] == list("xpfhdGbko") and not x["Rows of"] and not x["Columns of"]
+    assert x["Entries of"] == list("xpfhdGb") + [site.RHO, site.ALPHA, "k", "o"] and not x["Rows of"] and not x["Columns of"]
     assert site.unit_users(built, units["need"]) == {"Rows of": [site.OMEGA], "Columns of": ["x", "d", "Y", "v"], "Entries of": []}
 
 
@@ -291,8 +291,8 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert (at[0] >= 0).all() and (at[1] >= 0).all() and len(csv) == (x != 0).sum(), key
             got[at] = csv.value
             assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhme")
-    assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == ["R"]
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhme" + site.ALPHA + site.MU + site.RHO + site.LAMBDA)
+    assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == [site.LAMBDA, "R"]
     assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
     m, t = built.io, built.io.t
@@ -357,7 +357,8 @@ def test_the_order_to_work_in_is_shown_and_a_row_of_it_can_be_taken_apart(built)
     opening = {"sort": 0, "rows": site.ORDER_ROWS}
     assert data["start"] == opening and data["why"] == "activity" and data["lock"]
     assert _data(built.sheets["o"])["start"] == opening and _data(built.sheets["o"])["why"] == "tasks"
-    assert not any("start" in _data(s) or "why" in _data(s) for key, s in built.sheets.items() if key not in "ho")
+    assert _data(built.sheets[site.RHO])["start"] == opening and "why" not in _data(built.sheets[site.RHO])
+    assert not any("start" in _data(s) or "why" in _data(s) for key, s in built.sheets.items() if key not in ("h", "o", site.RHO))
     # it is on the home page, under the equations and over the table of terms, and on its own page, with the words for a row's parts
     home = (site.SITE / site.HOME).read_text()
     assert home.index("</math>") < home.index('id="order"') < home.index('id="mx-canvas"') < home.index('id="terms"')
@@ -386,6 +387,48 @@ def test_the_order_to_work_in_is_shown_and_a_row_of_it_can_be_taken_apart(built)
     first = int(np.argmax(h[:, 0]))
     assert data["rows"]["names"][first] == "Clean tools, equipment, facilities, or work areas."
     assert (parts["defined"][first], parts["open"][first], parts["kind"][first]) == ("yes", "no", "physical")
+
+
+def test_the_gap_is_divided_among_abilities_and_machines_are_judged_in_each(built):
+    v = {k: s.values for k, s in built.sheets.items()}
+    occ, acts = list(v["p"].index), list(v[site.THETA].columns)
+    L, C = v[site.LAMBDA].loc[occ], v[site.GAMMA].loc[acts]
+    abilities = list(L.columns)
+    ratings, calls, judged = built.abilities
+    assert abilities == list(C.columns) == list(judged.index) and len(abilities) == 52 and set(judged.family) == set(site.ABILITY_FAMILY.values())
+    # the ratings are importance times level, and the links are O*NET's, the same for every activity under one general activity
+    raw = pd.read_csv(site.O.OCC / "onet_abilities.csv")
+    chief = raw[raw.onet_soc.str.startswith("11-1011.")]            # the finer occupations O*NET has under one code are averaged
+    assert np.allclose(L.loc["11-1011"], (chief.importance * chief.level).groupby(chief.ability).mean()[abilities], atol=0.006)
+    assert L.values.max() <= 35 and L.values.min() >= 0
+    links = pd.read_csv(site.O.OCC / "onet_ability_activities.csv")
+    assert set(np.unique(C.values)) == {0.0, 1.0} and (C.sum(axis=1) > 0).all()
+    parent = built.act.parent[acts]
+    assert C.groupby(parent.values).nunique().max().max() == 1 and C.groupby(parent.values).first().values.sum() == len(links)
+    # alpha: each occupation's gap in each activity, divided among the abilities the activity calls on by the occupation's ratings
+    z = (v["m"].iloc[:, 0] * (1 - v["e"].iloc[:, 0]))[acts].values
+    called = L.values @ C.values.T
+    for way in v["p"].columns:
+        gap = (v[site.THETA].loc[occ, acts].values * v["p"][way].values[:, None] + v["G"].loc[occ, acts].values) * z[None, :]
+        alpha = np.zeros(len(abilities))
+        for k in range(len(abilities)):
+            part = np.divide(C.values[:, k][None, :] * L.values[:, k][:, None], called, out=np.zeros_like(called), where=called > 0)
+            alpha[k] = (gap * part).sum()
+        assert np.allclose(alpha, v[site.ALPHA][way].values, atol=1e-12), way
+        # it adds up to the gap, but for the occupations O*NET does not rate
+        unrated = gap[(L.sum(axis=1) == 0).values].sum()
+        assert alpha.sum() == pytest.approx(v["h"][way].sum() - unrated, abs=1e-9) and unrated < 0.001
+    # mu is the judgment on file, and rho is what it leaves
+    mu = v[site.MU].iloc[:, 0]
+    assert set(judged.machines) == set(site.DEFINED) and (judged.basis.str.len() > 10).all() and (mu == judged.machines.map(site.DEFINED)).all()
+    assert np.allclose(v[site.RHO].values, v[site.ALPHA].values * (1 - mu.values)[:, None], atol=1e-12)
+    # the home page says what each family comes to, before and after
+    home = (site.SITE / site.HOME).read_text()
+    section = home[home.index('id="abilities"'):home.index('id="terms"')]
+    for family in site.ABILITY_FAMILY.values():
+        mine = (judged.family == family).values
+        assert (f'<th scope="row">{family}</th><td class="num">{v[site.ALPHA].equal.values[mine].sum() * 100:.1f}</td>'
+                f'<td class="num">{v[site.RHO].equal.values[mine].sum() * 100:.1f}</td>') in section, family
 
 
 def test_a_row_of_the_software_order_can_be_taken_apart_into_its_tasks(built):

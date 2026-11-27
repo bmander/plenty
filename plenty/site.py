@@ -168,6 +168,25 @@ class Data:
         return J, Q, R, u, titles
 
     @functools.cached_property
+    def abilities(self) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+        """(Lambda, Gamma, judged). Lambda is the survey's occupation x O*NET ability: the occupation's
+        rating of the ability, its importance (1 to 5) times the level of it needed (0 to 7), the mean
+        of them where the survey publishes a group. Gamma is work activity x ability: one where O*NET
+        links the ability to the general work activity the activity is filed under. judged has, for
+        each ability, its name, its family, and how far machines already match a working person in it
+        (config/abilities.csv), with the reason."""
+        ab = pd.read_csv(O.OCC / "onet_abilities.csv")
+        judged = pd.read_csv(M.CONFIG / "abilities.csv", index_col=0)
+        judged["family"] = judged.index.str[:5].map(ABILITY_FAMILY)
+        rated = (ab.importance * ab.level).groupby([O.soc6(ab.onet_soc), ab.ability]).mean().unstack()
+        ratings = O._occupation_uses(self.wages[0].columns, rated, "mean").fillna(0.0)[judged.index]
+        links = pd.read_csv(O.OCC / "onet_ability_activities.csv")
+        general = pd.crosstab(links.gwa, links.ability).reindex(columns=judged.index, fill_value=0).astype(float)
+        acts = self.theta.columns
+        calls = general.loc[self.act.parent[acts]].set_axis(acts)
+        return ratings, calls, judged
+
+    @functools.cached_property
     def weights(self) -> pd.DataFrame:
         """omega: need x way of weighing the needs, each column summing to one: every need the same;
         by what households and governments spent on each; and by what the poorest fifth of households
@@ -305,7 +324,11 @@ def _sum(i: str) -> str:
 
 HOME = "index.html"                   # the account, which every term's page leads back to
 THETA, PHI, OMEGA = "Θ", "Φ", "ω"
-GREEK = {THETA: ("Theta", "&#x1D6AF;"), PHI: ("Phi", "&#x1D6BD;"), OMEGA: ("omega", "&#x1D6DA;")}   # a Greek letter's name in a file, and its bold
+LAMBDA, GAMMA, ALPHA, MU, RHO = "Λ", "Γ", "α", "μ", "ρ"
+# a Greek letter's name in a file, and its bold
+GREEK = {THETA: ("Theta", "&#x1D6AF;"), PHI: ("Phi", "&#x1D6BD;"), OMEGA: ("omega", "&#x1D6DA;"), LAMBDA: ("Lambda", "&#x1D6B2;"),
+         GAMMA: ("Gamma", "&#x1D6AA;"), ALPHA: ("alpha", "&#x1D6C2;"), MU: ("mu", "&#x1D6CD;"), RHO: ("rho", "&#x1D6D2;")}
+ABILITY_FAMILY = {"1.A.1": "Cognitive", "1.A.2": "Psychomotor", "1.A.3": "Physical", "1.A.4": "Sensory"}   # O*NET's four families of abilities, by the start of the ability's code
 HOURS_A_YEAR = 2080                   # a year of full-time work, which turns a yearly wage into an hourly one
 # the terms, in the order the account's table lists them
 GROUPS = [
@@ -316,13 +339,14 @@ GROUPS = [
     ("Value added", ["v", "r", "y"]),
     ("Work", ["W", "P", "T", "E", "M"]),
     ("Work activities", [THETA, "G", "m", "e", "s", "b"]),
+    ("Abilities", [RHO, ALPHA, MU, LAMBDA, GAMMA]),
     ("Software capabilities", ["k", "o", PHI, "J", "Q", "R", "u", "a", "c", "N", "t", "w"]),
 ]
 TERMS = [k for _, keys in GROUPS for k in keys]
 DEFINED = {"yes": 1.0, "partly": 0.5, "no": 0.0}     # how far a task the taxonomy calls benchmarkable counts as well defined
 PER_NEED = "dxv"                      # the vectors there is one of for each need, written with a subscript n
 # what each computed term is made from; a term that is not here is data
-USES = {"x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "h": ["f", "m", "e"], "o": ["k", "a", "c"], PHI: ["J", "Q", "R", "u"], "u": ["Q", "R"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
+USES = {"x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "h": ["f", "m", "e"], RHO: [ALPHA, MU], ALPHA: ["p", THETA, "G", "m", "e", GAMMA, LAMBDA], "o": ["k", "a", "c"], PHI: ["J", "Q", "R", "u"], "u": ["Q", "R"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
         "f": ["p", THETA, "G"], "G": ["E", "M", "Y"], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
         "D": ["V", "q"], "g": ["V"], "q": ["V"], "K": ["F", "H", "S"], "S": ["z", "H"], "z": ["g", "H"],
         "v": ["r", "x"], "r": ["y", "g", "D"], "W": ["P"], "P": ["T", "E", "M"]}
@@ -331,7 +355,7 @@ USES = {"x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI
 def stem(key: str) -> str:
     """The name a term's files go by. A matrix is filed as a matrix and a vector as a vector, so
     that no two differ by a letter's case alone: some file systems cannot tell D from d."""
-    return f"matrix-{GREEK[key][0]}" if key in GREEK else f"matrix-{key}" if key.isupper() else f"vector-{key}"
+    return f"{'matrix' if key.isupper() else 'vector'}-{GREEK[key][0] if key in GREEK else key}"
 
 
 SYMBOL_PAGES = {k: stem(k) + ".html" for k in TERMS}
@@ -374,6 +398,9 @@ MATRIX_KINDS = {
     "wage": {"unit": 1.0, "cut": 0.5, "scale": (25e3, 2e5), "ticks": ("$25k", "$50k", "$100k", "$200k"),
              "blank": "none published", "small": "not published", "colour": "the mean annual wage, from $25,000 to $200,000",
              "in_cell": "in thousands of dollars a year"},
+    # an occupation's rating of an ability: importance, 1 to 5, times level, 0 to 7
+    "rating": {"unit": 1e-2, "cut": 1e-2, "scale": (1.0, 40.0), "ticks": ("1", "2.5", "6", "16", "40"),
+               "blank": "zero", "small": "not rated", "colour": "the rating", "in_cell": "to the nearest whole"},
     # a number with no unit, such as a logarithm
     "number": {"unit": 1e-3, "cut": 1e-3, "scale": (0.1, 10.0), "ticks": ("0.1", "1", "10"),
                "blank": "under 0.001", "small": "under a thousandth", "colour": "the number", "in_cell": "to two places"},
@@ -423,13 +450,16 @@ def _term(key: str, here: str = "") -> str:
     return _vec(key, here) if key in PER_NEED else _sym(key, here)
 
 
+_ITALIC = {"h": "&#x210E;", "α": "&#x1D6FC;", "γ": "&#x1D6FE;", "θ": "&#x1D703;", "λ": "&#x1D706;", "μ": "&#x1D707;", "ρ": "&#x1D70C;"}
+
+
 def _elt(shown: str, sub: str, page: str = "", here: str = "") -> str:
     """One entry of a matrix or vector: an italic letter with subscripts, linked to the page of the
     term it is an entry of (page, a key of SYMBOL_PAGES) except on that page."""
     if not page or page == here:
         return _sub(shown, sub)
-    # Unicode's mathematical italic letters, among which h has a place of its own
-    italic = "&#x210E;" if shown == "h" else f"&#x{0x1D44E + ord(shown) - ord('a'):X};"
+    # Unicode's mathematical italic letters, among which h has a place of its own, and the Greek ones
+    italic = _ITALIC.get(shown) or f"&#x{0x1D44E + ord(shown) - ord('a'):X};"
     return f'<mi><a href="{SYMBOL_PAGES[page]}">{italic}<sub><i>{sub}</i></sub></a></mi>'
 
 
@@ -487,6 +517,15 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
         return S("k", T=True), f'<msup>{_paren(work)}{_TR}</msup>{_TIMES}{S(PHI)}'
     if key == "h":        # entry by entry: what goes to an activity, that is well defined, and has no open implementation
         return S("h"), f'{S("f")}{_HADAMARD}{S("m")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("e")}")}'
+    if key == RHO:        # of the gap that falls on an ability, the part machines do not yet match
+        return S(RHO), f'{S(ALPHA)}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S(MU)}")}'
+    if key == ALPHA:      # the gap of each occupation in each activity, divided among the abilities the activity calls on, by the occupation's ratings
+        E = lambda letter, script, page: _elt(letter, script, page, here)
+        work = _paren(f'{E("p", "o", "p")}{_TIMES}{E("θ", "oa", THETA)}<mo>+</mo>{E("g", "oa", "G")}')
+        gap_ = f'{work}{_TIMES}{E("m", "a", "m")}{_TIMES}{_paren(f"<mn>1</mn><mo>&minus;</mo>{E('e', 'a', 'e')}")}'
+        part = (f'<mfrac><mrow>{E("γ", "ak", GAMMA)}{_TIMES}{E("λ", "ok", LAMBDA)}</mrow>'
+                f'<mrow>{_sum("l")}{E("γ", "al", GAMMA)}{_TIMES}{E("λ", "ol", LAMBDA)}</mrow></mfrac>')
+        return E("α", "k", ALPHA), f'{_sum("o")}{_sum("a")}{gap_}{_TIMES}{part}'
     if key == "o":        # entry by entry: what is paid for work with a capability, that is well defined, and is not open
         return S("o"), f'{S("k")}{_HADAMARD}{S("a")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("c")}")}'
     if key == PHI:        # an occupation's products in each capability, weighted by how specific the capability is, as shares of a row
@@ -540,7 +579,7 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     raise KeyError(key)
 
 
-EQUATIONS = ["x", "p", "f", "h", "k", "o", PHI, "u", "a", "c", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
+EQUATIONS = ["x", "p", "f", "h", RHO, ALPHA, "k", "o", PHI, "u", "a", "c", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
 # What one entry of each term is measured in, in a few words. A unit that has a page is written
 # [as it reads here|the name its page is filed under], and is a link wherever this is set as HTML.
@@ -549,6 +588,9 @@ _MILLIONS, _MARK = "[millions of dollars|million-dollars], in 2017", "[one or ze
 MEASURED_IN = {
     "x": "[commodity dollars|commodity-dollar] produced per [need dollar|need-dollar]",
     "p": _WORK, "k": _WORK, "o": _WORK, "f": _WORK, "h": _WORK, "b": _WORK, "G": _WORK,
+    ALPHA: _WORK, RHO: _WORK, GAMMA: _MARK,
+    LAMBDA: "the occupation's rating of the ability, a [number|number] with no unit",
+    MU: "the part of the ability machines already match, a [share|share] of one",
     "m": "the well-defined part of the activity, a [share|share] of one",
     "e": "the part of the activity that has an open implementation, a [share|share] of one",
     "d": "[commodity dollars|commodity-dollar] bought per [need dollar|need-dollar]",
@@ -583,6 +625,7 @@ COUNTED = {
     "investor-kind": ("kind of investor", "kinds of investor"), "occupation": ("occupation", "occupations"),
     "onet-occupation": ("O*NET occupation", "O*NET occupations"), "product": ("software product", "software products"),
     "surveyed-industry": ("surveyed industry", "surveyed industries"),
+    "ability": ("ability", "abilities"),
     "capability": ("software capability", "software capabilities"), "task": ("task", "tasks"),
     "activity": ("work activity", "work activities"),
 }
@@ -728,6 +771,16 @@ def sheets(d: Data) -> dict[str, Sheet]:
     overhang = flow.mul(d.defined_share * (1 - d.open_share), axis=0)                       # o
     defined, opened = (d.judged[c].map(DEFINED).reindex(act.index) for c in ("well_defined", "open"))      # m, e
     by_activity_overhang = to_activity.mul(defined * (1 - opened), axis=0)                 # h
+    # the gap by ability: each occupation's gap in each activity, divided among the abilities the activity calls on, by the occupation's ratings
+    ratings, calls, of_ability = d.abilities
+    called = ratings.values @ calls.values.T              # occupation x activity: the occupation's ratings of what the activity calls on
+    def gap_by_ability(paid: np.ndarray) -> np.ndarray:
+        gap_ = (d.theta.values * paid[:, None] + unpaid.values) * (defined * (1 - opened)).values[None, :]
+        return ((np.divide(gap_, called, out=np.zeros_like(gap_), where=called > 0) @ calls.values) * ratings.values).sum(axis=0)
+    by_ability_gap = frame(np.column_stack([gap_by_ability(by_occ[c].values) for c in weights.columns]), ratings.columns)      # alpha
+    matched = of_ability.machines.map(DEFINED)                                                                                # mu
+    of_abilities = dict(row_names=of_ability.name, row_groups=of_ability.family)
+    ability_order = "Abilities are in O*NET's order within its four families."
     out = [
         # --- the account
         Sheet("x", "the output behind a dollar of each need", "per_dollar", xn.loc[com], t.names,
@@ -756,6 +809,60 @@ def sheets(d: Data) -> dict[str, Sheet]:
                    f"can be trusted. Work that needs a body is in it: {_m(_sym('s'))} says which, and a capability of that "
                    "kind needs a machine to act through as well as the processing.",
               row_tip="Activity", code="plenty/site.py", sums="cols", order=activity_order),
+        Sheet(RHO, "the part of the gap machines do not yet match, by ability", "per_dollar", by_ability_gap.mul(1 - matched, axis=0),
+              **of_abilities, **by_weighing, rows="O*NET's abilities",
+              entries="Dollars per need dollar: the part of the gap that falls on the ability, times the part of the ability "
+                      "in which machines do not yet match a working person.",
+              note=f"It rests on three layers of judgment: what is well defined, what has an open implementation, and what "
+                   f"machines can do. And the abilities are what work demands of a person, which is not what it demands of "
+                   f"a machine: see {_m(_sym(ALPHA))}.",
+              row_tip="Ability", code="plenty/site.py", sums="cols", order=ability_order),
+        Sheet(ALPHA, "the gap by the ability it calls on", "per_dollar", by_ability_gap, **of_abilities, **by_weighing,
+              rows="O*NET's abilities",
+              entries="Dollars per need dollar: the part of the gap that falls on the ability. An occupation's gap in an "
+                      "activity is divided among the abilities the activity calls on, in proportion to the occupation's "
+                      "ratings of them.",
+              source=f"The sums run over occupations {_m('<mi>o</mi>')} and work activities {_m('<mi>a</mi>')}. The first "
+                     f"factor is the occupation's part of {_m(_sym('h'))} in the activity, and the fraction is ability "
+                     f"{_m('<mi>k</mi>')}'s part of it.",
+              note="A column adds up to the gap, less the little of it in occupations O*NET does not rate. The abilities say "
+                   "what work demands of a person. Cleaning falls on strength, stamina and reach, because that is what tires "
+                   "a cleaner. Seeing what is dirty and handling whatever is there are so easy for a person that they are "
+                   "not rated, and they are the hard part for a machine.",
+              row_tip="Ability", code="plenty/site.py", sums="cols", order=ability_order),
+        Sheet(MU, "the part of each ability machines already match", "share", **lone(matched, MU, "Machines match", "share"), **of_abilities,
+              rows="O*NET's abilities",
+              entries="One where machines match a working person in the ability across the ordinary run of work, a half where "
+                      "they match in some conditions or on part of it, and zero where they fall well short.",
+              source=f"Judgment, made by hand, one ability at a time, with the reason: {_file('config/abilities.csv')}.",
+              note="It is judged of a machine that has the ability in general, in the varied conditions of ordinary work, "
+                   "whether or not it is open, and not of one built for a single job. The judgments are of the state of the "
+                   "art as recalled, and have not been checked against measurements.",
+              row_tip="Ability", code="plenty/site.py", order=ability_order),
+        Sheet(LAMBDA, "each occupation's rating of each ability", "rating", ratings, occ.title, of_ability.name,
+              rows="rated occupations", cols="O*NET's abilities",
+              entries="The importance of the ability to the occupation, from 1 to 5, times the level of it the occupation "
+                      "needs, from 0 to 7. An occupation the survey publishes only as a group takes the mean of the "
+                      "occupations in the group.",
+              source=f"O*NET 31.0, the U.S. Department of Labor's database of occupations, in its table of abilities: "
+                     f"{_file('data/occupations/onet_abilities.csv')}. The ratings are made by occupational analysts.",
+              note=f"{int((ratings.sum(axis=1) == 0).sum())} of the survey's {len(ratings)} occupations have no ratings.",
+              row_tip="Occupation", col_tip="Ability", axis="Abilities", code="plenty/site.py",
+              row_groups=occ.major, col_groups=of_ability.family, short=soc_short,
+              order=f"Occupations are in the order of the Standard Occupational Classification within its 22 major groups. {ability_order}"),
+        Sheet(GAMMA, "the abilities each work activity calls on", "mark", calls, act.name, of_ability.name,
+              rows="O*NET's intermediate work activities", cols="O*NET's abilities",
+              entries="One where O*NET links the ability to the general work activity that the activity is filed under, and "
+                      "zero elsewhere.",
+              source=f"O*NET 31.0, in its table linking abilities to work activities: "
+                     f"{_file('data/occupations/onet_ability_activities.csv')}. The links are to its "
+                     f"{d.act.parent[act.index].nunique()} general work activities, so the activities under one of those "
+                     "have the same row.",
+              note=f"{int((calls.sum(axis=0) == 0).sum())} of the {calls.shape[1]} abilities are linked to no activity.",
+              row_tip="Activity", col_tip="Ability", axis="Abilities", code="plenty/site.py",
+              row_groups=act.parent.map(d.act.name), col_groups=of_ability.family,
+              blanks=("does not call on it", "zero"), marked="calls on it", sums="both",
+              order=f"{activity_order} {ability_order}"),
         Sheet("o", "the overhang of each software capability", "per_dollar", overhang,
               **by_capability, **by_weighing, rows="the taxonomy's software capabilities",
               entries="Dollars per need dollar: what is paid for information work done with the capability, times the share of "
@@ -1153,6 +1260,8 @@ def matrix_data(d: Data, key: str) -> str:
         return sheet_data(s, parts=ORDER_PARTS, why="activity", start=start)
     if key == "o":
         return sheet_data(s, parts=TASK_PARTS, why="tasks", start=start)
+    if key == RHO:
+        return sheet_data(s, start=start)
     return sheet_data(s)
 
 
@@ -1413,6 +1522,17 @@ be said what doing it would be.</p>
 could be scored by a benchmark, {T("w")}. A task with no open tool whose result could be scored is one to build.</p>
 <p>Nothing says how a capability's work divides among its tasks. So the account counts tasks and does not weigh them, and it
 puts capabilities in order, not tasks.</p>"""),
+        Unit("ability", *COUNTED["ability"], True,
+             "One of the enduring capacities of a person that O*NET rates occupations by.",
+             f"""<p>One of the {len(d.abilities[2])} abilities of O*NET 31.0, the U.S. Department of Labor's database of
+occupations: {_file('data/occupations/onet_abilities.csv')}. They are capacities of a person that last, in four families:
+{", ".join(f"{int((d.abilities[2].family == f).sum())} {f.lower()}" for f in ABILITY_FAMILY.values())}. Deductive reasoning is
+one, manual dexterity another, stamina another.</p>
+<p>O*NET's analysts rate every {_unit("occupation")} on each, {T(LAMBDA)}, and link each ability to the kinds of
+{_unit("activity", "work activity")} that call on it, {T(GAMMA)}.</p>
+<p>An ability is what work demands of a person. It is rated where people differ or tire, and not where everyone finds the
+work easy. So the list is a fair account of human effort, and a poor account of what a machine would find hard:
+{T(MU)} says how far machines match each one.</p>"""),
         Unit("activity", *COUNTED["activity"], True,
              "One of O*NET's intermediate work activities: a kind of work, whoever does it.",
              f"""<p>One of the {len(d.sheets["f"].values)} intermediate work activities of O*NET 31.0, the U.S. Department of
@@ -1680,6 +1800,28 @@ def gap(d: Data) -> pd.Series:
     return d.sheets["h"].values.sum()
 
 
+def abilities_section(d: Data) -> str:
+    """What the gap demands of a person, by family of ability, and what is left where machines fall short."""
+    alpha, rho = (d.sheets[key].values.equal * 100 for key in (ALPHA, RHO))
+    judged = d.abilities[2]
+    families = "".join(
+        f'<tr><th scope="row">{e(f)}</th><td class="num">{alpha[judged.family == f].sum():.1f}</td>'
+        f'<td class="num">{rho[judged.family == f].sum():.1f}</td>'
+        f'<td class="wrap">{e(", ".join(judged.name[rho[judged.family == f].sort_values(ascending=False).index[:3]]).lower())}</td></tr>'
+        for f in ABILITY_FAMILY.values())
+    total = (f'<tr><td>All abilities</td><td class="num">{alpha.sum():.1f}</td><td class="num">{rho.sum():.1f}</td><td></td></tr>')
+    by_family = table([th("Family of abilities"), th("The gap that falls on it, ¢", "num"), th("Of it, what machines do not match, ¢", "num"),
+                       th("Largest of what is left")], [families], foot=total,
+                      caption="With the needs counted equally, in cents per need dollar.")
+    return f"""<p>{_m(_sym(ALPHA))} divides the gap among the {len(alpha)} abilities O*NET rates occupations by: what the work
+demands of the person doing it. {_m(_sym(MU))} is a judgment of how far machines already match a person in each, and
+{_m(_sym(RHO))} is what is left. Sorted, {_m(_sym(RHO))} says where machines fall short of the work there is to do.</p>
+{by_family}
+<p>The abilities are a person's, and are rated where people differ or tire. What everyone finds easy is not rated, and
+that is often what a machine finds hard.</p>
+"""
+
+
 def account_section(d: Data) -> str:
     """The whole account as five equations, what they come to, and every term in them."""
     f, h = (d.sheets[key].values for key in "fh")
@@ -1703,6 +1845,8 @@ implementation, with the needs counted equally. Its first {ORDER_ROWS} rows are 
 the needs the other two ways. The first row is marked, and under the picture it is taken apart: into what it is made
 from, what is judged of it, and the detailed activities filed under it. Click another row to take that one apart.</p>
 {sheet_picture(d.sheets["h"], also=ORDER_ALSO, extra=order_template())}
+<h2 id="abilities">The abilities the gap calls on</h2>
+{abilities_section(d)}
 <p>The same question can be put to the software that information work is done with today:
 {_m(_sym("k"))} places that work on {len(d.sheets["k"].values)} software capabilities, and {_m(_sym("o"))} keeps the part
 with no open tool, {d.sheets["o"].values.equal.sum() * 100:.1f} cents.</p>
