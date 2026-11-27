@@ -507,6 +507,14 @@ MEASURED_IN = {
     "a": "[share|share] of the capability's tasks that have no open tool",
     "c": "[share|share] of the capability's tasks",
 }
+# What a row or a column can be one of: the name its page is filed under, then one of it, then several.
+COUNTED = {
+    "commodity": ("commodity", "commodities"), "industry": ("industry", "industries"), "need": ("need", "needs"),
+    "weighting": ("way of weighing the needs", "ways of weighing the needs"),
+    "investor-kind": ("kind of investor", "kinds of investor"), "occupation": ("occupation", "occupations"),
+    "surveyed-industry": ("surveyed industry", "surveyed industries"),
+    "capability": ("software capability", "software capabilities"), "activity": ("work activity", "work activities"),
+}
 _UNIT_LINK = re.compile(r"\[([^|\]]+)\|([a-z-]+)\]")
 
 
@@ -527,7 +535,7 @@ class Sheet:
     values: pd.DataFrame
     row_names: pd.Series
     col_names: pd.Series
-    rows: str                      # what the rows are, after their number: "input commodities", or "needs: a dollar of each"
+    rows: str                      # what the rows are, ending in their unit: "input commodities", "a dollar of each need"
     cols: str                      # and the columns; for a single column, what it holds
     entries: str                   # what an entry is, with its unit
     row_tip: str                   # before a row's name, and a column's, in a cell's hover tip
@@ -617,7 +625,7 @@ def sheets(d: Data) -> dict[str, Sheet]:
     weights, (unpaid, unpaid_detail) = d.weights, d.unpaid
     ways = pd.Series({"equal": "Needs counted equally", "spending": "By spending on each", "poorest": "By the poorest fifth's budget"})
     by_weighing = dict(col_names=ways, col_groups=pd.Series("Ways of weighing the needs", index=ways.index), col_tip="Needs weighed",
-                       col_is="Column, the way the needs are weighed:", cols="ways of weighing the needs", axis="Ways of weighing the needs")
+                       col_is="Column, the way the needs are weighed:", cols="a need dollar under each way of weighing the needs", axis="Ways of weighing the needs")
     by_occupation_row = dict(row_names=occ.title, row_groups=occ.major, short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
                              order=f"Occupations are in {occupation_order[len('occupations in '):]}.")
     def frame(values, index) -> pd.DataFrame:
@@ -631,17 +639,17 @@ def sheets(d: Data) -> dict[str, Sheet]:
     out = [
         # --- the account
         Sheet("x", "the output behind a dollar of each need", "per_dollar", xn.loc[com], t.names,
-              rows="produced commodities", cols="needs: a dollar of each", **by_need,
+              rows="produced commodities", cols="a dollar of each need", **by_need,
               entries="Dollars of the commodity produced, at every stage of supply, to deliver a dollar of the need.",
               row_tip="Produced", col_tip="For a dollar of", row_is="Row, the commodity produced:", axis="Needs: one dollar of each",
               code="plenty/analysis.py", sums="cols"),
         Sheet("p", "the occupations a need dollar pays", "per_dollar", by_occ, **by_occupation_row, **by_weighing,
-              rows="occupations",
+              rows="paid occupations",
               entries="Dollars per need dollar that the sectors behind the needs pay the occupation.",
               note="What a sector pays is its whole value added, shared out the way its payroll is.",
               row_tip="Occupation", code="plenty/site.py", sums="cols"),
         Sheet("k", "the part of a need dollar that pays for work done with each capability", "per_dollar", flow,
-              **by_capability, **by_weighing, rows="software capabilities: the taxonomy's",
+              **by_capability, **by_weighing, rows="the taxonomy's software capabilities",
               entries="Dollars per need dollar that pay for the information work of the people who work with the capability, "
                       "with the unpaid information work done at home. It is the work the software serves, not what the software "
                       "earns.",
@@ -649,7 +657,7 @@ def sheets(d: Data) -> dict[str, Sheet]:
                    "occupations that list no software, or software the taxonomy does not place.",
               row_tip="Capability", code="plenty/flows.py", sums="cols", order=capability_order),
         Sheet("o", "the overhang of each capability", "per_dollar", overhang,
-              **by_capability, **by_weighing, rows="software capabilities: the taxonomy's",
+              **by_capability, **by_weighing, rows="the taxonomy's software capabilities",
               entries="Dollars per need dollar: what is paid for information work done with the capability, times the share of "
                       "its tasks that have no known open tool, times the share of those that is well defined.",
               note="A column adds up to the gap. Sorted, it is the order to work in, as far as the terms it is made from can be "
@@ -657,12 +665,12 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Capability", code="plenty/site.py", sums="cols", order=capability_order),
         # --- needs
         Sheet("d", "the commodities a dollar of each need buys", "per_dollar", dn.loc[com], t.names,
-              rows="purchased commodities", cols="needs: a dollar of each", **by_need,
+              rows="purchased commodities", cols="a dollar of each need", **by_need,
               entries="The part of a dollar of the need that is spent on the commodity. A column adds up to one dollar.",
               row_tip="Bought", col_tip="With a dollar of", row_is="Row, the commodity bought:", axis="Needs: one dollar of each",
               code="plenty/analysis.py"),
         Sheet("Y", "spending on each need", "dollars", A.need_demand(t)[needs].loc[com], t.names,
-              rows="purchased commodities", cols="needs: the purpose of the purchase", **by_need,
+              rows="purchased commodities", cols="the purpose of each purchase, a need", **by_need,
               entries="Millions of dollars bought by households and governments in 2017 and counted under the need.",
               source=f"{bea} It is the Use table's columns for personal consumption (<code>F01000</code>) and government "
                      f"consumption ({', '.join(f'<code>{c}</code>' for c in A.GOV_CONSUMPTION)}). Each commodity is counted under "
@@ -673,7 +681,7 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Bought", col_tip="For", row_is="Row, the commodity bought:", axis="Needs: spending on each",
               code="plenty/analysis.py", sums="both"),
         Sheet(OMEGA, "the weights of the needs", "share", weights, pd.Series(NEED_NAME)[needs], **by_weighing,
-              rows="needs", row_groups=pd.Series("Needs", index=needs),
+              rows="weighed needs", row_groups=pd.Series("Needs", index=needs),
               entries="The weight of the need. A column adds up to one.",
               source=f"Counted equally, each of the {len(needs)} needs weighs the same. By what is spent, a need weighs its share "
                      f"of {_m(_sym('Y'))}. The poorest fifth's budget is what the fifth of households with the lowest incomes "
@@ -718,22 +726,22 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Industry", col_tip="Made", col_is="Column, the commodity made:",
               axis="Commodities made", code=model, exact=True, sums="both"),
         Sheet("g", "each industry's output", "dollars", **lone(t.g.loc[ind], "g", "Output in 2017"), row_names=t.ind_names,
-              rows="industries", entries="Millions of dollars of everything the industry made in 2017: its row of the Make table, added up.",
+              rows="producing industries", entries="Millions of dollars of everything the industry made in 2017: its row of the Make table, added up.",
               row_tip="Industry", code=model, exact=True, sums="both"),
         Sheet("q", "each commodity's output", "dollars", **lone(t.q.loc[com], "q", "Output in 2017"), row_names=t.names,
-              rows="commodities", entries="Millions of dollars of the commodity made in 2017 by every industry: its column of the Make "
+              rows="produced commodities", entries="Millions of dollars of the commodity made in 2017 by every industry: its column of the Make "
                                           "table, added up.",
               row_tip="Commodity", code=model, exact=True, sums="both"),
         # --- capital
         Sheet("K", "the capital matrix", "dollars", m.K.loc[com, ind], t.names, t.ind_names,
-              rows="commodities: the capital good", cols="industries: the users of the capital good",
+              rows="capital goods, each a commodity", cols="capital-using industries",
               entries="Millions of dollars of the capital good bought as investment in 2017 and placed on the industry.",
               note="It is an estimate. The Bureau publishes investment by commodity and by kind of investor, not by the industry "
                    "that bought it.",
               row_tip="Capital good", col_tip="Placed on", col_is="Column, the industry it is placed on:",
               axis="Industries using the capital", code=model, sums="both"),
         Sheet("F", "investment purchases", "dollars", cap.investment.loc[com], t.names,
-              rows="commodities: the capital good", cols="kinds of investor", **by_investor,
+              rows="capital goods, each a commodity", cols="the buyer's kind of investor", **by_investor,
               entries="Millions of dollars of the commodity bought as investment in 2017 by investors of the kind. A negative "
                       "entry is a sale of used equipment or scrap.",
               source=f"{bea} It is the Use table's columns for investment, added up by kind of investor: "
@@ -741,14 +749,14 @@ def sheets(d: Data) -> dict[str, Sheet]:
                                  for h, cols in M.CAPITAL_COLUMNS.items()) + ".",
               row_tip="Capital good", col_tip="Bought by", axis="Kinds of investor", code=model, sums="both"),
         Sheet("H", "the kind of investor each industry is", "mark", investors.loc[ind], t.ind_names,
-              rows="industries", cols="kinds of investor", **by_investor,
+              rows="investing industries", cols="the industry's kind of investor", **by_investor,
               entries="One where the industry is of the kind, and zero elsewhere. Every industry is of one kind.",
               source=f"Lists in {_file(model)}: housing, federal defense, federal nondefense, and state and local government "
                      "are named there, and every other industry is private business.",
               row_tip="Industry", col_tip="Kind of investor", axis="Kinds of investor", code=model,
               blanks=("is not of this kind", "zero"), marked="is of this kind", sums="cols"),
         Sheet("S", "the placement of each capital good", "share", cap.shares.loc[com, ind], t.names, t.ind_names,
-              rows="commodities: the capital good", cols="industries: the users of the capital good",
+              rows="capital goods, each a commodity", cols="capital-using industries",
               entries="The share of the purchases of the capital good, by investors of the industry's kind, that is placed on the "
                       "industry. Within one kind of investor a row adds up to one.",
               source=f"{_m(_sub('&Omega;', 'ik'))} is the set of industries that could have bought capital good <i>i</i>, among "
@@ -758,7 +766,7 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Capital good", col_tip="Share placed on", col_is="Column, the industry it is placed on:",
               axis="Industries: their share of each capital good", code=model),
         Sheet("z", "the weights that share investment among industries", "dollars", **lone(cap.weight.loc[ind], "z", "Weight"), row_names=t.ind_names,
-              rows="industries",
+              rows="investing industries",
               entries="Millions of dollars: the industry's gross operating surplus if it is private business or housing, and its "
                       "output if it is government.",
               source=f"{bea} Gross operating surplus is the Use table's row <code>V00300</code>, with a negative surplus counted "
@@ -766,16 +774,16 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Industry", code=model),
         # --- value added
         Sheet("v", "the value added behind a dollar of each need", "share", d.need_value_added.loc[com], t.names,
-              rows="commodities: the sector that earns the income", cols="needs: a dollar of each", **by_need,
+              rows="sectors that earn the income, each a commodity", cols="a dollar of each need", **by_need,
               entries="The sector's share of the value added behind a dollar of the need. A column adds up to one.",
               row_tip="Sector", col_tip="Share of a dollar of", axis="Needs: one dollar of each", code="plenty/analysis.py"),
         Sheet("r", "value added per dollar of each commodity", "per_dollar",
               **lone(A.value_added_share(m).loc[com], "r", "Value added per dollar", "per dollar"), row_names=t.names,
-              rows="commodities", entries="Dollars of value added per dollar of the commodity's output: its makers' value added per "
+              rows="produced commodities", entries="Dollars of value added per dollar of the commodity's output: its makers' value added per "
                                           "dollar, mixed by their shares of it.",
               row_tip="Commodity", code="plenty/analysis.py"),
         Sheet("y", "each industry's value added", "dollars", **lone(t.VA.sum(axis=0).loc[ind], "y", "Value added in 2017"),
-              row_names=t.ind_names, rows="industries",
+              row_names=t.ind_names, rows="producing industries",
               entries="Millions of dollars of value added in 2017: what the industry paid its employees, taxes on production "
                       "less subsidies, and its gross operating surplus.",
               source=f"{bea} It is the Use table's three rows of value added "
@@ -783,19 +791,19 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Industry", code=model, sums="both"),
         # --- work
         Sheet("W", "the occupations that do each sector's work", "share", d.wages[0].loc[com], t.names, occ.title,
-              rows="commodities: the sector", cols="occupations",
+              rows="sectors, each a commodity", cols="paid occupations",
               entries="The occupation's share of the sector's wage bill. A row adds up to one, or is empty where the sector is "
                       "not measured.",
               row_tip="Sector", col_tip="Share of its wage bill paid to", col_is="Column, the occupation:",
               axis="Occupations: their share of each sector's wage bill", code=occupations, **by_occupation),
         Sheet("P", "the pay of each occupation in each sector", "dollars", P.loc[com], t.names, occ.title,
-              rows="commodities: the sector", cols="occupations",
+              rows="sectors, each a commodity", cols="paid occupations",
               entries="Millions of dollars paid to the occupation in a year by the surveyed industries that cover the sector.",
               note="Jobs times the mean wage, in the cells where the survey publishes both.",
               row_tip="Sector", col_tip="Paid to", col_is="Column, the occupation:",
               axis="Occupations: their pay in each sector", code=occupations, **by_occupation, sums="both"),
         Sheet("T", "the surveyed industries that cover each sector", "mark", T.loc[com], t.names, surveyed.title,
-              rows="commodities: the sector", cols="surveyed industries",
+              rows="sectors, each a commodity", cols="covering surveyed industries",
               entries="One where the surveyed industry covers the sector, and zero elsewhere.",
               source=f"The Bureau of Economic Analysis's concordance of its sectors with the industry classification the survey "
                      f"uses, in {_file('data/occupations/')}, and in {_file(occupations)} the stand-ins for what the survey "
@@ -805,21 +813,21 @@ def sheets(d: Data) -> dict[str, Sheet]:
               col_groups=surveyed.group, blanks=("does not cover it", "zero"), marked="covers it",
               order="Sectors and surveyed industries are each in code order within the same fifteen groups.", sums="both"),
         Sheet("E", "jobs in each occupation", "people", E.fillna(0.0), surveyed.title, occ.title,
-              rows="surveyed industries", cols="occupations", entries="Jobs in the occupation in the industry, in May 2021.",
+              rows="employing surveyed industries", cols="employed occupations", entries="Jobs in the occupation in the industry, in May 2021.",
               source=oews,
               note="It counts wage and salary jobs at nonfarm employers, not people: someone with two jobs is in it twice, and the "
                    "self-employed are not in it.",
               row_tip="Surveyed industry", col_tip="Occupation", axis="Occupations: the jobs of each industry in them",
               code=occupations, row_groups=surveyed.group, blanks=not_published, **by_occupation_only, sums="both"),
         Sheet("M", "the wage of each occupation", "wage", wage.fillna(0.0), surveyed.title, occ.title,
-              rows="surveyed industries", cols="occupations",
+              rows="paying surveyed industries", cols="paid occupations",
               entries="The mean annual wage of the occupation in the industry, in dollars, in May 2021.",
               source=oews, note="A wage of $208,000 or more is recorded as $208,000.",
               row_tip="Surveyed industry", col_tip="Occupation", axis="Occupations: their mean annual wage in each industry",
               code=occupations, row_groups=surveyed.group, blanks=not_published, **by_occupation_only),
         # --- software capabilities
         Sheet(PHI, "the software each occupation works with", "share", d.phi, occ.title, tax.name[caps],
-              rows="occupations", cols="software capabilities: the taxonomy's",
+              rows="software-using occupations", cols="the taxonomy's software capabilities",
               entries="The share of the occupation's work that is done with the capability. A row adds up to the share of the "
                       "occupation's software the taxonomy places, at most one.",
               source=f"O*NET 31.0, the U.S. Department of Labor's database of occupations, lists the software products each "
@@ -835,7 +843,7 @@ def sheets(d: Data) -> dict[str, Sheet]:
               order=f"Occupations are in the order of the Standard Occupational Classification within its 22 major groups. {capability_order}"),
         Sheet("a", "the well-defined share of the tasks with no open tool", "share",
               **lone(d.defined_share, "a", "Well defined", "share"), **by_capability,
-              rows="software capabilities: the taxonomy's",
+              rows="the taxonomy's software capabilities",
               entries="Of the capability's tasks with no known open tool, the share whose result could be scored by a benchmark. "
                       "A task that could partly be scored counts half. Zero where every task has a tool.",
               source=f"The taxonomy says of each task whether it is benchmarkable: {_file('taxonomy/capabilities.csv')}.",
@@ -843,7 +851,7 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Capability", code="taxonomy/build.py", order=capability_order),
         Sheet("c", "the open share of each capability", "share",
               **lone(d.open_share, "c", "Tasks with an open tool", "share"), **by_capability,
-              rows="software capabilities: the taxonomy's",
+              rows="the taxonomy's software capabilities",
               entries="The share of the capability's tasks for which an open-source tool is known.",
               source=f"The taxonomy names the open tools known for each of its {int((d.tax.level == 2).sum()):,} tasks: "
                      f"{_file('taxonomy/capabilities.csv')}.",
@@ -852,14 +860,14 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Capability", code="taxonomy/build.py", order=capability_order),
         # --- work activities: the same dollar, placed on what the work is
         Sheet("f", "the part of a need dollar that pays for each activity", "per_dollar", to_activity, **by_activity, **by_weighing,
-              rows="work activities: O*NET's intermediate work activities",
+              rows="O*NET's intermediate work activities",
               entries="Dollars per need dollar, paid and unpaid, that go to the activity. It is where today's work goes, not how "
                       "much an activity matters.",
               note="The rest of the dollar is in sectors the survey of occupations does not reach, and in occupations whose tasks "
                    "are not rated.",
               row_tip="Activity", code="plenty/flows.py", sums="cols", order=activity_order),
         Sheet(THETA, "the activities that make up each occupation's work", "share", d.theta, occ.title, act.name,
-              rows="occupations", cols="work activities: O*NET's intermediate work activities",
+              rows="working occupations", cols="O*NET's intermediate work activities",
               entries="The share of the occupation's work that is the activity. A row adds up to one, or is empty where no task of "
                       "the occupation is rated.",
               source=f"O*NET 31.0, the U.S. Department of Labor's database of occupations: {_file('data/occupations/')}. Each task of "
@@ -872,7 +880,7 @@ def sheets(d: Data) -> dict[str, Sheet]:
               short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
               order=f"Occupations are in the order of the Standard Occupational Classification within its 22 major groups. {activity_order}"),
         Sheet("G", "the unpaid work done at home", "per_dollar", unpaid, occ.title, act.name,
-              rows="occupations: the one that does such work for pay", cols="work activities: the kind of work",
+              rows="the paid equivalent of the work, an occupation", cols="the kind of work, a work activity",
               entries="Dollars of unpaid work at home for every dollar spent on the needs, valued at the mean wage of the "
                       "occupation that does such work for pay.",
               source=f"The hours are from the American Time Use Survey of the U.S. Bureau of Labor Statistics, 2017, and the number "
@@ -887,7 +895,7 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_groups=occ.major, col_groups=act.parent.map(d.act.name), short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
               sums="both", order=f"Occupations are in {occupation_order[len('occupations in '):]}. {activity_order}"),
         Sheet("s", "the activities that are information work", "mark", **lone(info, "s", "Information work", "one or zero"), **by_activity,
-              rows="work activities: O*NET's intermediate work activities",
+              rows="O*NET's intermediate work activities",
               entries="One where the activity is information work, which software could do, and zero where it needs a body or is "
                       "work in which the person is the point.",
               source=f"Judgment, made by hand, one activity at a time: {_file('config/activity_kinds.csv')}.",
@@ -895,7 +903,7 @@ def sheets(d: Data) -> dict[str, Sheet]:
               order=activity_order),
         Sheet("b", "the part of a need dollar that pays for work that needs a body", "per_dollar",
               to_activity.mul(1 - info, axis=0), **by_activity, **by_weighing,
-              rows="work activities: O*NET's intermediate work activities",
+              rows="O*NET's intermediate work activities",
               entries="Dollars per need dollar, paid and unpaid, that go to the activity, where it needs a body or a person. No "
                       "software capability reaches it without a machine to act through.",
               row_tip="Activity", code="plenty/site.py", sums="cols", order=activity_order),
@@ -917,12 +925,12 @@ def sheet_data(s: Sheet, **extra) -> str:
     def side(codes, names, things, groups=None):
         g = MX.groups(codes) if groups is None else groups
         return {"codes": list(codes), "names": [names[c] for c in codes], "groups": [g[c] for c in codes],
-                "things": things.split(":")[0].split(",")[0]}
+                "things": things}
     payload = {"key": s.key, "kind": s.kind, "unit": kind["unit"], "cut": kind["cut"], "scale": kind["scale"],
                "blank": s.blanks[0] if s.blanks else "nothing" if s.exact else kind["blank"], "marked": s.marked,
                "short": {**MX.SHORT, **(s.short or {})}, "lock": s.thin,
-               "rows": side(s.values.index, s.row_names, s.rows, s.row_groups),
-               "cols": side(s.values.columns, s.col_names, s.cols if s.values.shape[1] > 1 else "column", s.col_groups),
+               "rows": side(s.values.index, s.row_names, COUNTED[dimension(s.rows)[0]][1], s.row_groups),
+               "cols": side(s.values.columns, s.col_names, COUNTED[dimension(s.cols)[0]][1] if s.values.shape[1] > 1 else "column", s.col_groups),
                "rowTip": s.row_tip, "colTip": s.col_tip, "rowIs": s.row_is or f"Row, the {s.row_tip.lower()}:",
                "colIs": s.col_is or f"Column, the {s.col_tip.lower()}:",
                "second": w is not None, "cells": [[int(x) for x in col] for col in cells], **sheet_sums(s), **extra}
@@ -1059,7 +1067,7 @@ def units(d: Data) -> dict[str, Unit]:
     needs = [NEED_NAME[n].lower() for n in d.sheets["Y"].values.columns]
     ways = d.sheets[OMEGA].values
     out = [
-        Unit("commodity", "commodity", "commodities", True,
+        Unit("commodity", *COUNTED["commodity"], True,
              "One of the goods and services the Bureau of Economic Analysis divides the economy's output into.",
              f"""<p>One of the {len(t.commodities)} goods and services that the U.S. Bureau of Economic Analysis divides everything the
 economy makes into, in its 2017 benchmark input-output accounts at the detail level: {_file('data/bea/')}. Grain is one, hospitals
@@ -1067,32 +1075,32 @@ another, wholesale trade another.</p>
 <p>A commodity is a product, not a maker. It is made by one or more {_unit("industry", "industries")}, in the shares
 {T("D")} holds. Where a term's rows are called sectors, each row is still a commodity, standing for the industries that
 make it, mixed in those shares.</p>"""),
-        Unit("industry", "industry", "industries", True,
+        Unit("industry", *COUNTED["industry"], True,
              "One of the groups of producers the Bureau of Economic Analysis divides the economy into.",
              f"""<p>One of the {len(t.industries)} groups of producers in the same accounts. An industry is named for its main
 product, a {_unit("commodity")}, but it can make others too: {T("V")} says how much of each.</p>
 <p>The Bureau's tables say what industries bought and what they paid. The model turns those into what it takes to make a
 commodity, through {T("D")}.</p>"""),
-        Unit("need", "need", "needs", True,
+        Unit("need", *COUNTED["need"], True,
              "One of the purposes that household and government spending is counted under.",
              f"""<p>One of {len(needs)} purposes that what households and governments buy is counted under: {", ".join(needs)}.
 The list is the project's own. Each {_unit("commodity")} is counted under one need, or under none, by a list made by hand:
 {_file('config/basket.csv')}.</p>
 <p>What is under no need is left out of the account: financial and legal services, national defense and the rest of federal
 government among them.</p>"""),
-        Unit("weighting", "way of weighing the needs", "ways of weighing the needs", True,
+        Unit("weighting", *COUNTED["weighting"], True,
              "One of three ways of dividing a need dollar among the needs.",
              f"""<p>One of {ways.shape[1]} ways of dividing one {_unit("need-dollar", "need dollar")} among the
 {_unit("need", "needs")}, each a column of {T(OMEGA)}. Counted equally, every need has the same weight. By spending, a need
 weighs what households and governments spent on it. By the poorest fifth's budget, it weighs what the fifth of households with
 the lowest incomes spent on it themselves.</p>
 <p>Every term from {T("p")} on has a column for each, so the order the account ends in can be read all three ways.</p>"""),
-        Unit("investor-kind", "kind of investor", "kinds of investor", True,
+        Unit("investor-kind", *COUNTED["investor-kind"], True,
              "One of the five kinds of buyer the Bureau of Economic Analysis reports investment for.",
              f"""<p>One of the five kinds of buyer that the Bureau of Economic Analysis reports investment in equipment and buildings
 for: {", ".join(n.lower() for n in INVESTOR_NAME.values())}. The Bureau says what each kind bought, not which
 {_unit("industry")} bought it, so {T("S")} places each kind's purchases on the industries of that kind.</p>"""),
-        Unit("occupation", "occupation", "occupations", True,
+        Unit("occupation", *COUNTED["occupation"], True,
              "One of the kinds of job in the Standard Occupational Classification, as the survey of occupations publishes them.",
              f"""<p>One of the {len(occ):,} kinds of job, in {occ.major.nunique()} major groups, that the U.S. Bureau of Labor
 Statistics publishes in its Occupational Employment and Wage Statistics for May 2021: {_file('data/occupations/')}. They are
@@ -1100,7 +1108,7 @@ the occupations of the Standard Occupational Classification, except that the sur
 <p>The same occupations are described by O*NET, the Department of Labor's database, which says what tasks each does and what
 software it uses. That is how a dollar placed on an occupation goes on to {_unit("activity", "work activities")} and
 {_unit("capability", "software capabilities")}.</p>"""),
-        Unit("surveyed-industry", "surveyed industry", "surveyed industries", True,
+        Unit("surveyed-industry", *COUNTED["surveyed-industry"], True,
              "One of the industries the survey of occupations reports jobs and wages for.",
              f"""<p>One of the {len(surveyed)} industries that the survey of occupations reports {_unit("job", "jobs")} and wages
 for. They are industries of the North American Industry Classification System at about its four-digit level, a few of
@@ -1108,7 +1116,7 @@ them published as groups, with three more for federal, state and local governmen
 surveyed industries cover each sector.</p>
 <p>The survey leaves out farms and files public schools and hospitals with private ones. Stand-ins are used for those, and
 housing is covered by nothing, because nobody is employed in owning a home.</p>"""),
-        Unit("capability", "software capability", "software capabilities", True,
+        Unit("capability", *COUNTED["capability"], True,
              "One of the things software does for the people who work, in the project's own taxonomy.",
              f"""<p>One of the {int((tax.level == 1).sum())} things software does for people at work, in a taxonomy compiled for this
 project: {_file('taxonomy/')}. Medical coding, billing and claims is one; structural finite element analysis another. They are in
@@ -1116,7 +1124,7 @@ project: {_file('taxonomy/')}. Medical coding, billing and claims is one; struct
 <p>The taxonomy says of each task whether its result could be scored by a benchmark, and names the open-source tools known for
 it. {T("a")} and {T("c")} are counts of those. It also places the software products O*NET lists, which is how an
 {_unit("occupation")}'s work reaches a capability, in {T(PHI)}.</p>"""),
-        Unit("activity", "work activity", "work activities", True,
+        Unit("activity", *COUNTED["activity"], True,
              "One of O*NET's intermediate work activities: a kind of work, whoever does it.",
              f"""<p>One of the {len(d.sheets["f"].values)} intermediate work activities of O*NET 31.0, the U.S. Department of
 Labor's database of occupations: {_file('data/occupations/')}. An activity is a kind of work whoever does it, such as
@@ -1205,16 +1213,26 @@ def _unit(key: str, text: str = "") -> str:
     return f'<a href="unit-{key}.html">{text or key}</a>'
 
 
-def dimension(d: Data, phrase: str) -> Unit:
-    """The unit a term's rows or columns are counted in: the one its phrase names, at greatest length."""
-    named = [u for u in d.units.values() if u.counts and u.plural in phrase]
-    return max(named, key=lambda u: len(u.plural))
+def dimension(phrase: str) -> tuple[str, str]:
+    """(unit, words): the unit a term's rows or columns are counted in, by the name it is filed under,
+    and the words that name it. The phrase for the rows or columns ends in them: "input commodities",
+    "a dollar of each need"."""
+    named = [(key, words) for key, forms in COUNTED.items() for words in forms if phrase.endswith(words)]
+    return max(named, key=lambda x: len(x[1]))
 
 
-def dimension_html(d: Data, phrase: str) -> str:
-    """The phrase for a term's rows or columns, with its unit a link to the unit's page."""
-    u = dimension(d, phrase)
-    return e(phrase).replace(e(u.plural), _unit(u.key, e(u.plural)), 1)
+def dimension_html(phrase: str) -> str:
+    """The phrase for a term's rows or columns as a line of a page: with a capital, and the unit it
+    ends in a link to the unit's page."""
+    key, words = dimension(phrase)
+    phrase = phrase[0].upper() + phrase[1:]
+    return e(phrase[:-len(words)]) + _unit(key, e(phrase[-len(words):]))
+
+
+def size_html(s: Sheet) -> str:
+    """How many rows a term has, and columns if more than one, each counted in its unit."""
+    sides = [(n, dimension(phrase)[0]) for n, phrase in zip(s.values.shape, (s.rows, s.cols)) if phrase is s.rows or n > 1]
+    return " &times; ".join(f"{n:,} {_unit(key, e(COUNTED[key][1]))}" for n, key in sides)
 
 
 def measure_text(key: str) -> str:
@@ -1238,10 +1256,9 @@ def measures(key: str) -> list[str]:
 def term_tip(s: Sheet) -> str:
     """What a link to a term shows under the pointer: its name, what its rows and columns are, and
     what an entry is measured in. A vector has rows alone."""
-    nr, nc = s.values.shape
-    lines = [s.title, f"Rows: {nr:,} {s.rows.replace(': ', ', ', 1)}"]
-    if nc > 1:
-        lines.append(f"Columns: {nc:,} {s.cols.replace(': ', ', ', 1)}")
+    lines = [s.title, f"Rows: {s.rows}"]
+    if s.values.shape[1] > 1:
+        lines.append(f"Columns: {s.cols}")
     return "\n".join(lines + [f"Unit: {measure_text(s.key)}"])
 
 
@@ -1260,8 +1277,8 @@ def with_tips(d: Data, page: str) -> str:
 def unit_users(d: Data, u: Unit) -> dict[str, list[str]]:
     """The terms that use a unit, by how: as what their rows are, their columns, or their entries."""
     wide = [k for k, s in d.sheets.items() if s.values.shape[1] > 1]
-    return {"Rows of": [k for k, s in d.sheets.items() if dimension(d, s.rows) is u],
-            "Columns of": [k for k in wide if dimension(d, d.sheets[k].cols) is u],
+    return {"Rows of": [k for k, s in d.sheets.items() if dimension(s.rows)[0] == u.key],
+            "Columns of": [k for k in wide if dimension(d.sheets[k].cols)[0] == u.key],
             "Entries of": [k for k in d.sheets if u.key in measures(k)]}
 
 
@@ -1302,10 +1319,9 @@ def term_page(d: Data, key: str) -> str:
     """The page of one term: what its rows, columns and entries are, where it comes from, what it
     is made from and what it goes into, and the picture of the whole of it."""
     s = d.sheets[key]
-    nr, nc = s.values.shape
-    spec = [("Rows", f"{nr:,} {dimension_html(d, s.rows)}")]
-    if nc > 1:
-        spec.append(("Columns", f"{nc:,} {dimension_html(d, s.cols)}"))
+    spec = [("Rows", dimension_html(s.rows))]
+    if s.values.shape[1] > 1:
+        spec.append(("Columns", dimension_html(s.cols)))
     spec.append(("Entries", s.entries))
     spec.append(("Unit", measure_html(key)))
     if key in EQUATIONS:
@@ -1346,12 +1362,10 @@ def account_table(d: Data) -> str:
         rows.append(f'<tr class="band"><th colspan="4" scope="colgroup">{e(group)}</th></tr>')
         for k in keys:
             s = d.sheets[k]
-            nr, nc = s.values.shape
-            size = f"{nr:,} {dimension_html(d, s.rows.split(':')[0])}" + (f" &times; {nc:,} {dimension_html(d, s.cols.split(':')[0])}" if nc > 1 else "")
             a, b = equation(k) if k in EQUATIONS else ("", "")
             made = _m(f"{a}<mo>=</mo>{b}") if a else '<span class="dim">Data</span>'
             rows.append(f'<tr><th scope="row">{_m(_term(k))}</th><td class="wrap"><a href="{s.href}">{e(s.name[0].upper() + s.name[1:])}</a></td>'
-                        f'<td class="wrap">{size}</td><td>{made}</td></tr>')
+                        f'<td class="wrap">{size_html(s)}</td><td>{made}</td></tr>')
     return table([th("Term"), th("Name"), th("Size"), th("Made from")], rows, attrs=' class="terms"',
                  caption="Every matrix and vector of the account. Each is a link to its page: its rows, columns and entries, where "
                          "it comes from, what it goes into, and a picture of the whole of it.")

@@ -44,11 +44,11 @@ def test_a_link_to_a_term_says_what_its_rows_columns_and_entries_are(built):
     assert set(site.MEASURED_IN) == set(site.TERMS)
     for key, sheet in built.sheets.items():
         lines = site.term_tip(sheet).split("\n")
-        nr, nc = sheet.values.shape
-        assert lines[0] == sheet.title and lines[1].startswith(f"Rows: {nr:,} ") and lines[-1] == f"Unit: {site.measure_text(key)}", key
-        assert (len(lines) == 4 and lines[2].startswith(f"Columns: {nc:,} ")) if nc > 1 else len(lines) == 3, key   # a vector has rows alone
+        assert lines[0] == sheet.title and lines[1] == f"Rows: {sheet.rows}" and lines[-1] == f"Unit: {site.measure_text(key)}", key
+        # a vector has rows alone
+        assert (len(lines) == 4 and lines[2] == f"Columns: {sheet.cols}") if sheet.values.shape[1] > 1 else len(lines) == 3, key
     x = site.term_tip(built.sheets["x"]).split("\n")
-    assert x[1:] == ["Rows: 402 produced commodities", "Columns: 11 needs, a dollar of each",
+    assert x[1:] == ["Rows: produced commodities", "Columns: a dollar of each need",
                      "Unit: commodity dollars produced per need dollar"]
     for name in [site.HOME] + list(site.SYMBOL_PAGES.values()):      # and every link to a term carries its own
         text = (site.SITE / name).read_text()
@@ -66,13 +66,19 @@ def test_every_unit_has_a_page_and_every_term_links_to_its_units(built):
         page = (site.SITE / sheet.href).read_text()
         spec = page[page.index('<dl class="spec">'):page.index("</dl>")]
         nr, nc = sheet.values.shape
-        # the rows and the columns are each counted in a unit, named in their phrase, and it is a link
+        # the rows and the columns are each said as what they are, ending in their unit, which is a link; their number is not said
         sides = [("Rows", nr, sheet.rows)] + ([("Columns", nc, sheet.cols)] if nc > 1 else [])
         for label, n, phrase in sides:
-            u = site.dimension(built, phrase)
-            assert u.counts and u.plural in phrase, (key, phrase)
-            assert f'<dt>{label}</dt><dd>{n:,} ' in spec and f'<a href="{u.href}"' in spec.split(f"<dt>{label}</dt>")[1].split("</dd>")[0], (key, label)
-            used.add(u.key)
+            unit, words = site.dimension(phrase)
+            u = units[unit]
+            assert u.counts and words in (u.name, u.plural) and phrase.endswith(words), (key, phrase)
+            said = phrase[0].upper() + phrase[1:]
+            line = f'<dt>{label}</dt><dd>{markup.escape(said[:-len(words)])}{_link(u)}>{markup.escape(said[-len(words):])}</a></dd>'
+            assert line in spec, (key, label)
+            used.add(unit)
+        # the table of terms has the numbers, each counted in the unit
+        size = " &times; ".join(f"{n:,} {_link(units[site.dimension(phrase)[0]])}>{units[site.dimension(phrase)[0]].plural}</a>" for _, n, phrase in sides)
+        assert f'<td class="wrap">{size}</td>' in home, key
         # and the entries are measured in units that have pages, and are not what rows are counted in
         measured = site.measures(key)
         assert measured and all(not units[m].counts for m in measured), key
@@ -203,7 +209,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
         assert all(f'id="{i}"' in html for i in ("mx-top", "mx-left", "mx-zoom-in", "mx-zoom-out", "mx-zoom-all", "mx-unsort", "mx-note"))
         # what the page says of the term: its rows, columns and entries, where it comes from and what it goes into
         spec = html[html.index('<dl class="spec">'):html.index("</dl>")]
-        assert f"<dt>Rows</dt><dd>{X.shape[0]:,} " in spec and "<dt>Entries</dt>" in spec and "<dt>Data</dt>" in spec
+        assert "<dt>Rows</dt><dd>" in spec and "<dt>Entries</dt>" in spec and "<dt>Data</dt>" in spec
         assert ("<dt>Columns</dt>" in spec) == (X.shape[1] > 1), key
         assert ("<dt>Computed</dt>" in spec) == (key in site.EQUATIONS) and ("<dt>Source</dt>" in spec) == (key not in site.EQUATIONS), key
         assert ("<dt>Made from</dt>" in spec) == (key in site.USES), key
@@ -253,9 +259,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
     data = _data(built.sheets["A"])
     groups = data["rows"]["groups"]
     assert groups == sorted(groups, key=site.MX.ORDER.index) and set(groups) <= set(data["short"])
-    # its rows and columns are the same commodities, as inputs and as outputs
-    assert (data["rows"]["things"], data["cols"]["things"]) == ("input commodities", "output commodities")
-    assert {**data["cols"], "things": ""} == {**data["rows"], "things": ""}
+    assert data["cols"] == data["rows"] and data["rows"]["things"] == "commodities"
     occ = built.wages[2]
     data = _data(built.sheets["W"])
     assert set(data["cols"]["groups"]) <= set(data["short"]) and len(set(data["cols"]["groups"])) == occ.major.nunique() == len(site.SOC_SHORT)
