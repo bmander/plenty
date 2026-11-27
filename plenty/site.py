@@ -1073,8 +1073,12 @@ def units(d: Data) -> dict[str, Unit]:
 economy makes into, in its 2017 benchmark input-output accounts at the detail level: {_file('data/bea/')}. Grain is one, hospitals
 another, wholesale trade another.</p>
 <p>A commodity is a product, not a maker. It is made by one or more {_unit("industry", "industries")}, in the shares
-{T("D")} holds. Where a term's rows are called sectors, each row is still a commodity, standing for the industries that
-make it, mixed in those shares.</p>"""),
+{T("D")} holds.</p>
+<p>Some terms need a maker for each row: whose income a dollar becomes, and who works there. Their rows are called sectors.
+A sector is still a row for each commodity, with a maker put in the commodity's place. For value added, {T("r")}, the maker
+is every industry that makes the commodity, each counted by its share of it. For work, {T("W")}, it is only the
+{_unit("surveyed-industry", "surveyed industries")} whose classification matches the commodity's own, {T("T")}: the
+industry named for it, and not the others that make some of it.</p>"""),
         Unit("industry", *COUNTED["industry"], True,
              "One of the groups of producers the Bureau of Economic Analysis divides the economy into.",
              f"""<p>One of the {len(t.industries)} groups of producers in the same accounts. An industry is named for its main
