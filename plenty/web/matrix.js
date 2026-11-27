@@ -27,7 +27,7 @@
       say: function (v) { return cents(v) + " per dollar"; }, cell: hundredths,
       // a total of a dollar or more is said in dollars
       sum: function (v) { return (v >= 0.995 ? "$" + v.toFixed(2) : cents(v, 1)) + " per dollar"; },
-      brief: function (v) { return v >= 0.995 ? "$" + v.toFixed(2) : cents(v, 0); }
+      brief: function (v) { return v >= 0.995 ? "$" + v.toFixed(2) : cents(v, v >= 0.0995 ? 1 : 2); }   // small totals keep their figures
     },
     share: { say: function (v) { return hundredths(v) + "%"; }, cell: hundredths },
     dollars: {

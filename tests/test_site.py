@@ -32,9 +32,9 @@ def _data(sheet):
     return json.loads(text[text.index("{"):text.rindex("}") + 1])
 
 
-def test_the_account_is_three_equations_and_a_table_of_every_term(built):
+def test_the_account_is_four_equations_and_a_table_of_every_term(built):
     html = (site.SITE / site.HOME).read_text()
-    assert html.count('<math display="block"') == 1 and html.count("<mtr>") == 3
+    assert html.count('<math display="block"') == 1 and html.count("<mtr>") == 4
     # what the second and third lines come to is said under them
     k = built.sheets["k"].values.iloc[:, 0]
     assert f"{k.sum() * 100:.1f} cents" in html and f"{site.gap(built) * 100:.1f} cents" in html and f"{len(k)} software capabilities" in html
@@ -100,6 +100,7 @@ def test_the_equations_the_pages_print_hold_of_the_matrices_they_show(built):
     tasks = built.tax[built.tax.level == 2]
     assert list(c.index) == list(phi.columns) == list(built.tax.id[built.tax.level == 1]) and c.between(0, 1).all()
     assert (c * tasks.groupby("parent").size()[c.index]).sum() == pytest.approx((tasks.open_tools != "").sum())
+    assert np.allclose(col("o")[phi.columns], k * (1 - c.values), atol=1e-12)        # the third line, and the fourth
     assert site.gap(built) == pytest.approx(float(k @ (1 - c.values))) and 0 < site.gap(built) < k.sum()
 
 
@@ -119,7 +120,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
         for made_from in site.USES.get(key, ()):
             assert f'href="{site.SYMBOL_PAGES[made_from]}"' in spec, (key, made_from)
         users = [k for k in site.TERMS if key in site.USES.get(k, ())]
-        assert ("<dt>Used in</dt>" in spec) == bool(users or key in "kc"), key
+        assert ("<dt>Used in</dt>" in spec) == bool(users or key == "o"), key
         for user in users:
             assert f'href="{site.SYMBOL_PAGES[user]}"' in spec, (key, user)
         assert f'href="{site.HOME}"' in html and f'<a href="{sheet.href}"' not in html     # it leads back, and not to itself
@@ -147,7 +148,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert np.allclose(data["rowSums"], x.sum(axis=1), rtol=1e-5, atol=1e-9) and np.isclose(data["grand"], x.sum(), rtol=1e-5), key
         csv = pd.read_csv(site.SITE / sheet.csv_file, index_col=0, dtype={0: str})
         assert list(csv.index.astype(str)) == rows and np.allclose(csv.values, x, rtol=1e-5, atol=1e-9), key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xkfdYgqFHzvryc")
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xkofdYgqFHzvryc")
     # the matrices are the model's own
     m, t = built.io, built.io.t
     for key, X in {"A": m.A, "L": m.L, "U": t.U, "V": t.V, "K": m.K, "S": built.capital.shares, "F": built.capital.investment,

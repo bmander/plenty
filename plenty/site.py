@@ -3,7 +3,7 @@
     python scripts/03_run.py     # refresh results/ first if config/ changed
     python -m plenty.site
 
-The site is the account: three equations on the home page, and a page for every matrix and
+The site is the account: four equations on the home page, and a page for every matrix and
 vector they are made from, down to the published tables. Assets in plenty/web/ are copied as
 they are. Everything is plain HTML with relative links, so the site works from any path (GitHub
 Pages serves it under /plenty/).
@@ -193,7 +193,7 @@ def th(label: str, cls: str = "", sort: str = "") -> str:
 
 
 # ---------------------------------------------------------------- the account and its terms
-# The account is three equations. Every matrix and vector in them, and every one those are made
+# The account is four equations. Every matrix and vector in them, and every one those are made
 # from, down to the published tables, is a term with a page of its own: what its rows, columns and
 # entries are, where it comes from, what it is made from and what it goes into, and a picture of
 # the whole of it (web/matrix.js).
@@ -217,7 +217,7 @@ THETA, PHI = "Θ", "Φ"
 GREEK = {THETA: ("Theta", "&#x1D6AF;"), PHI: ("Phi", "&#x1D6BD;")}     # a Greek letter's name in a file, and its bold
 # the terms, in the order the account's table lists them
 GROUPS = [
-    ("The account", ["x", "k"]),
+    ("The account", ["x", "k", "o"]),
     ("Needs", ["d", "Y"]),
     ("The input-output model", ["L", "A", "B", "D", "U", "V", "g", "q"]),
     ("Capital", ["K", "F", "H", "S", "z"]),
@@ -229,7 +229,7 @@ GROUPS = [
 TERMS = [k for _, keys in GROUPS for k in keys]
 PER_NEED = "dxv"                      # the vectors there is one of for each need, written with a subscript n
 # what each computed term is made from; a term that is not here is data
-USES = {"x": ["L", "d"], "k": ["v", "W", PHI], "f": ["v", "W", THETA], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
+USES = {"x": ["L", "d"], "k": ["v", "W", PHI], "o": ["k", "c"], "f": ["v", "W", THETA], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
         "D": ["V", "q"], "g": ["V"], "q": ["V"], "K": ["F", "H", "S"], "S": ["z", "H"], "z": ["g", "H"],
         "v": ["r", "x"], "r": ["y", "g", "D"], "W": ["P"], "P": ["T", "E", "M"]}
 
@@ -375,8 +375,10 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     if key in "kf":       # the same dollar, placed on the software the work is done with, or on what the work is
         last = S(PHI if key == "k" else THETA)
         return S(key, T=True), (f'<mfrac><mn>1</mn><mi>N</mi></mfrac>{_TIMES}{_sum("n")}{V("v", T=True)}{_TIMES}{S("W")}{_TIMES}{last}')
-    if key == "gap":
-        return "<mi>gap</mi>", f'{S("k", T=True)}{_TIMES}{_paren(f"{_ONES}<mo>&minus;</mo>{S("c")}")}'
+    if key == "o":        # entry by entry: what is paid for work with a capability, times the part of it that is not open
+        return S("o"), f'{S("k")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("c")}")}'
+    if key == "gap":      # and the whole of it
+        return "<mi>gap</mi>", f'<msup>{_ONES}{_TR}</msup>{_TIMES}{S("o")}'
     if key == "d":        # the matrix whose columns are the d of each need
         first, last = _vec("d", here, sub="1"), _vec("d", here, sub="N")
         return (f"<mrow><mo>[</mo>{first}<mspace width=\"0.3em\"/><mo>&#x22EF;</mo><mspace width=\"0.3em\"/>{last}<mo>]</mo></mrow>",
@@ -410,7 +412,7 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     raise KeyError(key)
 
 
-EQUATIONS = ["x", "k", "f", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
+EQUATIONS = ["x", "k", "o", "f", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
 
 def _file(path: str) -> str:
@@ -533,6 +535,14 @@ def sheets(d: Data) -> dict[str, Sheet]:
                    f"reach, and {d.cap_acct.work_not_placed * 100:.1f} in occupations that list no software or software the taxonomy "
                    "does not place.",
               row_tip="Capability", code="plenty/flows.py", sums="both", order=capability_order),
+        Sheet("o", "the overhang of each capability", "per_dollar",
+              **lone(flow * (1 - d.open_share), "o", "Share of a need dollar", "per dollar"), **by_capability,
+              rows="software capabilities: the taxonomy's",
+              entries="Dollars per need dollar: what is paid for work done with the capability, times the share of its tasks "
+                      "that have no known open tool.",
+              note="The entries add up to the gap. Sorted, the column is the order to work in, as far as the two terms it is "
+                   "made from can be trusted.",
+              row_tip="Capability", code="plenty/site.py", sums="both", order=capability_order),
         # --- needs
         Sheet("d", "what a dollar of each need buys", "per_dollar", dn.loc[com], t.names,
               rows="commodities: what is bought", cols="needs: a dollar of each", **by_need,
@@ -881,7 +891,7 @@ def term_page(d: Data, key: str) -> str:
     if key in USES:
         spec.append(("Made from", term_links(d, USES[key], key)))
     users = [k for k in TERMS if key in USES.get(k, ())]
-    into = [equation(k, key) for k in users if k in EQUATIONS] + ([equation("gap", key)] if key in "kc" else [])
+    into = [equation(k, key) for k in users if k in EQUATIONS] + ([equation("gap", key)] if key == "o" else [])
     plain = [k for k in users if k not in EQUATIONS]
     if into or plain:
         spec.append(("Used in", (_eqs(into) if into else "") + (f"<p>{term_links(d, plain, key)}</p>" if plain else "")))
@@ -924,20 +934,19 @@ def account_table(d: Data) -> str:
 
 
 def gap(d: Data) -> float:
-    """The third line of the account: the part of a need dollar that pays for work done with software
+    """The last line of the account: the part of a need dollar that pays for work done with software
     capabilities whose tasks have no known open tool."""
-    k, c = (d.sheets[key].values.iloc[:, 0] for key in "kc")
-    return float(k @ (1 - c))
+    return float(d.sheets["o"].values.values.sum())
 
 
 def account_section(d: Data) -> str:
-    """The whole account as three equations, what they come to, and every term in them."""
+    """The whole account as four equations, what they come to, and every term in them."""
     k = d.sheets["k"].values.iloc[:, 0]
-    return f"""{_eqs([equation("x"), equation("k"), equation("gap")])}
+    return f"""{_eqs([equation("x"), equation("k"), equation("o"), equation("gap")])}
 <p>{_m("<mi>N</mi>")} is the number of needs, {len(NEED_NAME)}, each counted equally, and {_m(_ONES)} is a column of ones.
 The second line places {k.sum() * 100:.1f} cents of a need dollar on {len(k)} software capabilities: what is paid to the people
-who work with each. The third line comes to {gap(d) * 100:.1f} cents: the part of that paid for work with capabilities whose
-tasks have no known open tool.</p>
+who work with each. The third keeps the part of each that is paid for work with tasks that have no known open tool, and
+the fourth adds it up: {gap(d) * 100:.1f} cents. Sorted, {_m(_sym("o"))} is the order to work in.</p>
 <h2 id="terms">Every term</h2>
 {account_table(d)}
 """
