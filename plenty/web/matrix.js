@@ -1,22 +1,20 @@
 // A matrix page: paints every entry of one of the model's matrices on a canvas, to be zoomed,
-// marked and sorted. On the page for A it also takes a marked cell apart and lists one sector's
-// column and row. The data file sets window.PLENTY_MATRIX (written by plenty/site.py). No dependencies.
+// marked and sorted. On the page for A it also takes a marked cell apart. The data file sets
+// window.PLENTY_MATRIX (written by plenty/site.py). No dependencies.
 (function () {
   "use strict";
   var M = window.PLENTY_MATRIX, canvas = document.getElementById("mx-canvas");
   if (!M || !canvas) return;
   // nr rows by nc columns; the rows and the columns may be different things, and of different number
-  var nr = M.rows.names.length, nc = M.cols.names.length, unit = M.unit, LIST = 12, STEP = M.second ? 3 : 2;
+  var nr = M.rows.names.length, nc = M.cols.names.length, unit = M.unit, STEP = M.second ? 3 : 2;
   var LO = Math.log10(M.scale[0]), HI = Math.log10(M.scale[1]);   // the two ends of the colour scale
 
-  // dense copies for the pointer, and each row's entries for "who uses it"
-  var value = new Float32Array(nr * nc), capital = new Float32Array(nr * nc), byRow = [];
-  for (var r = 0; r < nr; r++) byRow.push([]);
+  // dense copies for the pointer
+  var value = new Float32Array(nr * nc), capital = new Float32Array(nr * nc);
   M.cells.forEach(function (col, j) {
     for (var k = 0; k < col.length; k += STEP) {
       value[col[k] * nc + j] = col[k + 1] * unit;
       if (M.second) capital[col[k] * nc + j] = col[k + 2] * unit;   // the part that is equipment and buildings
-      byRow[col[k]].push(j, col[k + 1]);
     }
   });
 
@@ -65,6 +63,9 @@
   // each sector once its cells are wide enough to label. Closer still, each cell carries its number.
   // Either axis can be put in the order of one line of the other, and a cell, a row or a column marked.
   var MIN_SPAN = 8;          // the closest view: this many sectors across
+  var MIN_ROWS = 12;         // or, of a matrix whose columns are always all in view, this many rows down
+  var VALUE_ROW = 13;        // in such a matrix a row this tall has room for its values
+  var FLAT_PX = 56;          // and a column this wide has its name written along it, not up it
   var NAME_PX = 10;          // sectors are named once a cell is this wide
   var VALUE_PX = 32;         // and each cell shows its value, in cents, once it is this wide
   var GROUP_PX = 13;         // a group is named in the far view if it is this wide
@@ -75,12 +76,16 @@
   var zoomIn = document.getElementById("mx-zoom-in"), zoomOut = document.getElementById("mx-zoom-out"), zoomAll = document.getElementById("mx-zoom-all");
   var unsort = document.getElementById("mx-unsort"), note = document.getElementById("mx-note");
   var hLine = document.getElementById("mx-h"), vLine = document.getElementById("mx-v");
-  // The view: its left and top edge and its width, in cells. Cells are square and the picture has
-  // the matrix's shape, so its height in cells follows from its width.
-  var view = { x: 0, y: 0, span: nc };
-  function down() { return view.span * nr / nc; }
-  function home() { return view.span >= nc && !view.x && !view.y; }   // the whole matrix, square in the picture
-  plot.style.aspectRatio = nc + " / " + nr;
+  // The view: its left and top edge and its span, in cells. Most matrices are drawn with square
+  // cells in a picture of the matrix's shape: the span is the cells across, and the cells down
+  // follow from it. A tall, narrow matrix (M.lock) would be a sliver that way, so its columns are
+  // always all in view, as wide as the picture allows; its span is the rows in view, and zooming
+  // changes those alone.
+  var LOCK = !!M.lock, FULL = LOCK ? nr : nc, CLOSEST = Math.min(FULL, LOCK ? MIN_ROWS : MIN_SPAN);
+  var view = { x: 0, y: 0, span: FULL };
+  function across() { return LOCK ? nc : view.span; }
+  function down() { return LOCK ? view.span : view.span * nr / nc; }
+  function home() { return view.span >= FULL && !view.x && !view.y; }   // the whole matrix, square in the picture
   var sheet = document.createElement("canvas"), pending = 0, pointer = null, lit = [];
   var stops = [], paper = "#fff", off = "#eee", rule = "#888", faint = "#888", series = "#36c", onLight = "#000", onDark = "#fff", face = "sans-serif";
   sheet.width = nc;
@@ -91,7 +96,7 @@
   // first; sel is the sector marked on it.
   // names, codes and groups are its sectors', in the Bureau's order, and runs the groups as stretches of them.
   function axis(box, side) {
-    var a = { box: box, n: side.names.length, names: side.names, codes: side.codes, groups: side.groups, runs: [], at: [], pos: [], by: null, sel: null };
+    var a = { box: box, n: side.names.length, names: side.names, codes: side.codes, groups: side.groups, things: side.things, runs: [], at: [], pos: [], by: null, sel: null };
     for (var k = 0; k < a.n; k++) { a.at.push(k); a.pos.push(k); }
     side.groups.forEach(function (g, j) {
       var last = a.runs[a.runs.length - 1];
@@ -163,20 +168,23 @@
   // a cell's value as short as it can be said
   function figure(v) { return (v < 0 ? "\u2212" : "") + kind.cell(Math.abs(v)); }
 
-  function cellPx() { return canvas.clientWidth / view.span; }
+  // a cell's width and height on the screen, which differ only in a matrix whose columns are locked
+  function cellWide() { return canvas.clientWidth / across(); }
+  function cellTall() { return canvas.clientHeight / down(); }
+  function size(a) { return a === cols ? cellWide() : cellTall(); }   // a cell's extent along an axis
   // a number of cells as a share of the picture's width, and of its height
-  function wide(cells) { return (cells / view.span * 100).toFixed(3) + "%"; }
+  function wide(cells) { return (cells / across() * 100).toFixed(3) + "%"; }
   function tall(cells) { return (cells / down() * 100).toFixed(3) + "%"; }
-  function named() { return cellPx() >= NAME_PX; }
+  function named(a) { return size(a) >= NAME_PX; }                    // whether an axis has room to name each line
   // The view can run past the matrix's edges. This is the part of the matrix in it, in cells.
   function seen() {
-    return { x0: Math.max(0, view.x), x1: Math.min(nc, view.x + view.span), y0: Math.max(0, view.y), y1: Math.min(nr, view.y + down()) };
+    return { x0: Math.max(0, view.x), x1: Math.min(nc, view.x + across()), y0: Math.max(0, view.y), y1: Math.min(nr, view.y + down()) };
   }
   // a line across the picture, and one down it, reach only as far as the matrix does
   function fit(acrossIt, downIt) {
     var s = seen();
     acrossIt.style.left = wide(s.x0 - view.x);
-    acrossIt.style.right = wide(view.x + view.span - s.x1);
+    acrossIt.style.right = wide(view.x + across() - s.x1);
     downIt.style.top = tall(s.y0 - view.y);
     downIt.style.bottom = tall(view.y + down() - s.y1);
   }
@@ -184,32 +192,31 @@
   function render() {
     pending = 0;
     var ratio = window.devicePixelRatio || 1, px = Math.max(1, Math.round(canvas.clientWidth * ratio));
-    var py = Math.max(1, Math.round(canvas.clientWidth * ratio * nr / nc));
+    var py = Math.max(1, Math.round(canvas.clientHeight * ratio));
     if (canvas.width !== px || canvas.height !== py) { canvas.width = px; canvas.height = py; }
-    var ctx = canvas.getContext("2d"), cell = px / view.span, line = Math.max(1, Math.round(ratio)), c;
-    var s = seen(), X = function (c) { return Math.round((c - view.x) * cell); }, Y = function (c) { return Math.round((c - view.y) * cell); };
+    var ctx = canvas.getContext("2d"), cw = px / across(), ch = py / down(), line = Math.max(1, Math.round(ratio)), c;
+    var s = seen(), X = function (c) { return Math.round((c - view.x) * cw); }, Y = function (c) { return Math.round((c - view.y) * ch); };
     var x0 = X(s.x0), y0 = Y(s.y0), w = X(s.x1) - x0, h = Y(s.y1) - y0;   // the matrix in the picture
     ctx.fillStyle = off;                              // whatever of the picture is off the matrix is tinted
     ctx.fillRect(0, 0, px, py);
     ctx.clearRect(x0, y0, w, h);
     ctx.imageSmoothingEnabled = false;
-    ctx.drawImage(sheet, s.x0, s.y0, s.x1 - s.x0, s.y1 - s.y0, (s.x0 - view.x) * cell, (s.y0 - view.y) * cell, (s.x1 - s.x0) * cell, (s.y1 - s.y0) * cell);
-    if (named()) {                                    // close in, a gap of paper between cells
-      ctx.fillStyle = paper;
-      for (c = Math.ceil(s.x0); c < s.x1; c++) ctx.fillRect(X(c), y0, line, h);
-      for (c = Math.ceil(s.y0); c < s.y1; c++) ctx.fillRect(x0, Y(c), w, line);
-    }
+    ctx.drawImage(sheet, s.x0, s.y0, s.x1 - s.x0, s.y1 - s.y0, (s.x0 - view.x) * cw, (s.y0 - view.y) * ch, (s.x1 - s.x0) * cw, (s.y1 - s.y0) * ch);
+    ctx.fillStyle = paper;                            // close in, a gap of paper between cells
+    if (named(cols)) for (c = Math.ceil(s.x0); c < s.x1; c++) ctx.fillRect(X(c), y0, line, h);
+    if (named(rows)) for (c = Math.ceil(s.y0); c < s.y1; c++) ctx.fillRect(x0, Y(c), w, line);
     ctx.fillStyle = rule;                             // and a rule between groups, on an axis still in groups
-    ctx.globalAlpha = named() ? 1 : 0.55;
+    ctx.globalAlpha = named(cols) ? 1 : 0.55;
     if (!cols.by) cols.runs.forEach(function (g) { if (g.from) ctx.fillRect(X(g.from), y0, line, h); });
+    ctx.globalAlpha = named(rows) ? 1 : 0.55;
     if (!rows.by) rows.runs.forEach(function (g) { if (g.from) ctx.fillRect(x0, Y(g.from), w, line); });
     ctx.globalAlpha = 1;
     ctx.fillRect(x0 - line, y0 - line, line, h + 2 * line);           // an edge of the matrix that is in the picture is ruled;
     ctx.fillRect(x0 + w, y0 - line, line, h + 2 * line);              // one at the picture's own edge falls outside it
     ctx.fillRect(x0, y0 - line, w, line);
     ctx.fillRect(x0, y0 + h, w, line);
-    if (cellPx() >= VALUE_PX) {                       // closest in, the number on each cell
-      ctx.font = "500 " + Math.round(Math.min(14, cellPx() / 3) * ratio) + "px " + face;
+    if (cellWide() >= VALUE_PX && cellTall() >= (LOCK ? VALUE_ROW : VALUE_PX)) {   // closest in, the number on each cell
+      ctx.font = "500 " + Math.round(Math.min(14, cellWide() / 3, cellTall() * 0.8) * ratio) + "px " + face;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       for (var i = Math.floor(s.y0); i < s.y1; i++) {
@@ -217,7 +224,7 @@
           var v = value[rows.at[i] * nc + cols.at[j]];
           if (!v) continue;
           ctx.fillStyle = v < 0 ? faint : luminance(shade(v)) > 0.2 ? onLight : onDark;
-          ctx.fillText(figure(v), (j + 0.5 - view.x) * cell, (i + 0.5 - view.y) * cell);
+          ctx.fillText(figure(v), (j + 0.5 - view.x) * cw, (i + 0.5 - view.y) * ch);
         }
       }
     }
@@ -232,8 +239,8 @@
     if (rows.sel !== null) { selRow.style.top = selCell.style.top = tall(rows.pos[rows.sel] - view.y); selRow.style.height = selCell.style.height = tall(1); }
     if (cols.sel !== null) { selCol.style.left = selCell.style.left = wide(cols.pos[cols.sel] - view.x); selCol.style.width = selCell.style.width = wide(1); }
     plot.classList.toggle("mx-zoomed", !home());
-    zoomIn.disabled = view.span <= MIN_SPAN;
-    zoomOut.disabled = view.span >= nc;
+    zoomIn.disabled = view.span <= CLOSEST;
+    zoomOut.disabled = view.span >= FULL;
     zoomAll.disabled = home();
     unsort.disabled = !rows.by && !cols.by;
     if (pointer) hover(pointer);
@@ -245,10 +252,10 @@
   function totals(a, from) {
     var box = a.sumBox;
     if (!box || !a.sums || !box.clientWidth) return;
-    var across = a === cols, ratio = window.devicePixelRatio || 1, span = across ? view.span : down();
+    var along = a === cols, ratio = window.devicePixelRatio || 1, span = along ? across() : down();
     var w = Math.round(box.clientWidth * ratio), h = Math.round(box.clientHeight * ratio);
     if (box.width !== w || box.height !== h) { box.width = w; box.height = h; }
-    var ctx = box.getContext("2d"), cell = (across ? w : h) / span, room = (across ? h : w) - 2 * ratio, close = named();
+    var ctx = box.getContext("2d"), cell = (along ? w : h) / span, room = (along ? h : w) - 2 * ratio, close = named(a);
     var gap = close ? Math.max(1, Math.round(ratio)) : 0, most = 0, p, v, at0, length;
     var first = Math.max(0, Math.floor(from)), end = Math.min(a.n, from + span);
     for (p = first; p < end; p++) most = Math.max(most, a.sums[a.at[p]]);
@@ -259,17 +266,17 @@
       v = a.sums[a.at[p]];
       at0 = Math.round((p - from) * cell) + gap;
       length = most > 0 ? Math.max(0, v) / most * room : 0;
-      if (across) ctx.fillRect(at0, 0, Math.max(1, cell - gap), length); else ctx.fillRect(0, at0, length, Math.max(1, cell - gap));
+      if (along) ctx.fillRect(at0, 0, Math.max(1, cell - gap), length); else ctx.fillRect(0, at0, length, Math.max(1, cell - gap));
     }
     ctx.globalAlpha = 1;
     if (!close) return;
     ctx.fillStyle = faint;
-    ctx.font = Math.round(Math.min(11, cellPx() - 1) * ratio) + "px " + face;
+    ctx.font = Math.round(Math.min(11, size(a) - 1) * ratio) + "px " + face;
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
     for (p = first; p < end; p++) {
       var mid = (p + 0.5 - from) * cell, text = kind.brief(a.sums[a.at[p]]);
-      if (!across) { ctx.fillText(text, 4 * ratio, mid); continue; }
+      if (!along) { ctx.fillText(text, 4 * ratio, mid); continue; }
       ctx.save();                                     // a column's figure is written down the strip
       ctx.translate(mid, 4 * ratio);
       ctx.rotate(Math.PI / 2);
@@ -281,7 +288,7 @@
   function placeOn(a, target, e) {
     var box = target.getBoundingClientRect();
     var p = Math.floor(a === rows ? view.y + (e.clientY - box.top) / box.height * down()
-                                  : view.x + (e.clientX - box.left) / box.width * view.span);
+                                  : view.x + (e.clientX - box.left) / box.width * across());
     return p < 0 || p >= a.n ? null : a.at[p];
   }
   [rows, cols].forEach(function (a) {
@@ -298,12 +305,12 @@
   // one strip: the groups in view and, close in, a narrow band of groups with each sector's name
   // beside it. An axis that is sorted has no groups to show, and says what it is sorted by instead.
   function strip(a, from) {
-    var box = a.box, across = a === cols, share = across ? wide : tall, to = from + (across ? view.span : down());
-    var size = cellPx(), names = named();
+    var box = a.box, along = a === cols, share = along ? wide : tall, to = from + (along ? across() : down());
+    var px = size(a), names = named(a);
     function put(cls, lo, hi, tip) {
       var s = el("span", cls);
-      s.style[across ? "left" : "top"] = share(lo - from);
-      s.style[across ? "width" : "height"] = share(hi - lo);
+      s.style[along ? "left" : "top"] = share(lo - from);
+      s.style[along ? "width" : "height"] = share(hi - lo);
       s.setAttribute("data-tip", tip);
       box.appendChild(s);
       return s;
@@ -317,23 +324,24 @@
     } else a.runs.forEach(function (g, i) {
       var lo = Math.max(g.from, from), hi = Math.min(g.to, to);
       if (hi <= lo) return;
-      band = put("mx-group" + (i % 2 ? "" : " alt"), lo, hi, g.name + ": " + (g.to - g.from) + " sectors");
-      if (names || (hi - lo) * size >= GROUP_PX) band.textContent = g.label;
+      band = put("mx-group" + (i % 2 ? "" : " alt"), lo, hi, g.name + ": " + (g.to - g.from) + " " + a.things);
+      if (names || (hi - lo) * px >= GROUP_PX) band.textContent = g.label;
     });
     if (!names || !band) return;
-    var font = Math.min(NAME_FONT, size / LINE), lines = Math.max(1, Math.floor(size / (font * LINE) + 0.01));
     var length = box.clientHeight - band.offsetHeight - SORT_PX;   // room for a name written up the top strip
+    var flat = along && LOCK && px >= FLAT_PX;                     // a wide column's name is written along it instead
+    var font = Math.min(NAME_FONT, px / LINE), lines = Math.max(1, Math.floor((flat ? length : px) / (font * LINE) + 0.01));
     for (var p = Math.max(0, Math.floor(from)); p < Math.min(a.n, Math.ceil(to)); p++) {
       var c = a.at[p], first = !a.by && c && a.groups[c] !== a.groups[c - 1];
-      var s = put("mx-name" + (first ? " first" : "") + (a.sel === c ? " sel" : ""), p, p + 1, a.names[c]);
+      var s = put("mx-name" + (first ? " first" : "") + (a.sel === c ? " sel" : "") + (flat ? " flat" : ""), p, p + 1, a.names[c]);
       var text = el("span", lines > 1 ? "mx-text" : "mx-text one", a.names[c]), holder = s;
       text.style.fontSize = font.toFixed(2) + "px";
       text.style.webkitLineClamp = lines;
-      if (across) {                                   // written sideways: a row of text turned a quarter turn
+      if (along && !flat) {                           // written sideways: a row of text turned a quarter turn
         holder = el("span", "mx-turn");
         holder.style.width = length + "px";
-        holder.style.height = size + "px";
-        holder.style.transform = "translateX(" + size + "px) rotate(-90deg)";
+        holder.style.height = px + "px";
+        holder.style.transform = "translateX(" + px + "px) rotate(-90deg)";
         s.appendChild(holder);
       }
       holder.appendChild(text);
@@ -396,13 +404,11 @@
     remark();
     schedule();
   }
-  // the lines under the picture that say what is marked, each with its sort button, and on a page
-  // with a sector lookup a way to it
+  // the lines under the picture that say what is marked, each with its sort button
   function remark() {
-    var i = rows.sel, j = cols.sel, lookup = document.getElementById("mx-pick");
+    var i = rows.sel, j = cols.sel;
     function line(label, a, k) {                      // sector k of axis a, whose button sorts the other axis
-      var p = el("p"), name = el(lookup ? "a" : "b", "", a.names[k]);
-      if (lookup) { name.href = "#sector"; name.setAttribute("data-sector", a.codes[k]); }
+      var p = el("p"), name = el("b", "", a.names[k]);
       p.appendChild(el("span", "dim", label + " "));
       p.appendChild(name);
       p.appendChild(sortButton(a.other, k, false));
@@ -493,26 +499,27 @@
 
   // The view may run past an edge of the matrix by half its own width, at any zoom, so that a cell
   // at the edge can be brought to the middle of the picture.
+  // Locked columns stay where they are.
   function settle() {
-    view.span = Math.min(nc, Math.max(MIN_SPAN, view.span));
-    var past = view.span / 2, pastDown = past * nr / nc;
-    view.x = Math.min(nc - view.span + past, Math.max(-past, view.x));
+    view.span = Math.min(FULL, Math.max(CLOSEST, view.span));
+    var past = LOCK ? 0 : across() / 2, pastDown = down() / 2;
+    view.x = Math.min(nc - across() + past, Math.max(-past, view.x));
     view.y = Math.min(nr - down() + pastDown, Math.max(-pastDown, view.y));
     schedule();
   }
   // zoom by a factor, keeping the point (fx, fy) of the picture, each 0 to 1, where it is
   function zoom(factor, fx, fy) {
-    var span = Math.min(nc, Math.max(MIN_SPAN, view.span / factor));
-    view.x += fx * (view.span - span);
-    view.y += fy * (view.span - span) * nr / nc;
-    view.span = span;
+    var wasAcross = across(), wasDown = down();
+    view.span = Math.min(FULL, Math.max(CLOSEST, view.span / factor));
+    view.x += fx * (wasAcross - across());
+    view.y += fy * (wasDown - down());
     settle();
   }
-  function whole() { view.x = view.y = 0; view.span = nc; settle(); }
+  function whole() { view.x = view.y = 0; view.span = FULL; settle(); }
 
   function cellAt(e) {
     var box = canvas.getBoundingClientRect();
-    var x = Math.floor(view.x + (e.clientX - box.left) / box.width * view.span);
+    var x = Math.floor(view.x + (e.clientX - box.left) / box.width * across());
     var y = Math.floor(view.y + (e.clientY - box.top) / box.height * down());
     return (x < 0 || y < 0 || x >= nc || y >= nr) ? null : { i: rows.at[y], j: cols.at[x], x: x, y: y };   // the sectors, and their places
   }
@@ -524,18 +531,19 @@
   function describe(i, j) { return M.rowTip + ": " + rows.names[i] + "\n" + M.colTip + ": " + cols.names[j] + "\n" + amount(i, j); }
   // far off, a hair line through the cell's row and column; close in, a band around each
   function hover(e) {
-    var c = cellAt(e), band = named();
+    var c = cellAt(e), band = named(rows), bandDown = named(cols);
     lit.forEach(function (x) { x.classList.remove("on"); });
     lit = [];
     if (!c) return unhover();
     window.plentyTip.show(describe(c.i, c.j), e);
     hLine.style.display = vLine.style.display = "block";
-    hLine.className = vLine.className = band ? "band" : "";
+    hLine.className = band ? "band" : "";
+    vLine.className = bandDown ? "band" : "";
     fit(hLine, vLine);
     hLine.style.top = tall(c.y - view.y + (band ? 0 : 0.5));
-    vLine.style.left = wide(c.x - view.x + (band ? 0 : 0.5));
+    vLine.style.left = wide(c.x - view.x + (bandDown ? 0 : 0.5));
     hLine.style.height = band ? tall(1) : "";
-    vLine.style.width = band ? wide(1) : "";
+    vLine.style.width = bandDown ? wide(1) : "";
     [[topStrip, c.j], [leftStrip, c.i]].forEach(function (p) {
       var name = p[0].querySelector('[data-i="' + p[1] + '"]');
       if (name) { name.classList.add("on"); lit.push(name); }
@@ -605,7 +613,7 @@
         plot.classList.add("mx-dragging");
         unhover();
       }
-      view.x = drag.vx - dx / box.width * view.span;
+      view.x = drag.vx - dx / box.width * across();
       view.y = drag.vy - dy / box.height * down();
       settle();
     });
@@ -635,8 +643,8 @@
   zoomOut.addEventListener("click", function () { zoom(0.5, 0.5, 0.5); });
   zoomAll.addEventListener("click", whole);
   canvas.addEventListener("keydown", function (e) {
-    var step = view.span / 8, move = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
-    if (move) { view.x += move[0] * step; view.y += move[1] * step; settle(); }
+    var move = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+    if (move) { view.x += move[0] * across() / 8; view.y += move[1] * down() / 8; settle(); }
     else if (e.key === "+" || e.key === "=") zoom(2, 0.5, 0.5);
     else if (e.key === "-") zoom(0.5, 0.5, 0.5);
     else if (e.key === "0" || e.key === "Escape") whole();
@@ -654,45 +662,12 @@
     if (dark.addEventListener) dark.addEventListener("change", function () { paint(); schedule(); });
   }
 
-  // --- one sector's column and row, on the page for A, where rows and columns are the same sectors.
-  // The helpers below are used by the picture too; what follows this line runs only with a lookup.
-  var pick = document.getElementById("mx-pick"), inBox = document.getElementById("mx-in"), outBox = document.getElementById("mx-out");
-  if (!pick) return;
-  var names = rows.names, groups = rows.groups, codes = rows.codes;
-  var group = null, og = null;
-  names.forEach(function (name, j) {
-    if (groups[j] !== group) {
-      group = groups[j];
-      og = document.createElement("optgroup");
-      og.label = group;
-      pick.appendChild(og);
-    }
-    var o = document.createElement("option");
-    o.value = j;
-    o.textContent = name;
-    og.appendChild(o);
-  });
-
+  // --- small pieces of markup
   function el(tag, cls, text) {
     var x = document.createElement(tag);
     if (cls) x.className = cls;
     if (text !== undefined) x.textContent = text;
     return x;
-  }
-  function sectorButton(j) {
-    var b = el("button", "pick", names[j]);
-    b.type = "button";
-    b.addEventListener("click", function () { select(j); });
-    return b;
-  }
-  function barCell(v, vmax) {
-    var td = el("td"), cell = el("div", "barcell"), bar = el("div", "bar"), fill = el("i");
-    fill.style.width = Math.max(0, Math.min(100, 100 * v / vmax)).toFixed(1) + "%";
-    bar.appendChild(fill);
-    cell.appendChild(bar);
-    cell.appendChild(el("span", "v", (v * 100).toFixed(2)));
-    td.appendChild(cell);
-    return td;
   }
   function headRow(heads) {
     var thead = el("thead"), tr = el("tr");
@@ -720,68 +695,5 @@
       more.remove();
     });
     box.appendChild(more);
-  }
-  // rows: [{j, v, k?}], largest first; the list is cut to LIST until "show all" is pressed
-  function listTable(box, heads, rows, foot) {
-    box.textContent = "";
-    var wrap = el("div", "scroll"), table = el("table", "ledger"), body = el("tbody");
-    table.appendChild(headRow(heads));
-    var vmax = rows.length ? Math.max(rows[0].v, 0) || 1 : 1;
-    rows.forEach(function (r) {
-      var row = el("tr"), name = el("th");
-      name.scope = "row";
-      name.appendChild(sectorButton(r.j));
-      row.appendChild(name);
-      row.appendChild(barCell(r.v, vmax));
-      if (r.k !== undefined) row.appendChild(el("td", "num", (r.k * 100).toFixed(2)));
-      body.appendChild(row);
-    });
-    table.appendChild(body);
-    if (foot) table.appendChild(footRows(foot));
-    wrap.appendChild(table);
-    box.appendChild(wrap);
-    fold(box, body, LIST);
-  }
-
-  function select(j) {
-    pick.value = j;
-    var name = names[j], col = M.cells[j], inputs = [], users = [], listed = 0, k;
-    for (k = 0; k < col.length; k += 3) {
-      inputs.push({ j: col[k], v: col[k + 1] * unit, k: col[k + 2] * unit });
-      listed += col[k + 1];
-    }
-    inputs.sort(function (a, b) { return b.v - a.v; });
-    for (k = 0; k < byRow[j].length; k += 2) users.push({ j: byRow[j][k], v: byRow[j][k + 1] * unit });
-    users.sort(function (a, b) { return b.v - a.v; });
-    document.getElementById("mx-in-title").textContent = "What a dollar of " + name + " uses";
-    document.getElementById("mx-out-title").textContent = "Who uses " + name;
-    listTable(inBox, ["Input", "\u00a2 per dollar", "Of it, equipment and buildings"], inputs, [
-      ["Inputs under " + cents(M.cut) + " each", ((M.total[j] - listed) * unit * 100).toFixed(2), ""],
-      ["All inputs", (M.total[j] * unit * 100).toFixed(2), (M.capital[j] * unit * 100).toFixed(2)]
-    ]);
-    listTable(outBox, ["Sector that uses it", "\u00a2 per dollar of that sector's output"], users, null);
-    if (!users.length) outBox.appendChild(el("p", "note", "No sector uses as much as " + cents(M.cut) + " of it per dollar of output."));
-    if (history.replaceState) history.replaceState(null, "", "#sector=" + codes[j]);
-  }
-  pick.addEventListener("change", function () { select(+pick.value); });
-
-  // links elsewhere on the page that name a sector, and a sector in the address
-  function fromHash() {
-    var m = /^#sector=(.+)$/.exec(location.hash), j = m ? codes.indexOf(decodeURIComponent(m[1])) : -1;
-    if (j >= 0) select(j);
-    return j >= 0;
-  }
-  document.addEventListener("click", function (e) {
-    var a = e.target.closest && e.target.closest("a[data-sector]");
-    if (!a) return;
-    e.preventDefault();
-    select(codes.indexOf(a.getAttribute("data-sector")));
-    document.getElementById("sector").scrollIntoView({ behavior: "smooth" });
-  });
-  window.addEventListener("hashchange", fromHash);
-  if (!fromHash()) {
-    var keep = location.hash;                          // opening on the default sector should not move the page
-    select(Math.max(0, codes.indexOf(M.shown)));
-    if (history.replaceState) history.replaceState(null, "", keep || location.pathname + location.search);
   }
 })();

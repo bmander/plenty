@@ -111,6 +111,19 @@ math { font-family: "Latin Modern Math", "STIX Two Math", "Cambria Math", math; 
 dl.where { display: grid; grid-template-columns: max-content 1fr; gap: 5px 16px; margin: 0 0 18px; max-width: 68ch; font-size: 14.5px; color: var(--ink-2); }
 dl.where dt { text-align: right; color: var(--ink); }
 dl.where dd { margin: 0; }
+/* a term's page: what its rows, columns and entries are, where it comes from and what it goes into */
+dl.spec { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 9px 20px; margin: 30px 0 30px; max-width: 80ch; font-size: 15px; }
+dl.spec dt { color: var(--ink-2); font-size: 13.5px; padding-top: 2px; }
+dl.spec dd { margin: 0; }
+dl.spec dd .eq { margin: 0 0 2px; padding: 0; border-left: 0; font-size: 19px; }
+dl.spec dd .eq mtd { padding: 0.3em 0.18em; }
+dl.spec dd p { margin: 6px 0 0; max-width: none; }
+@media (max-width: 560px) { dl.spec { grid-template-columns: 1fr; gap: 2px; } dl.spec dd { margin-bottom: 9px; } }
+/* every term of the account, in groups */
+table.terms tbody tr { background: none; }
+table.terms tbody tr.band th { padding-top: 20px; font-size: 12.5px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-2); border-bottom: 1px solid var(--rule); }
+table.terms tbody th math, table.terms td math { font-size: 1.12em; }
+table.terms td { vertical-align: middle; }
 
 /* Ledger tables: alternate rows carry the green band. */
 .scroll { overflow-x: auto; margin: 14px 0 6px; }
@@ -276,6 +289,7 @@ td.h { text-align: right; font-variant-numeric: tabular-nums; background: color-
 
 /* A matrix page: the picture of every entry, and one sector's column and row */
 math a { color: inherit; }
+math a sup { font-size: 0.72em; font-style: normal; }   /* the mark of a transpose, set upright */
 math a.inv.br { text-decoration-color: transparent; }   /* a bracket is part of the link, and is underlined only with the rest */
 math:has(a.inv:hover) a.inv { text-decoration-color: var(--series); }   /* the pieces of one expression that are one link light up together */
 #tip { white-space: pre-line; }
@@ -293,6 +307,10 @@ math:has(a.inv:hover) a.inv { text-decoration-color: var(--series); }   /* the p
 .mx-top > span { top: 0; bottom: 0; }
 .mx-top > .mx-group { writing-mode: vertical-rl; transform: rotate(180deg); padding: 4px 0; display: flex; align-items: center; }
 .mx-left { grid-column: 1; width: 11.5em; }
+/* a matrix whose columns are always all in view (.mx-lock) has room to write their names along them */
+.mx-lock .mx-top { height: 5.6em; }
+.mx-lock .mx-axis { width: max-content; min-width: 100%; max-width: calc(100vw - 90px); }   /* the buttons need more room than a lone column has */
+.mx-top > .mx-name.flat { display: flex; align-items: flex-end; justify-content: center; padding: 0 4px calc(var(--sort) + 3px); text-align: center; }
 .mx-left > span { left: 0; right: 0; }
 .mx-left > .mx-group { padding: 0 6px; display: flex; align-items: center; justify-content: flex-end; }
 .mx-named > .mx-group { display: block; padding: 0 3px; text-align: center; text-overflow: ellipsis; line-height: var(--band); font-weight: 600; }
@@ -335,6 +353,8 @@ math:has(a.inv:hover) a.inv { text-decoration-color: var(--series); }   /* the p
 .mx-sel-cell { outline-width: 2px; }
 .mx-note { margin: 10px 0 0; min-height: 1.6em; font-size: 13.5px; }
 .mx-note p { margin: 0 0 4px; max-width: none; }
+details.mx-how summary { cursor: pointer; width: fit-content; }
+details.mx-how p { margin: 6px 0 0; }
 .mx-note .mx-sort { font: inherit; font-size: 12.5px; line-height: 1.2; margin-left: 8px; color: var(--ink); background: var(--paper); border: 1.5px solid var(--rule); border-radius: 4px; padding: 1px 8px; cursor: pointer; }
 .mx-note .mx-sort.active { border-color: var(--ink-2); font-weight: 600; }
 /* a marked cell taken apart into the industries that make its column's commodity */
@@ -361,13 +381,5 @@ math:has(a.inv:hover) a.inv { text-decoration-color: var(--series); }   /* the p
   .mx-sums, .mx-corner, .mx-sumhead, .mx-sumfoot { display: none; }
 }
 .controls select { font: inherit; padding: 6px 8px; max-width: 100%; background: var(--paper); color: var(--ink); border: 1.5px solid var(--rule); border-radius: 4px; }
-.controls label[for="mx-pick"] { font-weight: 600; }
-.mx-lookup { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 430px), 1fr)); gap: 8px 40px; max-width: 1100px; align-items: start; }
-.mx-lookup h3 { margin-bottom: 0; }
-.mx-lookup button.pick { font: inherit; color: inherit; background: none; border: 0; padding: 0; text-align: left; cursor: pointer; text-decoration: underline; text-decoration-color: var(--rule); text-decoration-thickness: 2px; text-underline-offset: 3px; }
-.mx-lookup button.more { font: inherit; font-size: 14px; color: var(--ink-2); background: none; border: 1.5px solid var(--rule); border-radius: 4px; padding: 4px 10px; margin-top: 8px; cursor: pointer; }
-.mx-lookup .barcell { grid-template-columns: minmax(50px, 1fr) 5.5ch; min-width: 110px; }
 .ledger th.grp { vertical-align: bottom; text-align: right; padding-left: 4px; padding-right: 8px; }
 .ledger th.grp span { display: inline-block; writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
-.mx-lookup thead th.num { white-space: normal; max-width: 13ch; vertical-align: bottom; }
-.mx-lookup tbody th { width: 52%; }

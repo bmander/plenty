@@ -61,44 +61,149 @@ def test_activity_pages_add_up_to_the_flows(built):
     assert d.act_need.mean(axis=1).sum() == pytest.approx(d.act_acct["flowed"], abs=1e-5)
 
 
-def test_method_page_opens_with_the_account_as_equations(built):
-    html = (site.SITE / "method.html").read_text()
-    assert html.index('id="account"') < html.index("<h2>Steps</h2>")
+def _data(sheet):
+    text = (site.SITE / sheet.data_file).read_text()
+    return json.loads(text[text.index("{"):text.rindex("}") + 1])
+
+
+def test_the_account_is_three_equations_and_a_table_of_every_term(built):
+    html = (site.SITE / site.HOME.split("#")[0]).read_text()
     assert html.count('<math display="block"') == 1 and html.count("<mtr>") == 3
-    assert 'href="#requirements"' in html and 'id="requirements"' in html
     assert f"{built.act_acct.flowed * 100:.1f} cents" in html
+    table = html[html.index('id="terms"'):]
+    for key, sheet in built.sheets.items():
+        assert f'<td class="wrap"><a href="{sheet.href}">' in table, key       # each term is listed, by name
+        assert f'<mi><a href="{sheet.href}">' in html, key                     # and its letter is a link wherever it is written
+    assert list(built.sheets) == site.TERMS and len(set(site.SYMBOL_PAGES.values())) == len(site.TERMS)
+    assert len({name.lower() for name in site.SYMBOL_PAGES.values()}) == len(site.TERMS)   # no two files differ by case alone
+    # A is a link to its own page, so the rest of the inverse is the link to L's: two brackets, the I and the exponent
+    piece = f'<a href="{site.SYMBOL_PAGES["L"]}" class="inv'
+    for name in (site.HOME.split("#")[0], site.SYMBOL_PAGES["x"]):
+        text = (site.SITE / name).read_text()
+        assert text.count(piece) >= 4 and text.count(piece) % 4 == 0, name
+        assert text.count(f'<mtext>{piece}">&minus;1</a></mtext></msup>') == text.count(piece) // 4, name
 
 
-def test_the_page_for_A_shows_the_matrix_the_model_uses(built):
-    A = built.io.A
-    method = (site.SITE / "method.html").read_text()
-    assert f'<mi><a href="{site.MATRIX_A}">' in method          # the A in the equation is the link
-    html = (site.SITE / site.MATRIX_A).read_text()
-    assert f'width="{len(A)}" height="{len(A)}"' in html and 'src="matrix.js"' in html
-    # what matrix.js draws into and listens to: the margins, the buttons, and the line that says what is marked
-    assert all(f'id="{i}"' in html for i in ("mx-top", "mx-left", "mx-zoom-in", "mx-zoom-out", "mx-zoom-all", "mx-unsort", "mx-note"))
-    # the data file: every entry of any size, in the page's order, to within its rounding
-    text = (site.SITE / "matrix-A-data.js").read_text()
-    data = json.loads(text[text.index("{"):text.rindex("}") + 1])
+def test_the_equations_the_pages_print_hold_of_the_matrices_they_show(built):
+    v = {k: s.values for k, s in built.sheets.items()}
+    def col(key):
+        return v[key].iloc[:, 0]
+    com, ind = v["A"].index, v["U"].columns
+    eye = np.eye(len(com))
+    assert np.allclose(v["L"].values @ (eye - v["A"].values), eye, atol=1e-9) and np.diag(v["L"].values).min() >= 1
+    assert max(abs(np.linalg.eigvals(v["A"].values))) < 1         # which is why the rounds of supply add up at all
+    assert np.allclose(v["x"].values, v["L"].values @ v["d"].loc[com].values)
+    assert np.allclose(v["d"].values, (v["Y"] / v["Y"].sum()).values) and np.allclose(v["d"].sum(), 1.0)
+    assert np.allclose(v["A"].values, v["B"].values @ v["D"].loc[ind, com].values)
+    assert np.allclose(v["B"].values, (v["U"] + v["K"]).values / col("g")[ind].values)
+    assert np.allclose(col("g")[v["V"].index], v["V"].sum(axis=1)) and np.allclose(col("q")[v["V"].columns], v["V"].sum(axis=0))
+    made = col("q")[com].values > 0
+    assert np.allclose(v["D"].loc[ind, com].values[:, made], (v["V"].loc[ind, com] / col("q")[com]).values[:, made])
+    # capital: each investor's purchases, placed on its industries
+    H = v["H"].loc[ind]
+    assert (H.sum(axis=1) == 1).all() and list(H.columns) == list(v["F"].columns) == list(site.INVESTOR_NAME)
+    assert np.allclose(v["K"].values, (v["F"].loc[com].values @ H.values.T) * v["S"].values)
+    assert np.allclose(v["K"].sum(axis=1), v["F"].loc[com].sum(axis=1))      # nothing is made or lost in the placing
+    government = H[["fed_defense", "fed_nondefense", "state_local"]].sum(axis=1) == 1
+    assert np.allclose(col("z")[government], col("g")[government]) and (col("z") >= 0).all()
+    # value added
+    r = col("r")[com]
+    assert np.allclose(r, (col("y")[ind] / col("g")[ind]).values @ v["D"].loc[ind, com].values)
+    earned = v["x"].loc[com].mul(r, axis=0)
+    assert np.allclose(v["v"].loc[com].values, (earned / earned.sum()).values) and np.allclose(v["v"].sum(), 1.0)
+    # work
+    occ = v["W"].columns
+    paid = v["P"].sum(axis=1)
+    assert np.allclose(v["W"].values, v["P"].div(paid.replace(0, np.nan), axis=0).fillna(0.0).values)
+    assert np.allclose(v["P"].values, v["T"].values @ (v["E"] * v["M"]).values / 1e6)
+    theta = v[site.THETA]
+    assert list(theta.index) == list(occ) and set(np.round(theta.sum(axis=1), 9)) == {0.0, 1.0}
+    f = v["v"].loc[com].mean(axis=1).values @ v["W"].values @ theta.values      # the second line of the account
+    assert np.allclose(f, col("f")[theta.columns], atol=1e-9)
+    assert f.sum() == pytest.approx(built.act_acct.flowed, abs=1e-5)
+    assert list(v["c"].index) == list(theta.columns) and v["c"].values.min() >= 0 and v["c"].values.max() <= 1
+
+
+def test_every_term_has_a_page_with_its_picture_and_its_data(built):
+    for key, sheet in built.sheets.items():
+        X, html = sheet.values, (site.SITE / sheet.href).read_text()
+        assert f'src="{sheet.data_file}"' in html and 'src="matrix.js"' in html and 'id="mx-canvas"' in html
+        assert f'width="{X.shape[1]}" height="{X.shape[0]}"' in html
+        # what matrix.js draws into and listens to: the margins, the buttons, and the line that says what is marked
+        assert all(f'id="{i}"' in html for i in ("mx-top", "mx-left", "mx-zoom-in", "mx-zoom-out", "mx-zoom-all", "mx-unsort", "mx-note"))
+        # what the page says of the term: its rows, columns and entries, where it comes from and what it goes into
+        spec = html[html.index('<dl class="spec">'):html.index("</dl>")]
+        assert f"<dt>Rows</dt><dd>{X.shape[0]:,} " in spec and "<dt>Entries</dt>" in spec and "<dt>Data</dt>" in spec
+        assert ("<dt>Columns</dt>" in spec) == (X.shape[1] > 1), key
+        assert ("<dt>Computed</dt>" in spec) == (key in site.EQUATIONS) and ("<dt>Source</dt>" in spec) == (key not in site.EQUATIONS), key
+        assert ("<dt>Made from</dt>" in spec) == (key in site.USES), key
+        for made_from in site.USES.get(key, ()):
+            assert f'href="{site.SYMBOL_PAGES[made_from]}"' in spec, (key, made_from)
+        users = [k for k in site.TERMS if key in site.USES.get(k, ())]
+        assert ("<dt>Used in</dt>" in spec) == bool(users or key in "fc"), key
+        for user in users:
+            assert f'href="{site.SYMBOL_PAGES[user]}"' in spec, (key, user)
+        assert f'href="{site.HOME}"' in html and f'<a href="{sheet.href}"' not in html     # it leads back, and not to itself
+        assert f'href="{sheet.csv_file}"' in html
+        # the data file: every entry of any size, in the page's order, to within its rounding
+        data = _data(sheet)
+        rows, cols, unit, step = data["rows"]["codes"], data["cols"]["codes"], data["unit"], 3 if data["second"] else 2
+        assert rows == [str(c) for c in X.index] and cols == [str(c) for c in X.columns]
+        assert all(len(side[k]) == len(side["codes"]) for side in (data["rows"], data["cols"]) for k in ("names", "groups"))
+        assert all(isinstance(side["things"], str) and side["things"] for side in (data["rows"], data["cols"]))
+        x, got = X.values, np.zeros(X.shape)
+        for j, col in enumerate(data["cells"]):
+            got[col[0::step], j] = np.array(col[1::step]) * unit
+        kept = np.abs(x) >= data["cut"]
+        assert not got[~kept].any() and np.abs(got - x)[kept].max() <= unit / 2 + 1e-9, key
+        assert kept.sum() > 100 and data["scale"][0] < data["scale"][1]
+        # a tall, narrow matrix has its columns locked in view
+        assert data["lock"] == sheet.thin == ('class="mx-frame mx-lock"' in html) == (X.shape[0] >= site.THIN * X.shape[1]), key
+        # totals in the margins are of the whole matrix, and the page has a place for each one it is given
+        assert ("colSums" in data) == bool(sheet.sums) == ('id="mx-col-sums"' in html)
+        assert ("rowSums" in data) == ("grand" in data) == (sheet.sums == "both") == ('id="mx-row-sums"' in html) == ('id="mx-total"' in html)
+        if sheet.sums:
+            assert np.allclose(data["colSums"], x.sum(axis=0), rtol=1e-5, atol=1e-9), key
+        if sheet.sums == "both":
+            assert np.allclose(data["rowSums"], x.sum(axis=1), rtol=1e-5, atol=1e-9) and np.isclose(data["grand"], x.sum(), rtol=1e-5), key
+        csv = pd.read_csv(site.SITE / sheet.csv_file, index_col=0, dtype={0: str})
+        assert list(csv.index.astype(str)) == rows and np.allclose(csv.values, x, rtol=1e-5, atol=1e-9), key
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xfdYgqFHzvryc")
+    # the matrices are the model's own
+    m, t = built.io, built.io.t
+    for key, X in {"A": m.A, "L": m.L, "U": t.U, "V": t.V, "K": m.K, "S": built.capital.shares, "F": built.capital.investment,
+                   "W": built.wages[0], "P": built.wage_bill[0], "E": built.survey[0].fillna(0.0), "M": built.survey[1].fillna(0.0),
+                   "T": built.survey[2], "d": built.need_dollars[0], "x": built.need_dollars[1], "v": built.need_value_added}.items():
+        shown = built.sheets[key].values
+        assert np.allclose(shown.values, X.loc[shown.index, shown.columns].values), key
+    # a table of whole millions is filed exactly, so its blank cells hold nothing
+    assert built.sheets["U"].exact and np.allclose(t.U.values, np.round(t.U.values))
+    assert built.sheets["V"].exact and np.allclose(t.V.values, np.round(t.V.values))
+    # sectors are grouped, so a picture's blocks are groups, and each group has a label for the margins
+    data = _data(built.sheets["A"])
+    groups = data["rows"]["groups"]
+    assert data["cols"] == data["rows"] and groups == sorted(groups, key=site.MX.ORDER.index) and set(groups) <= set(data["short"])
+    occ = built.wages[2]
+    data = _data(built.sheets["W"])
+    assert set(data["cols"]["groups"]) <= set(data["short"]) and len(set(data["cols"]["groups"])) == occ.major.nunique() == len(site.SOC_SHORT)
+    # a tall matrix is drawn narrower than a wide one, and ones and zeros have no scale
+    t_page, e_page = ((site.SITE / f"matrix-{k}.html").read_text() for k in "TE")
+    assert f"minmax(0, {site.MATRIX_WIDTH + 2}px)" in e_page and f"minmax(0, {site.MATRIX_WIDTH + 2}px)" not in t_page
+    assert 'class="mx-legend"' in e_page and 'class="mx-legend"' not in t_page
+
+
+def test_a_cell_of_A_can_be_taken_apart(built):
+    sheet = built.sheets["A"]
+    html, data = (site.SITE / sheet.href).read_text(), _data(sheet)
     codes, unit = data["rows"]["codes"], data["unit"]
-    assert data["cols"] == data["rows"]                           # commodities both ways
-    assert sorted(codes) == sorted(A.index) and len(data["cells"]) == len(codes)
-    a = A.loc[codes, codes].values
+    a = built.io.A.loc[codes, codes].values
     k = site.MX.direct_parts(built.io)[1].loc[codes, codes].values
     got, got_k = np.zeros_like(a), np.zeros_like(a)
     for j, col in enumerate(data["cells"]):
         got[col[0::3], j] = np.array(col[1::3]) * unit
         got_k[col[0::3], j] = np.array(col[2::3]) * unit
     kept = np.abs(a) >= data["cut"]
-    assert kept.sum() > 50_000 and ((got != 0) == kept).all()
-    assert np.abs(got - a)[kept].max() <= unit / 2 + 1e-12
-    assert np.abs(got_k - k)[kept].max() <= unit / 2 + 1e-12      # and the part of each that is capital
-    assert np.allclose(np.array(data["capital"]) * unit, k.sum(axis=0), atol=unit)
-    assert np.allclose(np.array(data["total"]) * unit, a.sum(axis=0), atol=unit)
-    # sectors are grouped, so the picture's blocks are groups
-    groups = data["rows"]["groups"]
-    assert groups == sorted(groups, key=site.MX.ORDER.index)
-    assert set(groups) <= set(data["short"])                      # each group has a label for the margins
+    assert kept.sum() > 50_000 and np.abs(got_k - k)[kept].max() <= unit / 2 + 1e-12      # the part of each entry that is capital
     # the file behind a cell's derivation: B, of which each entry of any size is kept, and D; together they give A back
     text = (site.SITE / data["parts"]).read_text()
     parts = json.loads(text[text.index("{"):text.rindex("}") + 1])
@@ -116,164 +221,26 @@ def test_the_page_for_A_shows_the_matrix_the_model_uses(built):
     assert len(parts["industries"]) == b.shape[1] and all(isinstance(x, str) and x for x in parts["industries"])
     assert np.abs(got_b @ got_d - a)[kept].max() < 2e-4          # the terms a reader is shown add up to the cell, nearly
     assert 'id="mx-why"' in html
-    # the download is the matrix itself
-    csv = pd.read_csv(site.SITE / "matrix-A.csv", index_col=0, dtype={0: str})
-    assert list(csv.index.astype(str)) == codes and np.allclose(csv.values, a, rtol=1e-5, atol=1e-12)
+    assert not any('id="mx-why"' in (site.SITE / s.href).read_text() for key, s in built.sheets.items() if key != "A")
 
 
-def test_each_matrix_behind_A_has_a_page_reached_from_its_letter(built):
-    m, t = built.io, built.io.t
-    purchases, capital, D = site.MX.factors(m)
-    truth = {"A": m.A, "B": purchases + capital, "D": D, "U": t.U, "K": m.K, "V": t.V, "S": built.capital.shares,
-             "W": built.wages[0], "P": built.wage_bill[0],
-             "E": built.survey[0].fillna(0.0), "M": built.survey[1].fillna(0.0), "T": built.survey[2], "L": m.L}
-    assert set(truth) == set(site.MATRIX_PAGES) == set(built.sheets)
-    a_page, k_page = (site.SITE / site.MATRIX_A).read_text(), (site.SITE / "matrix-K.html").read_text()
-    method = (site.SITE / "method.html").read_text()
-    w_page = (site.SITE / "matrix-W.html").read_text()
-    p_page = (site.SITE / "matrix-P.html").read_text()
-    linked_from = {"S": k_page, "W": method, "P": w_page, "E": p_page, "M": p_page, "T": p_page, "L": method}   # the rest are in A's derivation
-    leads_back = {"W": "method.html#account", "P": "matrix-W.html", "E": "matrix-P.html", "M": "matrix-P.html", "T": "matrix-P.html",
-                  "L": "method.html#account"}
-    for key, X in truth.items():
-        sheet = built.sheets[key]
-        html = (site.SITE / sheet.href).read_text()
-        assert f'src="{sheet.data_file}"' in html and 'src="matrix.js"' in html and 'id="mx-canvas"' in html
-        assert f'width="{X.shape[1]}" height="{X.shape[0]}"' in html     # the picture has the matrix's shape
-        if key != "A":
-            assert f'<mi><a href="{sheet.href}"' in linked_from.get(key, a_page)    # its letter in the derivation is the link
-            assert f'href="{leads_back.get(key, site.MATRIX_A)}' in html         # and the page leads back
-            assert f'<a href="{sheet.href}"' not in html             # a page does not link to itself
-        text = (site.SITE / sheet.data_file).read_text()
-        data = json.loads(text[text.index("{"):text.rindex("}") + 1])
-        rows, cols, unit, step = data["rows"]["codes"], data["cols"]["codes"], data["unit"], 3 if data["second"] else 2
-        assert sorted(rows) == sorted(X.index) and sorted(cols) == sorted(X.columns)
-        assert all(len(side[k]) == len(side["codes"]) for side in (data["rows"], data["cols"]) for k in ("names", "groups"))
-        x, got = X.loc[rows, cols].values, np.zeros(X.shape)
-        for j, col in enumerate(data["cells"]):
-            got[col[0::step], j] = np.array(col[1::step]) * unit
-        kept = np.abs(x) >= data["cut"]
-        assert not got[~kept].any() and np.abs(got - x)[kept].max() <= unit / 2 + 1e-9, key
-        assert kept.sum() > 500 and data["scale"][0] < data["scale"][1]
-        # totals in the margins are of the whole matrix, and the page has a place for each one it is given
-        assert ("colSums" in data) == bool(sheet.sums) == ('id="mx-col-sums"' in html)
-        assert ("rowSums" in data) == ("grand" in data) == (sheet.sums == "both") == ('id="mx-row-sums"' in html) == ('id="mx-total"' in html)
-        if sheet.sums:
-            assert np.allclose(data["colSums"], x.sum(axis=0), rtol=1e-5, atol=1e-9), key
-        if sheet.sums == "both":
-            assert np.allclose(data["rowSums"], x.sum(axis=1), rtol=1e-5, atol=1e-9) and np.isclose(data["grand"], x.sum(), rtol=1e-5), key
-        csv = pd.read_csv(site.SITE / sheet.csv_file, index_col=0, dtype={0: str})
-        assert list(csv.index.astype(str)) == rows and np.allclose(csv.values, x, rtol=1e-5, atol=1e-9), key
-    # a table of whole millions is filed exactly, so its blank cells hold nothing
-    assert built.sheets["U"].exact and np.allclose(t.U.values, np.round(t.U.values))
-    assert built.sheets["V"].exact and np.allclose(t.V.values, np.round(t.V.values))
-
-
-def test_the_inverse_has_a_page_reached_from_wherever_it_is_written(built):
-    m = built.io
-    L, A, eye = m.L.values, m.A.values, np.eye(len(m.A))
-    assert np.allclose(L @ (eye - A), eye, atol=1e-9) and np.diag(L).min() >= 1
-    # A is a link to its own page, so the rest of the expression is the link: two brackets, the I and the exponent
-    piece = f'<a href="{site.SYMBOL_PAGES["L"]}" class="inv'
-    for name in ("method.html", site.MATRIX_A, site.SYMBOL_PAGES["d"], site.SYMBOL_PAGES["x"]):
-        text = (site.SITE / name).read_text()
-        assert text.count(piece) >= 4 and text.count(piece) % 4 == 0, name
-        assert text.count(f'<mtext>{piece}">&minus;1</a></mtext></msup>') == text.count(piece) // 4, name
-    html = (site.SITE / site.SYMBOL_PAGES["L"]).read_text()
-    # the rounds the page sets out are the powers of A, and with what is left they are the whole inverse
-    rounds = [np.linalg.matrix_power(A, k).sum() for k in range(site.MATRIX_ROUNDS + 1)]
-    assert all(f'<td class="num">{x:,.1f}</td>' in html for x in rounds + [L.sum() - sum(rounds)])
-    assert 0 < L.sum() - sum(rounds) < rounds[-1] * 2
-    assert f"${m.L.sum().median():.2f}" in html and 'id="reading"' in html
-    assert max(abs(np.linalg.eigvals(A))) < 1                     # which is why the rounds add up at all
-
-
-def test_the_capital_matrix_page_leads_to_what_it_is_made_from(built):
-    cap, t = built.capital, built.io.t
-    k_page = (site.SITE / "matrix-K.html").read_text()
-    s_page = (site.SITE / "matrix-S.html").read_text()
-    for letter in "FS":                                           # K = F times S, each a link
-        assert f'<mi><a href="{site.SYMBOL_PAGES[letter]}">' in k_page
-    assert f'<mi><a href="{site.SYMBOL_PAGES["z"]}">' in s_page and 'id="rules"' in s_page
-    # every pairing that placed something is listed, and every investor's remainder
-    rules = [x for x in cap.steps if x["note"]]
-    assert s_page.count("Everything else it invests in") == len(cap.steps) - len(rules) == len(site.INVESTOR_NAME)
-    assert all(site.e(x["note"].split("->")[-1].strip()) in s_page for x in rules)
-    # F: the investment the Bureau publishes, one row for each capital good, and the same totals as K
-    f_page = (site.SITE / site.SYMBOL_PAGES["F"]).read_text()
-    shown = site.investment(built)
-    assert f_page.count('<tr><th scope="row">') == len(shown) == (built.io.K != 0).any(axis=1).sum()
-    assert f"{shown.values.sum():,.0f}" in f_page and np.isclose(shown.values.sum(), built.io.K.values.sum())
-    csv = pd.read_csv(site.SITE / "matrix-F.csv", index_col=0, dtype={0: str})
-    assert list(csv.columns) == list(site.INVESTOR_NAME) and np.allclose(csv.values, cap.investment.values)
-    # z: every industry, with the measure its kind of investor shares by
-    w_page = (site.SITE / site.SYMBOL_PAGES["z"]).read_text()
-    assert w_page.count('<tr><th scope="row">') == len(t.industries)
-    assert w_page.count(">Output</td>") == cap.group.isin(["fed_defense", "fed_nondefense", "state_local"]).sum()
-    csv = pd.read_csv(site.SITE / "vector-z.csv", index_col=0, dtype={0: str})
-    assert np.allclose(csv.weight.values, cap.weight.values)
-
-
-def test_the_need_vectors_of_the_account_have_pages(built):
-    dn, x = built.need_dollars
-    method = (site.SITE / "method.html").read_text()
-    v = built.need_value_added
-    assert np.allclose(v.sum(), 1.0)                              # each need's value added is shared out whole
-    for letter, frame in (("d", dn), ("x", x), ("v", v)):
-        href = site.SYMBOL_PAGES[letter]
-        assert f'<mi><a href="{href}">' in method                     # the letter in the account is the link
-        html = (site.SITE / href).read_text()
-        assert f'<a href="{href}">' not in html and 'href="method.html#account"' in html
-        assert html.count('<th scope="col" class="grp" data-sort="num">') == len(site.NEED_NAME) == frame.shape[1]
-        rows = html[html.index('id="table"'):].count('<tr><th scope="row">')
-        assert rows == ((frame != 0).any(axis=1).sum() if letter == "d" else (frame.abs() >= site.HEAT_FLOOR).any(axis=1).sum())
-        csv = pd.read_csv(site.SITE / f"vector-{letter}.csv", index_col=0, dtype={0: str})
-        assert list(csv.columns) == list(site.NEED_NAME) and np.allclose(csv.values, frame.values, rtol=1e-5, atol=1e-9)
-    # the round-by-round table on x's page adds up to the column totals
-    x_page = (site.SITE / site.SYMBOL_PAGES["x"]).read_text()
-    assert all(f'data-v="{v:.4f}">${v:.2f}</td>' in x_page for v in x.sum())
-    # what is left out of the basket is listed, and the page's two totals are the model's
-    d_page = (site.SITE / site.SYMBOL_PAGES["d"]).read_text()
-    assert all(site.e(name) in d_page for name in site.LEFT_OUT_NAME.values())
-
-
-def test_the_wage_matrix_page_says_how_each_sector_is_measured(built):
+def test_the_survey_of_occupations_reaches_most_sectors(built):
     W, info, occ = built.wages
     measured = info.source.str.startswith("oews")
     assert np.allclose(W.sum(axis=1)[measured], 1.0) and not W[~measured].values.any()
-    assert occ.title.notna().all() and set(occ.major.map(len) > 0) == {True} and occ.major.nunique() == len(site.SOC_SHORT)
-    html = (site.SITE / "matrix-P.html").read_text()
-    names = built.io.t.names
-    assert all(site.e(names[c].lower()) in html for c in info.index[~measured])      # the sectors with no row are named
+    assert occ.title.notna().all() and set(occ.major.map(len) > 0) == {True}
     P, _, _, survey = built.wage_bill
-    assert np.allclose(P.div(P.sum(axis=1).replace(0, np.nan), axis=0).fillna(0.0).values, W.values)   # W is P by its row totals
     assert P.values.sum() > survey.wagebill_musd.sum() > 5e6      # rows overlap: sectors share surveyed industries
-    text = (site.SITE / "matrix-W-data.js").read_text()
-    data = json.loads(text[text.index("{"):text.rindex("}") + 1])
-    assert set(data["cols"]["groups"]) <= set(data["short"]) and len(set(data["cols"]["groups"])) == occ.major.nunique()
-
-
-def test_the_wage_bill_is_the_survey_added_up_over_the_industries_that_cover_a_sector(built):
     E, wage, T, surveyed = built.survey
-    P = built.wage_bill[0]
     assert list(T.index) == list(P.index) and list(T.columns) == list(E.index) == list(surveyed.index)
-    assert np.allclose(T.values @ (E * wage).fillna(0.0).values / 1e6, P.values)        # P = T (E o M)
     assert set(np.unique(T.values)) == {0.0, 1.0} and set(surveyed.group) <= set(site.MX.ORDER)
     groups = list(surveyed.group)
     assert groups == sorted(groups, key=site.MX.ORDER.index)                          # in the page's groups, like sectors
-    # the employment page gives the survey's own counts of what is withheld, and what the matrix adds up to
+    # the survey counts fewer jobs than it has: some cells are withheld, and some occupations are left out
     o = site.O.oews()
     listed = o[o.O_GROUP.str.lower() == "detailed"]
-    e_html = (site.SITE / "matrix-E.html").read_text()
-    assert f"withholds the employment of\n{int(listed.emp.isna().sum()):,} of them" in e_html
-    totals = o.emp[o.OCC_CODE == "00-0000"].sum()
-    assert E.sum().sum() < totals and f"{E.sum().sum() / 1e6:.1f} million" in e_html and f"{totals / 1e6:.1f} million" in e_html
-    assert "What it adds up to" not in e_html and built.sheets["E"].sums == "both"     # the total is in the picture's corner
-    assert listed.emp.sum() - E.sum().sum() == listed.emp[~listed.OCC_CODE.isin(E.columns)].sum() > 0   # the occupations left out
-    # a tall matrix is drawn narrower than a wide one
-    t_page, e_page = ((site.SITE / f"matrix-{k}.html").read_text() for k in "TE")
-    assert f"minmax(0, {site.MATRIX_WIDTH + 2}px)" in e_page and f"minmax(0, {site.MATRIX_WIDTH + 2}px)" not in t_page
-    assert 'class="mx-legend"' in e_page and 'class="mx-legend"' not in t_page         # ones and zeros have no scale
+    assert E.sum().sum() < o.emp[o.OCC_CODE == "00-0000"].sum()
+    assert listed.emp.sum() - E.sum().sum() == listed.emp[~listed.OCC_CODE.isin(E.columns)].sum() > 0
 
 
 def test_ai_use_sits_beside_the_work(built):
