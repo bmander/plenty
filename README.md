@@ -107,8 +107,7 @@ occupation data, and 2 in occupations with no task list.
 
 Weighting tasks by how often they are done, in place of importance, gives a rank correlation
 of 0.98 across the intermediate activities. All flows, by need and with the sectors, occupations and
-tasks behind each, are in `results/activity_*.csv` and on the site, where each activity
-has a page.
+tasks behind each, are in `results/activity_*.csv`.
 
 **Flow is where today's paid work goes, not how much it matters.** It follows pay, so
 directing and supervising rank high. It is not time: O\*NET rates how important and how
@@ -130,7 +129,6 @@ proprietary tools, and whether an open benchmark for it is possible.
 It is machine-readable: `taxonomy/domains/*.json` is the source of truth, and
 `taxonomy/capabilities.csv`, `crosswalk.csv`, `products_seed.csv` and `function_map.csv`
 (which capabilities each of the 18 became) are built from it by `taxonomy/build.py`.
-The capabilities page of the website shows the whole tree.
 
 How far to trust it: AI models wrote it and no practitioner has reviewed it. 1,082 of its
 1,803 citations of published sources (60%) were checked against the source itself; checking
@@ -164,7 +162,7 @@ placed in the taxonomy). Every step only splits, so the parts add up to the doll
 *By distinctive work* changes only how an occupation's part is divided: toward the
 capabilities few other occupations list, so tools everyone uses take less. All 223 flows,
 by need and with the sectors and occupations behind each, are in
-`results/capability_flow*.csv` and on the site.
+`results/capability_flow*.csv`.
 
 **Flow is where today's work goes, not how much a capability matters.** General office tools
 lead because everyone uses them. A capability few people use, such as genome analysis
@@ -349,11 +347,11 @@ Limits, most important first:
 
 ## Website
 
-`python -m plenty.site` renders a static site into `site/` from `config/`, `taxonomy/` and
-`results/`: the balance of capabilities against open leaderboards, then a page for each step of
-the loop (needs, capabilities, gaps, work), a sortable table of every sector, and the method.
-Each of the 332 work activities and 223 software capabilities has a page deriving its flow sector by sector, and each of the 18
-functions a page deriving its weight and exposure. Proposed work lives in `config/work.csv`.
+`python -m plenty.site` renders a static site into `site/` from the model, `config/` and
+`results/`. The site is the account: three equations on the home page, and a page for every
+matrix and vector they are made from, down to the published tables. Each page says what the
+term's rows, columns and entries are, where it comes from, what it is made from and what it
+goes into, and shows the whole of it as a picture that can be zoomed, sorted and downloaded.
 
 `.github/workflows/site.yml` rebuilds and publishes it on every push to `main`. GitHub Pages
 must be set to deploy from GitHub Actions (Settings > Pages > Source).
