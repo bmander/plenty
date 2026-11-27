@@ -309,6 +309,7 @@ math:has(a.inv:hover) a.inv { text-decoration-color: var(--series); }   /* the p
 .mx-left { grid-column: 1; width: 11.5em; }
 /* a matrix whose columns are always all in view (.mx-lock) has room to write their names along them */
 .mx-lock .mx-top { height: 5.6em; }
+.mx-lock .mx-left { width: 23em; }   /* and, being narrow, room beside it for longer names of its rows */
 .mx-axis { width: max-content; min-width: 100%; max-width: calc(100vw - 90px); }   /* the buttons need more room than a narrow picture has */
 .mx-top > .mx-name.flat { display: flex; align-items: flex-end; justify-content: center; padding: 0 4px calc(var(--sort) + 3px); text-align: center; }
 .mx-left > span { left: 0; right: 0; }
@@ -375,8 +376,8 @@ details.mx-how p { margin: 6px 0 0; }
 .mx-ticks { display: flex; justify-content: space-between; margin-top: 3px; }
 @media (max-width: 900px) {
   .mx-strip { --band: 8px; font-size: 0; }
-  .mx-top { height: 8px; }
-  .mx-left { width: 8px; }
+  .mx-top, .mx-lock .mx-top { height: 8px; }
+  .mx-left, .mx-lock .mx-left { width: 8px; }
   .mx-name { display: none; }
   .mx-sums, .mx-corner, .mx-sumhead, .mx-sumfoot { display: none; }
 }

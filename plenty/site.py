@@ -172,16 +172,22 @@ class Data:
         """a: of each capability's tasks with no known open tool, the share that is well defined: the
         taxonomy says whether a task's result could be scored by a benchmark (yes counts whole,
         partly half). Nothing where every task has a tool."""
-        tasks = self.tax[self.tax.level == 2]
-        closed = tasks[tasks.open_tools == ""]
-        score = closed.benchmarkable.map(DEFINED)
-        return score.groupby(closed.parent).mean().reindex(self.phi.columns).fillna(0.0)
+        closed = self.tasks[self.tasks.tool == 0]
+        return closed.defined.groupby(closed.capability).mean().reindex(self.phi.columns).fillna(0.0)
 
     @functools.cached_property
     def open_share(self) -> pd.Series:
         """c: the share of each capability's tasks for which the taxonomy names an open-source tool."""
-        tasks = self.tax[self.tax.level == 2]
-        return (tasks.open_tools != "").groupby(tasks.parent).mean().reindex(self.phi.columns)
+        return self.tasks.tool.groupby(self.tasks.capability).mean().reindex(self.phi.columns)
+
+    @functools.cached_property
+    def tasks(self) -> pd.DataFrame:
+        """The taxonomy's tasks, in its order: each one's name and capability, the open-source tools
+        known for it and whether its result could be scored by a benchmark, as the taxonomy has
+        them, and those two as numbers: tool (one if any tool is known) and defined (t and w)."""
+        x = self.tax[self.tax.level == 2].set_index("id")
+        return pd.DataFrame({"name": x.name, "capability": x.parent, "tools": x.open_tools, "benchmarkable": x.benchmarkable,
+                             "tool": (x.open_tools != "").astype(float), "defined": x.benchmarkable.map(DEFINED)})
 
     @functools.cached_property
     def capital(self) -> M.Capital:
@@ -278,14 +284,14 @@ GROUPS = [
     ("Capital", ["K", "F", "H", "S", "z"]),
     ("Value added", ["v", "r", "y"]),
     ("Work", ["W", "P", "T", "E", "M"]),
-    ("Software capabilities", [PHI, "a", "c"]),
+    ("Software capabilities", [PHI, "a", "c", "N", "t", "w"]),
     ("Work activities", ["f", THETA, "G", "s", "b"]),
 ]
 TERMS = [k for _, keys in GROUPS for k in keys]
 DEFINED = {"yes": 1.0, "partly": 0.5, "no": 0.0}     # how far a task the taxonomy calls benchmarkable counts as well defined
 PER_NEED = "dxv"                      # the vectors there is one of for each need, written with a subscript n
 # what each computed term is made from; a term that is not here is data
-USES = {"x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "o": ["k", "a", "c"], "b": ["f", "s"],
+USES = {"x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "o": ["k", "a", "c"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
         "f": ["p", THETA, "G"], "G": ["E", "M", "Y"], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
         "D": ["V", "q"], "g": ["V"], "q": ["V"], "K": ["F", "H", "S"], "S": ["z", "H"], "z": ["g", "H"],
         "v": ["r", "x"], "r": ["y", "g", "D"], "W": ["P"], "P": ["T", "E", "M"]}
@@ -307,6 +313,8 @@ SOC_SHORT = {"11": "Management", "13": "Business, finance", "15": "Computing, ma
 INVESTOR_NAME = {"private": "Private business", "residential": "Housing", "fed_defense": "Federal defense",
                  "fed_nondefense": "Federal nondefense", "state_local": "State and local government"}
 MATRIX_PARTS = "matrix-A-parts.js"   # B and D, fetched when a cell of A is first marked
+ORDER_PARTS = "vector-o-parts.js"    # k, a, c and the tasks of each capability, fetched when a row of o is first marked
+ORDER_ROWS = 25                      # the rows of o in view when its picture opens: the first of the order to work in
 MATRIX_PART_CUT = 1e-5     # entries of B under a thousandth of a cent are left out of that file
 MATRIX_WIDTH, MATRIX_HEIGHT = 802, 780   # the most a picture takes of the page, in CSS pixels
 # A matrix at least this many times as tall as it is wide is drawn with its columns locked in view,
@@ -440,6 +448,13 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
         return S("k", T=True), f'<msup>{_paren(work)}{_TR}</msup>{_TIMES}{S(PHI)}'
     if key == "o":        # entry by entry: what is paid for work with a capability, that is well defined, and is not open
         return S("o"), f'{S("k")}{_HADAMARD}{S("a")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("c")}")}'
+    if key == "a":        # of a capability's tasks that no open tool does, the part that is well defined
+        def over(*more):
+            entries = _TIMES.join([_elt("n", "ij", "N", here), *more, _paren(f'<mn>1</mn><mo>&minus;</mo>{_elt("t", "j", "t", here)}')])
+            return f'<mrow>{_sum("j")}{entries}</mrow>'
+        return _elt("a", "i", "a", here), f'<mfrac>{over(_elt("w", "j", "w", here))}{over()}</mfrac>'
+    if key == "c":        # and the part of its tasks that an open tool does
+        return S("c"), f'{_inv(_diag(S("N") + _TIMES + _ONES))}{_TIMES}{S("N")}{_TIMES}{S("t")}'
     if key == "b":        # what software could not do: the work that needs a body or a person
         return S("b"), f'{S("f")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("s")}")}'
     if key == "gap":      # and the whole of it
@@ -477,7 +492,7 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     raise KeyError(key)
 
 
-EQUATIONS = ["x", "p", "k", "o", "f", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
+EQUATIONS = ["x", "p", "k", "o", "a", "c", "f", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
 # What one entry of each term is measured in, in a few words. A unit that has a page is written
 # [as it reads here|the name its page is filed under], and is a link wherever this is set as HTML.
@@ -503,6 +518,7 @@ MEASURED_IN = {
     "E": "[jobs|job], in May 2021",
     "M": "[dollars a year|dollar-a-year], in May 2021",
     PHI: "[share|share] of the occupation's work",
+    "N": _MARK, "t": _MARK, "w": "the well-defined part of the task, a [share|share] of one",
     THETA: "[share|share] of the occupation's work",
     "a": "[share|share] of the capability's tasks that have no open tool",
     "c": "[share|share] of the capability's tasks",
@@ -513,7 +529,8 @@ COUNTED = {
     "weighting": ("way of weighing the needs", "ways of weighing the needs"),
     "investor-kind": ("kind of investor", "kinds of investor"), "occupation": ("occupation", "occupations"),
     "surveyed-industry": ("surveyed industry", "surveyed industries"),
-    "capability": ("software capability", "software capabilities"), "activity": ("work activity", "work activities"),
+    "capability": ("software capability", "software capabilities"), "task": ("task", "tasks"),
+    "activity": ("work activity", "work activities"),
 }
 _UNIT_LINK = re.compile(r"\[([^|\]]+)\|([a-z-]+)\]")
 
@@ -620,6 +637,11 @@ def sheets(d: Data) -> dict[str, Sheet]:
     domain = tax.name[tax.parent[caps]].set_axis(caps)
     by_capability = dict(row_names=tax.name[caps], row_groups=domain, short={tax.name[k]: k.capitalize() for k in tax.index[tax.level == 0]})
     capability_order = f"Capabilities are in the taxonomy's order within its {domain.nunique()} domains."
+    # and its tasks, in the same order
+    tasks = d.tasks
+    by_task = dict(row_names=tasks.name, row_groups=domain[tasks.capability].set_axis(tasks.index))
+    task_order = f"Tasks are in the taxonomy's order within its {domain.nunique()} domains."
+    member = pd.DataFrame((np.array(caps, dtype=object)[:, None] == tasks.capability.to_numpy(dtype=object)[None, :]).astype(float), index=caps, columns=tasks.index)   # N
     info = (d.kinds.reindex(act.index) == "information").astype(float)        # s
     # the three ways of weighing the needs, which every term from p on has a column for
     weights, (unpaid, unpaid_detail) = d.weights, d.unpaid
@@ -846,18 +868,38 @@ def sheets(d: Data) -> dict[str, Sheet]:
               rows="the taxonomy's software capabilities",
               entries="Of the capability's tasks with no known open tool, the share whose result could be scored by a benchmark. "
                       "A task that could partly be scored counts half. Zero where every task has a tool.",
-              source=f"The taxonomy says of each task whether it is benchmarkable: {_file('taxonomy/capabilities.csv')}.",
-              note="This is the taxonomy's own judgment of each task, made when it was compiled.",
-              row_tip="Capability", code="taxonomy/build.py", order=capability_order),
+              row_tip="Capability", code="plenty/site.py", order=capability_order),
         Sheet("c", "the open share of each capability", "share",
               **lone(d.open_share, "c", "Tasks with an open tool", "share"), **by_capability,
               rows="the taxonomy's software capabilities",
               entries="The share of the capability's tasks for which an open-source tool is known.",
-              source=f"The taxonomy names the open tools known for each of its {int((d.tax.level == 2).sum()):,} tasks: "
+              row_tip="Capability", code="plenty/site.py", order=capability_order),
+        Sheet("N", "the tasks of each capability", "mark", member, tax.name[caps], tasks.name,
+              rows="the taxonomy's software capabilities", cols="the capability's tasks",
+              entries="One where the task is part of the capability, and zero elsewhere. Every task is part of one capability.",
+              source=f"The taxonomy divides each capability into tasks: {_file('taxonomy/capabilities.csv')}.",
+              note="Nothing says how a capability's work divides among its tasks, so they are counted and not weighed: every "
+                   "task of a capability counts the same.",
+              row_tip="Capability", col_tip="Task", axis="Tasks", code="taxonomy/build.py",
+              row_groups=domain, col_groups=by_task["row_groups"], short=by_capability["short"],
+              blanks=("is not part of it", "zero"), marked="is part of it", sums="both",
+              order=f"{capability_order} Tasks are in the same order."),
+        Sheet("t", "the tasks that have an open tool", "mark", **lone(tasks.tool, "t", "Has an open tool", "one or zero"), **by_task,
+              rows="the taxonomy's tasks",
+              entries="One where an open-source tool is known for the task, and zero where none is.",
+              source=f"The taxonomy names the open tools known for each of its {len(tasks):,} tasks: "
                      f"{_file('taxonomy/capabilities.csv')}.",
               note="The tools were named from memory when the taxonomy was compiled. An entry says a tool exists, not that it is "
                    "good enough to do the work.",
-              row_tip="Capability", code="taxonomy/build.py", order=capability_order),
+              row_tip="Task", code="taxonomy/build.py", blanks=("has no known open tool", "zero"), marked="has an open tool",
+              short=by_capability["short"], order=task_order),
+        Sheet("w", "the well-defined part of each task", "share", **lone(tasks.defined, "w", "Well defined", "share"), **by_task,
+              rows="the taxonomy's tasks",
+              entries="One where the task's result could be scored by a benchmark, a half where it could partly be, and zero "
+                      "where it could not.",
+              source=f"The taxonomy says of each task whether it is benchmarkable: {_file('taxonomy/capabilities.csv')}.",
+              note="This is the taxonomy's own judgment of each task, made when it was compiled.",
+              row_tip="Task", code="taxonomy/build.py", short=by_capability["short"], order=task_order),
         # --- work activities: the same dollar, placed on what the work is
         Sheet("f", "the part of a need dollar that pays for each activity", "per_dollar", to_activity, **by_activity, **by_weighing,
               rows="O*NET's intermediate work activities",
@@ -954,7 +996,35 @@ def sheet_sums(s: Sheet) -> dict:
 def matrix_data(d: Data, key: str) -> str:
     """The data file of one term's page. A's also says where to find what its cells' derivation needs."""
     s = d.sheets[key]
-    return sheet_data(s, parts=MATRIX_PARTS) if key == "A" else sheet_data(s)
+    if key == "A":
+        return sheet_data(s, parts=MATRIX_PARTS)
+    if key == "o":      # its picture opens in order: sorted by its first column, largest first, with the first row marked
+        return sheet_data(s, parts=ORDER_PARTS, why="tasks", start={"sort": 0, "rows": ORDER_ROWS})
+    return sheet_data(s)
+
+
+def order_parts(d: Data) -> str:
+    """What a row of o is made of, for the page to show when a row is marked: the capability's row
+    of k, its a and its c, and its tasks, each as (name, the open tools known for it, whether it is
+    benchmarkable). Capabilities are in the page's order."""
+    caps = d.sheets["o"].values.index
+    tasks = d.tasks
+    of = {c: g for c, g in tasks.groupby("capability", sort=False)}
+    payload = {"k": [[round(float(x), 8) for x in row] for row in d.sheets["k"].values.loc[caps].values],
+               "a": [round(float(x), 6) for x in d.defined_share[caps]], "c": [round(float(x), 6) for x in d.open_share[caps]],
+               "tasks": [[list(x) for x in zip(of[c].name, of[c].tools, of[c].benchmarkable)] for c in caps]}
+    return "window.PLENTY_MATRIX_PARTS = " + json.dumps(payload, separators=(",", ":")) + ";\n"
+
+
+def order_template(here: str = "") -> str:
+    """What the script writes over the parts of a marked row of o."""
+    i = lambda letter, page: _elt(letter, "i", page, here)
+    parts = f'{i("o", "o")}<mo>=</mo>{i("k", "k")}{_TIMES}{i("a", "a")}{_TIMES}{_paren(f"<mn>1</mn><mo>&minus;</mo>{i('c', 'c')}")}'
+    return f"""<template id="mx-why"><h3>The parts of the row</h3>
+<p>A row of {_m(_sym("o", here))} is the capability's row of {_m(_sym("k"))}, times the well-defined share of its tasks with
+no open tool, {_m(_sym("a"))}, times the share of its tasks that have none:</p>
+{_m(parts, block=True)}</template>
+"""
 
 
 def matrix_a_parts(d: Data) -> str:
@@ -1124,10 +1194,19 @@ housing is covered by nothing, because nobody is employed in owning a home.</p>"
              "One of the things software does for the people who work, in the project's own taxonomy.",
              f"""<p>One of the {int((tax.level == 1).sum())} things software does for people at work, in a taxonomy compiled for this
 project: {_file('taxonomy/')}. Medical coding, billing and claims is one; structural finite element analysis another. They are in
-{int((tax.level == 0).sum())} domains, and each is divided into tasks, {int((tax.level == 2).sum()):,} in all.</p>
-<p>The taxonomy says of each task whether its result could be scored by a benchmark, and names the open-source tools known for
-it. {T("a")} and {T("c")} are counts of those. It also places the software products O*NET lists, which is how an
-{_unit("occupation")}'s work reaches a capability, in {T(PHI)}.</p>"""),
+{int((tax.level == 0).sum())} domains, and each is divided into {_unit("task", "tasks")}, {len(d.tasks):,} in all.</p>
+<p>The taxonomy also places the software products O*NET lists, which is how an {_unit("occupation")}'s work reaches a
+capability, in {T(PHI)}.</p>"""),
+        Unit("task", *COUNTED["task"], True,
+             "One of the pieces of work a software capability is divided into, in the project's own taxonomy.",
+             f"""<p>One of the {len(d.tasks):,} pieces of work that the taxonomy divides its
+{_unit("capability", "software capabilities")} into, {T("N")}: {_file('taxonomy/capabilities.csv')}. Diagnosis and procedure
+code assignment is a task of medical coding, billing and claims. Each has its inputs and outputs written down, so that it can
+be said what doing it would be.</p>
+<p>The taxonomy says two things of each task: whether an open-source tool is known for it, {T("t")}, and whether its result
+could be scored by a benchmark, {T("w")}. A task with no open tool whose result could be scored is one to build.</p>
+<p>Nothing says how a capability's work divides among its tasks. So the account counts tasks and does not weigh them, and it
+puts capabilities in order, not tasks.</p>"""),
         Unit("activity", *COUNTED["activity"], True,
              "One of O*NET's intermediate work activities: a kind of work, whoever does it.",
              f"""<p>One of the {len(d.sheets["f"].values)} intermediate work activities of O*NET 31.0, the U.S. Department of
@@ -1319,6 +1398,9 @@ def term_links(d: Data, keys, here: str = "") -> str:
     return "; ".join(f'{_m(_term(k, here))}, {e(d.sheets[k].name)}' for k in keys)
 
 
+ORDER_ALSO = "A marked row is taken apart under the picture, into what it is made from and the capability's tasks."
+
+
 def term_page(d: Data, key: str) -> str:
     """The page of one term: what its rows, columns and entries are, where it comes from, what it
     is made from and what it goes into, and the picture of the whole of it."""
@@ -1350,6 +1432,8 @@ def term_page(d: Data, key: str) -> str:
 {_m(_sym("D"))}. Each industry that makes the column's commodity brings what it uses of the row's, in proportion to its share:</p>
 {_m(f'{_sub("a", "ij")}<mo>=</mo>{_sum("k")}{_sub("b", "ik")}{_TIMES}{_sub("d", "kj")}', block=True)}</template>
 """
+    if key == "o":      # a marked row is taken apart into what it is made from and the capability's tasks
+        also, why = ORDER_ALSO, order_template(key)
     body = f"""
 <p class="crumbs"><a href="{HOME}">The account</a></p>
 <h1 class="long">{_m(_term(key, key))}, {e(s.name)}</h1>
@@ -1396,6 +1480,12 @@ software capabilities: the information work of each occupation, by the software 
 capability's work that is well defined and has no known open tool, and the fifth adds it up: {g.equal:.1f} cents. Weighing
 the needs by what is spent on each it is {g.spending:.1f} cents, and by the poorest fifth's budget {g.poorest:.1f}. Sorted,
 a column of {_m(_sym("o"))} is the order to work in.</p>
+<h2 id="order">The order to work in</h2>
+<p>This is {_m(_sym("o"))}, sorted by its first column: the capabilities with the most well-defined work and no known open
+tool, with the needs counted equally. Its first {ORDER_ROWS} rows are in view, and the other two columns weigh the needs
+the other two ways. The first row is marked, and under the picture it is taken apart, down to the
+{_unit("task", "tasks")} there are to build. Click another row to take that one apart.</p>
+{sheet_picture(d.sheets["o"], also=ORDER_ALSO, extra=order_template())}
 <h2 id="terms">Every term</h2>
 {account_table(d)}
 <h2 id="units">Every unit</h2>
@@ -1411,7 +1501,7 @@ def index(d: Data) -> str:
 deliver them, to the sectors whose income it becomes, to the occupations they pay, and to the software those
 occupations work with. Every term is a link to its matrix.</p>
 {account_section(d)}"""
-    return page("The account", body, home=True)
+    return page("The account", body, home=True, scripts=(d.sheets["o"].data_file, "matrix.js"))
 
 
 def main():
@@ -1427,6 +1517,7 @@ def main():
         (SITE / sheet.data_file).write_text(matrix_data(d, key), encoding="utf-8")
         (SITE / sheet.csv_file).write_text(sheet_csv(sheet), encoding="utf-8")
     (SITE / MATRIX_PARTS).write_text(matrix_a_parts(d), encoding="utf-8")
+    (SITE / ORDER_PARTS).write_text(order_parts(d), encoding="utf-8")
     (SITE / ".nojekyll").write_text("")
     print(f"wrote {len(pages)} pages to {SITE}")
 

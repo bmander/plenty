@@ -105,7 +105,8 @@ def test_every_unit_has_a_page_and_every_term_links_to_its_units(built):
 
 def test_the_account_is_five_equations_and_a_table_of_every_term(built):
     html = (site.SITE / site.HOME).read_text()
-    assert html.count('<math display="block"') == 1 and html.count("<mtr>") == 5
+    account = html[:html.index('id="order"')]
+    assert account.count('<math display="block"') == 1 and account.count("<mtr>") == 5
     # what the lines come to is said under them, for each way of weighing the needs
     k, b, gap = (built.sheets[key].values.sum() for key in "kbo")
     assert f"{k.equal * 100:.1f} cents" in html and f"{b.equal * 100:.1f} cents" in html and f"{len(built.sheets['k'].values)}\nsoftware capabilities" in html
@@ -195,6 +196,13 @@ def test_the_equations_the_pages_print_hold_of_the_matrices_they_show(built):
     score = closed.benchmarkable.map(site.DEFINED)
     assert set(tasks.benchmarkable) == set(site.DEFINED) and a.between(0, 1).all() and (a[c == 1] == 0).all()
     assert (a * (1 - c) * tasks.groupby("parent").size()[c.index]).sum() == pytest.approx(score.sum())
+    # and both are counts of the taxonomy's tasks: N says which capability each is part of, t which have a tool, w how far each is defined
+    N, has, defined = v["N"].loc[phi.columns], col("t"), col("w")
+    assert list(N.columns) == list(has.index) == list(defined.index) == list(tasks.id) and (N.sum(axis=0) == 1).all()
+    assert set(has) == {0.0, 1.0} and set(defined) == set(site.DEFINED.values())
+    assert np.allclose(c, (N.values @ has.values) / N.values.sum(axis=1))
+    lacking = N.values @ (1 - has.values)
+    assert np.allclose(a[lacking > 0], (N.values @ (defined.values * (1 - has.values)))[lacking > 0] / lacking[lacking > 0]) and (a[lacking == 0] == 0).all()
     o = k * (a.values * (1 - c.values))[:, None]                                 # the fourth line, and the fifth
     assert np.allclose(o, v["o"].loc[phi.columns].values, atol=1e-12)
     assert np.allclose(site.gap(built), o.sum(axis=0)) and (0 < o.sum(axis=0)).all() and (o.sum(axis=0) < k.sum(axis=0)).all()
@@ -244,7 +252,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert np.allclose(data["rowSums"], x.sum(axis=1), rtol=1e-5, atol=1e-9) and np.isclose(data["grand"], x.sum(), rtol=1e-5), key
         csv = pd.read_csv(site.SITE / sheet.csv_file, index_col=0, dtype={0: str})
         assert list(csv.index.astype(str)) == rows and np.allclose(csv.values, x, rtol=1e-5, atol=1e-9), key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasb")
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtw")
     # the matrices are the model's own
     m, t = built.io, built.io.t
     for key, X in {"A": m.A, "L": m.L, "U": t.U, "V": t.V, "K": m.K, "S": built.capital.shares, "F": built.capital.investment,
@@ -298,7 +306,43 @@ def test_a_cell_of_A_can_be_taken_apart(built):
     assert len(parts["industries"]) == b.shape[1] and all(isinstance(x, str) and x for x in parts["industries"])
     assert np.abs(got_b @ got_d - a)[kept].max() < 2e-4          # the terms a reader is shown add up to the cell, nearly
     assert 'id="mx-why"' in html
-    assert not any('id="mx-why"' in (site.SITE / s.href).read_text() for key, s in built.sheets.items() if key != "A")
+    assert not any('id="mx-why"' in (site.SITE / s.href).read_text() for key, s in built.sheets.items() if key not in "Ao")
+
+
+def test_the_order_to_work_in_is_shown_and_a_row_of_it_can_be_taken_apart(built):
+    sheet = built.sheets["o"]
+    data = _data(sheet)
+    # the picture opens sorted by its first column, largest first, on its first rows; no other term's does
+    assert data["start"] == {"sort": 0, "rows": site.ORDER_ROWS} and data["why"] == "tasks" and data["lock"]
+    assert not any("start" in _data(s) or "why" in _data(s) for key, s in built.sheets.items() if key != "o")
+    # it is on the home page, under the equations and over the table of terms, and on its own page, with the words for a row's parts
+    home = (site.SITE / site.HOME).read_text()
+    assert home.index("</math>") < home.index('id="order"') < home.index('id="mx-canvas"') < home.index('id="terms"')
+    assert f'<script src="{sheet.data_file}"></script><script src="matrix.js"></script>' in home
+    for text in (home, (site.SITE / sheet.href).read_text()):
+        assert text.count('id="mx-why"') == 1 and text.count('id="mx-canvas"') == 1
+    # the file behind a row's parts: its row of k, its a and c, and its tasks as the taxonomy has them
+    text = (site.SITE / data["parts"]).read_text()
+    parts = json.loads(text[text.index("{"):text.rindex("}") + 1])
+    caps = data["rows"]["codes"]
+    k, o = built.sheets["k"].values.loc[caps].values, sheet.values.loc[caps].values
+    a, c = np.array(parts["a"]), np.array(parts["c"])
+    assert np.allclose(parts["k"], k, atol=1e-8) and np.allclose(np.array(parts["k"]) * (a * (1 - c))[:, None], o, atol=1e-6)
+    tasks = built.tax[built.tax.level == 2]
+    assert sum(len(x) for x in parts["tasks"]) == len(tasks) == built.sheets["N"].values.shape[1]
+    score = {"yes": 1.0, "partly": 0.5, "no": 0.0}
+    for i, cap in enumerate(caps):
+        mine = tasks[tasks.parent == cap]
+        assert [x[0] for x in parts["tasks"][i]] == list(mine.name) and [x[1] for x in parts["tasks"][i]] == list(mine.open_tools), cap
+        # a and c can be counted again from the tasks listed, as the page does
+        closed = [x for x in parts["tasks"][i] if not x[1]]
+        assert c[i] == pytest.approx(1 - len(closed) / len(mine), abs=1e-6), cap
+        assert a[i] == pytest.approx(sum(score[x[2]] for x in closed) / len(closed) if closed else 0.0, abs=1e-6), cap
+    # the first of the order, with the needs counted equally, and what there is to build in it
+    first = int(np.argmax(o[:, 0]))
+    assert data["rows"]["names"][first] == "Medical coding, billing and claims"
+    assert [x[0] for x in parts["tasks"][first] if not x[1] and x[2] == "yes"] == [
+        "Diagnosis and procedure code assignment", "Inpatient case-mix grouping", "Claim edit checking", "Fee schedule pricing"]
 
 
 def test_the_survey_of_occupations_reaches_most_sectors(built):

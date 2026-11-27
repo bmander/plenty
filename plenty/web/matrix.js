@@ -420,42 +420,54 @@
     if (j !== null) line(M.colIs, cols, j);
     if (i !== null && j !== null) {
       note.appendChild(el("p", "", "Cell: " + amount(i, j)));
-      if (M.parts) note.appendChild(derivation(i, j));
+      if (M.parts && M.why !== "tasks") note.appendChild(derivation(i, j));
     }
+    if (M.why === "tasks" && i !== null) note.appendChild(rowParts(i));
   }
 
-  // --- how a marked cell of A is made up. A = B D, so the cell is row i of B against column j of D:
-  // a term for each industry that makes commodity j. B and D come in a file of their own,
-  // fetched when a cell is first marked.
+  // --- what is marked, taken apart. What it is made of comes in a file of its own (M.parts),
+  // fetched when something is first marked.
   var WHY = 8;                                        // terms listed before "show all"
   var parts = null, asked = false;                    // parts is false if the file could not be had
+  function fine(x) { return (x * 100).toFixed(3); }   // dollars, as cents to a thousandth
   function fetchParts() {
     if (asked) return;
     asked = true;
     var s = document.createElement("script");
     s.src = M.parts;
     s.onload = function () {
-      var P = window.PLENTY_MATRIX_PARTS, m = P.industries.length;
-      parts = { names: P.industries, m: m, makers: P.D, unit: P.unit, cut: P.cut, use: new Float32Array(nr * m), capital: new Float32Array(nr * m) };
-      P.B.forEach(function (col, k) {
-        for (var x = 0; x < col.length; x += 3) {
-          parts.use[col[x] * m + k] = col[x + 1] * P.unit;
-          parts.capital[col[x] * m + k] = col[x + 2] * P.unit;
-        }
-      });
+      parts = M.why === "tasks" ? window.PLENTY_MATRIX_PARTS : cellParts(window.PLENTY_MATRIX_PARTS);
       remark();
     };
     s.onerror = function () { parts = false; remark(); };
     document.head.appendChild(s);
   }
-  function derivation(i, j) {
-    var box = el("div", "mx-why"), fine = function (x) { return (x * 100).toFixed(3); };
+  // the box the parts go in, under the page's own words for it; null until the file has come
+  function partsBox(what) {
+    var box = el("div", "mx-why");
     box.appendChild(document.getElementById("mx-why").content.cloneNode(true));
-    if (!parts) {
-      if (parts === null) fetchParts();
-      box.appendChild(el("p", "dim", parts === null ? "Fetching the two tables..." : "The two tables could not be fetched."));
-      return box;
-    }
+    if (parts) return { box: box, ready: true };
+    if (parts === null) fetchParts();
+    box.appendChild(el("p", "dim", parts === null ? "Fetching " + what + "..." : what.charAt(0).toUpperCase() + what.slice(1) + " could not be fetched."));
+    return { box: box, ready: false };
+  }
+
+  // How a marked cell of A is made up. A = B D, so the cell is row i of B against column j of D:
+  // a term for each industry that makes commodity j.
+  function cellParts(P) {
+    var m = P.industries.length;
+    var made = { names: P.industries, m: m, makers: P.D, unit: P.unit, cut: P.cut, use: new Float32Array(nr * m), capital: new Float32Array(nr * m) };
+    P.B.forEach(function (col, k) {
+      for (var x = 0; x < col.length; x += 3) {
+        made.use[col[x] * m + k] = col[x + 1] * P.unit;
+        made.capital[col[x] * m + k] = col[x + 2] * P.unit;
+      }
+    });
+    return made;
+  }
+  function derivation(i, j) {
+    var got = partsBox("the two tables"), box = got.box;
+    if (!got.ready) return box;
     var makers = parts.makers[j], terms = [], sum = 0, v = value[i * nc + j];
     for (var x = 0; x < makers.length; x += 2) {
       var k = makers[x], share = makers[x + 1] * parts.unit, use = parts.use[i * parts.m + k];
@@ -484,6 +496,61 @@
     wrap.appendChild(table);
     box.appendChild(wrap);
     fold(box, body, WHY);
+    return box;
+  }
+  // How a marked row of o is made up. o = k a (1 - c), entry by entry: the capability's row of k,
+  // and the two shares that come from counting its tasks, which are listed with what the taxonomy
+  // says of each: the ones to build first.
+  var DEFINED = { yes: 1, partly: 0.5, no: 0 }, SAID = { yes: "Yes", partly: "Partly", no: "No" };
+  function count(n, one, many) { return n + " " + (n === 1 ? one : many); }
+  function rowParts(i) {
+    var got = partsBox("the tasks"), box = got.box;
+    if (!got.ready) return box;
+    var a = parts.a[i], c = parts.c[i];
+    var tasks = parts.tasks[i].map(function (t) { return { name: t[0], tools: t[1], defined: t[2], build: t[1] ? 0 : DEFINED[t[2]] }; });
+    var closed = tasks.filter(function (t) { return !t.tools; });
+    var whole = closed.filter(function (t) { return t.build === 1; }).length, half = closed.filter(function (t) { return t.build === 0.5; }).length;
+    // the factors, for each way of weighing the needs
+    var wrap = el("div", "scroll"), table = el("table", "ledger"), body = el("tbody");
+    table.appendChild(headRow([M.colTip, "k, \u00a2", "a", "1 \u2212 c", "o, \u00a2"]));
+    parts.k[i].forEach(function (k, n) {
+      var row = el("tr"), name = el("th", "", cols.names[n]);
+      name.scope = "row";
+      row.appendChild(name);
+      [fine(k), a.toFixed(2), (1 - c).toFixed(2), fine(k * a * (1 - c))].forEach(function (x) { row.appendChild(el("td", "num", x)); });
+      body.appendChild(row);
+    });
+    table.appendChild(body);
+    wrap.appendChild(table);
+    box.appendChild(wrap);
+    // where a and c come from
+    var said = rows.names[i] + " has " + count(tasks.length, "task", "tasks") + ". ";
+    if (!closed.length) said += "An open tool is known for every one, so 1 \u2212 c is zero and nothing here is left to build.";
+    else {
+      said += count(closed.length, "has", "have") + " no known open tool, so 1 \u2212 c is " + closed.length + " / " + tasks.length + ". Of those, " +
+        count(whole, "is", "are") + " well defined and " + count(half, "is", "are") + " partly, which counts half, so a is " +
+        (half ? "(" + whole + " + " + half + " / 2)" : whole) + " / " + closed.length + ".";
+    }
+    box.appendChild(el("p", "", said));
+    // the tasks: first the ones to build, the well defined before the partly, then the rest with no tool, then those that have one
+    tasks.sort(function (x, y) { return y.build - x.build || !!x.tools - !!y.tools; });
+    wrap = el("div", "scroll");
+    table = el("table", "ledger");
+    body = el("tbody");
+    table.appendChild(headRow(["Task", "Open tool", "Well defined", "To build"], true));
+    tasks.forEach(function (t) {
+      var row = el("tr"), name = el("th", "", t.name);
+      name.scope = "row";
+      row.appendChild(name);
+      row.appendChild(el("td", t.tools ? "wrap" : "dim", t.tools || "None known"));
+      row.appendChild(el("td", "", SAID[t.defined]));
+      row.appendChild(el("td", "", t.build === 1 ? "Yes" : t.build ? "Partly" : ""));
+      body.appendChild(row);
+    });
+    table.appendChild(body);
+    wrap.appendChild(table);
+    box.appendChild(wrap);
+    fold(box, body, Math.max(WHY, whole + half));
     return box;
   }
   [rows, cols].forEach(function (a) {
@@ -653,6 +720,13 @@
   });
 
   paint();
+  if (M.start) {
+    cols.sel = M.start.sort;
+    order(rows, { k: M.start.sort, dir: -1 });
+    rows.sel = rows.at[0];
+    view.span = M.start.rows;
+    settle();
+  }
   remark();
   render();
   if (window.ResizeObserver) new ResizeObserver(schedule).observe(canvas);
@@ -669,9 +743,9 @@
     if (text !== undefined) x.textContent = text;
     return x;
   }
-  function headRow(heads) {
+  function headRow(heads, words) {
     var thead = el("thead"), tr = el("tr");
-    heads.forEach(function (h, i) { var th = el("th", i ? "num" : "", h); th.scope = "col"; tr.appendChild(th); });
+    heads.forEach(function (h, i) { var th = el("th", i && !words ? "num" : "", h); th.scope = "col"; tr.appendChild(th); });
     thead.appendChild(tr);
     return thead;
   }

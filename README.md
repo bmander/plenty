@@ -355,6 +355,10 @@ goes into, and shows the whole of it as a picture that can be zoomed, sorted and
 Every unit has a page too: what a row or a column is one of (a commodity, an occupation), and
 what an entry is measured in (a need dollar, a work dollar). A term's page links to its units.
 
+The home page ends with the last term sorted, which is the order to work in: the capabilities
+with the most well-defined work and no known open tool. A marked row is taken apart under the
+picture, into the terms it is made from and the capability's tasks, the ones to build first.
+
 `.github/workflows/site.yml` rebuilds and publishes it on every push to `main`. GitHub Pages
 must be set to deploy from GitHub Actions (Settings > Pages > Source).
 
