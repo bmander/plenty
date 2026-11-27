@@ -473,6 +473,33 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
 
 EQUATIONS = ["x", "p", "k", "o", "f", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
+# what one entry of each term is measured in, in a few words, for the tip a link to the term shows
+_NEED_DOLLAR, _MILLIONS, _MARK = "dollars per dollar spent on the needs", "millions of dollars, in 2017", "one or zero"
+UNITS = {
+    "x": "dollars of the commodity produced per dollar spent on the need",
+    "p": _NEED_DOLLAR, "k": _NEED_DOLLAR, "o": _NEED_DOLLAR, "f": _NEED_DOLLAR, "b": _NEED_DOLLAR, "G": _NEED_DOLLAR,
+    "d": "dollars spent on the commodity per dollar spent on the need",
+    "Y": _MILLIONS, "U": _MILLIONS, "V": _MILLIONS, "g": _MILLIONS, "q": _MILLIONS, "K": _MILLIONS, "F": _MILLIONS,
+    "z": _MILLIONS, "y": _MILLIONS,
+    OMEGA: "the need's weight, a share of one",
+    "L": "dollars of the row's commodity produced per dollar of the column's delivered",
+    "A": "dollars of the input per dollar of the thing made",
+    "B": "dollars of the input per dollar of the industry's output",
+    "D": "the industry's share of the commodity's output",
+    "H": _MARK, "T": _MARK, "s": _MARK,
+    "S": "share of what investors of one kind buy of the capital good",
+    "v": "the sector's share of the value added behind the need",
+    "r": "dollars of value added per dollar of output",
+    "W": "the occupation's share of the sector's wage bill",
+    "P": "millions of dollars a year, at May 2021 wages",
+    "E": "jobs, in May 2021",
+    "M": "dollars a year, in May 2021",
+    PHI: "share of the occupation's work",
+    THETA: "share of the occupation's work",
+    "a": "share of the capability's tasks that have no open tool",
+    "c": "share of the capability's tasks",
+}
+
 
 def _file(path: str) -> str:
     """A link to a file of the repository, by its path."""
@@ -992,6 +1019,23 @@ sort the whole matrix by that row or column: largest first, then smallest first,
 Sorting by a row or column marks it, and unmarking it lets go of the sort.</p></details>"""
 
 
+def term_tip(s: Sheet) -> str:
+    """What a link to a term shows under the pointer: its name, what its rows and columns are, and
+    what an entry is measured in. A vector has rows alone."""
+    nr, nc = s.values.shape
+    lines = [s.title, f"Rows: {nr:,} {s.rows.replace(': ', ', ', 1)}"]
+    if nc > 1:
+        lines.append(f"Columns: {nc:,} {s.cols.replace(': ', ', ', 1)}")
+    return "\n".join(lines + [f"Unit: {UNITS[s.key]}"])
+
+
+def with_tips(d: Data, page: str) -> str:
+    """A page with that tip on every link in it to a term's page."""
+    for s in d.sheets.values():
+        page = page.replace(f'<a href="{s.href}"', f'<a href="{s.href}" data-tip="{e(term_tip(s))}"')
+    return page
+
+
 def term_links(d: Data, keys, here: str = "") -> str:
     """Terms by letter and name, each letter a link to its page."""
     return "; ".join(f'{_m(_term(k, here))}, {e(d.sheets[k].name)}' for k in keys)
@@ -1099,7 +1143,7 @@ def main():
     shutil.copytree(WEB, SITE)
     pages = {"index.html": index, **{SYMBOL_PAGES[key]: (lambda d, key=key: term_page(d, key)) for key in TERMS}}
     for name, fn in pages.items():
-        (SITE / name).write_text(fn(d), encoding="utf-8")
+        (SITE / name).write_text(with_tips(d, fn(d)), encoding="utf-8")
     for key, sheet in d.sheets.items():
         (SITE / sheet.data_file).write_text(matrix_data(d, key), encoding="utf-8")
         (SITE / sheet.csv_file).write_text(sheet_csv(sheet), encoding="utf-8")

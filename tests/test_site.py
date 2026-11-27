@@ -1,3 +1,4 @@
+import html as markup
 import json
 import re
 import numpy as np
@@ -32,6 +33,28 @@ def _data(sheet):
     return json.loads(text[text.index("{"):text.rindex("}") + 1])
 
 
+def _link(sheet):
+    """How a link to a term's page opens: with the tip it shows under the pointer."""
+    return f'<a href="{sheet.href}" data-tip="{markup.escape(site.term_tip(sheet))}"'
+
+
+def test_a_link_to_a_term_says_what_its_rows_columns_and_entries_are(built):
+    assert set(site.UNITS) == set(site.TERMS)
+    for key, sheet in built.sheets.items():
+        lines = site.term_tip(sheet).split("\n")
+        nr, nc = sheet.values.shape
+        assert lines[0] == sheet.title and lines[1].startswith(f"Rows: {nr:,} ") and lines[-1] == f"Unit: {site.UNITS[key]}", key
+        assert (len(lines) == 4 and lines[2].startswith(f"Columns: {nc:,} ")) if nc > 1 else len(lines) == 3, key   # a vector has rows alone
+    x = site.term_tip(built.sheets["x"]).split("\n")
+    assert x[1:] == ["Rows: 402 commodities, what is produced", "Columns: 11 needs, a dollar of each",
+                     "Unit: dollars of the commodity produced per dollar spent on the need"]
+    for name in [site.HOME] + list(site.SYMBOL_PAGES.values()):      # and every link to a term carries its own
+        text = (site.SITE / name).read_text()
+        for href, tip in re.findall(r'<a href="((?:matrix|vector)-[A-Za-z]+\.html)"(?: data-tip="([^"]*)")?', text):
+            sheet = next(s for s in built.sheets.values() if s.href == href)
+            assert markup.unescape(tip) == site.term_tip(sheet), f"{name}: {href}"
+
+
 def test_the_account_is_five_equations_and_a_table_of_every_term(built):
     html = (site.SITE / site.HOME).read_text()
     assert html.count('<math display="block"') == 1 and html.count("<mtr>") == 5
@@ -42,12 +65,12 @@ def test_the_account_is_five_equations_and_a_table_of_every_term(built):
     assert f"{built.sheets['G'].values.values.sum() * 100:.0f} cents" in html
     table = html[html.index('id="terms"'):]
     for key, sheet in built.sheets.items():
-        assert f'<td class="wrap"><a href="{sheet.href}">' in table, key       # each term is listed, by name
-        assert f'<mi><a href="{sheet.href}">' in html, key                     # and its letter is a link wherever it is written
+        assert f'<td class="wrap">{_link(sheet)}>' in table, key       # each term is listed, by name
+        assert f'<mi>{_link(sheet)}>' in html, key                     # and its letter is a link wherever it is written
     assert list(built.sheets) == site.TERMS and len(set(site.SYMBOL_PAGES.values())) == len(site.TERMS)
     assert len({name.lower() for name in site.SYMBOL_PAGES.values()}) == len(site.TERMS)   # no two files differ by case alone
     # A is a link to its own page, so the rest of the inverse is the link to L's: two brackets, the I and the exponent
-    piece = f'<a href="{site.SYMBOL_PAGES["L"]}" class="inv'
+    piece = f'{_link(built.sheets["L"])} class="inv'
     for name in (site.HOME, site.SYMBOL_PAGES["x"]):
         text = (site.SITE / name).read_text()
         assert text.count(piece) >= 4 and text.count(piece) % 4 == 0, name
