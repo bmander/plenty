@@ -352,6 +352,8 @@ Limits, most important first:
 matrix and vector they are made from, down to the published tables. Each page says what the
 term's rows, columns and entries are, where it comes from, what it is made from and what it
 goes into, and shows the whole of it as a picture that can be zoomed, sorted and downloaded.
+Every unit has a page too: what a row or a column is one of (a commodity, an occupation), and
+what an entry is measured in (a need dollar, a work dollar). A term's page links to its units.
 
 `.github/workflows/site.yml` rebuilds and publishes it on every push to `main`. GitHub Pages
 must be set to deploy from GitHub Actions (Settings > Pages > Source).

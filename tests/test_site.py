@@ -15,7 +15,8 @@ def built():
 
 def test_site_builds_and_links_resolve(built):
     pages = sorted(p.name for p in site.SITE.glob("*.html"))
-    assert pages == sorted(["index.html"] + list(site.SYMBOL_PAGES.values()))      # the account, and a page for each term
+    units = [u.href for u in built.units.values()]
+    assert pages == sorted(["index.html"] + list(site.SYMBOL_PAGES.values()) + units)      # the account, and a page for each term and unit
     for name in pages:
         text = (site.SITE / name).read_text()
         assert ">nan<" not in text and "nan%" not in text, name
@@ -33,26 +34,67 @@ def _data(sheet):
     return json.loads(text[text.index("{"):text.rindex("}") + 1])
 
 
-def _link(sheet):
-    """How a link to a term's page opens: with the tip it shows under the pointer."""
-    return f'<a href="{sheet.href}" data-tip="{markup.escape(site.term_tip(sheet))}"'
+def _link(x):
+    """How a link to a term's page opens, or a unit's: with the tip it shows under the pointer."""
+    tip = site.term_tip(x) if isinstance(x, site.Sheet) else site.unit_tip(x)
+    return f'<a href="{x.href}" data-tip="{markup.escape(tip)}"'
 
 
 def test_a_link_to_a_term_says_what_its_rows_columns_and_entries_are(built):
-    assert set(site.UNITS) == set(site.TERMS)
+    assert set(site.MEASURED_IN) == set(site.TERMS)
     for key, sheet in built.sheets.items():
         lines = site.term_tip(sheet).split("\n")
         nr, nc = sheet.values.shape
-        assert lines[0] == sheet.title and lines[1].startswith(f"Rows: {nr:,} ") and lines[-1] == f"Unit: {site.UNITS[key]}", key
+        assert lines[0] == sheet.title and lines[1].startswith(f"Rows: {nr:,} ") and lines[-1] == f"Unit: {site.measure_text(key)}", key
         assert (len(lines) == 4 and lines[2].startswith(f"Columns: {nc:,} ")) if nc > 1 else len(lines) == 3, key   # a vector has rows alone
     x = site.term_tip(built.sheets["x"]).split("\n")
     assert x[1:] == ["Rows: 402 produced commodities", "Columns: 11 needs, a dollar of each",
-                     "Unit: dollars of the commodity produced per dollar spent on the need"]
+                     "Unit: commodity dollars produced per need dollar"]
     for name in [site.HOME] + list(site.SYMBOL_PAGES.values()):      # and every link to a term carries its own
         text = (site.SITE / name).read_text()
         for href, tip in re.findall(r'<a href="((?:matrix|vector)-[A-Za-z]+\.html)"(?: data-tip="([^"]*)")?', text):
             sheet = next(s for s in built.sheets.values() if s.href == href)
             assert markup.unescape(tip) == site.term_tip(sheet), f"{name}: {href}"
+
+
+def test_every_unit_has_a_page_and_every_term_links_to_its_units(built):
+    units = built.units
+    home = (site.SITE / site.HOME).read_text()
+    assert len({u.href for u in units.values()}) == len(units) and all(u.key == key for key, u in units.items())
+    used = set()
+    for key, sheet in built.sheets.items():
+        page = (site.SITE / sheet.href).read_text()
+        spec = page[page.index('<dl class="spec">'):page.index("</dl>")]
+        nr, nc = sheet.values.shape
+        # the rows and the columns are each counted in a unit, named in their phrase, and it is a link
+        sides = [("Rows", nr, sheet.rows)] + ([("Columns", nc, sheet.cols)] if nc > 1 else [])
+        for label, n, phrase in sides:
+            u = site.dimension(built, phrase)
+            assert u.counts and u.plural in phrase, (key, phrase)
+            assert f'<dt>{label}</dt><dd>{n:,} ' in spec and f'<a href="{u.href}"' in spec.split(f"<dt>{label}</dt>")[1].split("</dd>")[0], (key, label)
+            used.add(u.key)
+        # and the entries are measured in units that have pages, and are not what rows are counted in
+        measured = site.measures(key)
+        assert measured and all(not units[m].counts for m in measured), key
+        line = spec.split("<dt>Unit</dt>")[1].split("</dd>")[0]
+        assert all(f'<a href="{units[m].href}"' in line for m in measured) and "[" not in line and "|" not in line, key
+        assert "[" not in site.measure_text(key) and "|" not in site.measure_text(key), key
+        used.update(measured)
+    assert used == set(units)                                  # no unit is left without a term
+    table = home[home.index('id="units"'):]
+    for key, u in units.items():
+        assert f'<th scope="row">{_link(u)}>{markup.escape(u.title)}</a></th>' in table, key
+        page = (site.SITE / u.href).read_text()
+        assert f"<h1 class=\"long\">{markup.escape(u.title)}</h1>" in page, key
+        users = site.unit_users(built, u)
+        assert any(users.values()), key
+        for how, terms in users.items():                       # its page lists the terms that use it, by how
+            assert (f"<dt>{how}</dt>" in page) == bool(terms), (key, how)
+            for term in terms:
+                assert f'<a href="{built.sheets[term].href}"' in page.split(f"<dt>{how}</dt>")[1].split("</dd>")[0], (key, how, term)
+    x = site.unit_users(built, units["need-dollar"])
+    assert x["Entries of"] == list("xpkodfGb") and not x["Rows of"] and not x["Columns of"]
+    assert site.unit_users(built, units["need"]) == {"Rows of": [site.OMEGA], "Columns of": ["x", "d", "Y", "v"], "Entries of": []}
 
 
 def test_the_account_is_five_equations_and_a_table_of_every_term(built):

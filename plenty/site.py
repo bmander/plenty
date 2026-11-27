@@ -13,6 +13,7 @@ import functools
 from dataclasses import dataclass
 import html
 import json
+import re
 import shutil
 from pathlib import Path
 
@@ -192,6 +193,11 @@ class Data:
         """The model's matrices that have a page, by letter."""
         return sheets(self)
 
+    @functools.cached_property
+    def units(self) -> dict:
+        """What the terms count and measure in, each with a page, by the name it is filed under."""
+        return units(self)
+
 
 # ---------------------------------------------------------------- pieces
 
@@ -209,7 +215,7 @@ def page(title: str, body: str, home: bool = False, scripts: tuple[str, ...] = (
 <div class="sheet">
 <header class="masthead">
 <a class="wordmark" href="index.html">Plenty</a>
-<nav aria-label="Sections"><a href="index.html"{' aria-current="page"' if home else ""}>The account</a><a href="index.html#terms">Every term</a></nav>
+<nav aria-label="Sections"><a href="index.html"{' aria-current="page"' if home else ""}>The account</a><a href="index.html#terms">Every term</a><a href="index.html#units">Every unit</a></nav>
 </header>
 <main>
 {body}
@@ -473,32 +479,35 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
 
 EQUATIONS = ["x", "p", "k", "o", "f", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
-# what one entry of each term is measured in, in a few words, for the tip a link to the term shows
-_NEED_DOLLAR, _MILLIONS, _MARK = "dollars per dollar spent on the needs", "millions of dollars, in 2017", "one or zero"
-UNITS = {
-    "x": "dollars of the commodity produced per dollar spent on the need",
-    "p": _NEED_DOLLAR, "k": _NEED_DOLLAR, "o": _NEED_DOLLAR, "f": _NEED_DOLLAR, "b": _NEED_DOLLAR, "G": _NEED_DOLLAR,
-    "d": "dollars spent on the commodity per dollar spent on the need",
+# What one entry of each term is measured in, in a few words. A unit that has a page is written
+# [as it reads here|the name its page is filed under], and is a link wherever this is set as HTML.
+_WORK = "[work dollars|work-dollar] per [need dollar|need-dollar]"
+_MILLIONS, _MARK = "[millions of dollars|million-dollars], in 2017", "[one or zero|one-or-zero]"
+MEASURED_IN = {
+    "x": "[commodity dollars|commodity-dollar] produced per [need dollar|need-dollar]",
+    "p": _WORK, "k": _WORK, "o": _WORK, "f": _WORK, "b": _WORK, "G": _WORK,
+    "d": "[commodity dollars|commodity-dollar] bought per [need dollar|need-dollar]",
     "Y": _MILLIONS, "U": _MILLIONS, "V": _MILLIONS, "g": _MILLIONS, "q": _MILLIONS, "K": _MILLIONS, "F": _MILLIONS,
     "z": _MILLIONS, "y": _MILLIONS,
-    OMEGA: "the need's weight, a share of one",
-    "L": "dollars of the row's commodity produced per dollar of the column's delivered",
-    "A": "dollars of the input per dollar of the thing made",
-    "B": "dollars of the input per dollar of the industry's output",
-    "D": "the industry's share of the commodity's output",
+    OMEGA: "the need's weight, a [share|share] of one",
+    "L": "[commodity dollars|commodity-dollar] produced per commodity dollar delivered",
+    "A": "[commodity dollars|commodity-dollar] of the input per commodity dollar of the output",
+    "B": "[commodity dollars|commodity-dollar] of the input per dollar of the industry's output",
+    "D": "the industry's [share|share] of the commodity's output",
     "H": _MARK, "T": _MARK, "s": _MARK,
-    "S": "share of the purchases of the capital good by investors of one kind",
-    "v": "the sector's share of the value added behind the need",
-    "r": "dollars of value added per dollar of output",
-    "W": "the occupation's share of the sector's wage bill",
-    "P": "millions of dollars a year, at May 2021 wages",
-    "E": "jobs, in May 2021",
-    "M": "dollars a year, in May 2021",
-    PHI: "share of the occupation's work",
-    THETA: "share of the occupation's work",
-    "a": "share of the capability's tasks that have no open tool",
-    "c": "share of the capability's tasks",
+    "S": "[share|share] of the purchases of the capital good by investors of one kind",
+    "v": "the sector's [share|share] of the [value-added dollars|value-added-dollar] behind the need",
+    "r": "[value-added dollars|value-added-dollar] per [commodity dollar|commodity-dollar] produced",
+    "W": "the occupation's [share|share] of the sector's wage bill",
+    "P": "[millions of dollars|million-dollars] a year, at the wages of May 2021",
+    "E": "[jobs|job], in May 2021",
+    "M": "[dollars a year|dollar-a-year], in May 2021",
+    PHI: "[share|share] of the occupation's work",
+    THETA: "[share|share] of the occupation's work",
+    "a": "[share|share] of the capability's tasks that have no open tool",
+    "c": "[share|share] of the capability's tasks",
 }
+_UNIT_LINK = re.compile(r"\[([^|\]]+)\|([a-z-]+)\]")
 
 
 def _file(path: str) -> str:
@@ -1019,6 +1028,213 @@ sort the whole matrix by that row or column: largest first, then smallest first,
 Sorting by a row or column marks it, and unmarking it lets go of the sort.</p></details>"""
 
 
+@dataclass
+class Unit:
+    """Something the terms count or measure in, with a page that explains it."""
+    key: str            # the name its page is filed under
+    name: str           # one of it: "commodity", "need dollar"
+    plural: str         # as a term's rows and columns write it: "commodities"
+    counts: bool        # what a row or a column is one of; or else what an entry is measured in
+    short: str          # in one sentence, for the tip a link to it shows and the table of units
+    text: str           # the explanation, as paragraphs of HTML
+
+    @property
+    def href(self) -> str: return f"unit-{self.key}.html"
+    @property
+    def title(self) -> str: return self.name[0].upper() + self.name[1:]
+
+
+def units(d: Data) -> dict[str, Unit]:
+    """Every unit, by the name it is filed under: first what rows and columns are, then what entries
+    are measured in."""
+    t = d.io.t
+    T = lambda key: _m(_term(key))
+    trillion = lambda musd: f"${musd / 1e6:.1f} trillion"
+    spent = d.sheets["Y"].values.values.sum()
+    consumed = (t.F["F01000"] + t.F[A.GOV_CONSUMPTION].sum(axis=1)).sum()
+    value_added, pay = t.VA.values.sum(), t.VA.loc["V00100"].sum()
+    work, unpaid = d.sheets["f"].values.sum().equal, d.sheets["G"].values.values.sum()
+    tax, E = d.tax, d.survey[0]
+    occ, surveyed = d.wage_bill[2], d.survey[3]
+    needs = [NEED_NAME[n].lower() for n in d.sheets["Y"].values.columns]
+    ways = d.sheets[OMEGA].values
+    out = [
+        Unit("commodity", "commodity", "commodities", True,
+             "One of the goods and services the Bureau of Economic Analysis divides the economy's output into.",
+             f"""<p>One of the {len(t.commodities)} goods and services that the U.S. Bureau of Economic Analysis divides everything the
+economy makes into, in its 2017 benchmark input-output accounts at the detail level: {_file('data/bea/')}. Grain is one, hospitals
+another, wholesale trade another.</p>
+<p>A commodity is a product, not a maker. It is made by one or more {_unit("industry", "industries")}, in the shares
+{T("D")} holds. Where a term's rows are called sectors, each row is still a commodity, standing for the industries that
+make it, mixed in those shares.</p>"""),
+        Unit("industry", "industry", "industries", True,
+             "One of the groups of producers the Bureau of Economic Analysis divides the economy into.",
+             f"""<p>One of the {len(t.industries)} groups of producers in the same accounts. An industry is named for its main
+product, a {_unit("commodity")}, but it can make others too: {T("V")} says how much of each.</p>
+<p>The Bureau's tables say what industries bought and what they paid. The model turns those into what it takes to make a
+commodity, through {T("D")}.</p>"""),
+        Unit("need", "need", "needs", True,
+             "One of the purposes that household and government spending is counted under.",
+             f"""<p>One of {len(needs)} purposes that what households and governments buy is counted under: {", ".join(needs)}.
+The list is the project's own. Each {_unit("commodity")} is counted under one need, or under none, by a list made by hand:
+{_file('config/basket.csv')}.</p>
+<p>What is under no need is left out of the account: financial and legal services, national defense and the rest of federal
+government among them.</p>"""),
+        Unit("weighting", "way of weighing the needs", "ways of weighing the needs", True,
+             "One of three ways of dividing a need dollar among the needs.",
+             f"""<p>One of {ways.shape[1]} ways of dividing one {_unit("need-dollar", "need dollar")} among the
+{_unit("need", "needs")}, each a column of {T(OMEGA)}. Counted equally, every need has the same weight. By spending, a need
+weighs what households and governments spent on it. By the poorest fifth's budget, it weighs what the fifth of households with
+the lowest incomes spent on it themselves.</p>
+<p>Every term from {T("p")} on has a column for each, so the order the account ends in can be read all three ways.</p>"""),
+        Unit("investor-kind", "kind of investor", "kinds of investor", True,
+             "One of the five kinds of buyer the Bureau of Economic Analysis reports investment for.",
+             f"""<p>One of the five kinds of buyer that the Bureau of Economic Analysis reports investment in equipment and buildings
+for: {", ".join(n.lower() for n in INVESTOR_NAME.values())}. The Bureau says what each kind bought, not which
+{_unit("industry")} bought it, so {T("S")} places each kind's purchases on the industries of that kind.</p>"""),
+        Unit("occupation", "occupation", "occupations", True,
+             "One of the kinds of job in the Standard Occupational Classification, as the survey of occupations publishes them.",
+             f"""<p>One of the {len(occ):,} kinds of job, in {occ.major.nunique()} major groups, that the U.S. Bureau of Labor
+Statistics publishes in its Occupational Employment and Wage Statistics for May 2021: {_file('data/occupations/')}. They are
+the occupations of the Standard Occupational Classification, except that the survey publishes a few only as a group.</p>
+<p>The same occupations are described by O*NET, the Department of Labor's database, which says what tasks each does and what
+software it uses. That is how a dollar placed on an occupation goes on to {_unit("activity", "work activities")} and
+{_unit("capability", "software capabilities")}.</p>"""),
+        Unit("surveyed-industry", "surveyed industry", "surveyed industries", True,
+             "One of the industries the survey of occupations reports jobs and wages for.",
+             f"""<p>One of the {len(surveyed)} industries that the survey of occupations reports {_unit("job", "jobs")} and wages
+for. They are industries of the North American Industry Classification System at about its four-digit level, a few of
+them published as groups, with three more for federal, state and local government. They are not the Bureau of Economic Analysis's {_unit("industry", "industries")}, so {T("T")} says which
+surveyed industries cover each sector.</p>
+<p>The survey leaves out farms and files public schools and hospitals with private ones. Stand-ins are used for those, and
+housing is covered by nothing, because nobody is employed in owning a home.</p>"""),
+        Unit("capability", "software capability", "software capabilities", True,
+             "One of the things software does for the people who work, in the project's own taxonomy.",
+             f"""<p>One of the {int((tax.level == 1).sum())} things software does for people at work, in a taxonomy compiled for this
+project: {_file('taxonomy/')}. Medical coding, billing and claims is one; structural finite element analysis another. They are in
+{int((tax.level == 0).sum())} domains, and each is divided into tasks, {int((tax.level == 2).sum()):,} in all.</p>
+<p>The taxonomy says of each task whether its result could be scored by a benchmark, and names the open-source tools known for
+it. {T("a")} and {T("c")} are counts of those. It also places the software products O*NET lists, which is how an
+{_unit("occupation")}'s work reaches a capability, in {T(PHI)}.</p>"""),
+        Unit("activity", "work activity", "work activities", True,
+             "One of O*NET's intermediate work activities: a kind of work, whoever does it.",
+             f"""<p>One of the {len(d.sheets["f"].values)} intermediate work activities of O*NET 31.0, the U.S. Department of
+Labor's database of occupations: {_file('data/occupations/')}. An activity is a kind of work whoever does it, such as
+preparing foods or beverages, or maintaining sales or financial records. O*NET files every task of every
+{_unit("occupation")} under one or more of them.</p>
+<p>Each is marked as information work, which software could do, or as work that needs a body or a person: {T("s")}.</p>"""),
+        Unit("need-dollar", "need dollar", "need dollars", False,
+             "One dollar of what households and governments spent on the needs in 2017.",
+             f"""<p>One dollar of what households and governments spent on the {_unit("need", "needs")} in 2017. The spending is the
+Bureau of Economic Analysis's personal consumption and government consumption, {T("Y")}. It came to {trillion(spent)}, of
+{trillion(consumed)} of consumption in all.</p>
+<p>A dollar of one need, as in {T("x")}, {T("d")} and {T("v")}, is spent the way that need's spending was: on each
+{_unit("commodity")} in proportion to its part of the need's column of {T("Y")}.</p>
+<p>From {T("p")} on, a need dollar is one dollar divided among all the needs, by one of the
+{_unit("weighting", "ways of weighing them")}. A term measured per need dollar says: of each dollar spent on the needs,
+this much.</p>
+<p>Investment and exports are not in it. Equipment and buildings are counted as inputs instead, through {T("K")}.</p>"""),
+        Unit("commodity-dollar", "commodity dollar", "commodity dollars", False,
+             "One dollar's worth of a commodity, at the price its producer received in 2017.",
+             f"""<p>One dollar's worth of a {_unit("commodity")}, at the producer prices of 2017: what its maker received, before
+shops and carriers add their margins. Trade and transport are commodities of their own, and the margins are dollars of
+those.</p>
+<p>Each term says what the dollar's worth is doing. Produced, it is output, which counts everything made, including what is
+used up in making something else: {trillion(t.q.sum())} in 2017. Delivered, it is sold to its last buyer. Used, it is an
+input. So the dollars produced behind one dollar delivered come to more than a dollar, and {T("L")} says how much of each.</p>
+<p>An {_unit("industry")}'s output is counted in the same dollars.</p>"""),
+        Unit("value-added-dollar", "value-added dollar", "value-added dollars", False,
+             "One dollar of what an industry's output is worth beyond the inputs it bought.",
+             f"""<p>One dollar of what an {_unit("industry")}'s output is worth beyond the inputs it bought. It is what the industry
+paid its employees, taxes on production less subsidies, and gross operating surplus: what is left for owners and lenders and
+to replace equipment and buildings as they wear out.</p>
+<p>Added up over every industry it is gross domestic product: {trillion(value_added)} in 2017, of which
+{trillion(pay)} was pay.</p>
+<p>It is the income that spending becomes. {T("v")} divides a dollar of each need among the sectors by the value added
+each earns behind it.</p>"""),
+        Unit("work-dollar", "work dollar", "work dollars", False,
+             "One dollar placed on the work it pays for, or one dollar's worth of unpaid work at home.",
+             f"""<p>One dollar placed on work. For paid work it is a
+{_unit("value-added-dollar", "value-added dollar")} of a sector, divided among the sector's
+{_unit("occupation", "occupations")} in proportion to what it pays each, {T("W")}. The whole of the value added is divided
+that way, not the payroll alone, so a work dollar is more than the worker was paid: pay was
+{pay / value_added * 100:.0f} cents of each dollar of value added in 2017.</p>
+<p>For unpaid work at home it is an hour valued at the mean wage of the occupation that does such work for pay, {T("G")}. It
+is added to the need dollar, not taken out of it. With the needs counted equally, the work behind a need dollar comes to
+{work * 100:.0f} cents: {(work - unpaid) * 100:.0f} paid and {unpaid * 100:.0f} unpaid. The rest of the paid dollar is in
+sectors and occupations the surveys do not reach.</p>
+<p>The wages are those of May 2021 and the spending is that of 2017, so the unpaid work is valued somewhat high against the
+need dollar.</p>"""),
+        Unit("million-dollars", "million dollars", "millions of dollars", False,
+             "A million dollars at the prices of 2017, as the Bureau of Economic Analysis's tables count.",
+             f"""<p>The Bureau of Economic Analysis publishes its 2017 input-output tables in millions of dollars, at the prices of
+2017 and at producer prices. The terms that are those tables, or are added up from them, are kept in that unit. One million
+of it is a million {_unit("commodity-dollar", "commodity dollars")} where it counts a commodity, and a million
+{_unit("value-added-dollar", "value-added dollars")} where it counts value added.</p>
+<p>{T("P")} is in millions of dollars too, but of pay in a year at the wages of May 2021, the month of the survey of
+occupations. It is used only for its shares, {T("W")}.</p>"""),
+        Unit("share", "share", "shares", False,
+             "A part of a whole, from zero to one.",
+             f"""<p>A part of a whole, from zero to one. Pictures show it in percent. Each term says what the whole is, and so
+which way it adds up to one: a column of {T("D")} is one commodity's output, divided among its makers, and a row of
+{T("W")} is one sector's wage bill, divided among occupations.</p>
+<p>Multiplying by a share divides something up without adding to it or losing any. Where rows or columns add up to less than
+one, the term's page says what is missing.</p>"""),
+        Unit("one-or-zero", "one or zero", "ones and zeros", False,
+             "One where something is so, and zero where it is not.",
+             f"""<p>One where something is so, and zero where it is not. Multiplying by such a term keeps the entries it marks and
+drops the rest: {T("s")} keeps the work that is information work, and {T("H")} keeps the industries of one kind of
+investor.</p>"""),
+        Unit("job", "job", "jobs", False,
+             "One wage or salary job, as the survey of occupations counted them in May 2021.",
+             f"""<p>One wage or salary job at a nonfarm employer, as the Occupational Employment and Wage Statistics of the U.S.
+Bureau of Labor Statistics counted them in May 2021: {E.sum().sum() / 1e6:.0f} million in the industries and occupations it
+publishes. It is a job and not a person: someone with two jobs is counted twice, and the self-employed are not counted.</p>"""),
+        Unit("dollar-a-year", "dollar a year", "dollars a year", False,
+             "A dollar of an occupation's mean annual wage, in May 2021.",
+             f"""<p>A dollar of the mean annual wage of an {_unit("occupation")} in a
+{_unit("surveyed-industry", "surveyed industry")}, from the same survey, in May 2021. The survey records a wage of
+${O.OEWS_TOP_CODE:,.0f} or more as ${O.OEWS_TOP_CODE:,.0f}. Where an hourly wage is needed, a year is taken as
+{HOURS_A_YEAR:,} hours.</p>"""),
+    ]
+    return {u.key: u for u in out}
+
+
+def _unit(key: str, text: str = "") -> str:
+    """A link to a unit's page, reading as the key does unless text is given."""
+    return f'<a href="unit-{key}.html">{text or key}</a>'
+
+
+def dimension(d: Data, phrase: str) -> Unit:
+    """The unit a term's rows or columns are counted in: the one its phrase names, at greatest length."""
+    named = [u for u in d.units.values() if u.counts and u.plural in phrase]
+    return max(named, key=lambda u: len(u.plural))
+
+
+def dimension_html(d: Data, phrase: str) -> str:
+    """The phrase for a term's rows or columns, with its unit a link to the unit's page."""
+    u = dimension(d, phrase)
+    return e(phrase).replace(e(u.plural), _unit(u.key, e(u.plural)), 1)
+
+
+def measure_text(key: str) -> str:
+    """What a term's entries are measured in, as plain words."""
+    return _UNIT_LINK.sub(r"\1", MEASURED_IN[key])
+
+
+def measure_html(key: str) -> str:
+    """And as a line of a page: with a capital, and each unit a link to its page."""
+    words = MEASURED_IN[key]
+    first = 1 if words.startswith("[") else 0
+    words = words[:first] + words[first].upper() + words[first + 1:]
+    return _UNIT_LINK.sub(lambda m: _unit(m.group(2), m.group(1)), e(words))
+
+
+def measures(key: str) -> list[str]:
+    """The units a term's entries are measured in, by the names they are filed under."""
+    return [m.group(2) for m in _UNIT_LINK.finditer(MEASURED_IN[key])]
+
+
 def term_tip(s: Sheet) -> str:
     """What a link to a term shows under the pointer: its name, what its rows and columns are, and
     what an entry is measured in. A vector has rows alone."""
@@ -1026,14 +1242,55 @@ def term_tip(s: Sheet) -> str:
     lines = [s.title, f"Rows: {nr:,} {s.rows.replace(': ', ', ', 1)}"]
     if nc > 1:
         lines.append(f"Columns: {nc:,} {s.cols.replace(': ', ', ', 1)}")
-    return "\n".join(lines + [f"Unit: {UNITS[s.key]}"])
+    return "\n".join(lines + [f"Unit: {measure_text(s.key)}"])
+
+
+def unit_tip(u: Unit) -> str:
+    """And a link to a unit: its name, and what it is in a sentence."""
+    return f"{u.title}\n{u.short}"
 
 
 def with_tips(d: Data, page: str) -> str:
-    """A page with that tip on every link in it to a term's page."""
-    for s in d.sheets.values():
-        page = page.replace(f'<a href="{s.href}"', f'<a href="{s.href}" data-tip="{e(term_tip(s))}"')
+    """A page with those tips on every link in it to a term's page or a unit's."""
+    for x, tip in [(s, term_tip(s)) for s in d.sheets.values()] + [(u, unit_tip(u)) for u in d.units.values()]:
+        page = page.replace(f'<a href="{x.href}"', f'<a href="{x.href}" data-tip="{e(tip)}"')
     return page
+
+
+def unit_users(d: Data, u: Unit) -> dict[str, list[str]]:
+    """The terms that use a unit, by how: as what their rows are, their columns, or their entries."""
+    wide = [k for k, s in d.sheets.items() if s.values.shape[1] > 1]
+    return {"Rows of": [k for k, s in d.sheets.items() if dimension(d, s.rows) is u],
+            "Columns of": [k for k in wide if dimension(d, d.sheets[k].cols) is u],
+            "Entries of": [k for k in d.sheets if u.key in measures(k)]}
+
+
+def unit_page(d: Data, key: str) -> str:
+    """The page of one unit: what it is, and the terms that count or measure in it."""
+    u = d.units[key]
+    spec = [(how, term_links(d, keys)) for how, keys in unit_users(d, u).items() if keys]
+    body = f"""
+<p class="crumbs"><a href="{HOME}">The account</a> &rsaquo; <a href="{HOME}#units">Every unit</a></p>
+<h1 class="long">{e(u.title)}</h1>
+{u.text}
+<dl class="spec">{"".join(f"<dt>{k}</dt><dd>{v}</dd>" for k, v in spec)}</dl>
+"""
+    return page(u.title, body)
+
+
+def unit_table(d: Data) -> str:
+    """Every unit in one table: what it is, and the terms that use it."""
+    rows = []
+    for counts, band in ((True, "Units of rows and columns"), (False, "Units of entries")):
+        rows.append(f'<tr class="band"><th colspan="3" scope="colgroup">{band}</th></tr>')
+        for u in d.units.values():
+            if u.counts == counts:
+                used = [k for keys in unit_users(d, u).values() for k in keys]
+                letters = " ".join(_m(_term(k)) for k in TERMS if k in used)
+                rows.append(f'<tr><th scope="row"><a href="{u.href}">{e(u.title)}</a></th><td class="wrap">{e(u.short)}</td>'
+                            f'<td class="wrap">{letters}</td></tr>')
+    return table([th("Unit"), th("Definition"), th("Terms")], rows, attrs=' class="terms units"',
+                 caption="Every unit of the account. Each is a link to its page.")
 
 
 def term_links(d: Data, keys, here: str = "") -> str:
@@ -1046,10 +1303,11 @@ def term_page(d: Data, key: str) -> str:
     is made from and what it goes into, and the picture of the whole of it."""
     s = d.sheets[key]
     nr, nc = s.values.shape
-    spec = [("Rows", f"{nr:,} {s.rows}")]
+    spec = [("Rows", f"{nr:,} {dimension_html(d, s.rows)}")]
     if nc > 1:
-        spec.append(("Columns", f"{nc:,} {s.cols}"))
+        spec.append(("Columns", f"{nc:,} {dimension_html(d, s.cols)}"))
     spec.append(("Entries", s.entries))
+    spec.append(("Unit", measure_html(key)))
     if key in EQUATIONS:
         spec.append(("Computed", _eqs([equation(key, key)])))
     if s.source:
@@ -1089,7 +1347,7 @@ def account_table(d: Data) -> str:
         for k in keys:
             s = d.sheets[k]
             nr, nc = s.values.shape
-            size = f"{nr:,} {e(s.rows.split(':')[0])}" + (f" &times; {nc:,} {e(s.cols.split(':')[0].split(',')[0])}" if nc > 1 else "")
+            size = f"{nr:,} {dimension_html(d, s.rows.split(':')[0])}" + (f" &times; {nc:,} {dimension_html(d, s.cols.split(':')[0])}" if nc > 1 else "")
             a, b = equation(k) if k in EQUATIONS else ("", "")
             made = _m(f"{a}<mo>=</mo>{b}") if a else '<span class="dim">Data</span>'
             rows.append(f'<tr><th scope="row">{_m(_term(k))}</th><td class="wrap"><a href="{s.href}">{e(s.name[0].upper() + s.name[1:])}</a></td>'
@@ -1122,6 +1380,8 @@ the needs by what is spent on each it is {g.spending:.1f} cents, and by the poor
 a column of {_m(_sym("o"))} is the order to work in.</p>
 <h2 id="terms">Every term</h2>
 {account_table(d)}
+<h2 id="units">Every unit</h2>
+{unit_table(d)}
 """
 
 
@@ -1141,7 +1401,8 @@ def main():
     if SITE.exists():
         shutil.rmtree(SITE)
     shutil.copytree(WEB, SITE)
-    pages = {"index.html": index, **{SYMBOL_PAGES[key]: (lambda d, key=key: term_page(d, key)) for key in TERMS}}
+    pages = {"index.html": index, **{SYMBOL_PAGES[key]: (lambda d, key=key: term_page(d, key)) for key in TERMS},
+             **{u.href: (lambda d, key=key: unit_page(d, key)) for key, u in d.units.items()}}
     for name, fn in pages.items():
         (SITE / name).write_text(with_tips(d, fn(d)), encoding="utf-8")
     for key, sheet in d.sheets.items():
