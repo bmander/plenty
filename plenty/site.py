@@ -346,9 +346,12 @@ ORDER_PARTS = "vector-o-parts.js"    # k, a, c and the tasks of each capability,
 ORDER_ROWS = 25                      # the rows of o in view when its picture opens: the first of the order to work in
 MATRIX_PART_CUT = 1e-5     # entries of B under a thousandth of a cent are left out of that file
 MATRIX_WIDTH, MATRIX_HEIGHT = 802, 780   # the most a picture takes of the page, in CSS pixels
-# A matrix at least this many times as tall as it is wide is drawn with its columns locked in view,
-# each this wide at most (a lone column wider), in a picture of a fixed height.
+# A matrix at least this many times as tall as it is wide is drawn in a picture of a fixed height.
+# With few columns they are locked in view, each this wide at most (a lone column wider), and
+# zooming changes the rows alone. With more than LOCK_COLUMNS the picture is stretched to hold
+# the whole matrix, and zooming brings both its rows and its columns closer.
 THIN, THIN_COLUMN, THIN_VECTOR, THIN_HEIGHT = 8, 110, 170, 620
+LOCK_COLUMNS = 12
 # How each kind of matrix is filed and shown: the unit of its data file, the smallest entry kept in
 # it (smaller ones are blank in the picture), the two ends of the colour scale and their legend,
 # what a blank cell is said to hold, what colour stands for, and how a cell's printed value is described.
@@ -626,8 +629,12 @@ class Sheet:
     def title(self) -> str: return f"{self.key}, {self.name}"
     @property
     def thin(self) -> bool:
-        """Tall and narrow: drawn with its columns locked in view."""
+        """Tall and narrow: drawn in a picture of a fixed shape, not of its own."""
         return self.values.shape[0] >= THIN * self.values.shape[1]
+    @property
+    def lock(self) -> bool:
+        """And with few enough columns to keep them all in view, however close the rows are."""
+        return self.thin and self.values.shape[1] <= LOCK_COLUMNS
     @property
     def shown(self) -> np.ndarray:
         """Which entries the picture and the data file hold."""
@@ -1072,7 +1079,7 @@ def sheet_data(s: Sheet, **extra) -> str:
                 "things": things}
     payload = {"key": s.key, "kind": s.kind, "unit": kind["unit"], "cut": kind["cut"], "scale": kind["scale"],
                "blank": s.blanks[0] if s.blanks else "nothing" if s.exact else kind["blank"], "marked": s.marked,
-               "short": {**MX.SHORT, **(s.short or {})}, "lock": s.thin,
+               "short": {**MX.SHORT, **(s.short or {})}, "lock": s.lock, "stretch": s.thin and not s.lock,
                "rows": side(s.values.index, s.row_names, COUNTED[dimension(s.rows)[0]][1], s.row_groups),
                "cols": side(s.values.columns, s.col_names, COUNTED[dimension(s.cols)[0]][1] if s.values.shape[1] > 1 else "column", s.col_groups),
                "rowTip": s.row_tip, "colTip": s.col_tip, "rowIs": s.row_is or f"Row, the {s.row_tip.lower()}:",
@@ -1164,7 +1171,7 @@ def sheet_picture(s: Sheet, also: str = "", extra: str = "") -> str:
     also: a sentence about this picture alone; extra: markup the script uses."""
     kind, (nr, nc) = MATRIX_KINDS[s.kind], s.values.shape
     blank = s.blanks[1] if s.blanks else "zero" if s.exact else f"zero or {kind['small']}"
-    if s.thin:          # its columns always all in view, in a picture of a fixed shape
+    if s.thin:          # a picture of a fixed shape: the columns always all in view, or the whole matrix stretched to fill it
         width = min(MATRIX_WIDTH, nc * (THIN_VECTOR if nc == 1 else THIN_COLUMN))
         shape = f"{width} / {THIN_HEIGHT}"
     else:               # square cells, in a picture of the matrix's shape; a tall matrix is drawn narrower, to stay on the screen
@@ -1181,16 +1188,18 @@ def sheet_picture(s: Sheet, also: str = "", extra: str = "") -> str:
                       "corner is the total of the whole matrix. The longest bar is the largest total in view.",
               "cols": " The bars along the bottom are the totals of each column. The longest bar is the largest total in view.",
               "": ""}[s.sums]
+    past = ("To move, drag with the mouse wheel pressed or with Ctrl held, or with a finger on a touch screen. The picture "
+            "can be moved past the matrix's edge, far enough to bring a cell at the edge to the middle.")
     moving = ("Zooming changes how many rows are in view; the columns are always all there. To move, drag with the mouse "
-              "wheel pressed or with Ctrl held, or with a finger on a touch screen." if s.thin else
-              "To move, drag with the mouse wheel pressed or with Ctrl held, or with a finger on a touch screen. The picture "
-              "can be moved past the matrix's edge, far enough to bring a cell at the edge to the middle.")
+              "wheel pressed or with Ctrl held, or with a finger on a touch screen." if s.lock else
+              "The whole matrix is stretched to fill the picture, and zooming brings its rows and its columns closer together, "
+              f"the rows going on after the columns are as close as they come. {past}" if s.thin else past)
     legend = (f'<div class="mx-legend" aria-hidden="true"><div class="mx-ramp"></div>\n<div class="mx-ticks">'
               + "".join(f"<span>{x}</span>" for x in kind["ticks"]) + "</div></div>") if kind["ticks"] else ""
     colour = f"Colour is {kind['colour']}, on a log scale." if kind["colour"] else f"A filled cell is a one: the row {s.marked}."
     empty = (~s.shown).mean()      # a matrix that is nearly all blank is not said to be all blank
     return f"""<figure class="mx">
-<div class="mx-frame{" mx-lock" if s.thin else ""}" style="grid-template-columns: auto minmax(0, {width + 2}px) auto">
+<div class="mx-frame{" mx-lock" if s.lock else ""}" style="grid-template-columns: auto minmax(0, {width + 2}px) auto">
 <div class="mx-axis mx-axis-top"><span>{e(s.axis)} &rarr;</span>
 <span class="mx-zoom"><button type="button" id="mx-zoom-out" aria-label="Zoom out" disabled>&minus;</button><button
  type="button" id="mx-zoom-in" aria-label="Zoom in">+</button><button type="button" id="mx-zoom-all" disabled>Whole matrix</button><button

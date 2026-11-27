@@ -257,8 +257,11 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
         kept = np.abs(x) >= data["cut"]
         assert not got[~kept].any() and np.abs(got - x)[kept].max() <= unit / 2 + 1e-9, key
         assert kept.any() and data["scale"][0] < data["scale"][1]
-        # a tall, narrow matrix has its columns locked in view
-        assert data["lock"] == sheet.thin == ('class="mx-frame mx-lock"' in html) == (X.shape[0] >= site.THIN * X.shape[1]), key
+        # a tall, narrow matrix has a picture of a fixed shape: its columns locked in view if they are few, and the
+        # whole of it stretched to fill the picture, to zoom both ways, if they are many
+        assert sheet.thin == (X.shape[0] >= site.THIN * X.shape[1]) == (f'aspect-ratio: {X.shape[1]} / {X.shape[0]}"' not in html), key
+        assert data["lock"] == sheet.lock == ('class="mx-frame mx-lock"' in html) == (sheet.thin and X.shape[1] <= site.LOCK_COLUMNS), key
+        assert data["stretch"] == (sheet.thin and not sheet.lock) == ("stretched to fill the picture" in html), key
         # totals in the margins are of the whole matrix, and the page has a place for each one it is given
         assert ("colSums" in data) == bool(sheet.sums) == ('id="mx-col-sums"' in html)
         assert ("rowSums" in data) == ("grand" in data) == (sheet.sums == "both") == ('id="mx-row-sums"' in html) == ('id="mx-total"' in html)
@@ -278,6 +281,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             got[at] = csv.value
             assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
     assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRu")
+    assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == ["R"]
     assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
     m, t = built.io, built.io.t

@@ -79,13 +79,16 @@
   var hLine = document.getElementById("mx-h"), vLine = document.getElementById("mx-v");
   // The view: its left and top edge and its span, in cells. Most matrices are drawn with square
   // cells in a picture of the matrix's shape: the span is the cells across, and the cells down
-  // follow from it. A tall, narrow matrix (M.lock) would be a sliver that way, so its columns are
-  // always all in view, as wide as the picture allows; its span is the rows in view, and zooming
-  // changes those alone.
-  var LOCK = !!M.lock, FULL = LOCK ? nr : nc, CLOSEST = Math.min(FULL, LOCK ? MIN_ROWS : MIN_SPAN);
+  // follow from it. A tall, narrow matrix would be a sliver that way, so it has a picture of a fixed
+  // shape, and its span is the rows in view. If its columns are few (M.lock) they are always all in
+  // view, as wide as the picture allows, and zooming changes the rows alone. If they are many
+  // (M.stretch) the whole matrix is stretched to fill the picture, and the columns in view follow
+  // from the rows, down to the closest view of them, after which the rows go on alone.
+  var LOCK = !!M.lock, STRETCH = !!M.stretch, TALL = LOCK || STRETCH;
+  var FULL = TALL ? nr : nc, CLOSEST = Math.min(FULL, TALL ? MIN_ROWS : MIN_SPAN);
   var view = { x: 0, y: 0, span: FULL };
-  function across() { return LOCK ? nc : view.span; }
-  function down() { return LOCK ? view.span : view.span * nr / nc; }
+  function across() { return LOCK ? nc : STRETCH ? Math.max(Math.min(nc, MIN_SPAN), nc * view.span / nr) : view.span; }
+  function down() { return TALL ? view.span : view.span * nr / nc; }
   function home() { return view.span >= FULL && !view.x && !view.y; }   // the whole matrix, square in the picture
   var sheet = document.createElement("canvas"), pending = 0, pointer = null, lit = [];
   var stops = [], paper = "#fff", off = "#eee", rule = "#888", faint = "#888", series = "#36c", onLight = "#000", onDark = "#fff", face = "sans-serif";
@@ -216,7 +219,7 @@
     ctx.fillRect(x0 + w, y0 - line, line, h + 2 * line);              // one at the picture's own edge falls outside it
     ctx.fillRect(x0, y0 - line, w, line);
     ctx.fillRect(x0, y0 + h, w, line);
-    if (cellWide() >= VALUE_PX && cellTall() >= (LOCK ? VALUE_ROW : VALUE_PX)) {   // closest in, the number on each cell
+    if (cellWide() >= VALUE_PX && cellTall() >= (TALL ? VALUE_ROW : VALUE_PX)) {   // closest in, the number on each cell
       ctx.font = "500 " + Math.round(Math.min(14, cellWide() / 3, cellTall() * 0.8) * ratio) + "px " + face;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
