@@ -79,6 +79,7 @@
   // the matrix's shape, so its height in cells follows from its width.
   var view = { x: 0, y: 0, span: nc };
   function down() { return view.span * nr / nc; }
+  function home() { return view.span >= nc && !view.x && !view.y; }   // the whole matrix, square in the picture
   plot.style.aspectRatio = nc + " / " + nr;
   var sheet = document.createElement("canvas"), pending = 0, pointer = null, lit = [];
   var stops = [], paper = "#fff", off = "#eee", rule = "#888", faint = "#888", series = "#36c", onLight = "#000", onDark = "#fff", face = "sans-serif";
@@ -230,9 +231,10 @@
     fit(selRow, selCol);
     if (rows.sel !== null) { selRow.style.top = selCell.style.top = tall(rows.pos[rows.sel] - view.y); selRow.style.height = selCell.style.height = tall(1); }
     if (cols.sel !== null) { selCol.style.left = selCell.style.left = wide(cols.pos[cols.sel] - view.x); selCol.style.width = selCell.style.width = wide(1); }
-    plot.classList.toggle("mx-zoomed", view.span < nc);
+    plot.classList.toggle("mx-zoomed", !home());
     zoomIn.disabled = view.span <= MIN_SPAN;
-    zoomOut.disabled = zoomAll.disabled = view.span >= nc;
+    zoomOut.disabled = view.span >= nc;
+    zoomAll.disabled = home();
     unsort.disabled = !rows.by && !cols.by;
     if (pointer) hover(pointer);
   }
@@ -489,12 +491,11 @@
     });
   });
 
-  // The view may run past an edge of the matrix by half its own width, so that a cell at the edge
-  // can be brought to the middle of the picture. It may not run past by more than it is zoomed in
-  // by, so that the whole matrix, once it is all in view, sits square in the picture.
+  // The view may run past an edge of the matrix by half its own width, at any zoom, so that a cell
+  // at the edge can be brought to the middle of the picture.
   function settle() {
     view.span = Math.min(nc, Math.max(MIN_SPAN, view.span));
-    var past = Math.min(view.span / 2, nc - view.span), pastDown = past * nr / nc;
+    var past = view.span / 2, pastDown = past * nr / nc;
     view.x = Math.min(nc - view.span + past, Math.max(-past, view.x));
     view.y = Math.min(nr - down() + pastDown, Math.max(-pastDown, view.y));
     schedule();
@@ -575,7 +576,8 @@
   });
 
   // Dragging moves the view. With a mouse it takes the wheel button, or Control and the main
-  // button, so that a plain press stays a click; a finger or a pen drags as it is.
+  // button, so that a plain press stays a click; a finger or a pen drags as it is, except over
+  // the whole matrix in its place, where a finger is left to scroll the page.
   var drag = null, dragged = false, press = null;
   // whether the click that ends a press was really a drag, of the view or of nothing
   function slid(e) {
@@ -584,14 +586,14 @@
     return was;
   }
   function pans(e) {
-    if (e.pointerType !== "mouse") return e.button === 0;
+    if (e.pointerType !== "mouse") return e.button === 0 && !home();
     return e.button === 1 || e.ctrlKey;               // on a Mac, Control can make the main button report as the second
   }
   surfaces.forEach(function (target) {
     target.addEventListener("pointerdown", function (e) {
       dragged = false;
       press = { x: e.clientX, y: e.clientY };
-      if (pans(e) && view.span < nc) drag = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, id: e.pointerId };
+      if (pans(e)) drag = { x: e.clientX, y: e.clientY, vx: view.x, vy: view.y, id: e.pointerId };
     });
     target.addEventListener("pointermove", function (e) {
       if (!drag || drag.id !== e.pointerId) return;
@@ -634,7 +636,7 @@
   zoomAll.addEventListener("click", whole);
   canvas.addEventListener("keydown", function (e) {
     var step = view.span / 8, move = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
-    if (move && view.span < nc) { view.x += move[0] * step; view.y += move[1] * step; settle(); }
+    if (move) { view.x += move[0] * step; view.y += move[1] * step; settle(); }
     else if (e.key === "+" || e.key === "=") zoom(2, 0.5, 0.5);
     else if (e.key === "-") zoom(0.5, 0.5, 0.5);
     else if (e.key === "0" || e.key === "Escape") whole();
