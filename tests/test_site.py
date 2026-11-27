@@ -32,13 +32,14 @@ def _data(sheet):
     return json.loads(text[text.index("{"):text.rindex("}") + 1])
 
 
-def test_the_account_is_four_equations_and_a_table_of_every_term(built):
+def test_the_account_is_five_equations_and_a_table_of_every_term(built):
     html = (site.SITE / site.HOME).read_text()
-    assert html.count('<math display="block"') == 1 and html.count("<mtr>") == 4
-    # what the second and third lines come to is said under them
-    k, b = (built.sheets[key].values.iloc[:, 0] for key in "kb")
-    assert f"{k.sum() * 100:.1f} cents" in html and f"{site.gap(built) * 100:.1f} cents" in html and f"{len(k)} software capabilities" in html
-    assert f"{b.sum() * 100:.1f} cents" in html
+    assert html.count('<math display="block"') == 1 and html.count("<mtr>") == 5
+    # what the lines come to is said under them, for each way of weighing the needs
+    k, b, gap = (built.sheets[key].values.sum() for key in "kbo")
+    assert f"{k.equal * 100:.1f} cents" in html and f"{b.equal * 100:.1f} cents" in html and f"{len(built.sheets['k'].values)}\nsoftware capabilities" in html
+    assert all(f"{x * 100:.1f}" in html for x in gap) and (site.gap(built) == gap).all()
+    assert f"{built.sheets['G'].values.values.sum() * 100:.0f} cents" in html
     table = html[html.index('id="terms"'):]
     for key, sheet in built.sheets.items():
         assert f'<td class="wrap"><a href="{sheet.href}">' in table, key       # each term is listed, by name
@@ -85,37 +86,47 @@ def test_the_equations_the_pages_print_hold_of_the_matrices_they_show(built):
     paid = v["P"].sum(axis=1)
     assert np.allclose(v["W"].values, v["P"].div(paid.replace(0, np.nan), axis=0).fillna(0.0).values)
     assert np.allclose(v["P"].values, v["T"].values @ (v["E"] * v["M"]).values / 1e6)
-    theta = v[site.THETA]
-    assert list(theta.index) == list(occ) and set(np.round(theta.sum(axis=1), 9)) == {0.0, 1.0}
-    f = v["v"].loc[com].mean(axis=1).values @ v["W"].values @ theta.values      # the second line of the account
-    assert np.allclose(f, col("f")[theta.columns], atol=1e-9)
-    assert f.sum() == pytest.approx(built.act_acct.flowed, abs=1e-5)
-    # the same dollar placed on software capabilities: the second line of the account, and the third
-    phi = v[site.PHI]
-    assert list(phi.index) == list(occ) and phi.values.min() >= 0 and phi.sum(axis=1).max() <= 1 + 1e-9
-    paid = v["v"].loc[com].mean(axis=1).values @ v["W"].values                  # a need dollar, by occupation
+    theta, phi = v[site.THETA], v[site.PHI]
+    assert list(theta.index) == list(phi.index) == list(occ) and set(np.round(theta.sum(axis=1), 9)) == {0.0, 1.0}
+    assert phi.values.min() >= 0 and phi.sum(axis=1).max() <= 1 + 1e-9
+    # the needs are weighed three ways, and every term from p on has a column for each
+    w, needs = v[site.OMEGA], list(v["v"].columns)
+    assert list(w.index) == needs and list(w.columns) == ["equal", "spending", "poorest"] and np.allclose(w.sum(), 1.0)
+    assert np.allclose(w.equal, 1 / len(needs)) and np.allclose(w.spending, v["Y"].sum() / v["Y"].values.sum())
+    assert w.at["safety", "poorest"] == 0 and w.poorest.idxmax() == "shelter"       # households do not pay for police themselves
+    p = v["W"].values.T @ (v["v"].loc[com].values @ w.values)                    # the second line of the account
+    assert np.allclose(p, v["p"].loc[occ].values, atol=1e-12) and list(v["p"].columns) == list(w.columns)
+    # with the needs counted equally, and before any unpaid work, these are the flows the scripts publish
+    assert np.allclose(p[:, 0] @ theta.values, built.act.flow[theta.columns], atol=1e-9)
     published = pd.read_csv(site.RESULTS / "capability_flow.csv", index_col=0).flow_distinctive
-    assert np.allclose(paid @ phi.values, published[phi.columns], atol=1e-9)    # with every kind of work, the published flow
+    assert np.allclose(p[:, 0] @ phi.values, published[phi.columns], atol=1e-9)
+    # the unpaid work done at home: each kind of it under one activity and one occupation, at that occupation's wage
+    G, (_, detail) = v["G"].loc[occ, theta.columns], built.unpaid
+    assert (G.values != 0).sum() == len(detail.drop_duplicates(["occupation", "work_activity"])) and G.values.min() >= 0
+    assert detail.hours_per_day.sum() == pytest.approx(3.0, abs=0.05) and 3e12 < detail.usd.sum() < 6e12
+    assert G.values.sum() == pytest.approx(detail.usd.sum() / (v["Y"].values.sum() * 1e6))
+    assert (detail.work_activity.map(built.act.name).str.rstrip(".") == detail.work_activity_name).all()
+    f = p.T @ theta.values + G.values.sum(axis=0)
+    assert np.allclose(f.T, v["f"].loc[theta.columns].values, atol=1e-12)
     # only information work is placed on software; the rest of the flow to activities needs a body or a person
     s = col("s")[theta.columns]
     assert set(s) == {0.0, 1.0} and list(s.index) == list(built.kinds.index) and set(built.kinds) == {"information", "physical", "people"}
     assert ((s == 1) == (built.kinds == "information")).all()
-    k = (paid * (theta.values @ s.values)) @ phi.values
-    assert np.allclose(k, col("k")[phi.columns], atol=1e-12) and 0 < k.sum() < published.sum()
-    assert np.allclose(col("b")[theta.columns], col("f")[theta.columns] * (1 - s), atol=1e-12)
-    assert col("b").sum() + (col("f")[theta.columns] * s).sum() == pytest.approx(col("f").sum())
-    c = col("c")
+    k = phi.values.T @ (p * (theta.values @ s.values)[:, None] + (G.values @ s.values)[:, None])      # the third line
+    assert np.allclose(k, v["k"].loc[phi.columns].values, atol=1e-12)
+    assert np.allclose(v["b"].loc[theta.columns].values, f.T * (1 - s.values)[:, None], atol=1e-12)
+    c, a = col("c"), col("a")
     tasks = built.tax[built.tax.level == 2]
     assert list(c.index) == list(phi.columns) == list(built.tax.id[built.tax.level == 1]) and c.between(0, 1).all()
     assert (c * tasks.groupby("parent").size()[c.index]).sum() == pytest.approx((tasks.open_tools != "").sum())
     # of what is not open, the share that is well defined: the taxonomy's tasks again
-    a = col("a")
     closed = tasks[tasks.open_tools == ""]
     score = closed.benchmarkable.map(site.DEFINED)
     assert set(tasks.benchmarkable) == set(site.DEFINED) and a.between(0, 1).all() and (a[c == 1] == 0).all()
     assert (a * (1 - c) * tasks.groupby("parent").size()[c.index]).sum() == pytest.approx(score.sum())
-    assert np.allclose(col("o")[phi.columns], k * a.values * (1 - c.values), atol=1e-12)        # the third line, and the fourth
-    assert site.gap(built) == pytest.approx(float(k @ (a.values * (1 - c.values)))) and 0 < site.gap(built) < k.sum()
+    o = k * (a.values * (1 - c.values))[:, None]                                 # the fourth line, and the fifth
+    assert np.allclose(o, v["o"].loc[phi.columns].values, atol=1e-12)
+    assert np.allclose(site.gap(built), o.sum(axis=0)) and (0 < o.sum(axis=0)).all() and (o.sum(axis=0) < k.sum(axis=0)).all()
 
 
 def test_every_term_has_a_page_with_its_picture_and_its_data(built):
@@ -150,7 +161,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             got[col[0::step], j] = np.array(col[1::step]) * unit
         kept = np.abs(x) >= data["cut"]
         assert not got[~kept].any() and np.abs(got - x)[kept].max() <= unit / 2 + 1e-9, key
-        assert kept.sum() > 50 and data["scale"][0] < data["scale"][1]
+        assert kept.any() and data["scale"][0] < data["scale"][1]
         # a tall, narrow matrix has its columns locked in view
         assert data["lock"] == sheet.thin == ('class="mx-frame mx-lock"' in html) == (X.shape[0] >= site.THIN * X.shape[1]), key
         # totals in the margins are of the whole matrix, and the page has a place for each one it is given
@@ -162,7 +173,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert np.allclose(data["rowSums"], x.sum(axis=1), rtol=1e-5, atol=1e-9) and np.isclose(data["grand"], x.sum(), rtol=1e-5), key
         csv = pd.read_csv(site.SITE / sheet.csv_file, index_col=0, dtype={0: str})
         assert list(csv.index.astype(str)) == rows and np.allclose(csv.values, x, rtol=1e-5, atol=1e-9), key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xkofdYgqFHzvrycasb")
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasb")
     # the matrices are the model's own
     m, t = built.io, built.io.t
     for key, X in {"A": m.A, "L": m.L, "U": t.U, "V": t.V, "K": m.K, "S": built.capital.shares, "F": built.capital.investment,

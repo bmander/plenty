@@ -3,7 +3,7 @@
     python scripts/03_run.py     # refresh results/ first if config/ changed
     python -m plenty.site
 
-The site is the account: four equations on the home page, and a page for every matrix and
+The site is the account: five equations on the home page, and a page for every matrix and
 vector they are made from, down to the published tables. Assets in plenty/web/ are copied as
 they are. Everything is plain HTML with relative links, so the site works from any path (GitHub
 Pages serves it under /plenty/).
@@ -49,6 +49,10 @@ class Data:
         # Which work software could do at all: each activity is information work, or needs a body, or
         # is work in which the person is the point. Judgment, made by hand.
         self.kinds = pd.read_csv(M.CONFIG / "activity_kinds.csv", index_col=0).kind
+        # Households (data/households): how people spend their time, and what households at each level of income spend
+        households = M.ROOT / "data" / "households"
+        self.time_use = pd.read_csv(households / "time_use_2017.csv").drop_duplicates("activity", keep=False).set_index("activity").hours_per_day
+        self.spending = pd.read_csv(households / "spending_quintiles_2017.csv").set_index("item")
 
     @functools.cached_property
     def io(self) -> M.Model:
@@ -132,6 +136,37 @@ class Data:
         return O._occupation_uses(self.wages[0].columns, shares, "mean").fillna(0.0)[caps]
 
     @functools.cached_property
+    def weights(self) -> pd.DataFrame:
+        """omega: need x way of weighing the needs, each column summing to one: every need the same;
+        by what households and governments spent on each; and by what the poorest fifth of households
+        spent on each themselves (config/spending_needs.csv says which item of spending is which need)."""
+        needs = list(self.need_dollars[0].columns)
+        spent = A.need_demand(self.io.t)[needs].sum()
+        placed = pd.read_csv(M.CONFIG / "spending_needs.csv")
+        poorest = self.spending.lowest.astype(float)[placed["item"]].groupby(placed.need.values).sum().reindex(needs).fillna(0.0)
+        return pd.DataFrame({"equal": 1 / len(needs), "spending": spent / spent.sum(), "poorest": poorest / poorest.sum()}, index=needs)
+
+    @functools.cached_property
+    def unpaid(self) -> tuple[pd.DataFrame, pd.DataFrame]:
+        """(G, detail). G is the unpaid work done at home for every dollar spent on the needs, occupation
+        x work activity: each kind of household work is filed under the work activity it is and the
+        occupation that does it for pay (config/unpaid_work.csv), and is worth its hours a day for each
+        adult, times the adults there are, times that occupation's mean wage. detail has each kind's
+        hours and its value in dollars a year."""
+        E, wage, _, _ = self.survey
+        jobs = E.fillna(0.0).where(wage.notna(), 0.0)
+        hourly = (jobs * wage.fillna(0.0)).sum() / jobs.sum() / HOURS_A_YEAR      # an occupation's mean wage, wherever it is published
+        s = self.spending["all"].astype(float)
+        adults = s["Number of consumer units (in thousands)"] * 1e3 * (s["People"] - s["Children under 18"])
+        work = pd.read_csv(M.CONFIG / "unpaid_work.csv")
+        hours = self.time_use[work.activity].values
+        detail = work.assign(hours_per_day=hours, usd=hours * 365 * adults * hourly[work.occupation].values)
+        needs = list(self.need_dollars[0].columns)
+        spent = A.need_demand(self.io.t)[needs].values.sum() * 1e6
+        G = detail.groupby(["occupation", "work_activity"]).usd.sum().unstack(fill_value=0.0) / spent
+        return G.reindex(index=self.wages[0].columns, columns=self.theta.columns, fill_value=0.0), detail
+
+    @functools.cached_property
     def defined_share(self) -> pd.Series:
         """a: of each capability's tasks with no known open tool, the share that is well defined: the
         taxonomy says whether a task's result could be scored by a benchmark (yes counts whole,
@@ -206,7 +241,7 @@ def th(label: str, cls: str = "", sort: str = "") -> str:
 
 
 # ---------------------------------------------------------------- the account and its terms
-# The account is four equations. Every matrix and vector in them, and every one those are made
+# The account is five equations. Every matrix and vector in them, and every one those are made
 # from, down to the published tables, is a term with a page of its own: what its rows, columns and
 # entries are, where it comes from, what it is made from and what it goes into, and a picture of
 # the whole of it (web/matrix.js).
@@ -226,24 +261,26 @@ def _sum(i: str) -> str:
 
 
 HOME = "index.html"                   # the account, which every term's page leads back to
-THETA, PHI = "Θ", "Φ"
-GREEK = {THETA: ("Theta", "&#x1D6AF;"), PHI: ("Phi", "&#x1D6BD;")}     # a Greek letter's name in a file, and its bold
+THETA, PHI, OMEGA = "Θ", "Φ", "ω"
+GREEK = {THETA: ("Theta", "&#x1D6AF;"), PHI: ("Phi", "&#x1D6BD;"), OMEGA: ("omega", "&#x1D6DA;")}   # a Greek letter's name in a file, and its bold
+HOURS_A_YEAR = 2080                   # a year of full-time work, which turns a yearly wage into an hourly one
 # the terms, in the order the account's table lists them
 GROUPS = [
-    ("The account", ["x", "k", "o"]),
-    ("Needs", ["d", "Y"]),
+    ("The account", ["x", "p", "k", "o"]),
+    ("Needs", ["d", "Y", OMEGA]),
     ("The input-output model", ["L", "A", "B", "D", "U", "V", "g", "q"]),
     ("Capital", ["K", "F", "H", "S", "z"]),
     ("Value added", ["v", "r", "y"]),
     ("Work", ["W", "P", "T", "E", "M"]),
     ("Software capabilities", [PHI, "a", "c"]),
-    ("Work activities", ["f", THETA, "s", "b"]),
+    ("Work activities", ["f", THETA, "G", "s", "b"]),
 ]
 TERMS = [k for _, keys in GROUPS for k in keys]
 DEFINED = {"yes": 1.0, "partly": 0.5, "no": 0.0}     # how far a task the taxonomy calls benchmarkable counts as well defined
 PER_NEED = "dxv"                      # the vectors there is one of for each need, written with a subscript n
 # what each computed term is made from; a term that is not here is data
-USES = {"x": ["L", "d"], "k": ["v", "W", THETA, "s", PHI], "o": ["k", "a", "c"], "b": ["f", "s"], "f": ["v", "W", THETA], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
+USES = {"x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "o": ["k", "a", "c"], "b": ["f", "s"],
+        "f": ["p", THETA, "G"], "G": ["E", "M", "Y"], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
         "D": ["V", "q"], "g": ["V"], "q": ["V"], "K": ["F", "H", "S"], "S": ["z", "H"], "z": ["g", "H"],
         "v": ["r", "x"], "r": ["y", "g", "D"], "W": ["P"], "P": ["T", "E", "M"]}
 
@@ -386,9 +423,15 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
         return _vec(k, here, T=T)
     if key == "x":
         return V("x"), _inverse(here) + _TIMES + V("d")
-    if key in "kf":       # the same dollar, placed on what the work is, or on the software its information work is done with
-        last = S(THETA) if key == "f" else f'{_diag(S(THETA) + _TIMES + S("s"))}{_TIMES}{S(PHI)}'
-        return S(key, T=True), (f'<mfrac><mn>1</mn><mi>N</mi></mfrac>{_TIMES}{_sum("n")}{V("v", T=True)}{_TIMES}{S("W")}{_TIMES}{last}')
+    if key == "p":        # a need dollar by occupation, however the needs are weighed
+        weight = (_sub("&omega;", "n") if here == OMEGA else
+                  f'<mi><a href="{SYMBOL_PAGES[OMEGA]}">&#x1D714;<sub><i>n</i></sub></a></mi>')
+        return S("p", T=True), f'{_sum("n")}{weight}{_TIMES}{V("v", T=True)}{_TIMES}{S("W")}'
+    if key == "f":        # the same dollar by what the work is, with the unpaid work done at home
+        return S("f", T=True), f'{S("p", T=True)}{_TIMES}{S(THETA)}<mo>+</mo><msup>{_ONES}{_TR}</msup>{_TIMES}{S("G")}'
+    if key == "k":        # and the information work in it, paid and unpaid, by the software it is done with
+        work = f'{S("p")}{_HADAMARD}{S(THETA)}{_TIMES}{S("s")}<mo>+</mo>{S("G")}{_TIMES}{S("s")}'
+        return S("k", T=True), f'<msup>{_paren(work)}{_TR}</msup>{_TIMES}{S(PHI)}'
     if key == "o":        # entry by entry: what is paid for work with a capability, that is well defined, and is not open
         return S("o"), f'{S("k")}{_HADAMARD}{S("a")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("c")}")}'
     if key == "b":        # what software could not do: the work that needs a body or a person
@@ -428,7 +471,7 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     raise KeyError(key)
 
 
-EQUATIONS = ["x", "k", "o", "f", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
+EQUATIONS = ["x", "p", "k", "o", "f", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
 
 def _file(path: str) -> str:
@@ -534,8 +577,21 @@ def sheets(d: Data) -> dict[str, Sheet]:
     by_capability = dict(row_names=tax.name[caps], row_groups=domain, short={tax.name[k]: k.capitalize() for k in tax.index[tax.level == 0]})
     capability_order = f"Capabilities are in the taxonomy's order within its {domain.nunique()} domains."
     info = (d.kinds.reindex(act.index) == "information").astype(float)        # s
-    paid = d.need_value_added.loc[com].mean(axis=1).values @ d.wages[0].loc[com].values    # a need dollar, by occupation
-    flow = pd.Series((paid * (d.theta.values @ info.values)) @ d.phi.values, index=caps)
+    # the three ways of weighing the needs, which every term from p on has a column for
+    weights, (unpaid, unpaid_detail) = d.weights, d.unpaid
+    ways = pd.Series({"equal": "Needs counted equally", "spending": "By what is spent on each", "poorest": "By the poorest fifth's budget"})
+    by_weighing = dict(col_names=ways, col_groups=pd.Series("Ways of weighing the needs", index=ways.index), col_tip="Needs weighed",
+                       col_is="Column, the way the needs are weighed:", cols="ways of weighing the needs", axis="Ways of weighing the needs")
+    by_occupation_row = dict(row_names=occ.title, row_groups=occ.major, short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
+                             order=f"Occupations are in {occupation_order[len('occupations in '):]}.")
+    def frame(values, index) -> pd.DataFrame:
+        return pd.DataFrame(values, index=index, columns=weights.columns)
+    paid = d.wages[0].loc[com].values.T @ (d.need_value_added.loc[com].values @ weights.values)
+    by_occ = frame(paid, occ.index)                                                         # p
+    to_activity = frame(d.theta.values.T @ by_occ.values, act.index).add(unpaid.sum(), axis=0)      # f
+    information = by_occ.mul(d.theta.values @ info.values, axis=0).add(unpaid.values @ info.values, axis=0)
+    flow = frame(d.phi.values.T @ information.values, caps)                                 # k
+    overhang = flow.mul(d.defined_share * (1 - d.open_share), axis=0)                       # o
     out = [
         # --- the account
         Sheet("x", "the output behind a dollar of each need", "per_dollar", xn.loc[com], t.names,
@@ -543,23 +599,26 @@ def sheets(d: Data) -> dict[str, Sheet]:
               entries="Dollars of the commodity produced, at every stage of supply, to deliver a dollar of the need.",
               row_tip="Produced", col_tip="For a dollar of", row_is="Row, the commodity produced:", axis="Needs: one dollar of each",
               code="plenty/analysis.py", sums="cols"),
-        Sheet("k", "the part of a need dollar that pays for work done with each capability", "per_dollar",
-              **lone(flow, "k", "Share of a need dollar", "per dollar"), **by_capability,
-              rows="software capabilities: the taxonomy's",
-              entries="Dollars per need dollar, the needs counted equally, that pay for the information work of the people who "
-                      "work with the capability. It is the work the software serves, not what the software earns.",
-              note=f"The entries add up to {flow.sum() * 100:.1f} cents. With every kind of work counted, not information work "
-                   f"alone, they would add up to {d.cap_acct.flowed * 100:.1f}: the rest of the dollar is in sectors the survey of "
-                   "occupations does not reach, and in occupations that list no software or software the taxonomy does not place.",
-              row_tip="Capability", code="plenty/flows.py", sums="both", order=capability_order),
-        Sheet("o", "the overhang of each capability", "per_dollar",
-              **lone(flow * d.defined_share * (1 - d.open_share), "o", "Share of a need dollar", "per dollar"), **by_capability,
-              rows="software capabilities: the taxonomy's",
+        Sheet("p", "whose work a need dollar pays for", "per_dollar", by_occ, **by_occupation_row, **by_weighing,
+              rows="occupations",
+              entries="Dollars per need dollar that the sectors behind the needs pay the occupation.",
+              note="What a sector pays is its whole value added, shared out the way its payroll is.",
+              row_tip="Occupation", code="plenty/site.py", sums="cols"),
+        Sheet("k", "the part of a need dollar that pays for work done with each capability", "per_dollar", flow,
+              **by_capability, **by_weighing, rows="software capabilities: the taxonomy's",
+              entries="Dollars per need dollar that pay for the information work of the people who work with the capability, "
+                      "with the unpaid information work done at home. It is the work the software serves, not what the software "
+                      "earns.",
+              note="Only information work is placed here. Work that needs a body or a person is not, and nor is the work of "
+                   "occupations that list no software, or software the taxonomy does not place.",
+              row_tip="Capability", code="plenty/flows.py", sums="cols", order=capability_order),
+        Sheet("o", "the overhang of each capability", "per_dollar", overhang,
+              **by_capability, **by_weighing, rows="software capabilities: the taxonomy's",
               entries="Dollars per need dollar: what is paid for information work done with the capability, times the share of "
                       "its tasks that have no known open tool, times the share of those that is well defined.",
-              note="The entries add up to the gap. Sorted, the column is the order to work in, as far as the two terms it is "
-                   "made from can be trusted.",
-              row_tip="Capability", code="plenty/site.py", sums="both", order=capability_order),
+              note="A column adds up to the gap. Sorted, it is the order to work in, as far as the terms it is made from can be "
+                   "trusted.",
+              row_tip="Capability", code="plenty/site.py", sums="cols", order=capability_order),
         # --- needs
         Sheet("d", "what a dollar of each need buys", "per_dollar", dn.loc[com], t.names,
               rows="commodities: what is bought", cols="needs: a dollar of each", **by_need,
@@ -577,6 +636,17 @@ def sheets(d: Data) -> dict[str, Sheet]:
                    f"{_m(_sym('K'))}.",
               row_tip="Bought", col_tip="For", row_is="Row, the commodity bought:", axis="Needs: what was spent on each",
               code="plenty/analysis.py", sums="both"),
+        Sheet(OMEGA, "how the needs are weighed", "share", weights, pd.Series(NEED_NAME)[needs], **by_weighing,
+              rows="needs", row_groups=pd.Series("Needs", index=needs),
+              entries="The weight of the need. A column adds up to one.",
+              source=f"Counted equally, each of the {len(needs)} needs weighs the same. By what is spent, a need weighs its share "
+                     f"of {_m(_sym('Y'))}. The poorest fifth's budget is what the fifth of households with the lowest incomes "
+                     f"spent on each need themselves, from the Consumer Expenditure Survey of the U.S. Bureau of Labor Statistics, "
+                     f"2017: {_file('data/households/')}. Which item of spending belongs to which need is judgment: "
+                     f"{_file('config/spending_needs.csv')}.",
+              note="The survey counts what households pay themselves. Safety, which governments pay for, has no weight in that "
+                   "column, and public schooling and public health insurance are missing from it.",
+              row_tip="Need", code="plenty/site.py", order="Needs are in the order the list of them has."),
         # --- the input-output model
         Sheet("L", "the total requirements", "per_dollar", m.L.loc[com, com], t.names, t.names,
               rows="commodities: what is produced", cols="commodities: what is delivered",
@@ -745,14 +815,13 @@ def sheets(d: Data) -> dict[str, Sheet]:
                    "good enough to do the work.",
               row_tip="Capability", code="taxonomy/build.py", order=capability_order),
         # --- work activities: the same dollar, placed on what the work is
-        Sheet("f", "the part of a need dollar that pays for each activity", "per_dollar",
-              **lone(act.flow, "f", "Share of a need dollar", "per dollar"), **by_activity,
+        Sheet("f", "the part of a need dollar that pays for each activity", "per_dollar", to_activity, **by_activity, **by_weighing,
               rows="work activities: O*NET's intermediate work activities",
-              entries="Dollars per need dollar, the needs counted equally. It is where today's money goes, not how much an "
-                      "activity matters.",
-              note=f"The entries add up to {d.act_acct.flowed * 100:.1f} cents. The rest of the dollar is in sectors the survey of "
-                   "occupations does not reach, and in occupations whose tasks are not rated.",
-              row_tip="Activity", code="plenty/flows.py", sums="both", order=activity_order),
+              entries="Dollars per need dollar, paid and unpaid, that go to the activity. It is where today's work goes, not how "
+                      "much an activity matters.",
+              note="The rest of the dollar is in sectors the survey of occupations does not reach, and in occupations whose tasks "
+                   "are not rated.",
+              row_tip="Activity", code="plenty/flows.py", sums="cols", order=activity_order),
         Sheet(THETA, "what each occupation's work is", "share", d.theta, occ.title, act.name,
               rows="occupations", cols="work activities: O*NET's intermediate work activities",
               entries="The share of the occupation's work that is the activity. A row adds up to one, or is empty where no task of "
@@ -766,6 +835,21 @@ def sheets(d: Data) -> dict[str, Sheet]:
               code="plenty/work.py", row_groups=occ.major, col_groups=act.parent.map(d.act.name),
               short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
               order=f"Occupations are in the order of the Standard Occupational Classification within its 22 major groups. {activity_order}"),
+        Sheet("G", "the unpaid work done at home", "per_dollar", unpaid, occ.title, act.name,
+              rows="occupations: who would be paid to do it", cols="work activities: what the work is",
+              entries="Dollars of unpaid work at home for every dollar spent on the needs, valued at the mean wage of the "
+                      "occupation that does such work for pay.",
+              source=f"The hours are from the American Time Use Survey of the U.S. Bureau of Labor Statistics, 2017, and the number "
+                     f"of adults from its Consumer Expenditure Survey: {_file('data/households/')}. An occupation's wage is its "
+                     f"mean over the industries that publish it. Which activities at home are work, which work activity each is, "
+                     f"and which occupation does it for pay, is judgment: {_file('config/unpaid_work.csv')}.",
+              note=f"It comes to {unpaid.values.sum() * 100:.0f} cents for every dollar spent on the needs: "
+                   f"{unpaid_detail.hours_per_day.sum():.1f} hours a day for each adult, ${unpaid_detail.usd.sum() / 1e12:.1f} trillion "
+                   "a year. Housework, cooking, shopping, care and the travel they take are counted. Commuting, other travel, "
+                   "study and volunteering are not. It is the same however the needs are weighed.",
+              row_tip="Occupation", col_tip="Activity", axis="Work activities", code="plenty/site.py",
+              row_groups=occ.major, col_groups=act.parent.map(d.act.name), short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
+              sums="both", order=f"Occupations are in {occupation_order[len('occupations in '):]}. {activity_order}"),
         Sheet("s", "which work is information work", "mark", **lone(info, "s", "Information work", "one or zero"), **by_activity,
               rows="work activities: O*NET's intermediate work activities",
               entries="One where the activity is information work, which software could do, and zero where it needs a body or is "
@@ -774,11 +858,11 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Activity", code="plenty/site.py", blanks=("needs a body or a person", "zero"), marked="is information work",
               order=activity_order),
         Sheet("b", "the part of a need dollar that pays for work that needs a body", "per_dollar",
-              **lone(act.flow * (1 - info), "b", "Share of a need dollar", "per dollar"), **by_activity,
+              to_activity.mul(1 - info, axis=0), **by_activity, **by_weighing,
               rows="work activities: O*NET's intermediate work activities",
-              entries="Dollars per need dollar that pay for the activity, where it needs a body or a person. No software "
-                      "capability reaches it without a machine to act through.",
-              row_tip="Activity", code="plenty/site.py", sums="both", order=activity_order),
+              entries="Dollars per need dollar, paid and unpaid, that go to the activity, where it needs a body or a person. No "
+                      "software capability reaches it without a machine to act through.",
+              row_tip="Activity", code="plenty/site.py", sums="cols", order=activity_order),
     ]
     assert [s.key for s in out] == TERMS, "the terms and their pages have fallen out of step"
     return {s.key: s for s in out}
@@ -971,21 +1055,27 @@ def account_table(d: Data) -> str:
                          "it comes from, what it goes into, and a picture of the whole of it.")
 
 
-def gap(d: Data) -> float:
-    """The last line of the account: the part of a need dollar that pays for work done with software
-    capabilities whose tasks have no known open tool."""
-    return float(d.sheets["o"].values.values.sum())
+def gap(d: Data) -> pd.Series:
+    """The last line of the account, for each way of weighing the needs: the part of a need dollar that
+    pays for information work that is well defined and done with software that has no known open tool."""
+    return d.sheets["o"].values.sum()
 
 
 def account_section(d: Data) -> str:
-    """The whole account as four equations, what they come to, and every term in them."""
-    k, b = (d.sheets[key].values.iloc[:, 0] for key in "kb")
-    return f"""{_eqs([equation("x"), equation("k"), equation("o"), equation("gap")])}
-<p>{_m("<mi>N</mi>")} is the number of needs, {len(NEED_NAME)}, each counted equally, and {_m(_ONES)} is a column of ones.
-The second line places {k.sum() * 100:.1f} cents of a need dollar on {len(k)} software capabilities: what occupations are paid
-for information work, by the software they do it with. Another {b.sum() * 100:.1f} cents pay for work that needs a body or a
-person, {_m(_sym("b"))}. The third line keeps the part of each capability's work that is well defined and has no known open
-tool, and the fourth adds it up: {gap(d) * 100:.1f} cents. Sorted, {_m(_sym("o"))} is the order to work in.</p>
+    """The whole account as five equations, what they come to, and every term in them."""
+    k, b = (d.sheets[key].values.sum() for key in "kb")
+    unpaid = d.sheets["G"].values.values.sum()
+    g = gap(d) * 100
+    return f"""{_eqs([equation(key) for key in ("x", "p", "k", "o", "gap")])}
+<p>{_m(_sym(OMEGA))} weighs the needs, in three ways, and every term from {_m(_sym("p"))} on has a column for each.
+{_m(_sym("G"))} is the unpaid work done at home, {unpaid * 100:.0f} cents for every dollar spent on the needs, and
+{_m(_sym("s"))} marks the work that is information work. {_m(_ONES)} is a column of ones.</p>
+<p>With the needs counted equally, the third line places {k.equal * 100:.1f} cents of a need dollar on {len(d.sheets["k"].values)}
+software capabilities: the information work of each occupation, by the software it is done with. Another
+{b.equal * 100:.1f} cents is work that needs a body or a person, {_m(_sym("b"))}. The fourth line keeps the part of each
+capability's work that is well defined and has no known open tool, and the fifth adds it up: {g.equal:.1f} cents. Weighing
+the needs by what is spent on each it is {g.spending:.1f} cents, and by the poorest fifth's budget {g.poorest:.1f}. Sorted,
+a column of {_m(_sym("o"))} is the order to work in.</p>
 <h2 id="terms">Every term</h2>
 {account_table(d)}
 """

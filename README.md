@@ -348,7 +348,7 @@ Limits, most important first:
 ## Website
 
 `python -m plenty.site` renders a static site into `site/` from the model, `config/` and
-`results/`. The site is the account: four equations on the home page, and a page for every
+`results/`. The site is the account: five equations on the home page, and a page for every
 matrix and vector they are made from, down to the published tables. Each page says what the
 term's rows, columns and entries are, where it comes from, what it is made from and what it
 goes into, and shows the whole of it as a picture that can be zoomed, sorted and downloaded.
