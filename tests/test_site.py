@@ -46,7 +46,7 @@ def test_a_link_to_a_term_says_what_its_rows_columns_and_entries_are(built):
         assert lines[0] == sheet.title and lines[1].startswith(f"Rows: {nr:,} ") and lines[-1] == f"Unit: {site.UNITS[key]}", key
         assert (len(lines) == 4 and lines[2].startswith(f"Columns: {nc:,} ")) if nc > 1 else len(lines) == 3, key   # a vector has rows alone
     x = site.term_tip(built.sheets["x"]).split("\n")
-    assert x[1:] == ["Rows: 402 commodities, what is produced", "Columns: 11 needs, a dollar of each",
+    assert x[1:] == ["Rows: 402 produced commodities", "Columns: 11 needs, a dollar of each",
                      "Unit: dollars of the commodity produced per dollar spent on the need"]
     for name in [site.HOME] + list(site.SYMBOL_PAGES.values()):      # and every link to a term carries its own
         text = (site.SITE / name).read_text()
@@ -210,7 +210,10 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
     # sectors are grouped, so a picture's blocks are groups, and each group has a label for the margins
     data = _data(built.sheets["A"])
     groups = data["rows"]["groups"]
-    assert data["cols"] == data["rows"] and groups == sorted(groups, key=site.MX.ORDER.index) and set(groups) <= set(data["short"])
+    assert groups == sorted(groups, key=site.MX.ORDER.index) and set(groups) <= set(data["short"])
+    # its rows and columns are the same commodities, as inputs and as outputs
+    assert (data["rows"]["things"], data["cols"]["things"]) == ("input commodities", "output commodities")
+    assert {**data["cols"], "things": ""} == {**data["rows"], "things": ""}
     occ = built.wages[2]
     data = _data(built.sheets["W"])
     assert set(data["cols"]["groups"]) <= set(data["short"]) and len(set(data["cols"]["groups"])) == occ.major.nunique() == len(site.SOC_SHORT)
