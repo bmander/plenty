@@ -46,6 +46,9 @@ class Data:
         # The taxonomy of software capabilities (taxonomy/build.py): domains, capabilities and their tasks
         self.tax = pd.read_csv(FL.TAXONOMY / "capabilities.csv", dtype=str).fillna("").astype({"level": int})
         self.cap_acct = pd.read_csv(RESULTS / "capability_flow_accounting.csv", index_col=0).flow
+        # Which work software could do at all: each activity is information work, or needs a body, or
+        # is work in which the person is the point. Judgment, made by hand.
+        self.kinds = pd.read_csv(M.CONFIG / "activity_kinds.csv", index_col=0).kind
 
     @functools.cached_property
     def io(self) -> M.Model:
@@ -127,6 +130,16 @@ class Data:
         caps = FL.capabilities()
         shares = FL.occupation_shares(FL.listings(), FL.product_capabilities(), caps, distinctive=True)
         return O._occupation_uses(self.wages[0].columns, shares, "mean").fillna(0.0)[caps]
+
+    @functools.cached_property
+    def defined_share(self) -> pd.Series:
+        """a: of each capability's tasks with no known open tool, the share that is well defined: the
+        taxonomy says whether a task's result could be scored by a benchmark (yes counts whole,
+        partly half). Nothing where every task has a tool."""
+        tasks = self.tax[self.tax.level == 2]
+        closed = tasks[tasks.open_tools == ""]
+        score = closed.benchmarkable.map(DEFINED)
+        return score.groupby(closed.parent).mean().reindex(self.phi.columns).fillna(0.0)
 
     @functools.cached_property
     def open_share(self) -> pd.Series:
@@ -223,13 +236,14 @@ GROUPS = [
     ("Capital", ["K", "F", "H", "S", "z"]),
     ("Value added", ["v", "r", "y"]),
     ("Work", ["W", "P", "T", "E", "M"]),
-    ("Software capabilities", [PHI, "c"]),
-    ("Work activities", ["f", THETA]),
+    ("Software capabilities", [PHI, "a", "c"]),
+    ("Work activities", ["f", THETA, "s", "b"]),
 ]
 TERMS = [k for _, keys in GROUPS for k in keys]
+DEFINED = {"yes": 1.0, "partly": 0.5, "no": 0.0}     # how far a task the taxonomy calls benchmarkable counts as well defined
 PER_NEED = "dxv"                      # the vectors there is one of for each need, written with a subscript n
 # what each computed term is made from; a term that is not here is data
-USES = {"x": ["L", "d"], "k": ["v", "W", PHI], "o": ["k", "c"], "f": ["v", "W", THETA], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
+USES = {"x": ["L", "d"], "k": ["v", "W", THETA, "s", PHI], "o": ["k", "a", "c"], "b": ["f", "s"], "f": ["v", "W", THETA], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
         "D": ["V", "q"], "g": ["V"], "q": ["V"], "K": ["F", "H", "S"], "S": ["z", "H"], "z": ["g", "H"],
         "v": ["r", "x"], "r": ["y", "g", "D"], "W": ["P"], "P": ["T", "E", "M"]}
 
@@ -372,11 +386,13 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
         return _vec(k, here, T=T)
     if key == "x":
         return V("x"), _inverse(here) + _TIMES + V("d")
-    if key in "kf":       # the same dollar, placed on the software the work is done with, or on what the work is
-        last = S(PHI if key == "k" else THETA)
+    if key in "kf":       # the same dollar, placed on what the work is, or on the software its information work is done with
+        last = S(THETA) if key == "f" else f'{_diag(S(THETA) + _TIMES + S("s"))}{_TIMES}{S(PHI)}'
         return S(key, T=True), (f'<mfrac><mn>1</mn><mi>N</mi></mfrac>{_TIMES}{_sum("n")}{V("v", T=True)}{_TIMES}{S("W")}{_TIMES}{last}')
-    if key == "o":        # entry by entry: what is paid for work with a capability, times the part of it that is not open
-        return S("o"), f'{S("k")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("c")}")}'
+    if key == "o":        # entry by entry: what is paid for work with a capability, that is well defined, and is not open
+        return S("o"), f'{S("k")}{_HADAMARD}{S("a")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("c")}")}'
+    if key == "b":        # what software could not do: the work that needs a body or a person
+        return S("b"), f'{S("f")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("s")}")}'
     if key == "gap":      # and the whole of it
         return "<mi>gap</mi>", f'<msup>{_ONES}{_TR}</msup>{_TIMES}{S("o")}'
     if key == "d":        # the matrix whose columns are the d of each need
@@ -412,7 +428,7 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     raise KeyError(key)
 
 
-EQUATIONS = ["x", "k", "o", "f", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
+EQUATIONS = ["x", "k", "o", "f", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
 
 def _file(path: str) -> str:
@@ -517,7 +533,9 @@ def sheets(d: Data) -> dict[str, Sheet]:
     domain = tax.name[tax.parent[caps]].set_axis(caps)
     by_capability = dict(row_names=tax.name[caps], row_groups=domain, short={tax.name[k]: k.capitalize() for k in tax.index[tax.level == 0]})
     capability_order = f"Capabilities are in the taxonomy's order within its {domain.nunique()} domains."
-    flow = pd.Series(d.need_value_added.loc[com].mean(axis=1).values @ d.wages[0].loc[com].values @ d.phi.values, index=caps)
+    info = (d.kinds.reindex(act.index) == "information").astype(float)        # s
+    paid = d.need_value_added.loc[com].mean(axis=1).values @ d.wages[0].loc[com].values    # a need dollar, by occupation
+    flow = pd.Series((paid * (d.theta.values @ info.values)) @ d.phi.values, index=caps)
     out = [
         # --- the account
         Sheet("x", "the output behind a dollar of each need", "per_dollar", xn.loc[com], t.names,
@@ -528,18 +546,17 @@ def sheets(d: Data) -> dict[str, Sheet]:
         Sheet("k", "the part of a need dollar that pays for work done with each capability", "per_dollar",
               **lone(flow, "k", "Share of a need dollar", "per dollar"), **by_capability,
               rows="software capabilities: the taxonomy's",
-              entries="Dollars per need dollar, the needs counted equally, that pay the people who work with the capability. It is "
-                      "the work the software serves, not what the software earns.",
-              note=f"The entries add up to {d.cap_acct.flowed * 100:.1f} cents. Of the rest, "
-                   f"{d.cap_acct.sectors_without_occupation_data * 100:.1f} cents are in sectors the survey of occupations does not "
-                   f"reach, and {d.cap_acct.work_not_placed * 100:.1f} in occupations that list no software or software the taxonomy "
-                   "does not place.",
+              entries="Dollars per need dollar, the needs counted equally, that pay for the information work of the people who "
+                      "work with the capability. It is the work the software serves, not what the software earns.",
+              note=f"The entries add up to {flow.sum() * 100:.1f} cents. With every kind of work counted, not information work "
+                   f"alone, they would add up to {d.cap_acct.flowed * 100:.1f}: the rest of the dollar is in sectors the survey of "
+                   "occupations does not reach, and in occupations that list no software or software the taxonomy does not place.",
               row_tip="Capability", code="plenty/flows.py", sums="both", order=capability_order),
         Sheet("o", "the overhang of each capability", "per_dollar",
-              **lone(flow * (1 - d.open_share), "o", "Share of a need dollar", "per dollar"), **by_capability,
+              **lone(flow * d.defined_share * (1 - d.open_share), "o", "Share of a need dollar", "per dollar"), **by_capability,
               rows="software capabilities: the taxonomy's",
-              entries="Dollars per need dollar: what is paid for work done with the capability, times the share of its tasks "
-                      "that have no known open tool.",
+              entries="Dollars per need dollar: what is paid for information work done with the capability, times the share of "
+                      "its tasks that have no known open tool, times the share of those that is well defined.",
               note="The entries add up to the gap. Sorted, the column is the order to work in, as far as the two terms it is "
                    "made from can be trusted.",
               row_tip="Capability", code="plenty/site.py", sums="both", order=capability_order),
@@ -710,6 +727,14 @@ def sheets(d: Data) -> dict[str, Sheet]:
               code="plenty/flows.py", row_groups=occ.major, col_groups=domain,
               short={**{g: SOC_SHORT[c[:2]] for c, g in occ.major.items()}, **by_capability["short"]},
               order=f"Occupations are in the order of the Standard Occupational Classification within its 22 major groups. {capability_order}"),
+        Sheet("a", "how much of what is not open is well defined", "share",
+              **lone(d.defined_share, "a", "Well defined", "share"), **by_capability,
+              rows="software capabilities: the taxonomy's",
+              entries="Of the capability's tasks with no known open tool, the share whose result could be scored by a benchmark. "
+                      "A task that could partly be scored counts half. Zero where every task has a tool.",
+              source=f"The taxonomy says of each task whether it is benchmarkable: {_file('taxonomy/capabilities.csv')}.",
+              note="This is the taxonomy's own judgment of each task, made when it was compiled.",
+              row_tip="Capability", code="taxonomy/build.py", order=capability_order),
         Sheet("c", "how much of each capability is open", "share",
               **lone(d.open_share, "c", "Tasks with an open tool", "share"), **by_capability,
               rows="software capabilities: the taxonomy's",
@@ -741,6 +766,19 @@ def sheets(d: Data) -> dict[str, Sheet]:
               code="plenty/work.py", row_groups=occ.major, col_groups=act.parent.map(d.act.name),
               short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
               order=f"Occupations are in the order of the Standard Occupational Classification within its 22 major groups. {activity_order}"),
+        Sheet("s", "which work is information work", "mark", **lone(info, "s", "Information work", "one or zero"), **by_activity,
+              rows="work activities: O*NET's intermediate work activities",
+              entries="One where the activity is information work, which software could do, and zero where it needs a body or is "
+                      "work in which the person is the point.",
+              source=f"Judgment, made by hand, one activity at a time: {_file('config/activity_kinds.csv')}.",
+              row_tip="Activity", code="plenty/site.py", blanks=("needs a body or a person", "zero"), marked="is information work",
+              order=activity_order),
+        Sheet("b", "the part of a need dollar that pays for work that needs a body", "per_dollar",
+              **lone(act.flow * (1 - info), "b", "Share of a need dollar", "per dollar"), **by_activity,
+              rows="work activities: O*NET's intermediate work activities",
+              entries="Dollars per need dollar that pay for the activity, where it needs a body or a person. No software "
+                      "capability reaches it without a machine to act through.",
+              row_tip="Activity", code="plenty/site.py", sums="both", order=activity_order),
     ]
     assert [s.key for s in out] == TERMS, "the terms and their pages have fallen out of step"
     return {s.key: s for s in out}
@@ -941,12 +979,13 @@ def gap(d: Data) -> float:
 
 def account_section(d: Data) -> str:
     """The whole account as four equations, what they come to, and every term in them."""
-    k = d.sheets["k"].values.iloc[:, 0]
+    k, b = (d.sheets[key].values.iloc[:, 0] for key in "kb")
     return f"""{_eqs([equation("x"), equation("k"), equation("o"), equation("gap")])}
 <p>{_m("<mi>N</mi>")} is the number of needs, {len(NEED_NAME)}, each counted equally, and {_m(_ONES)} is a column of ones.
-The second line places {k.sum() * 100:.1f} cents of a need dollar on {len(k)} software capabilities: what is paid to the people
-who work with each. The third keeps the part of each that is paid for work with tasks that have no known open tool, and
-the fourth adds it up: {gap(d) * 100:.1f} cents. Sorted, {_m(_sym("o"))} is the order to work in.</p>
+The second line places {k.sum() * 100:.1f} cents of a need dollar on {len(k)} software capabilities: what occupations are paid
+for information work, by the software they do it with. Another {b.sum() * 100:.1f} cents pay for work that needs a body or a
+person, {_m(_sym("b"))}. The third line keeps the part of each capability's work that is well defined and has no known open
+tool, and the fourth adds it up: {gap(d) * 100:.1f} cents. Sorted, {_m(_sym("o"))} is the order to work in.</p>
 <h2 id="terms">Every term</h2>
 {account_table(d)}
 """
