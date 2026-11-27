@@ -51,6 +51,7 @@
       say: function (v) { return "$" + Math.round(v).toLocaleString("en-US") + " a year"; },
       cell: function (x) { return Math.round(x / 1000) + "k"; }
     },
+    number: { say: function (v) { return v.toFixed(3); }, cell: function (x) { return x.toFixed(2); } },
     mark: {
       say: function () { return M.marked; }, cell: function () { return "1"; },
       sum: function (v) { return Math.round(v) + " in all"; }, brief: function (v) { return String(Math.round(v)); }

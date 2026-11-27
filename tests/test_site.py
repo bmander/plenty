@@ -172,6 +172,22 @@ def test_the_equations_the_pages_print_hold_of_the_matrices_they_show(built):
     assert np.allclose(p[:, 0] @ theta.values, built.act.flow[theta.columns], atol=1e-9)
     published = pd.read_csv(site.RESULTS / "capability_flow.csv", index_col=0).flow_distinctive
     assert np.allclose(p[:, 0] @ phi.values, published[phi.columns], atol=1e-9)
+    # Phi is made from what O*NET lists and where the taxonomy places it: J, Q, R and u
+    J, Q, R, u = v["J"].loc[occ], v["Q"], v["R"], col("u")[phi.columns]
+    assert list(J.columns) == list(Q.index) and list(Q.columns) == list(R.index) and list(R.columns) == list(phi.columns)
+    assert set(np.unique(Q.values)) == {0.0, 1.0} and Q.values.sum() == len(site.FL.listings())
+    placed = R.sum(axis=1)
+    assert np.allclose(placed[placed > 0], 1) and (placed == 0).sum() > 0 and R.values.min() >= 0     # a product is placed whole, or not at all
+    listed = Q.values @ R.values                              # the products each occupation lists in each capability
+    assert np.allclose(u, np.log(len(Q) / np.clip((listed > 0).sum(axis=0), 1, None))) and (u > 0).all()
+    weighted, lists = listed @ u.values, Q.values.sum(axis=1)
+    assert (lists > 0).all() and ((weighted > 0) == (listed.sum(axis=1) > 0)).all()
+    some = weighted > 0
+    onet = np.zeros_like(listed)
+    onet[some] = (listed[some] * u.values) * (listed[some].sum(axis=1) / lists[some] / weighted[some])[:, None]
+    assert np.allclose(J.values @ onet, phi.values, atol=1e-12)
+    rows = J.sum(axis=1)
+    assert np.allclose(rows[rows > 0], 1) and ((rows == 0) == (phi.sum(axis=1) == 0)).sum() >= len(rows) - 2
     # the unpaid work done at home: each kind of it under one activity and one occupation, at that occupation's wage
     G, (_, detail) = v["G"].loc[occ, theta.columns], built.unpaid
     assert (G.values != 0).sum() == len(detail.drop_duplicates(["occupation", "work_activity"])) and G.values.min() >= 0
@@ -250,9 +266,19 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert np.allclose(data["colSums"], x.sum(axis=0), rtol=1e-5, atol=1e-9), key
         if sheet.sums == "both":
             assert np.allclose(data["rowSums"], x.sum(axis=1), rtol=1e-5, atol=1e-9) and np.isclose(data["grand"], x.sum(), rtol=1e-5), key
-        csv = pd.read_csv(site.SITE / sheet.csv_file, index_col=0, dtype={0: str})
-        assert list(csv.index.astype(str)) == rows and np.allclose(csv.values, x, rtol=1e-5, atol=1e-9), key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtw")
+        if x.size <= site.SPARSE_CSV:       # the CSV is the whole table
+            csv = pd.read_csv(site.SITE / sheet.csv_file, index_col=0, dtype={0: str})
+            assert list(csv.index.astype(str)) == rows and np.allclose(csv.values, x, rtol=1e-5, atol=1e-9), key
+            assert "The whole of it as CSV</a>" in html, key
+        else:                               # or, of a large matrix, a line for each entry that is not zero
+            csv = pd.read_csv(site.SITE / sheet.csv_file, dtype={"row": str, "column": str})
+            got = np.zeros(sheet.values.shape)
+            at = (sheet.values.index.get_indexer(csv.row), sheet.values.columns.get_indexer(csv.column))
+            assert (at[0] >= 0).all() and (at[1] >= 0).all() and len(csv) == (x != 0).sum(), key
+            got[at] = csv.value
+            assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRu")
+    assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
     m, t = built.io, built.io.t
     for key, X in {"A": m.A, "L": m.L, "U": t.U, "V": t.V, "K": m.K, "S": built.capital.shares, "F": built.capital.investment,

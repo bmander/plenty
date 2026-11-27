@@ -137,6 +137,35 @@ class Data:
         return O._occupation_uses(self.wages[0].columns, shares, "mean").fillna(0.0)[caps]
 
     @functools.cached_property
+    def software(self) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
+        """(J, Q, R, u, titles): what Phi is made from, as matrices. Q is O*NET occupation x software
+        product, one where O*NET lists the product for the occupation. R is product x capability: the
+        part of the product the taxonomy places in the capability, a row adding up to one, or to
+        nothing where the product is not placed. u is the specificity of each capability: the log of
+        the occupations there are over those that list anything in it. J is the survey's occupation x
+        O*NET occupation: one where they are the same, an equal part of one for each member of a group
+        the survey publishes as one, and nothing where O*NET lists no software. titles names the
+        O*NET occupations. Products are in the order of the first capability they are placed in, the
+        ones not placed last."""
+        ls, pc, caps = FL.listings(), FL.product_capabilities(), FL.capabilities()
+        at = {c: i for i, c in enumerate(caps)}
+        first = pc.capability.map(at).groupby(pc["product"]).min()
+        products = sorted(ls["product"].unique(), key=lambda x: (first.get(x, len(caps)), x))
+        socs = sorted(ls.soc.unique())
+        Q = pd.crosstab(ls.soc, ls["product"]).reindex(index=socs, columns=products, fill_value=0).astype(float)
+        R = pc.pivot(index="product", columns="capability", values="weight").reindex(index=products, columns=caps).fillna(0.0)
+        listed = (Q.values @ R.values) > 0
+        u = pd.Series(np.log(len(socs) / listed.sum(axis=0).clip(min=1)), index=caps)
+        J = pd.DataFrame(0.0, index=self.wages[0].columns, columns=socs)
+        for code in J.index:
+            members = [code] if code in J.columns else [s for s in socs if s.startswith(code.rstrip("0"))]
+            if members:
+                J.loc[code, members] = 1 / len(members)
+        named = pd.read_csv(O.OCC / "onet_occupations.csv")
+        titles = named.Title.groupby(O.soc6(named["O*NET-SOC Code"])).first()[socs]
+        return J, Q, R, u, titles
+
+    @functools.cached_property
     def weights(self) -> pd.DataFrame:
         """omega: need x way of weighing the needs, each column summing to one: every need the same;
         by what households and governments spent on each; and by what the poorest fifth of households
@@ -284,14 +313,14 @@ GROUPS = [
     ("Capital", ["K", "F", "H", "S", "z"]),
     ("Value added", ["v", "r", "y"]),
     ("Work", ["W", "P", "T", "E", "M"]),
-    ("Software capabilities", [PHI, "a", "c", "N", "t", "w"]),
+    ("Software capabilities", [PHI, "J", "Q", "R", "u", "a", "c", "N", "t", "w"]),
     ("Work activities", ["f", THETA, "G", "s", "b"]),
 ]
 TERMS = [k for _, keys in GROUPS for k in keys]
 DEFINED = {"yes": 1.0, "partly": 0.5, "no": 0.0}     # how far a task the taxonomy calls benchmarkable counts as well defined
 PER_NEED = "dxv"                      # the vectors there is one of for each need, written with a subscript n
 # what each computed term is made from; a term that is not here is data
-USES = {"x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "o": ["k", "a", "c"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
+USES = {"x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "o": ["k", "a", "c"], PHI: ["J", "Q", "R", "u"], "u": ["Q", "R"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
         "f": ["p", THETA, "G"], "G": ["E", "M", "Y"], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
         "D": ["V", "q"], "g": ["V"], "q": ["V"], "K": ["F", "H", "S"], "S": ["z", "H"], "z": ["g", "H"],
         "v": ["r", "x"], "r": ["y", "g", "D"], "W": ["P"], "P": ["T", "E", "M"]}
@@ -339,6 +368,9 @@ MATRIX_KINDS = {
     "wage": {"unit": 1.0, "cut": 0.5, "scale": (25e3, 2e5), "ticks": ("$25k", "$50k", "$100k", "$200k"),
              "blank": "none published", "small": "not published", "colour": "the mean annual wage, from $25,000 to $200,000",
              "in_cell": "in thousands of dollars a year"},
+    # a number with no unit, such as a logarithm
+    "number": {"unit": 1e-3, "cut": 1e-3, "scale": (0.1, 10.0), "ticks": ("0.1", "1", "10"),
+               "blank": "under 0.001", "small": "under a thousandth", "colour": "the number", "in_cell": "to two places"},
     # ones and zeros: no scale to show
     "mark": {"unit": 1.0, "cut": 0.5, "scale": (0.1, 1.0), "ticks": (), "blank": "no", "small": "", "colour": "", "in_cell": "as a 1"},
 }
@@ -448,6 +480,13 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
         return S("k", T=True), f'<msup>{_paren(work)}{_TR}</msup>{_TIMES}{S(PHI)}'
     if key == "o":        # entry by entry: what is paid for work with a capability, that is well defined, and is not open
         return S("o"), f'{S("k")}{_HADAMARD}{S("a")}{_HADAMARD}{_paren(f"{_ONES}<mo>&minus;</mo>{S("c")}")}'
+    if key == PHI:        # an occupation's products in each capability, weighted by how specific the capability is, as shares of a row
+        QR = f'{S("Q")}{_TIMES}{S("R")}'
+        return S(PHI), _TIMES.join([S("J"), _inv(_diag(S("Q") + _TIMES + _ONES)), _diag(QR + _TIMES + _ONES),
+                                    _inv(_diag(QR + _TIMES + S("u"))), '<mspace width="0.17em"/>' + QR, _diag(S("u"))])
+    if key == "u":        # how few occupations list anything in the capability
+        O_k = "<msub><mi>O</mi><mi>k</mi></msub>"
+        return _elt("u", "k", "u", here), f'<mrow><mi>ln</mi><mo>&#x2061;</mo><mfrac><mi>O</mi>{O_k}</mfrac></mrow>'
     if key == "a":        # of a capability's tasks that no open tool does, the part that is well defined
         def over(*more):
             entries = _TIMES.join([_elt("n", "ij", "N", here), *more, _paren(f'<mn>1</mn><mo>&minus;</mo>{_elt("t", "j", "t", here)}')])
@@ -492,7 +531,7 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     raise KeyError(key)
 
 
-EQUATIONS = ["x", "p", "k", "o", "a", "c", "f", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
+EQUATIONS = ["x", "p", "k", "o", PHI, "u", "a", "c", "f", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
 # What one entry of each term is measured in, in a few words. A unit that has a page is written
 # [as it reads here|the name its page is filed under], and is a link wherever this is set as HTML.
@@ -518,6 +557,9 @@ MEASURED_IN = {
     "E": "[jobs|job], in May 2021",
     "M": "[dollars a year|dollar-a-year], in May 2021",
     PHI: "[share|share] of the occupation's work",
+    "J": "the O*NET occupation's [share|share] of the survey's occupation", "Q": _MARK,
+    "R": "the part of the product placed in the capability, a [share|share] of one",
+    "u": "a logarithm, a [number|number] with no unit",
     "N": _MARK, "t": _MARK, "w": "the well-defined part of the task, a [share|share] of one",
     THETA: "[share|share] of the occupation's work",
     "a": "[share|share] of the capability's tasks that have no open tool",
@@ -528,6 +570,7 @@ COUNTED = {
     "commodity": ("commodity", "commodities"), "industry": ("industry", "industries"), "need": ("need", "needs"),
     "weighting": ("way of weighing the needs", "ways of weighing the needs"),
     "investor-kind": ("kind of investor", "kinds of investor"), "occupation": ("occupation", "occupations"),
+    "onet-occupation": ("O*NET occupation", "O*NET occupations"), "product": ("software product", "software products"),
     "surveyed-industry": ("surveyed industry", "surveyed industries"),
     "capability": ("software capability", "software capabilities"), "task": ("task", "tasks"),
     "activity": ("work activity", "work activities"),
@@ -637,6 +680,16 @@ def sheets(d: Data) -> dict[str, Sheet]:
     domain = tax.name[tax.parent[caps]].set_axis(caps)
     by_capability = dict(row_names=tax.name[caps], row_groups=domain, short={tax.name[k]: k.capitalize() for k in tax.index[tax.level == 0]})
     capability_order = f"Capabilities are in the taxonomy's order within its {domain.nunique()} domains."
+    # what Phi is made from: O*NET's occupations and the software products it lists for them
+    J, listing, placing, specificity, onet_titles = d.software
+    major_of = {c[:2]: g for c, g in occ.major.items()}
+    onet_major = pd.Series({c: major_of[c[:2]] for c in listing.index})
+    product_names = pd.Series(listing.columns, index=listing.columns)
+    not_placed = "Not placed"
+    product_group = pd.Series([domain.iloc[row.argmax()] if row.any() else not_placed for row in (placing.values > 0)], index=placing.index)
+    soc_short = {g: SOC_SHORT[c[:2]] for c, g in occ.major.items()}
+    product_order = ("Products are in the order of the first capability they are placed in, and by name within it, with those the "
+                     "taxonomy does not place last.")
     # and its tasks, in the same order
     tasks = d.tasks
     by_task = dict(row_names=tasks.name, row_groups=domain[tasks.capability].set_axis(tasks.index))
@@ -852,17 +905,66 @@ def sheets(d: Data) -> dict[str, Sheet]:
               rows="software-using occupations", cols="the taxonomy's software capabilities",
               entries="The share of the occupation's work that is done with the capability. A row adds up to the share of the "
                       "occupation's software the taxonomy places, at most one.",
-              source=f"O*NET 31.0, the U.S. Department of Labor's database of occupations, lists the software products each "
-                     f"occupation uses: {_file('data/occupations/')}. The taxonomy places each product in the capabilities it is an "
-                     f"example of: {_file('taxonomy/')}. An occupation's work is split among its capabilities in proportion to the "
-                     "products it lists in each, times how few other occupations list anything there, so that tools everyone "
-                     "uses take less. An occupation the survey publishes only as a group takes the mean of the occupations in "
-                     "the group.",
+              source=f"{_m(_sym('Q'))}{_m(_sym('R'))} counts the products an occupation lists in each capability. Each count is "
+                     f"weighted by the capability's specificity, {_m(_sym('u'))}, so that tools everyone uses take less, and "
+                     "divided by the row's total, so that the row adds up to one. The row is then scaled to the share of the "
+                     f"occupation's products that the taxonomy places. Last, {_m(_sym('J'))} gives each of the survey's "
+                     "occupations the row of its O*NET occupation, or the mean of the rows of its group. An occupation none of "
+                     "whose products is placed has a row of zeros.",
               note="A list of products is not time: O*NET says which software an occupation uses, not for how long.",
               row_tip="Occupation", col_tip="Capability", axis="Software capabilities: their share of each occupation's work",
               code="plenty/flows.py", row_groups=occ.major, col_groups=domain,
               short={**{g: SOC_SHORT[c[:2]] for c, g in occ.major.items()}, **by_capability["short"]},
               order=f"Occupations are in the order of the Standard Occupational Classification within its 22 major groups. {capability_order}"),
+        Sheet("J", "the O*NET occupations each of the survey's occupations stands for", "share", J, occ.title, onet_titles,
+              rows="the survey's occupations", cols="member O*NET occupations",
+              entries="One where the survey's occupation is the O*NET occupation. Where the survey publishes a group of "
+                      "occupations as one, each O*NET occupation in the group has an equal part of one, so that the group takes "
+                      "their mean. A row is empty where O*NET lists no software for the occupation.",
+              source=f"The two lists of occupations, matched by their codes in the Standard Occupational Classification: "
+                     f"{_file('data/occupations/')}. A code of the survey's that ends in zeros is a group, and stands for every "
+                     "O*NET occupation whose code begins as it does.",
+              note=f"{int((J.sum(axis=1) == 0).sum())} of the survey's {len(J)} occupations have an empty row, and "
+                   f"{int(((J > 0).sum(axis=1) > 1).sum())} are groups. {int((J.sum(axis=0) == 0).sum())} of the {J.shape[1]} "
+                   "O*NET occupations are under none of the survey's.",
+              row_tip="Survey's occupation", col_tip="O*NET occupation", axis="O*NET occupations", code="plenty/occupations.py",
+              row_groups=occ.major, col_groups=onet_major, short=soc_short,
+              order="Both lists are in the order of the Standard Occupational Classification within its 22 major groups."),
+        Sheet("Q", "the software each occupation lists", "mark", listing, onet_titles, product_names,
+              rows="listing O*NET occupations", cols="listed software products",
+              entries="One where O*NET lists the product among the software the occupation uses, and zero elsewhere.",
+              source=f"O*NET 31.0, the U.S. Department of Labor's database of occupations, in its table of technology skills: "
+                     f"{_file('data/occupations/onet_software_skills.csv')}. The lists of the finer occupations O*NET has under "
+                     "one six-digit code are pooled.",
+              note="A list of products is not time: O*NET says which software an occupation uses, not for how long.",
+              row_tip="Occupation", col_tip="Product", axis="Software products", code="plenty/flows.py",
+              row_groups=onet_major, col_groups=product_group, short={**soc_short, **by_capability["short"]},
+              blanks=("does not list it", "zero"), marked="lists it", sums="both",
+              order=f"Occupations are in the order of the Standard Occupational Classification within its 22 major groups. {product_order}"),
+        Sheet("R", "the capabilities each software product is an example of", "share", placing, product_names, tax.name[caps],
+              rows="listed software products", cols="the taxonomy's software capabilities",
+              entries="The part of the product placed in the capability: one where it is an example of that capability alone, "
+                      "and an equal part of one where it is an example of several. A row is empty where the taxonomy does not "
+                      "place the product.",
+              source=f"The taxonomy names products as examples of its tasks: {_file('taxonomy/products_seed.csv')}. A product "
+                     "is placed in the capabilities those tasks are part of.",
+              note=f"The placing is judgment, made when the taxonomy was compiled. {int((placing.sum(axis=1) == 0).sum()):,} of "
+                   f"the {len(placing):,} products are not placed, and {int(((placing > 0).sum(axis=1) > 1).sum()):,} are placed "
+                   "in more than one capability.",
+              row_tip="Product", col_tip="Capability", axis="Software capabilities", code="plenty/flows.py",
+              row_groups=product_group, col_groups=domain, short=by_capability["short"],
+              order=f"{product_order} {capability_order}"),
+        Sheet("u", "the specificity of each capability", "number", **lone(specificity, "u", "Specificity", "number"), **by_capability,
+              rows="the taxonomy's software capabilities",
+              entries="The natural logarithm of the number of O*NET occupations over the number of them that list a product of "
+                      "the capability. It is near zero for a capability nearly every occupation lists, and largest for one "
+                      "that a single occupation lists.",
+              source=f"{_m('<mi>O</mi>')} is the number of O*NET occupations, {listing.shape[0]}, and "
+                     f"{_m('<msub><mi>O</mi><mi>k</mi></msub>')} the number of them that list a product placed in capability "
+                     f"{_m('<mi>k</mi>')}: the rows of {_m(_sym('Q'))}{_m(_sym('R'))} whose entry in column {_m('<mi>k</mi>')} "
+                     "is not zero. A capability no occupation lists is counted as if one did, and nothing is placed on it "
+                     "either way.",
+              row_tip="Capability", code="plenty/flows.py", order=capability_order),
         Sheet("a", "the well-defined share of the tasks with no open tool", "share",
               **lone(d.defined_share, "a", "Well defined", "share"), **by_capability,
               rows="the taxonomy's software capabilities",
@@ -1046,8 +1148,15 @@ def matrix_a_parts(d: Data) -> str:
     return "window.PLENTY_MATRIX_PARTS = " + json.dumps(payload, separators=(",", ":")) + ";\n"
 
 
+SPARSE_CSV = 1_000_000     # a matrix of more cells than this is filed as its entries that are not zero, one to a line
+
+
 def sheet_csv(s: Sheet) -> str:
-    return s.values.to_csv(float_format="%.6g")
+    """The whole of a term as CSV: a table, or for a large matrix a line for each entry that is not zero."""
+    if s.values.size <= SPARSE_CSV:
+        return s.values.to_csv(float_format="%.6g")
+    i, j = np.nonzero(s.values.values)
+    return pd.DataFrame({"row": s.values.index[i], "column": s.values.columns[j], "value": s.values.values[i, j]}).to_csv(index=False, float_format="%.6g")
 
 
 def sheet_picture(s: Sheet, also: str = "", extra: str = "") -> str:
@@ -1079,6 +1188,7 @@ def sheet_picture(s: Sheet, also: str = "", extra: str = "") -> str:
     legend = (f'<div class="mx-legend" aria-hidden="true"><div class="mx-ramp"></div>\n<div class="mx-ticks">'
               + "".join(f"<span>{x}</span>" for x in kind["ticks"]) + "</div></div>") if kind["ticks"] else ""
     colour = f"Colour is {kind['colour']}, on a log scale." if kind["colour"] else f"A filled cell is a one: the row {s.marked}."
+    empty = (~s.shown).mean()      # a matrix that is nearly all blank is not said to be all blank
     return f"""<figure class="mx">
 <div class="mx-frame{" mx-lock" if s.thin else ""}" style="grid-template-columns: auto minmax(0, {width + 2}px) auto">
 <div class="mx-axis mx-axis-top"><span>{e(s.axis)} &rarr;</span>
@@ -1095,7 +1205,7 @@ def sheet_picture(s: Sheet, also: str = "", extra: str = "") -> str:
 </div>
 <div class="mx-note" id="mx-note" aria-live="polite"></div>
 {extra}{legend}
-<figcaption>{colour} The {(~s.shown).mean():.0%} of entries that are {blank} are blank. {s.order}</figcaption>
+<figcaption>{colour} The {empty:.{1 if 0.995 <= empty < 1 else 0}%} of entries that are {blank} are blank. {s.order}</figcaption>
 </figure>
 <details class="note mx-how"><summary>Using the picture</summary>
 <p>Hover over a cell for its row, its column and its value. Click a cell to mark it with its row and column, or click
@@ -1182,6 +1292,23 @@ the occupations of the Standard Occupational Classification, except that the sur
 <p>The same occupations are described by O*NET, the Department of Labor's database, which says what tasks each does and what
 software it uses. That is how a dollar placed on an occupation goes on to {_unit("activity", "work activities")} and
 {_unit("capability", "software capabilities")}.</p>"""),
+        Unit("onet-occupation", *COUNTED["onet-occupation"], True,
+             "One of the occupations O*NET lists software for, by its six-digit code in the Standard Occupational Classification.",
+             f"""<p>One of the {d.software[1].shape[0]} occupations for which O*NET 31.0, the U.S. Department of Labor's database
+of occupations, lists software: {_file('data/occupations/')}. They are counted by six-digit code in the Standard Occupational
+Classification, and the finer occupations O*NET has under one code are pooled.</p>
+<p>They are nearly the survey's {_unit("occupation", "occupations")}, but not quite: the survey publishes some occupations
+only as a group, and O*NET lists no software for others. {T("J")} says which O*NET occupations each of the survey's stands
+for.</p>"""),
+        Unit("product", *COUNTED["product"], True,
+             "One of the software products O*NET names among the technology an occupation uses.",
+             f"""<p>One of the {d.software[1].shape[1]:,} software products that O*NET 31.0 names as examples of the technology
+occupations use, such as Microsoft Excel or Dassault Systemes SolidWorks:
+{_file('data/occupations/onet_software_skills.csv')}. {T("Q")} says which
+{_unit("onet-occupation", "O*NET occupations")} list each.</p>
+<p>The taxonomy places {int((d.software[2].sum(axis=1) > 0).sum()):,} of them in the
+{_unit("capability", "software capabilities")} they are examples of, {T("R")}. The rest are not placed, and the work done
+with them reaches no capability.</p>"""),
         Unit("surveyed-industry", *COUNTED["surveyed-industry"], True,
              "One of the industries the survey of occupations reports jobs and wages for.",
              f"""<p>One of the {len(surveyed)} industries that the survey of occupations reports {_unit("job", "jobs")} and wages
@@ -1276,6 +1403,10 @@ one, the term's page says what is missing.</p>"""),
              f"""<p>One where something is so, and zero where it is not. Multiplying by such a term keeps the entries it marks and
 drops the rest: {T("s")} keeps the work that is information work, and {T("H")} keeps the industries of one kind of
 investor.</p>"""),
+        Unit("number", "number", "numbers", False,
+             "A number with no unit.",
+             f"""<p>A number with no unit: a count, a ratio of two counts, or the logarithm of one. {T("u")} is the only term
+measured so. It weights other terms, and what it weights keeps its own unit.</p>"""),
         Unit("job", "job", "jobs", False,
              "One wage or salary job, as the survey of occupations counted them in May 2021.",
              f"""<p>One wage or salary job at a nonfarm employer, as the Occupational Employment and Wage Statistics of the U.S.
@@ -1423,7 +1554,9 @@ def term_page(d: Data, key: str) -> str:
         spec.append(("Used in", (_eqs(into) if into else "") + (f"<p>{term_links(d, plain, key)}</p>" if plain else "")))
     if s.note:
         spec.append(("Note", s.note))
-    spec.append(("Data", f'<a href="{s.csv_file}">The whole of it as CSV</a>, with codes for rows and columns. The code is {_file(s.code)}.'))
+    whole = ("The whole of it as CSV</a>, with codes for rows and columns." if s.values.size <= SPARSE_CSV else
+             "Every entry that is not zero as CSV</a>, one to a line, by the codes of its row and column.")
+    spec.append(("Data", f'<a href="{s.csv_file}">{whole} The code is {_file(s.code)}.'))
     why = also = ""
     if key == "A":      # a marked cell is taken apart into the industries that make the column's commodity
         also = "A marked cell is taken apart under the picture, into the industries that make the column's commodity."
