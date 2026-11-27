@@ -11,6 +11,8 @@ Inputs to the occupation-based measures (`plenty/occupations.py`, `plenty/work.p
 | `onet_tasks.csv` | same, `task_statements.csv` joined with `task_ratings.csv`: one row per occupation's task, with its importance (1 to 5), relevance (percent of incumbents who do it) and the percent of incumbents in each of seven frequency categories | O\*NET 31.0 | CC BY 4.0 |
 | `onet_task_activities.csv` | same, `tasks_to_dwas.csv`: the detailed work activities each task belongs to | O\*NET 31.0 | CC BY 4.0 |
 | `onet_work_activities.csv` | same, `gwas_to_iwas_to_dwas.csv`: the hierarchy of general, intermediate and detailed work activities | O\*NET 31.0 | CC BY 4.0 |
+| `onet_abilities.csv` | same, `abilities.csv`: one row per occupation's rating of an ability, with its importance (1 to 5) and the level of it needed (0 to 7); extracted with `scripts/00_extract_abilities.py`, downloaded 2026-11-27 | O\*NET 31.0 | CC BY 4.0 |
+| `onet_ability_activities.csv` | same, `abilities_to_work_activities.csv`: the general work activities O\*NET links each ability to | O\*NET 31.0 | CC BY 4.0 |
 | `oews_2021_nat4d.csv` | U.S. Bureau of Labor Statistics, [OEWS national industry-specific estimates](https://www.bls.gov/oes/tables.htm), `oesm21in4.zip`, `nat4d_M2021_dl.xlsx` | May 2021 (SOC 2018, NAICS 2017) | U.S. government work, public domain |
 | `bea_naics_2017.csv` | `MasterCrosswalk2017` from [USEPA/useeior](https://github.com/USEPA/useeior) (`data/MasterCrosswalk2017.rda`), BEA 2017 detail code to NAICS 2017 at every level | useeior `master`, fetched 2026-11-24 | MIT (see `../bea/LICENSE-useeior`); the BEA concordance it encodes is public domain |
 
