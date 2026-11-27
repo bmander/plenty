@@ -19,7 +19,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from . import analysis as A, matrix as MX, model as M, occupations as O, work as WK
+from . import analysis as A, flows as FL, matrix as MX, model as M, occupations as O, work as WK
 
 ROOT = Path(__file__).resolve().parent.parent
 RESULTS, WEB, SITE = ROOT / "results", ROOT / "plenty" / "web", ROOT / "site"
@@ -43,8 +43,9 @@ class Data:
         # flow through each, and how much of the software listed by the people who do each is open.
         self.act = pd.read_csv(RESULTS / "activity_flow.csv", index_col=0).fillna({"parent": ""})
         self.act_acct = pd.read_csv(RESULTS / "activity_flow_accounting.csv", index_col=0).value
-        # AI as a means (plenty/ai.py): each vendor's share of conversations by activity
-        self.ai = pd.read_csv(RESULTS / "activity_ai.csv", index_col=0)
+        # The taxonomy of software capabilities (taxonomy/build.py): domains, capabilities and their tasks
+        self.tax = pd.read_csv(FL.TAXONOMY / "capabilities.csv", dtype=str).fillna("").astype({"level": int})
+        self.cap_acct = pd.read_csv(RESULTS / "capability_flow_accounting.csv", index_col=0).flow
 
     @functools.cached_property
     def io(self) -> M.Model:
@@ -114,6 +115,24 @@ class Data:
         by_detailed = O._occupation_uses(self.wages[0].columns, tasks, "mean").fillna(0.0)
         iwa = WK.hierarchy().iwa.reindex(by_detailed.columns)
         return by_detailed.T.groupby(iwa.values).sum().T.sort_index(axis=1)
+
+    @functools.cached_property
+    def phi(self) -> pd.DataFrame:
+        """Phi: occupation x software capability, the share of the occupation's work done with the
+        capability, for the occupations the wage survey publishes: the share of the software
+        products it lists that are of the capability, split by how specific each capability is to
+        the occupation (flows.occupation_shares, distinctive). A row sums to the share of the
+        occupation's products the taxonomy places, at most one. With it the flow to capabilities
+        is one product: the needs' mean v, times W, times Phi."""
+        caps = FL.capabilities()
+        shares = FL.occupation_shares(FL.listings(), FL.product_capabilities(), caps, distinctive=True)
+        return O._occupation_uses(self.wages[0].columns, shares, "mean").fillna(0.0)[caps]
+
+    @functools.cached_property
+    def open_share(self) -> pd.Series:
+        """c: the share of each capability's tasks for which the taxonomy names an open-source tool."""
+        tasks = self.tax[self.tax.level == 2]
+        return (tasks.open_tools != "").groupby(tasks.parent).mean().reindex(self.phi.columns)
 
     @functools.cached_property
     def capital(self) -> M.Capital:
@@ -194,21 +213,23 @@ def _sum(i: str) -> str:
 
 
 HOME = "index.html"                   # the account, which every term's page leads back to
-THETA = "Θ"
+THETA, PHI = "Θ", "Φ"
+GREEK = {THETA: ("Theta", "&#x1D6AF;"), PHI: ("Phi", "&#x1D6BD;")}     # a Greek letter's name in a file, and its bold
 # the terms, in the order the account's table lists them
 GROUPS = [
-    ("The account", ["x", "f"]),
+    ("The account", ["x", "k"]),
     ("Needs", ["d", "Y"]),
     ("The input-output model", ["L", "A", "B", "D", "U", "V", "g", "q"]),
     ("Capital", ["K", "F", "H", "S", "z"]),
     ("Value added", ["v", "r", "y"]),
-    ("Work", ["W", "P", "T", "E", "M", THETA]),
-    ("Capability", ["c"]),
+    ("Work", ["W", "P", "T", "E", "M"]),
+    ("Software capabilities", [PHI, "c"]),
+    ("Work activities", ["f", THETA]),
 ]
 TERMS = [k for _, keys in GROUPS for k in keys]
 PER_NEED = "dxv"                      # the vectors there is one of for each need, written with a subscript n
 # what each computed term is made from; a term that is not here is data
-USES = {"x": ["L", "d"], "f": ["v", "W", THETA], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
+USES = {"x": ["L", "d"], "k": ["v", "W", PHI], "f": ["v", "W", THETA], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
         "D": ["V", "q"], "g": ["V"], "q": ["V"], "K": ["F", "H", "S"], "S": ["z", "H"], "z": ["g", "H"],
         "v": ["r", "x"], "r": ["y", "g", "D"], "W": ["P"], "P": ["T", "E", "M"]}
 
@@ -216,7 +237,7 @@ USES = {"x": ["L", "d"], "f": ["v", "W", THETA], "d": ["Y"], "L": ["A"], "A": ["
 def stem(key: str) -> str:
     """The name a term's files go by. A matrix is filed as a matrix and a vector as a vector, so
     that no two differ by a letter's case alone: some file systems cannot tell D from d."""
-    return "matrix-Theta" if key == THETA else f"matrix-{key}" if key.isupper() else f"vector-{key}"
+    return f"matrix-{GREEK[key][0]}" if key in GREEK else f"matrix-{key}" if key.isupper() else f"vector-{key}"
 
 
 SYMBOL_PAGES = {k: stem(k) + ".html" for k in TERMS}
@@ -265,9 +286,9 @@ MATRIX_UNIT = MATRIX_KINDS["per_dollar"]["unit"]
 # because browsers misplace a MathML script on a base that is a link.
 
 def _bold(letter: str) -> str:
-    """A capital or small Latin letter, or a capital theta, as Unicode's mathematical bold."""
-    if letter == THETA:
-        return "&#x1D6AF;"
+    """A capital or small Latin letter, or a capital Greek one, as Unicode's mathematical bold."""
+    if letter in GREEK:
+        return GREEK[letter][1]
     return f"&#x{0x1D400 + ord(letter) - ord('A') if letter.isupper() else 0x1D41A + ord(letter) - ord('a'):X};"
 
 
@@ -351,10 +372,11 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
         return _vec(k, here, T=T)
     if key == "x":
         return V("x"), _inverse(here) + _TIMES + V("d")
-    if key == "f":
-        return S("f", T=True), (f'<mfrac><mn>1</mn><mi>N</mi></mfrac>{_TIMES}{_sum("n")}{V("v", T=True)}{_TIMES}{S("W")}{_TIMES}{S(THETA)}')
+    if key in "kf":       # the same dollar, placed on the software the work is done with, or on what the work is
+        last = S(PHI if key == "k" else THETA)
+        return S(key, T=True), (f'<mfrac><mn>1</mn><mi>N</mi></mfrac>{_TIMES}{_sum("n")}{V("v", T=True)}{_TIMES}{S("W")}{_TIMES}{last}')
     if key == "gap":
-        return "<mi>gap</mi>", f'{S("f", T=True)}{_TIMES}{_paren(f"{_ONES}<mo>&minus;</mo>{S("c")}")}'
+        return "<mi>gap</mi>", f'{S("k", T=True)}{_TIMES}{_paren(f"{_ONES}<mo>&minus;</mo>{S("c")}")}'
     if key == "d":        # the matrix whose columns are the d of each need
         first, last = _vec("d", here, sub="1"), _vec("d", here, sub="N")
         return (f"<mrow><mo>[</mo>{first}<mspace width=\"0.3em\"/><mo>&#x22EF;</mo><mspace width=\"0.3em\"/>{last}<mo>]</mo></mrow>",
@@ -388,7 +410,7 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     raise KeyError(key)
 
 
-EQUATIONS = ["x", "f", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
+EQUATIONS = ["x", "k", "f", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
 
 def _file(path: str) -> str:
@@ -487,10 +509,13 @@ def sheets(d: Data) -> dict[str, Sheet]:
         return dict(values=s.to_frame(key), col_names=pd.Series({key: label}), col_groups=pd.Series({key: unit}),
                     cols=label[0].lower() + label[1:], col_tip="Entry", col_is="Column:", axis=label)
     investors = pd.DataFrame({h: (cap.group == h).astype(float) for h in cap.investment.columns})
-    proxies = pd.DataFrame({"open": act.software_open_share.fillna(0.0), **{k: d.ai[k].reindex(act.index).fillna(0.0)
-                                                                            for k in ("pooled", "claude", "chatgpt", "copilot")}})
-    proxy_name = pd.Series({"open": "Software with an open tool", "pooled": "AI use, three vendors pooled", "claude": "AI use, Claude",
-                            "chatgpt": "AI use, ChatGPT", "copilot": "AI use, Copilot"})
+    # software capabilities, in the taxonomy's order within its domains
+    caps = list(d.phi.columns)
+    tax = d.tax.set_index("id")
+    domain = tax.name[tax.parent[caps]].set_axis(caps)
+    by_capability = dict(row_names=tax.name[caps], row_groups=domain, short={tax.name[k]: k.capitalize() for k in tax.index[tax.level == 0]})
+    capability_order = f"Capabilities are in the taxonomy's order within its {domain.nunique()} domains."
+    flow = pd.Series(d.need_value_added.loc[com].mean(axis=1).values @ d.wages[0].loc[com].values @ d.phi.values, index=caps)
     out = [
         # --- the account
         Sheet("x", "the output behind a dollar of each need", "per_dollar", xn.loc[com], t.names,
@@ -498,14 +523,16 @@ def sheets(d: Data) -> dict[str, Sheet]:
               entries="Dollars of the commodity produced, at every stage of supply, to deliver a dollar of the need.",
               row_tip="Produced", col_tip="For a dollar of", row_is="Row, the commodity produced:", axis="Needs: one dollar of each",
               code="plenty/analysis.py", sums="cols"),
-        Sheet("f", "the part of a need dollar that pays for each activity", "per_dollar",
-              **lone(act.flow, "f", "Share of a need dollar", "per dollar"), **by_activity,
-              rows="work activities: O*NET's intermediate work activities",
-              entries="Dollars per need dollar, the needs counted equally. It is where today's money goes, not how much an "
-                      "activity matters.",
-              note=f"The entries add up to {d.act_acct.flowed * 100:.1f} cents. The rest of the dollar is in sectors the survey of "
-                   "occupations does not reach, and in occupations whose tasks are not rated.",
-              row_tip="Activity", code="plenty/flows.py", sums="both", order=activity_order),
+        Sheet("k", "the part of a need dollar that pays for work done with each capability", "per_dollar",
+              **lone(flow, "k", "Share of a need dollar", "per dollar"), **by_capability,
+              rows="software capabilities: the taxonomy's",
+              entries="Dollars per need dollar, the needs counted equally, that pay the people who work with the capability. It is "
+                      "the work the software serves, not what the software earns.",
+              note=f"The entries add up to {d.cap_acct.flowed * 100:.1f} cents. Of the rest, "
+                   f"{d.cap_acct.sectors_without_occupation_data * 100:.1f} cents are in sectors the survey of occupations does not "
+                   f"reach, and {d.cap_acct.work_not_placed * 100:.1f} in occupations that list no software or software the taxonomy "
+                   "does not place.",
+              row_tip="Capability", code="plenty/flows.py", sums="both", order=capability_order),
         # --- needs
         Sheet("d", "what a dollar of each need buys", "per_dollar", dn.loc[com], t.names,
               rows="commodities: what is bought", cols="needs: a dollar of each", **by_need,
@@ -657,6 +684,40 @@ def sheets(d: Data) -> dict[str, Sheet]:
               source=oews, note="A wage of $208,000 or more is recorded as $208,000.",
               row_tip="Surveyed industry", col_tip="Occupation", axis="Occupations: their mean annual wage in each industry",
               code=occupations, row_groups=surveyed.group, blanks=not_published, **by_occupation_only),
+        # --- software capabilities
+        Sheet(PHI, "what software each occupation works with", "share", d.phi, occ.title, tax.name[caps],
+              rows="occupations", cols="software capabilities: the taxonomy's",
+              entries="The share of the occupation's work that is done with the capability. A row adds up to the share of the "
+                      "occupation's software the taxonomy places, at most one.",
+              source=f"O*NET 31.0, the U.S. Department of Labor's database of occupations, lists the software products each "
+                     f"occupation uses: {_file('data/occupations/')}. The taxonomy places each product in the capabilities it is an "
+                     f"example of: {_file('taxonomy/')}. An occupation's work is split among its capabilities in proportion to the "
+                     "products it lists in each, times how few other occupations list anything there, so that tools everyone "
+                     "uses take less. An occupation the survey publishes only as a group takes the mean of the occupations in "
+                     "the group.",
+              note="A list of products is not time: O*NET says which software an occupation uses, not for how long.",
+              row_tip="Occupation", col_tip="Capability", axis="Software capabilities: their share of each occupation's work",
+              code="plenty/flows.py", row_groups=occ.major, col_groups=domain,
+              short={**{g: SOC_SHORT[c[:2]] for c, g in occ.major.items()}, **by_capability["short"]},
+              order=f"Occupations are in the order of the Standard Occupational Classification within its 22 major groups. {capability_order}"),
+        Sheet("c", "how much of each capability is open", "share",
+              **lone(d.open_share, "c", "Tasks with an open tool", "share"), **by_capability,
+              rows="software capabilities: the taxonomy's",
+              entries="The share of the capability's tasks for which an open-source tool is known.",
+              source=f"The taxonomy names the open tools known for each of its {int((d.tax.level == 2).sum()):,} tasks: "
+                     f"{_file('taxonomy/capabilities.csv')}.",
+              note="The tools were named from memory when the taxonomy was compiled. An entry says a tool exists, not that it is "
+                   "good enough to do the work.",
+              row_tip="Capability", code="taxonomy/build.py", order=capability_order),
+        # --- work activities: the same dollar, placed on what the work is
+        Sheet("f", "the part of a need dollar that pays for each activity", "per_dollar",
+              **lone(act.flow, "f", "Share of a need dollar", "per dollar"), **by_activity,
+              rows="work activities: O*NET's intermediate work activities",
+              entries="Dollars per need dollar, the needs counted equally. It is where today's money goes, not how much an "
+                      "activity matters.",
+              note=f"The entries add up to {d.act_acct.flowed * 100:.1f} cents. The rest of the dollar is in sectors the survey of "
+                   "occupations does not reach, and in occupations whose tasks are not rated.",
+              row_tip="Activity", code="plenty/flows.py", sums="both", order=activity_order),
         Sheet(THETA, "what each occupation's work is", "share", d.theta, occ.title, act.name,
               rows="occupations", cols="work activities: O*NET's intermediate work activities",
               entries="The share of the occupation's work that is the activity. A row adds up to one, or is empty where no task of "
@@ -670,20 +731,6 @@ def sheets(d: Data) -> dict[str, Sheet]:
               code="plenty/work.py", row_groups=occ.major, col_groups=act.parent.map(d.act.name),
               short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
               order=f"Occupations are in the order of the Standard Occupational Classification within its 22 major groups. {activity_order}"),
-        # --- capability
-        Sheet("c", "what machines can do of each activity", "share", proxies, **by_activity, col_names=proxy_name,
-              col_groups=pd.Series("Not c: the two proxies there are", index=proxies.columns),
-              rows="work activities: O*NET's intermediate work activities", cols="proxies, which stand in for the one column of the term",
-              entries="The term itself is the fraction of the activity that machines can do, ideally with open tools. It is not "
-                      "measured. The first column here is the share of the software listed by the people who do the activity "
-                      "whose tasks have a known open-source tool. The others are the share of a vendor's AI conversations that "
-                      "fall on the activity.",
-              source=f"The open tools are named in {_file('taxonomy/')}. The AI figures are the vendors' own, classified by them into "
-                     f"O*NET's activities: Anthropic's Economic Index, OpenAI's Signals and Microsoft's Working with AI, in "
-                     f"{_file('data/ai/')}.",
-              note="Neither proxy is capability. One says a tool exists, the other that a system is used. Measuring this term is "
-                   "what open benchmarks are for.",
-              row_tip="Activity", col_tip="Proxy", axis="Proxies", code="plenty/ai.py", order=activity_order),
     ]
     assert [s.key for s in out] == TERMS, "the terms and their pages have fallen out of step"
     return {s.key: s for s in out}
@@ -834,7 +881,7 @@ def term_page(d: Data, key: str) -> str:
     if key in USES:
         spec.append(("Made from", term_links(d, USES[key], key)))
     users = [k for k in TERMS if key in USES.get(k, ())]
-    into = [equation(k, key) for k in users if k in EQUATIONS] + ([equation("gap", key)] if key in "fc" else [])
+    into = [equation(k, key) for k in users if k in EQUATIONS] + ([equation("gap", key)] if key in "kc" else [])
     plain = [k for k in users if k not in EQUATIONS]
     if into or plain:
         spec.append(("Used in", (_eqs(into) if into else "") + (f"<p>{term_links(d, plain, key)}</p>" if plain else "")))
@@ -868,7 +915,7 @@ def account_table(d: Data) -> str:
             nr, nc = s.values.shape
             size = f"{nr:,} {e(s.rows.split(':')[0])}" + (f" &times; {nc:,} {e(s.cols.split(':')[0].split(',')[0])}" if nc > 1 else "")
             a, b = equation(k) if k in EQUATIONS else ("", "")
-            made = _m(f"{a}<mo>=</mo>{b}") if a else '<span class="dim">Data</span>' if k != "c" else '<span class="dim">Not measured</span>'
+            made = _m(f"{a}<mo>=</mo>{b}") if a else '<span class="dim">Data</span>'
             rows.append(f'<tr><th scope="row">{_m(_term(k))}</th><td class="wrap"><a href="{s.href}">{e(s.name[0].upper() + s.name[1:])}</a></td>'
                         f'<td class="wrap">{size}</td><td>{made}</td></tr>')
     return table([th("Term"), th("What it is"), th("Size"), th("Made from")], rows, attrs=' class="terms"',
@@ -876,14 +923,21 @@ def account_table(d: Data) -> str:
                          "it comes from, what it goes into, and a picture of the whole of it.")
 
 
+def gap(d: Data) -> float:
+    """The third line of the account: the part of a need dollar that pays for work done with software
+    capabilities whose tasks have no known open tool."""
+    k, c = (d.sheets[key].values.iloc[:, 0] for key in "kc")
+    return float(k @ (1 - c))
+
+
 def account_section(d: Data) -> str:
-    """The whole account as three equations, and every term in them."""
-    n_act = int((d.act.level == "intermediate").sum())
-    return f"""{_eqs([equation("x"), equation("f"), equation("gap")])}
+    """The whole account as three equations, what they come to, and every term in them."""
+    k = d.sheets["k"].values.iloc[:, 0]
+    return f"""{_eqs([equation("x"), equation("k"), equation("gap")])}
 <p>{_m("<mi>N</mi>")} is the number of needs, {len(NEED_NAME)}, each counted equally, and {_m(_ONES)} is a column of ones.
-The first two lines are computed. Together they place {d.act_acct.flowed * 100:.1f} cents of a need dollar on {n_act} work
-activities. The third line is the goal: the part of a need dollar that pays for work machines cannot yet do. Its
-{_m(_sym("c"))} is not measured yet.</p>
+The second line places {k.sum() * 100:.1f} cents of a need dollar on {len(k)} software capabilities: what is paid to the people
+who work with each. The third line comes to {gap(d) * 100:.1f} cents: the part of that paid for work with capabilities whose
+tasks have no known open tool.</p>
 <h2 id="terms">Every term</h2>
 {account_table(d)}
 """
@@ -894,8 +948,8 @@ def index(d: Data) -> str:
     body = f"""
 <h1>The account</h1>
 <p class="lede">A dollar of each need is traced to the commodities it buys, to everything the economy produces to
-deliver them, to the sectors whose income it becomes, to the occupations they pay, and to the work those occupations
-do. Every term is a link to its matrix.</p>
+deliver them, to the sectors whose income it becomes, to the occupations they pay, and to the software those
+occupations work with. Every term is a link to its matrix.</p>
 {account_section(d)}"""
     return page("The account", body, home=True)
 

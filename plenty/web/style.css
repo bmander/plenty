@@ -309,7 +309,7 @@ math:has(a.inv:hover) a.inv { text-decoration-color: var(--series); }   /* the p
 .mx-left { grid-column: 1; width: 11.5em; }
 /* a matrix whose columns are always all in view (.mx-lock) has room to write their names along them */
 .mx-lock .mx-top { height: 5.6em; }
-.mx-lock .mx-axis { width: max-content; min-width: 100%; max-width: calc(100vw - 90px); }   /* the buttons need more room than a lone column has */
+.mx-axis { width: max-content; min-width: 100%; max-width: calc(100vw - 90px); }   /* the buttons need more room than a narrow picture has */
 .mx-top > .mx-name.flat { display: flex; align-items: flex-end; justify-content: center; padding: 0 4px calc(var(--sort) + 3px); text-align: center; }
 .mx-left > span { left: 0; right: 0; }
 .mx-left > .mx-group { padding: 0 6px; display: flex; align-items: center; justify-content: flex-end; }
