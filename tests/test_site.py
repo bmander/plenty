@@ -752,3 +752,49 @@ def test_work_is_weighed_by_what_it_costs_those_who_do_it(built):
         assert f"hours of cost {site._few(scores.wellbys_back[key])} WELLBYs a year" in page, key
         assert f'<td class="num">{site._wellbys(scores.wellbys_a_year[key])}</td>' in proposals and f'<td class="num">{site._few(scores.wellbys_back[key])}</td>' in proposals, key
     assert site._wellbys(306_157) == "306,000" and site._wellbys(4.67e6) == "4.7 million" and site._few(101.02) == "101" and site._few(0.306) == "0.31"
+
+
+def test_the_guide_sets_wellbys_of_every_size_beside_things_of_that_size(built):
+    marks, examples = site.wellby_benchmarks(), site.wellby_examples(built)
+    assert marks.what.is_unique and marks[["what", "by", "source"]].notna().all().all() and marks.url.str.startswith("https://").all()
+    assert (marks.wellbys != 0).all() and (marks.wellbys == site.HEALTHY_YEAR).sum() == 1
+    # every benchmark is an example with its source, and the experienced ones have none and are counted from the ratings
+    assert len(examples) == len({what for _, what, _ in examples}) and all(w != 0 and np.isfinite(w) for w, _, _ in examples)
+    by = {what: (w, source) for w, what, source in examples}
+    for r in marks.itertuples():
+        assert by[markup.escape(r.what)] == (r.wellbys, f'<a href="{markup.escape(r.url)}">{markup.escape(r.by)}</a>'), r.what
+    year = 365.25 * 24
+    job = built.below_rest(site.WORKING)
+    assert np.isclose(by["An hour at a job"][0], -job / year) and by["An hour at a job"][1] == ""
+    assert np.isclose(by["A year of full-time work"][0], -job * site.HOURS_A_YEAR / year)
+    assert np.isclose(by["A day off, in place of a working day of eight hours"][0], -by["A working day of eight hours"][0])
+    assert np.isclose(by["A minute of play with one's child"][0], -built.below_rest(site.FELT["play"]) / year / 60) and by["A minute of play with one's child"][0] > 0
+    assert all(built.feelings.index.str.startswith(codes).any() and built.feelings[built.feelings.index.str.startswith(codes)].compared.sum() > 300
+               for codes in site.FELT.values())
+    xi, scores = built.sheets[site.XI].values, site.proposal_scores(built)
+    assert np.isclose(by["All the work behind the needs of the United States, for a year"][0], -xi.spending.sum() * built.spent / 1e9)
+    for key, x in built.proposals.items():
+        assert np.isclose(by[f'<a href="{x.href}">{markup.escape(x.name)}</a>, if it did all it claims, for a year'][0], scores.wellbys_a_year[key]), key
+    # the table: a row for each power of ten, each example once and in the row nearest its size, under the column of its sign
+    page = (site.SITE / built.units["microwellby"].href).read_text()
+    table = page[page.index(f'id="{site.GUIDE}"'):page.index("</table>")]
+    rows = table.split("<tr>")[2:]
+    top = max(int(np.floor(np.log10(abs(w)) + 0.5)) for w, _, _ in examples)
+    assert len(rows) == top + 8 and top >= 9
+    assert rows[0].startswith('<th scope="row">0.1 microWELLBYs</th><td class="wrap">one person for 3.2 seconds</td>')
+    assert rows[4].startswith('<th scope="row">1,000 microWELLBYs</th>') and rows[7].startswith('<th scope="row">1 WELLBY</th><td class="wrap">one person for a year</td>')
+    assert rows[8].startswith('<th scope="row">10 WELLBYs</th><td class="wrap">10 people for a year</td>')
+    for w, what, source in examples:
+        said = f"{what}: {site._size(w)}" + (f" ({source})" if source else "")
+        k = int(np.floor(np.log10(abs(w)) + 0.5))
+        assert table.count(said) == 1 and said in rows[k + 7].split('<td class="wrap">')[2 if w < 0 else 3], what
+        assert 10 ** (k - 0.5) <= abs(w) < 10 ** (k + 0.5), what
+    assert sum(1 for r in rows if '<td class="wrap"></td><td class="wrap"></td>' in r) <= 1       # few sizes have nothing beside them
+    assert site._size(-85.3e-6) == "&minus;85 microWELLBYs" and site._size(1e-6) == "+1 microWELLBY" and site._size(0.0148) == "+0.015 WELLBYs"
+    assert site._size(-7) == "&minus;7 WELLBYs" and site._size(45_728) == "+45,700 WELLBYs" and site._size(22.6e6) == "+22.6 million WELLBYs"
+    for source in marks.source.unique():
+        assert page.count(markup.escape(source)) == 1, source
+    # and the account points to it
+    home = (site.SITE / site.HOME).read_text()
+    assert f'<a href="{built.units["microwellby"].href}#{site.GUIDE}">guide to sizes</a>' in home
+

@@ -380,6 +380,9 @@ It also weighs each hour by how far people rate such work below the rest of thei
 scale from 0 to 10, and counts the cost in experienced WELLBYs, a WELLBY being one point for one
 person for one year: a job is rated about three quarters of a point below the rest of the day,
 and work at home about a fifth of one.
+The unit's page has a guide to sizes, from a tenth of a microWELLBY to a billion WELLBYs, each
+beside things that take away or add about that much. Its benchmarks of life as a whole are
+others' findings, in `config/wellby_benchmarks.csv`.
 
 Last come the proposals: things that could be built, one file each in
 [`proposals/`](proposals/), which says how to write one. A proposal states what it is, how a

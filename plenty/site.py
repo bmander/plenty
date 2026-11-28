@@ -1961,7 +1961,13 @@ is put on one scale from 0 to 10, happiness less the mean of pain, sadness and s
 other time that was not work. The two kinds of answer do not always agree, so a figure here is not to be set beside a
 WELLBY counted the usual way without saying so.</p>
 <p>With the needs counted equally, the work behind a thousand need dollars costs those who do it
-{d.sheets[XI].values.equal.sum():,.0f} of them, {T(XI)}.</p>"""),
+{d.sheets[XI].values.equal.sum():,.0f} of them, {T(XI)}.</p>
+<h2>A guide to sizes</h2>
+<p>A WELLBY is an amount and not a rate, as a kilowatt-hour is: a point held for a time. What follows sets amounts of
+every size beside things that come to about that much. The benchmarks of life as a whole are in
+{_file('config/wellby_benchmarks.csv')}. The British Treasury, whose guidance several are from, values one WELLBY at
+£13,000 in the prices of 2019, between a low of £10,000 and a high of £16,000.</p>
+{wellby_guide(d)}"""),
         Unit("dollar-a-year", "dollar a year", "dollars a year", False,
              "A dollar of an occupation's mean annual wage, in May 2021.",
              f"""<p>A dollar of the mean annual wage of an {_unit("occupation")} in a
@@ -2201,6 +2207,94 @@ def _wellbys(x: float) -> str:
     return _count(x) if x >= 1e6 else f"{float(f'{x:.3g}'):,.0f}"
 
 
+GUIDE = "guide"                      # where the guide to the sizes of WELLBYs is, on the page of the unit
+HEALTHY_YEAR = 7                     # the points between a year in good health and one as bad as death, by the Treasury's guidance
+# the time-use survey's codes for the kinds of time the guide gives as examples
+FELT = {"cleanup": "020203", "cleaning": "020101", "commute": "1805", "homework": "0603", "play": "030103", "friends": "1201",
+        "eating": "1101", "sport": "1301"}
+
+
+def _size(w: float) -> str:
+    """An amount of wellbeing with its sign: in microWELLBYs under a thousandth of a WELLBY, in WELLBYs from there."""
+    a, sign = abs(w), "&minus;" if w < 0 else "+"
+    def figures(x):                  # to two figures under a hundred and three from there, a million or more in words
+        if x >= 1e6:
+            return _count(x)
+        v = float(f"{x:.2g}" if x < 100 else f"{x:.3g}")
+        return f"{v:,.0f}" if v >= 100 else f"{v:g}"
+    micro = a < 0.9995e-3
+    said = figures(a * 1e6 if micro else a)
+    return f"{sign}{said} {'microWELLBY' if micro else 'WELLBY'}{'' if said == '1' else 's'}"
+
+
+def wellby_benchmarks() -> pd.DataFrame:
+    """What others have found things to come to in WELLBYs, of life as a whole (config/wellby_benchmarks.csv)."""
+    return pd.read_csv(M.CONFIG / "wellby_benchmarks.csv")
+
+
+def wellby_examples(d: Data) -> list[tuple[float, str, str]]:
+    """Things of every size, each as (WELLBYs, what it is, where the figure is from as HTML). The first are experienced,
+    counted from how people rated their time against the rest of their own day; the last are of life as a whole, from
+    config/wellby_benchmarks.csv."""
+    detail, xi, scores = d.unpaid[1], d.sheets[XI].values, proposal_scores(d)
+    hour = {k: -d.below_rest(codes) / (365.25 * 24) for k, codes in {"job": WORKING, **FELT}.items()}      # WELLBYs for an hour of it, in place of other time that is not work
+    home = -(detail.hours * detail.below_rest).sum() / detail.hours.sum() / (365.25 * 24)
+    people = d.spending["all"].astype(float)
+    people = people["Number of consumer units (in thousands)"] * 1e3 * people["People"]
+    felt = [
+        (hour["job"] * 5 / 3600, "Five seconds at a job"), (hour["job"] / 60, "A minute at a job"),
+        (hour["cleanup"] / 6, "Ten minutes of cleaning up the kitchen"), (hour["commute"] / 6, "Ten minutes of travel to or from work"),
+        (hour["job"], "An hour at a job"), (hour["cleaning"], "An hour of cleaning the house"), (hour["homework"], "An hour of homework for a class"),
+        (hour["job"] * 8, "A working day of eight hours"), (hour["job"] * HOURS_A_YEAR / 12, "A month of full-time work"),
+        (home * detail.hours_per_day.sum() * 365, f"A year of the unpaid work at home an adult does, {detail.hours_per_day.sum():.0f} hours a day"),
+        (hour["job"] * HOURS_A_YEAR, "A year of full-time work"), (hour["job"] * HOURS_A_YEAR * 45, "Forty-five years of full-time work"),
+        (-xi.spending.sum() * d.spent / 1e9, "All the work behind the needs of the United States, for a year"),
+        (hour["play"] * 5 / 3600, "Five seconds of play with one's child"), (hour["play"] / 60, "A minute of play with one's child"),
+        (hour["play"] / 6, "Ten minutes of play with one's child"), (hour["friends"], "An hour with friends or family"),
+        (hour["eating"], "An hour of eating and drinking"), (hour["sport"], "An hour of sport or exercise"),
+        (-hour["job"] * 8, "A day off, in place of a working day of eight hours"),
+        (hour["friends"] * 365, "An hour a day with friends or family, for a year"),
+        *((r.wellbys_a_year, f'<a href="{d.proposals[k].href}">{e(d.proposals[k].name)}</a>, if it did all it claims, for a year')
+          for k, r in scores.iterrows()),
+    ]
+    marks = wellby_benchmarks()
+    life = [(r.wellbys, e(r.what), f'<a href="{e(r.url)}">{e(r.by)}</a>') for r in marks.itertuples()]
+    treasury = marks[marks.wellbys == HEALTHY_YEAR].iloc[0]
+    life.append((HEALTHY_YEAR * people, f"A year in good health for everyone in the United States, {_count(people)} people",
+                 f'<a href="{e(treasury.url)}">{e(treasury.by)}</a>'))
+    return [(w, what, "") for w, what in felt] + life
+
+
+def wellby_guide(d: Data) -> str:
+    """A table of sizes, a row for each power of ten from a tenth of a microWELLBY up, with things that take away
+    about that much and things that add it. An example is put in the row nearest its size."""
+    examples = wellby_examples(d)
+    rung = lambda w: int(np.floor(np.log10(abs(w)) + 0.5))
+    rungs = range(-7, max(rung(w) for w, _, _ in examples) + 1)
+    def one_point_for(k: int) -> str:
+        if k >= 0:
+            return "one person for a year" if k == 0 else f"{_count(10 ** k)} people for a year"
+        seconds = 10.0 ** k * 365.25 * 24 * 3600
+        for size, name in ((7 * 86400, "weeks"), (86400, "days"), (3600, "hours"), (60, "minutes"), (1, "seconds")):
+            if seconds >= 1.5 * size:
+                return f"one person for {seconds / size:.{0 if seconds / size >= 9.5 else 1}f} {name}".replace(".0 ", " ")
+    def cell(k: int, sign: int) -> str:
+        here = sorted((x for x in examples if rung(x[0]) == k and np.sign(x[0]) == sign), key=lambda x: abs(x[0]))
+        return "<br>".join(f"{what}: {_size(w)}" + (f" ({source})" if source else "") for w, what, source in here)
+    def amount(k: int) -> str:       # a thousandth of a WELLBY is said as a thousand microWELLBYs
+        return "1,000 microWELLBYs" if k == -3 else _size(10.0 ** k)[1:]
+    rows = [f'<tr><th scope="row">{amount(k)}</th><td class="wrap">{one_point_for(k)}</td>'
+            f'<td class="wrap">{cell(k, -1)}</td><td class="wrap">{cell(k, 1)}</td></tr>' for k in rungs]
+    cited = wellby_benchmarks().drop_duplicates("source")
+    sources = " ".join(f'<a href="{e(r.url)}">{e(r.source)}</a>.' for r in cited.itertuples())
+    return table([th("Amount"), th("That is one point for"), th("Takes about that much away"), th("Adds about that much")], rows,
+                 attrs=f' data-scores id="{GUIDE}"',
+                 caption="Each row is ten times the one above, and a thing is put in the row nearest its size. A figure with "
+                         "no source named is experienced: counted here from how people rated that time against the rest of "
+                         "their own day. A figure with a source is of life as a whole, and the two are not the same measure. "
+                         f"The sources: {sources}")
+
+
 def hours_section(d: Data) -> str:
     """The account again in hours, and what changes when work is counted by the time it takes and not by its pay."""
     f, h, tau, eta = (d.sheets[key].values for key in ("f", "h", TAU, ETA))
@@ -2267,7 +2361,8 @@ household's children {-below["Caring for and helping household children"]:.2f} a
 microWELLBYs. At that rate the work behind a thousand need dollars costs those who do it {xi.equal.sum():,.0f}
 experienced microWELLBYs, {_m(_sym(XI))}: {xi.equal.sum() - lost_unpaid:,.0f} paid and {lost_unpaid:,.0f} unpaid. Unpaid
 work is {unpaid_hours / tau.equal.sum() * 100:.0f}% of the hours and {lost_unpaid / xi.equal.sum() * 100:.0f}% of this cost.
-As the needs were in fact paid for, it comes to {_wellbys(xi.spending.sum() * d.spent / 1e9)} WELLBYs a year.</p>
+As the needs were in fact paid for, it comes to {_wellbys(xi.spending.sum() * d.spent / 1e9)} WELLBYs a year. A
+<a href="{d.units["microwellby"].href}#{GUIDE}">guide to sizes</a> sets these amounts beside other things.</p>
 <p>They are called experienced because a WELLBY proper is counted from what people say of their life as a whole, and
 these are counted from what they felt at the time. The scale is also even: six hours one point down count as one hour
 six points down, and those who study severe pain think the worst hours count for far more. Counting only the time with
