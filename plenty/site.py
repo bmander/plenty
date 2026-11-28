@@ -313,6 +313,25 @@ class Data:
         return A.need_demand(self.io.t)[needs].values.sum() * 1e6
 
     @functools.cached_property
+    def people(self) -> float:
+        """The people of the United States in 2017, as the survey of what households spend counts them."""
+        s = self.spending["all"].astype(float)
+        return s["Number of consumer units (in thousands)"] * 1e3 * s["People"]
+
+    @functools.cached_property
+    def prices(self) -> pd.Series:
+        """What people pay, in dollars of 2017: for an hour of healthy life, for an hour of their own time, and for an
+        hour of work. And the rates those make: the hours of healthy life an hour given back is worth, and those a
+        full-time job's pay for a year is priced as. Health is the part of full health an ordinary year is lived at."""
+        p = published_prices().value
+        health = 1 - self.burden.yld_thousands[self.burden.level == 0].sum() * 1e3 / self.people
+        life = p.life / (p.life_left * YEAR_HOURS * health)
+        time = p.time_share * p.household_income / HOURS_A_YEAR
+        pay = self.io.t.VA.loc[HR.PAY].sum() / HR.industry_hours(self.io.t).sum()
+        return pd.Series({"health": health, "life": life, "time": time, "pay": pay,
+                          "hour_back": time / life, "job_lost": HOURS_A_YEAR * pay / life})
+
+    @functools.cached_property
     def unpaid_hours(self) -> pd.DataFrame:
         """X: the hours of that unpaid work for every thousand dollars spent on the needs, occupation x
         work activity. It is G before the hours are valued at a wage."""
@@ -442,8 +461,10 @@ REPLACED, WITH, BEHIND = "Ψ", "Π", "φ"                  # the sectors a propo
 JOBS, BACK = "j", "ε"                                   # the jobs in a proposal's paid hours, and what all its hours cost those who work them
 KEPT, LOST = "Ξ", "Ω"                               # what a proposal that works gives back, with the jobs in its hours kept and with them lost
 ILL, LIFTS = "ι", "Δ"                                   # the healthy life each cause of ill health takes, and the part of each a proposal would lift
-HEALTHY_YEAR = 7                                        # the points between a year in good health and one as bad as death, by the Treasury's guidance: a benchmark too
-JOBLESS_POINTS = 0.70                                   # what a year without a job takes from a life, in points of 10: a benchmark in config/wellby_benchmarks.csv
+HEALTHY_YEAR = 7                                        # the points between a year in good health and one as bad as death, by the Treasury's guidance: a benchmark of the guide
+YEAR_HOURS = 365.25 * 24                                # the hours in a year of life
+HOUR_BACK = "0.43"                                      # the hours of healthy life an hour given back is worth, as epsilon's equation prints it; a test holds it to the prices
+JOB_LOST = "2.36"                                       # the thousands of hours of healthy life a job's pay for a year is priced as, as Omega's equation prints it; held likewise
 XI = "ξ"                                                # and what they cost those who work them, in wellbeing
 WORKING = "0501"                                        # the time-use survey's code for working at a job
 JOB_POINTS = "0.75"                                     # how far below the rest of the day a job is rated, as xi's equation prints it; a test holds it to the data
@@ -478,7 +499,7 @@ PER_NEED = "dxv"                      # the vectors there is one of for each nee
 # what each computed term is made from; a term that is not here is data
 USES = {ETA: [TAU, "m", "e"], TAU: [PI, THETA, "X"], PI: [BETA, "Z"], BETA: [CHI, OMEGA, "v"], CHI: ["l", "g", "D", "r"], "Z": ["T", "E"], "X": ["Y"],
         LABOUR: [CHI, "r", "L"], BOUGHT: [OMEGA, "d", "r", "x"], WITH: [CHI, "r", REPLACED, "A"], BEHIND: [LABOUR, WITH, BOUGHT],
-        JOBS: ["C", THETA, PI, "e", BEHIND], BACK: ["C", XI, "e", BEHIND], KEPT: [BACK, LIFTS, ILL], LOST: [KEPT, JOBS],
+        JOBS: ["C", THETA, PI, "e", BEHIND], BACK: [PSI, BEHIND], KEPT: [BACK, LIFTS, ILL], LOST: [KEPT, JOBS],
         PSI: ["C", TAU, "e"], KAPPA: [SIGMA, BETA, "Z", THETA, PI], SIGMA: ["l", "g", "V"],
         ZETA: [PI, THETA, "X"], XI: [DELTA, THETA, PI, "X"],
         "x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "h": ["f", "m", "e"], RHO: [ALPHA, MU], ALPHA: ["p", THETA, "G", "m", "e", GAMMA, LAMBDA], "o": ["k", "a", "c"], PHI: ["J", "Q", "R", "u"], "u": ["Q", "R"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
@@ -552,6 +573,10 @@ MATRIX_KINDS = {
     "years": {"unit": 1e-4, "cut": 1e-3, "scale": (1e-3, 10.0), "ticks": ("0.001", "0.01", "0.1", "1", "10"),
               "blank": "under 0.001 years per $1 million", "small": "under a thousandth of a year",
               "colour": "years of healthy life per million dollars", "in_cell": "in years"},
+    # hours of healthy life for every thousand dollars; it can be negative
+    "life": {"unit": 1e-4, "cut": 1e-3, "scale": (1e-3, 100.0), "ticks": ("0.001", "0.01", "0.1", "1", "10", "100"),
+             "blank": "under 0.001 hours of healthy life per $1,000", "small": "under a thousandth of an hour",
+             "colour": "hours of healthy life per thousand dollars", "in_cell": "in hours"},
     # wellbeing, in microWELLBYs for every thousand dollars; it can be negative
     "wellbeing": {"unit": 1e-2, "cut": 0.1, "scale": (0.1, 1e3), "ticks": ("0.1", "1", "10", "100", "1,000"),
                   "blank": "under 0.1 microWELLBYs per $1,000", "small": "under a tenth of a microWELLBY",
@@ -695,14 +720,13 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     if key == JOBS:       # the paid hours a proposal would do, claimed by activity and behind the sectors it replaces, in full-time jobs
         claimed = f'{S("C", T=True)}{_TIMES}{_paren(_paren(S(THETA, T=True) + _TIMES + S(PI)) + _HADAMARD + less_open)}'
         return S(JOBS), f'<mfrac><mn>1</mn><mn>{HOURS_A_YEAR / 1000:g}</mn></mfrac>{_TIMES}{_paren(claimed + "<mo>+</mo>" + S(BEHIND))}'
-    if key == BACK:       # what those hours cost the people who work them: claimed hours at their own points, hours behind sectors at a job's
-        at_a_job = f'<mn>{POINT_HOUR:.0f}</mn><mo>&sdot;</mo><mn>{JOB_POINTS}</mn>{_TIMES}{S(BEHIND)}'
-        return S(BACK), f'{S("C", T=True)}{_TIMES}{_paren(f"{S(XI)}{_HADAMARD}{less_open}")}<mo>+</mo>{at_a_job}'
-    if key == KEPT:   # with the healthy life it gives back to those it serves, at a healthy year's points
-        health = f'<mn>{HEALTHY_YEAR * 1000:,}</mn>{_TIMES}{S(LIFTS, T=True)}{_TIMES}{S(ILL)}{_TIMES}<msup>{_ONES}{_TR}</msup>'
+    if key == BACK:       # what those hours are worth to the people who work them: each at what people pay for an hour of their own time
+        return S(BACK), f'<mn>{HOUR_BACK}</mn>{_TIMES}{_paren(S(PSI) + "<mo>+</mo>" + S(BEHIND))}'
+    if key == KEPT:       # with the healthy life it gives back to those it serves: a year for a million dollars, in hours for a thousand
+        health = f'<mn>{YEAR_HOURS / 1000:.3f}</mn>{_TIMES}{S(LIFTS, T=True)}{_TIMES}{S(ILL)}{_TIMES}<msup>{_ONES}{_TR}</msup>'
         return S(KEPT), f'{S(BACK)}<mo>+</mo>{health}'
-    if key == LOST:       # less what a year without a job takes from each of those whose jobs were in the hours
-        return S(LOST), f'{S(KEPT)}<mo>&minus;</mo><mn>{JOBLESS_POINTS * 1000:.0f}</mn>{_TIMES}{S(JOBS)}'
+    if key == LOST:       # less the pay of each of the jobs that were in the hours, at the price of healthy life
+        return S(LOST), f'{S(KEPT)}<mo>&minus;</mo><mn>{JOB_LOST}</mn>{_TIMES}{S(JOBS)}'
     if key == XI:         # what the hours cost: paid hours at the points of a job, unpaid hours at the points of each kind of work at home
         paid = f'<mn>{JOB_POINTS}</mn>{_TIMES}{S(THETA, T=True)}{_TIMES}{S(PI)}'
         unpaid = f'{S(DELTA)}{_HADAMARD}{_paren(S("X", T=True) + _TIMES + _ONES)}'
@@ -788,6 +812,7 @@ EQUATIONS = [KEPT, LOST, BACK, JOBS, BEHIND, WITH, LABOUR, BOUGHT, ETA, TAU, PI,
 _WORK = "[work dollars|work-dollar] per [need dollar|need-dollar]"
 _MILLIONS, _MARK = "[millions of dollars|million-dollars], in 2017", "[one or zero|one-or-zero]"
 _HOURS = "[hours|hour] of work per thousand [need dollars|need-dollar]"
+_LIFE = "[hours of healthy life|healthy-hour] per thousand [need dollars|need-dollar]"
 _STILL = f"hours in {HR.YEAR} for each hour in {HR.SINCE}, a [number|number] with no unit"
 MEASURED_IN = {
     ETA: _HOURS, TAU: _HOURS, PI: _HOURS, BETA: _HOURS, "X": _HOURS, PSI: _HOURS,
@@ -805,11 +830,11 @@ MEASURED_IN = {
     REPLACED: "the part of the sector the proposal would replace, a [share|share] of one",
     BEHIND: _HOURS,
     JOBS: "[full-time jobs|job-year] per million [need dollars|need-dollar]",
-    BACK: "[experienced microWELLBYs|microwellby] per thousand [need dollars|need-dollar]",
+    BACK: _LIFE,
     ILL: "[years of healthy life|healthy-year] lost in a year, per million [need dollars|need-dollar]",
     LIFTS: "the part of what the cause takes that the proposal would give back, a [share|share] of one",
-    KEPT: "[experienced microWELLBYs|microwellby] per thousand [need dollars|need-dollar]",
-    LOST: "[experienced microWELLBYs|microwellby] per thousand [need dollars|need-dollar]",
+    KEPT: _LIFE,
+    LOST: _LIFE,
     "x": "[commodity dollars|commodity-dollar] produced per [need dollar|need-dollar]",
     "p": _WORK, "k": _WORK, "o": _WORK, "f": _WORK, "h": _WORK, "b": _WORK, "G": _WORK,
     ALPHA: _WORK, RHO: _WORK, GAMMA: _MARK,
@@ -1088,11 +1113,10 @@ def sheets(d: Data) -> dict[str, Sheet]:
                           for k, z in ((k, replaced[k].values) for k in replaced.columns)}, index=com)             # Pi
     bought = frame((dn.loc[com, needs].values / (per_value_added.loc[com].values @ xn.loc[com, needs].values)) @ weights.loc[needs].values, com)   # upsilon
     behind = frame((labour.values[:, None] - with_.values).T @ bought.values, claims.columns)                    # phi
-    # what a proposal's hours hold and cost: the jobs in its paid hours, and the wellbeing of those who work all of them
+    # what a proposal's hours hold and are worth: the jobs in its paid hours, and what people pay for all of them as hours of their own
     paid_claimed = frame(claims.values.T @ frame(d.theta.values.T @ paid_hours.values, act.index).mul(1 - opened, axis=0).values, claims.columns)
     jobs = (paid_claimed + behind) / (HOURS_A_YEAR / 1000)                                                         # j, for every million need dollars
-    given_back = (frame(claims.values.T @ wellbeing_lost.mul(1 - opened, axis=0).values, claims.columns)
-                  + behind * d.below_rest(WORKING) * POINT_HOUR)                                                   # epsilon
+    given_back = (would_do + behind) * d.prices.hour_back                                                         # epsilon, in hours of healthy life
     # and the health of those it serves: the years of healthy life each cause takes, and the part of each a proposal would give back
     ills = d.burden[d.burden["last"]].set_index("code")
     healthy_years = (ills.yld_thousands + ills.yll_thousands) * 1e3 / (d.spent / 1e6)                              # iota, for every million need dollars
@@ -1104,12 +1128,12 @@ def sheets(d: Data) -> dict[str, Sheet]:
     for key, x in d.proposals.items():
         for code, share in sorted(x.lifts.share.items(), key=lambda kv: depth[kv[0]]):       # the deeper cause has the last word
             lifted.loc[filed_under(code), key] = share
-    health_back = lifted.T @ healthy_years * HEALTHY_YEAR * 1000                                                  # microWELLBYs per thousand need dollars
+    health_back = lifted.T @ healthy_years * YEAR_HOURS / 1000                                                    # hours of healthy life per thousand need dollars
     kept = given_back.add(health_back, axis=0)                                                                    # Xi, if the proposal works
     names_of = d.burden.set_index("code").cause
     ill_groups = pd.Series({c: names_of[([c] + _above(c, under))[max(0, depth[c] - 2)]] for c in ills.index})     # the cause two steps down the list that it is filed under
     ill_order = f"Causes are in the Organization's order within its {ill_groups.nunique()} groups."
-    if_lost = kept - jobs * JOBLESS_POINTS * 1000                                                                 # Omega
+    if_lost = kept - jobs * d.prices.job_lost / 1000                                                              # Omega
     of_proposals = pd.Series("Proposals", index=claims.columns)
     proposal_order = "Proposals are in the order of their files' names."
     production_account = ("The integrated industry-level production account of the U.S. Bureau of Economic Analysis and Bureau of "
@@ -1362,21 +1386,20 @@ def sheets(d: Data) -> dict[str, Sheet]:
               note="It is a ceiling: the work the claims cover, if the proposal did all of it. A claim is the proposer's own. "
                    "Proposals overlap, so the rows do not add up.",
               row_tip="Proposal", code="plenty/site.py", order=proposal_order),
-        Sheet(KEPT, "what each proposal would give back, the jobs kept", "wellbeing", kept, proposed, **by_weighing,
+        Sheet(KEPT, "what each proposal would give back, the jobs kept", "life", kept, proposed, **by_weighing,
               rows="scored proposals", row_groups=of_proposals,
-              entries="MicroWELLBYs for every thousand need dollars, if the proposal works: what the hours it would do cost those "
-                      f"who work them, and the healthy life it would give back to those it serves at {HEALTHY_YEAR} points a year.",
+              entries="Hours of healthy life for every thousand need dollars, if the proposal works: what the hours it would do "
+                      "are worth to those who work them, and the healthy life it would give back to those it serves.",
               row_tip="Proposal", code="plenty/site.py", order=proposal_order),
-        Sheet(LOST, "what each proposal would give back, the jobs lost", "wellbeing", if_lost, proposed, **by_weighing,
+        Sheet(LOST, "what each proposal would give back, the jobs lost", "life", if_lost, proposed, **by_weighing,
               rows="scored proposals", row_groups=of_proposals,
-              entries="The same, less what a year without a job takes from each person whose job was in those hours: "
-                      f"{JOBLESS_POINTS:.2f} points of 10.",
+              entries="The same, less a year's pay for each job that was in those hours, at the price of healthy life.",
               row_tip="Proposal", code="plenty/site.py", order=proposal_order),
-        Sheet(BACK, "what the hours each proposal would do cost those who work them", "wellbeing", given_back, proposed, **by_weighing,
+        Sheet(BACK, "what the hours each proposal would do are worth to those who work them", "life", given_back, proposed, **by_weighing,
               rows="scored proposals", row_groups=of_proposals,
-              entries="Experienced microWELLBYs for every thousand need dollars: the hours in the activities the proposal claims, "
-                      "each at the points people rate such work below the rest of their day, and the hours behind the sectors it "
-                      f"replaces, each at the {JOB_POINTS} points of a job.",
+              entries="Hours of healthy life for every thousand need dollars: the hours in the activities the proposal claims and "
+                      f"behind the sectors it replaces, each at the {HOUR_BACK} of an hour of healthy life that people pay for an "
+                      "hour of their own time.",
               row_tip="Proposal", code="plenty/site.py", order=proposal_order),
         Sheet(JOBS, "the full-time jobs in the paid hours each proposal would do", "jobs", jobs, proposed, **by_weighing,
               rows="scored proposals", row_groups=of_proposals,
@@ -1996,6 +2019,19 @@ def units(d: Data) -> dict[str, Unit]:
     occ, surveyed = d.wage_bill[2], d.survey[3]
     needs = [NEED_NAME[n].lower() for n in d.sheets["Y"].values.columns]
     ways = d.sheets[OMEGA].values
+    pub, price = published_prices(), d.prices
+    def said(key: str, text: str) -> str:              # a published figure, as a link to where it is published
+        return f'<a href="{e(pub.url[key])}">{text}</a>'
+    def priced(dollars: float) -> str:
+        return f"${dollars / 1e6:.1f} million" if dollars >= 1e6 else f"${dollars:,.0f}" if dollars >= 100 else f"${dollars:.2f}"
+    def in_hours(hours: float) -> str:
+        return f"{float(f'{hours:.3g}'):,.0f}" if hours >= 1e5 else f"{hours:,.0f}" if hours >= 10 else f"{hours:.2f}"
+    traded = [("An hour of healthy life", price.life), ("An hour of a person's own time", price.time),
+              ("An hour of work, as it is paid", price.pay), ("A full-time job's pay for a year", price.pay * HOURS_A_YEAR),
+              ("A year of healthy life", price.life * YEAR_HOURS), ("A statistical life", pub.value.life)]
+    exchange = table([th("What is traded"), th("Priced at, in dollars of 2017", "num"), th("Hours of healthy life", "num")],
+                     [f'<tr><th scope="row">{what}</th><td class="num">{priced(x)}</td><td class="num">{in_hours(x / price.life)}</td></tr>'
+                      for what, x in traded], attrs=" data-scores")
     out = [
         Unit("commodity", *COUNTED["commodity"], True,
              "One of the goods and services the Bureau of Economic Analysis divides the economy's output into.",
@@ -2226,19 +2262,40 @@ its ends, and that what such months do to the years after them is not counted in
 of full health it takes. In the United States in 2019 they came to
 {(d.burden.yld_thousands + d.burden.yll_thousands)[d.burden.level == 0].sum() / 1e3:.0f} million. {T(ILL)} counts them for
 every million {_unit("need-dollar", "need dollars")}.</p>
-<p>The British Treasury's guidance takes good health as 8 points of 10 and a state as bad as death as 1, so a year of
-healthy life is {HEALTHY_YEAR} WELLBYs, and one such year for every million need dollars is {HEALTHY_YEAR * 1000:,}
-{_unit("microwellby", "microWELLBYs")} for every thousand: the figure in {T(KEPT)}. These are WELLBYs of life as a
-whole, and {T(KEPT)} adds them to experienced ones.</p>"""),
+<p>It is {YEAR_HOURS:,.0f} {_unit("healthy-hour", "hours of healthy life")}, so one year for every million need dollars is
+{YEAR_HOURS / 1000:.3f} hours for every thousand: the figure in {T(KEPT)}.</p>"""),
+        Unit("healthy-hour", "hour of healthy life", "hours of healthy life", False,
+             "An hour of one person's life in full health: what an hour of anything else is traded for.",
+             f"""<p>An hour of one person's life in full health. The account weighs everything else against it, at the rates
+people trade at: an hour of one thing for so many hours of another. A {_unit("healthy-year", "year of healthy life")} is
+{YEAR_HOURS:,.0f} of them.</p>
+<p>The rates are from what people pay, in dollars of 2017. The published figures are in {_file('config/prices.csv')}.</p>
+<p>The {said("life", "U.S. Department of Transportation")} values a statistical life at ${pub.value.life / 1e6:.1f} million,
+from what people accept in pay to bear a small risk of death. At forty, about the age of those people, a life has
+{said("life_left", f"{pub.value.life_left:g} years")} left. By the World Health Organization's count an ordinary year in
+the United States is lived at {price.health:.2f} of full health. So an hour of healthy life is priced at
+${price.life:.2f}.</p>
+<p>The Department values an hour of a person's own time at {said("time_share", f"{pub.value.time_share:g} of the median household's income")}
+for the hour, from what people pay to save time on the road. That income was
+{said("household_income", f"${pub.value.household_income:,.0f}")} a year, so the hour is ${price.time:.2f}, and an hour
+given back is worth {HOUR_BACK} of an hour of healthy life: the figure in {T(BACK)}.</p>
+<p>An hour of work was paid ${price.pay:.2f} in the account's year, pay and benefits together. A full-time job's pay
+for a year is priced as {price.job_lost:,.0f} hours of healthy life, so a job for every million need dollars is
+{JOB_LOST} hours for every thousand: the figure in {T(LOST)}.</p>
+{exchange}
+<p>These are prices and not ratings. A price says what people give up for an hour, which rises with what they have to
+give. The account uses one rate for everyone, and one for every hour given back whatever the work: nothing here prices
+an hour of cooking against an hour of cleaning. A price holds at the margin, for an hour more or less, and need not
+hold for a year.</p>"""),
         Unit("job-year", "full-time job", "full-time jobs", False,
              f"A year of one person's paid work: {HOURS_A_YEAR:,} hours.",
              f"""<p>A year of one person's paid work, taken as {HOURS_A_YEAR:,} hours. {T(JOBS)} counts them for every million
 {_unit("need-dollar", "need dollars")}, so an hour for every thousand need dollars is 1 &frasl; {HOURS_A_YEAR / 1000:g} of a
 job.</p>
-<p>It is the measure of what is at stake for the people whose work a proposal does. People without a job rate their lives
-{JOBLESS_POINTS:.2f} points of 10 below people with one, so a job lost for a year takes {JOBLESS_POINTS:.2f} of a WELLBY,
-and one job for every million need dollars is {JOBLESS_POINTS * 1000:.0f}
-{_unit("microwellby", "microWELLBYs")} for every thousand: the figure in {T(LOST)}.</p>"""),
+<p>It is the measure of what is at stake for the people whose work a proposal does. A job's pay for a year,
+{HOURS_A_YEAR:,} hours at ${price.pay:.2f}, is priced as {price.job_lost:,.0f}
+{_unit("healthy-hour", "hours of healthy life")}, so one job for every million need dollars is {JOB_LOST} of them for
+every thousand: the figure in {T(LOST)}.</p>"""),
         Unit("dollar-a-year", "dollar a year", "dollars a year", False,
              "A dollar of an occupation's mean annual wage, in May 2021.",
              f"""<p>A dollar of the mean annual wage of an {_unit("occupation")} in a
@@ -2471,8 +2528,8 @@ def _few(x: float) -> str:
     return ("&minus;" if x < 0 and said.strip("0.") else "") + said
 
 
-def _wellbys(x: float) -> str:
-    """A count of WELLBYs, or of jobs, to three figures under a million, with a true minus for one below zero."""
+def _about(x: float) -> str:
+    """A count of years, of jobs or of WELLBYs, to three figures under a million, with a true minus for one below zero."""
     a = abs(x)
     said = _count(a) if a >= 1e6 else f"{float(f'{a:.3g}'):,.0f}"
     return ("&minus;" if x < 0 and said != "0" else "") + said
@@ -2495,6 +2552,11 @@ def _size(w: float) -> str:
     micro = a < 10 ** -2.5
     said = figures(a * 1e6 if micro else a)
     return f"{sign}{said} {'microWELLBY' if micro else 'WELLBY'}{'' if said == '1' else 's'}"
+
+
+def published_prices() -> pd.DataFrame:
+    """What others have found people to pay, and what the rates of exchange are made from, by key (config/prices.csv)."""
+    return pd.read_csv(M.CONFIG / "prices.csv").set_index("key")
 
 
 def wellby_benchmarks() -> pd.DataFrame:
@@ -2645,7 +2707,7 @@ household's children {-below["Caring for and helping household children"]:.2f} a
 microWELLBYs. At that rate the work behind a thousand need dollars costs those who do it {xi.equal.sum():,.0f}
 experienced microWELLBYs, {_m(_sym(XI))}: {xi.equal.sum() - lost_unpaid:,.0f} paid and {lost_unpaid:,.0f} unpaid. Unpaid
 work is {unpaid_hours / tau.equal.sum() * 100:.0f}% of the hours and {lost_unpaid / xi.equal.sum() * 100:.0f}% of this cost.
-As the needs were in fact paid for, it comes to {_wellbys(xi.spending.sum() * d.spent / 1e9)} WELLBYs a year. A
+As the needs were in fact paid for, it comes to {_about(xi.spending.sum() * d.spent / 1e9)} WELLBYs a year. A
 <a href="{d.units["microwellby"].href}#{GUIDE}">guide to sizes</a> sets these amounts beside other things.</p>
 <p>They are called experienced because a WELLBY proper is counted from what people say of their life as a whole, and
 these are counted from what they felt at the time. The scale is also even: six hours one point down count as one hour
@@ -2659,10 +2721,10 @@ not say what a respondent's job was.</p>
 def proposal_scores(d: Data) -> pd.DataFrame:
     """What each proposal comes to. For the activities it claims: how many, the work in them that is not already open, in
     cents per need dollar and hours per thousand need dollars (needs counted equally), in hours a year (as the needs were
-    paid for), the unpaid and the unpleasant part of those, and what they cost those who work them in WELLBYs a year. For
+    paid for), and the unpaid and the unpleasant part of those. For
     the sectors it replaces: the hours a year behind them. For the causes of ill health it lifts: the years of healthy life
     a year. For all of it: all its hours a year, the full-time jobs in the paid
-    ones, the WELLBYs a year it would give back if it works, with the jobs kept and with them lost,
+    ones, what all those hours are worth in years of healthy life a year, all it would give back if it works, with the jobs kept and with them lost,
     its cost in hours and what there is for each of them, and the hours the paid work it claims still takes, now against
     then: the mean of kappa over its paid hours."""
     f, tau, C = d.sheets["f"].values, d.sheets[TAU].values, d.sheets["C"].values
@@ -2671,17 +2733,17 @@ def proposal_scores(d: Data) -> pd.DataFrame:
     out = pd.DataFrame({"activities": (C > 0).sum(), "cents": C.T @ (f.equal * left) * 100, "hours": C.T @ (tau.equal * left),
                         "a_year": C.T @ (tau.spending * left) * a_year, "unpaid_a_year": C.T @ (d.unpaid_hours.sum() * left) * a_year,
                         "unpleasant_a_year": C.T @ (d.sheets[ZETA].values.spending * left) * a_year,
-                        "wellbys_a_year": C.T @ (d.sheets[XI].values.spending * left) * a_year / 1e6,
                         "behind_a_year": d.sheets[BEHIND].values.spending * a_year,
                         "jobs": d.sheets[JOBS].values.spending * d.spent / 1e6,
                         "healthy_years": d.sheets[LIFTS].values.T @ d.sheets[ILL].values.iloc[:, 0] * d.spent / 1e6,
-                        "kept": d.sheets[KEPT].values.spending * a_year / 1e6,
-                        "lost": d.sheets[LOST].values.spending * a_year / 1e6,
+                        "time": d.sheets[BACK].values.spending * a_year / YEAR_HOURS,
+                        "kept": d.sheets[KEPT].values.spending * a_year / YEAR_HOURS,
+                        "lost": d.sheets[LOST].values.spending * a_year / YEAR_HOURS,
                         "cost": pd.Series({k: x.cost for k, x in d.proposals.items()}, dtype=float)})
     paid = C.mul((tau.equal - d.unpaid_hours.sum()) * left, axis=0)                   # the paid hours each claims, by activity
     still = paid.mul(d.sheets[KAPPA].values.equal, axis=0).sum() / paid.sum().where(paid.sum() > 0)
     return out.assign(hours_a_year=out.a_year + out.behind_a_year, back=out.a_year / out.cost,
-                      wellbys_back=out.wellbys_a_year / out.cost * 1000, kept_back=out.kept / out.cost * 1000, still=still)
+                      kept_back=out.kept / out.cost * 1000, still=still)
 
 
 def proposals_section(d: Data) -> str:
@@ -2692,15 +2754,16 @@ def proposals_section(d: Data) -> str:
     def cell(x, text):
         return f'<td class="num">{text if pd.notna(x) else "none given"}</td>'
     rows = [f'<tr><th scope="row"><a href="{d.proposals[k].href}">{e(d.proposals[k].name)}</a></th>'
-            f'<td class="num">{_count(r.hours_a_year)}</td><td class="num">{_wellbys(r.jobs)}</td><td class="num">{_wellbys(r.healthy_years)}</td>'
-            f'<td class="num">{_wellbys(r.kept)}</td><td class="num">{_wellbys(r.lost)}</td>'
+            f'<td class="num">{_count(r.hours_a_year)}</td><td class="num">{_about(r.jobs)}</td><td class="num">{_about(r.time)}</td><td class="num">{_about(r.healthy_years)}</td>'
+            f'<td class="num">{_about(r.kept)}</td><td class="num">{_about(r.lost)}</td>'
             + cell(r.cost, _count(r.cost)) + cell(r.kept_back, _few(r.kept_back)) + "</tr>"
             for k, r in scores.iterrows()]
-    listed = table([th("Proposal"), th("Hours a year", "num"), th("Full-time jobs in them", "num"), th("Years of healthy life a year", "num"),
-                    th("WELLBYs a year, the jobs kept", "num"), th("The jobs lost", "num"), th("Cost to make, hours", "num"),
-                    th("WELLBYs a year for each thousand hours of cost", "num")], rows, attrs=" data-scores",
-                   caption="Every figure is what the proposal comes to if it works. Hours, jobs and WELLBYs a year are as the needs "
-                           "were in fact paid for. Years of healthy life are "
+    listed = table([th("Proposal"), th("Hours a year", "num"), th("Full-time jobs in them", "num"), th("What the hours are worth", "num"),
+                    th("Healthy life for those it serves", "num"),
+                    th("Both, the jobs kept", "num"), th("The jobs lost", "num"), th("Cost to make, hours", "num"),
+                    th("For each thousand hours of cost", "num")], rows, attrs=" data-scores",
+                   caption="Every figure is what the proposal comes to if it works. All but hours, jobs and cost are in years of "
+                           "healthy life a year. Hours and jobs are as the needs were in fact paid for. Ill health is that "
                            "of the United States in 2019.")
     together = (tau.equal * left * C.max(axis=1)).sum()
     unclaimed = eta.equal[C.max(axis=1) == 0].nlargest(3)
@@ -2753,8 +2816,8 @@ def proposal_page(d: Data, key: str) -> str:
         for code, r in x.lifts.iterrows():
             last = [c for c in ill.index if c == code or code in _above(c, under)]
             rows.append(f'<tr><th scope="row" class="wrap">{e(burden.cause[code])}</th><td class="num">{r.share:g}</td>'
-                        f'<td class="wrap">{e(r.basis)}</td><td class="num">{_wellbys(ill[last].sum() * d.spent / 1e6)}</td></tr>')
-        foot = f'<tr><td>All it would give back</td><td></td><td></td><td class="num">{_wellbys(score.healthy_years)}</td></tr>'
+                        f'<td class="wrap">{e(r.basis)}</td><td class="num">{_about(ill[last].sum() * d.spent / 1e6)}</td></tr>')
+        foot = f'<tr><td>All it would give back</td><td></td><td></td><td class="num">{_about(score.healthy_years)}</td></tr>'
         tables += table([th("Cause of ill health"), th("Part lifted", "num"), th("Why"), th("Years of healthy life it takes", "num")],
                         rows, foot=foot, attrs=" data-scores",
                         caption=f"Years of healthy life lost in the United States in 2019: {_m(_sym(ILL))}. The last line is the "
@@ -2774,14 +2837,16 @@ def proposal_page(d: Data, key: str) -> str:
     if len(x.does):
         spec.append(("Of them unpleasant", f"{_count(score.unpleasant_a_year)} hours a year, at the rates people report for such work: "
                                            f"its claims' part of {_m(_sym(ZETA))}."))
-    spec.append(("Jobs in them", f"{_wellbys(score.jobs)} full-time jobs: its row of {_m(_sym(JOBS))}."))
+    spec.append(("Jobs in them", f"{_about(score.jobs)} full-time jobs: its row of {_m(_sym(JOBS))}."))
     if len(x.lifts):
-        spec.append(("Healthy life", f"{_wellbys(score.healthy_years)} years a year given back to those it serves."))
-    spec.append(("If it works", f"{_wellbys(score.kept)} WELLBYs a year if the jobs are kept, and {_wellbys(score.lost)} if "
+        spec.append(("Healthy life", f"{_about(score.healthy_years)} years a year given back to those it serves."))
+    spec.append(("The hours are worth", f"{_about(score.time)} years of healthy life a year, at {HOUR_BACK} of an hour of "
+                                         f"healthy life for each: its row of {_m(_sym(BACK))}."))
+    spec.append(("If it works", f"{_about(score.kept)} years of healthy life a year if the jobs are kept, and {_about(score.lost)} if "
                              f"they are lost: its rows of {_m(_sym(KEPT))} and {_m(_sym(LOST))}."))
     if x.cost:
         spec.append(("Cost to make", f"{_count(x.cost)} hours of people's work, by the proposer's estimate. {e(x.cost_basis)}"))
-        spec.append(("For each thousand hours of cost", f"{_few(score.kept_back)} WELLBYs a year, the jobs kept."))
+        spec.append(("For each thousand hours of cost", f"{_few(score.kept_back)} years of healthy life a year, the jobs kept."))
     if pd.notna(score.still):
         spec.append(("Has it been moving", f"The paid work it claims took {score.still:.2f} hours in {HR.YEAR} for each hour in {HR.SINCE}, "
                                            f"for the same output, in the sectors where it is done: the mean of {_m(_sym(KAPPA))} over "

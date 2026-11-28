@@ -389,8 +389,10 @@ people feel at the time, and the rest are judgments that say their points and th
 Last come the proposals: things that could be built, one file each in
 [`proposals/`](proposals/), which says how to write one. A proposal states what it is, how a
 stranger would check it, the part of each work activity it would do and what it would cost to
-make, and the site says how many hours of work a year its claims come to, what those hours cost
-the people who work them in experienced WELLBYs, and how much of each there is for its cost.
+make, and the site says how many hours of work a year its claims come to, what those hours are
+worth to the people who work them, and how much there is for its cost. Worth is counted in hours
+of healthy life, at the rates people trade at when they pay: a statistical life against an hour
+of their own time and against an hour's pay, from the published figures in `config/prices.csv`.
 A proposal can also name sectors it would replace, and is then given the hours behind them and
 behind all they bought, by solving the model again with it in place. Each is scored as if
 it works, on what it would give back, twice over: with the jobs in its
