@@ -101,6 +101,14 @@ class Data:
         households = M.ROOT / "data" / "households"
         self.time_use = pd.read_csv(households / "time_use_2017.csv").drop_duplicates("activity", keep=False).set_index("activity").hours_per_day
         self.spending = pd.read_csv(households / "spending_quintiles_2017.csv").set_index("item")
+        # and how people felt during each kind of activity, by the time-use survey's six-digit code
+        self.feelings = pd.read_csv(households / "wellbeing_by_activity.csv", dtype={"code": str}).set_index("code")
+
+    def unpleasant(self, codes: str) -> float:
+        """The share of the time spent in activities of these codes (each a code or the start of several,
+        with semicolons between) that was unpleasant: pain, sadness or stress rated above happiness."""
+        rated = self.feelings[self.feelings.index.str.startswith(tuple(codes.split(";")))]
+        return float((rated.unpleasant * rated.share_of_time).sum() / rated.share_of_time.sum())
 
     @functools.cached_property
     def io(self) -> M.Model:
@@ -248,15 +256,16 @@ class Data:
         x work activity: each kind of household work is filed under the work activity it is and the
         occupation that does it for pay (config/unpaid_work.csv), and is worth its hours a day for each
         adult, times the adults there are, times that occupation's mean wage. detail has each kind's
-        hours and its value in dollars a year."""
+        hours and its value in dollars a year, and the share of the time spent on it that people found unpleasant."""
         E, wage, _, _ = self.survey
         jobs = E.fillna(0.0).where(wage.notna(), 0.0)
         hourly = (jobs * wage.fillna(0.0)).sum() / jobs.sum() / HOURS_A_YEAR      # an occupation's mean wage, wherever it is published
         s = self.spending["all"].astype(float)
         adults = s["Number of consumer units (in thousands)"] * 1e3 * (s["People"] - s["Children under 18"])
-        work = pd.read_csv(M.CONFIG / "unpaid_work.csv")
+        work = pd.read_csv(M.CONFIG / "unpaid_work.csv", dtype={"time_use_codes": str})
         hours = self.time_use[work.activity].values
-        detail = work.assign(hours_per_day=hours, hours=hours * 365 * adults, usd=hours * 365 * adults * hourly[work.occupation].values)
+        detail = work.assign(hours_per_day=hours, hours=hours * 365 * adults, usd=hours * 365 * adults * hourly[work.occupation].values,
+                             unpleasant=[self.unpleasant(codes) for codes in work.time_use_codes])
         G = detail.groupby(["occupation", "work_activity"]).usd.sum().unstack(fill_value=0.0) / self.spent
         return G.reindex(index=self.wages[0].columns, columns=self.theta.columns, fill_value=0.0), detail
 
@@ -388,11 +397,13 @@ THETA, PHI, OMEGA = "Θ", "Φ", "ω"
 LAMBDA, GAMMA, ALPHA, MU, RHO = "Λ", "Γ", "α", "μ", "ρ"
 PI, TAU, ETA, CHI, PSI = "π", "τ", "η", "χ", "ψ"       # the account in hours: the Greek of p and of h, and tau for time
 KAPPA, SIGMA = "κ", "σ"                                 # and whether those hours have been going anyway
+ZETA = "ζ"                                              # and the part of them people find unpleasant
+WORKING = "0501"                                        # the time-use survey's code for working at a job
 # a Greek letter's name in a file, and its bold
 GREEK = {THETA: ("Theta", "&#x1D6AF;"), PHI: ("Phi", "&#x1D6BD;"), OMEGA: ("omega", "&#x1D6DA;"), LAMBDA: ("Lambda", "&#x1D6B2;"),
          GAMMA: ("Gamma", "&#x1D6AA;"), ALPHA: ("alpha", "&#x1D6C2;"), MU: ("mu", "&#x1D6CD;"), RHO: ("rho", "&#x1D6D2;"),
          PI: ("pi", "&#x1D6D1;"), TAU: ("tau", "&#x1D6D5;"), ETA: ("eta", "&#x1D6C8;"), CHI: ("chi", "&#x1D6D8;"), PSI: ("psi", "&#x1D6D9;"),
-         KAPPA: ("kappa", "&#x1D6CB;"), SIGMA: ("sigma", "&#x1D6D4;")}
+         KAPPA: ("kappa", "&#x1D6CB;"), SIGMA: ("sigma", "&#x1D6D4;"), ZETA: ("zeta", "&#x1D6C7;")}
 ABILITY_FAMILY = {"1.A.1": "Cognitive", "1.A.2": "Psychomotor", "1.A.3": "Physical", "1.A.4": "Sensory"}   # O*NET's four families of abilities, by the start of the ability's code
 HOURS_A_YEAR = 2080                   # a year of full-time work, which turns a yearly wage into an hourly one
 # the terms, in the order the account's table lists them
@@ -404,7 +415,7 @@ GROUPS = [
     ("Value added", ["v", "r", "y"]),
     ("Work", ["W", "P", "T", "E", "M"]),
     ("Work activities", [THETA, "G", "m", "e", "s", "b"]),
-    ("Hours", [ETA, TAU, PI, CHI, "Z", "l", "X", KAPPA, SIGMA]),
+    ("Hours", [ETA, TAU, PI, CHI, "Z", "l", "X", ZETA, KAPPA, SIGMA]),
     ("Proposals", [PSI, "C"]),
     ("Abilities", [RHO, ALPHA, MU, LAMBDA, GAMMA]),
     ("Software capabilities", ["k", "o", PHI, "J", "Q", "R", "u", "a", "c", "N", "t", "w"]),
@@ -415,6 +426,7 @@ PER_NEED = "dxv"                      # the vectors there is one of for each nee
 # what each computed term is made from; a term that is not here is data
 USES = {ETA: [TAU, "m", "e"], TAU: [PI, THETA, "X"], PI: [OMEGA, "v", CHI, "Z"], CHI: ["l", "g", "D", "r"], "Z": ["T", "E"], "X": ["Y"],
         PSI: ["C", TAU, "e"], KAPPA: [SIGMA, OMEGA, "v", CHI, "Z", THETA], SIGMA: ["l", "g", "V"],
+        ZETA: [PI, THETA, "X"],
         "x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "h": ["f", "m", "e"], RHO: [ALPHA, MU], ALPHA: ["p", THETA, "G", "m", "e", GAMMA, LAMBDA], "o": ["k", "a", "c"], PHI: ["J", "Q", "R", "u"], "u": ["Q", "R"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
         "f": ["p", THETA, "G"], "G": ["E", "M", "Y"], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
         "D": ["V", "q"], "g": ["V"], "q": ["V"], "K": ["F", "H", "S"], "S": ["z", "H"], "z": ["g", "H"],
@@ -691,6 +703,7 @@ MEASURED_IN = {
     "l": "millions of [hours|hour] a year, in 2016",
     "C": "the part of the activity the proposal would do, a [share|share] of one",
     KAPPA: _STILL, SIGMA: _STILL,
+    ZETA: "unpleasant [hours|hour] of work per thousand [need dollars|need-dollar]",
     "x": "[commodity dollars|commodity-dollar] produced per [need dollar|need-dollar]",
     "p": _WORK, "k": _WORK, "o": _WORK, "f": _WORK, "h": _WORK, "b": _WORK, "G": _WORK,
     ALPHA: _WORK, RHO: _WORK, GAMMA: _MARK,
@@ -891,6 +904,10 @@ def sheets(d: Data) -> dict[str, Sheet]:
     unpaid_hours = d.unpaid_hours                                                           # X
     hours_to_activity = frame(d.theta.values.T @ paid_hours.values, act.index).add(unpaid_hours.sum(), axis=0)      # tau
     hours_overhang = hours_to_activity.mul(defined * (1 - opened), axis=0)                 # eta
+    # the hours of it that people find unpleasant: paid hours at the rate of working at a job, unpaid hours at the rate of each kind of work at home
+    unpleasant_at_home = ((unpaid_detail.hours * unpaid_detail.unpleasant).groupby(unpaid_detail.work_activity).sum()
+                          .reindex(act.index).fillna(0.0) / d.spent * 1000)
+    unpleasant_hours = (frame(d.theta.values.T @ paid_hours.values, act.index) * d.unpleasant(WORKING)).add(unpleasant_at_home, axis=0)   # zeta
     # whether those hours have been going anyway: each sector's hours for a unit of real value added, now against then,
     # and for each activity the mean of that over the sectors it is done in for pay, weighted by its paid hours in each
     still = HR.sector_still_needed(t)                                                       # sigma
@@ -1064,6 +1081,21 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Occupation", col_tip="Activity", axis="Work activities", code="plenty/site.py",
               row_groups=occ.major, col_groups=act.parent.map(d.act.name), short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
               sums="both", order=f"Occupations are in {occupation_order[len('occupations in '):]}. {activity_order}"),
+        Sheet(ZETA, "the unpleasant hours of work behind a need dollar, by activity", "hours", unpleasant_hours, **by_activity, **by_weighing,
+              rows="O*NET's intermediate work activities",
+              entries="Hours of work for every thousand need dollars, paid and unpaid, that go to the activity and that the "
+                      "people doing such work find unpleasant.",
+              source=f"The Well-Being Module of the American Time Use Survey, U.S. Bureau of Labor Statistics, 2010, 2012, 2013 "
+                     f"and 2021: {_file('data/households/wellbeing_by_activity.csv')}. Each respondent rated three of the day's "
+                     "activities from 0 to 6 on six feelings, and the time of an activity is called unpleasant when pain, sadness "
+                     f"or stress was rated above happiness. The paid hours of an activity, in {_m(_sym(TAU))}, count at the rate "
+                     f"of working at a job, {d.unpleasant(WORKING) * 100:.0f}% of the time. Its unpaid hours, in {_m(_sym('X'))}, "
+                     f"count at the rate of each kind of work at home, which {_file('config/unpaid_work.csv')} names by the "
+                     "survey's codes.",
+              note="All paid work has the one rate, because the survey's files used here do not say what a respondent's job "
+                   "was. So among paid work this says nothing of which activity is worse. People also grow used to what "
+                   "they cannot change, and report less distress than an observer would expect.",
+              row_tip="Activity", code="plenty/site.py", sums="cols", order=activity_order),
         Sheet(KAPPA, "the hours each activity's paid work still takes", "number", activity_still, **by_activity, **by_weighing,
               rows="O*NET's intermediate work activities",
               entries=f"For the same output, the hours taken in {span}, in the sectors where the activity is done for pay: "
@@ -2072,6 +2104,7 @@ that is often what a machine finds hard.</p>
 
 
 HOURS_ROWS = 10                      # the rows of eta the home page lists
+FELT_HOURS = 0.1                     # the kinds of unpaid work the home page says the feel of: those of this many hours a day or more
 
 
 def _count(x: float) -> str:
@@ -2099,6 +2132,17 @@ def hours_section(d: Data) -> str:
                   caption=f"The first {HOURS_ROWS} rows of the gap in hours, with the needs counted equally, beside the same rows "
                           "counted in dollars.")
     a_year = tau.spending.sum() * d.spent / 1000
+    zeta, detail, at_work = d.sheets[ZETA].values, d.unpaid[1], d.unpleasant(WORKING)
+    at_home = (detail.hours * detail.unpleasant).sum() / detail.hours.sum()
+    unpleasant_unpaid = at_home * unpaid_hours
+    kinds = [("Working at a job", d.time_use["Working"], at_work)] + [
+        (r.activity, r.hours_per_day, r.unpleasant) for r in detail.sort_values("hours_per_day", ascending=False).itertuples()
+        if r.hours_per_day >= FELT_HOURS]
+    felt = table([th("Kind of time"), th("Hours a day for each person", "num"), th("Part of it that is unpleasant", "num")],
+                 [f'<tr><th scope="row" class="wrap">{e(name)}</th><td class="num">{hours:.2f}</td><td class="num">{part * 100:.0f}%</td></tr>'
+                  for name, hours, part in kinds], attrs=" data-scores",
+                 caption=f"Paid work, and the kinds of unpaid work at home that take at least {FELT_HOURS} hours a day, as people "
+                         "of 15 and over reported them.")
     return f"""{_eqs([equation(key) for key in (PI, TAU, ETA)])}
 <p>A dollar counts work by what it is paid. An hour counts it by the time of someone's life it takes, which is the same
 whatever it earns. {_m(_sym(CHI))} is the hours worked for each dollar of a sector's value added, {_m(_sym("Z"))} divides
@@ -2111,19 +2155,28 @@ cleaner. The gap,
 {_m(_sym(ETA))}, is {eta.equal.sum():.0f} of the {tau.equal.sum():.0f} hours. As the needs were in fact paid for, the work
 behind them took {_count(a_year)} hours in the year.</p>
 {first}
+<p>The same survey asked people how they felt during three activities of their day. The time of an activity is called
+unpleasant here when pain, sadness or stress was rated above happiness. Working at a job is unpleasant
+{at_work * 100:.0f}% of the time, and unpaid work at home {at_home * 100:.0f}%. So of the {tau.equal.sum():.0f} hours behind a
+thousand need dollars, {zeta.equal.sum():.1f} are unpleasant, {_m(_sym(ZETA))}: {zeta.equal.sum() - unpleasant_unpaid:.1f} paid
+and {unpleasant_unpaid:.1f} unpaid. Unpaid work is {unpaid_hours / tau.equal.sum() * 100:.0f}% of the hours and
+{unpleasant_unpaid / zeta.equal.sum() * 100:.0f}% of the unpleasant ones.</p>
+{felt}
+<p>All paid work is given the one rate, because the files used here do not say what a respondent's job was.</p>
 """
 
 
 def proposal_scores(d: Data) -> pd.DataFrame:
     """What each proposal comes to: the activities it claims, the work in them that is not already open, in cents
     per need dollar and hours per thousand need dollars (needs counted equally), in hours a year (as the needs
-    were paid for) and the unpaid part of those, its cost in hours, the hours a year for each hour of cost, and
+    were paid for), the unpaid part of those and the part people find unpleasant, its cost in hours, the hours a year for each hour of cost, and
     the hours the paid work it claims still takes, now against then: the mean of kappa over its paid hours."""
     f, tau, C = d.sheets["f"].values, d.sheets[TAU].values, d.sheets["C"].values
     left = 1 - d.sheets["e"].values.iloc[:, 0]
     a_year = d.spent / 1000              # an hour per thousand need dollars, in hours a year
     out = pd.DataFrame({"activities": (C > 0).sum(), "cents": C.T @ (f.equal * left) * 100, "hours": C.T @ (tau.equal * left),
                         "a_year": C.T @ (tau.spending * left) * a_year, "unpaid_a_year": C.T @ (d.unpaid_hours.sum() * left) * a_year,
+                        "unpleasant_a_year": C.T @ (d.sheets[ZETA].values.spending * left) * a_year,
                         "cost": pd.Series({k: x.cost for k, x in d.proposals.items()}, dtype=float)})
     paid = C.mul((tau.equal - d.unpaid_hours.sum()) * left, axis=0)                   # the paid hours each claims, by activity
     still = paid.mul(d.sheets[KAPPA].values.equal, axis=0).sum() / paid.sum()
@@ -2137,13 +2190,14 @@ def proposals_section(d: Data) -> str:
     scores = proposal_scores(d).sort_values("a_year", ascending=False)
     def cell(x, text):
         return f'<td class="num">{text if pd.notna(x) else "none given"}</td>'
-    rows = [f'<tr><th scope="row"><a href="{d.proposals[k].href}">{e(d.proposals[k].name)}</a></th><td class="num">{r.activities:.0f}</td>'
+    rows = [f'<tr><th scope="row"><a href="{d.proposals[k].href}">{e(d.proposals[k].name)}</a></th>'
             f'<td class="num">{r.hours:.{1 if r.hours >= 1 else 2}f}</td><td class="num">{_count(r.a_year)}</td><td class="num">{_count(r.unpaid_a_year)}</td>'
+            f'<td class="num">{_count(r.unpleasant_a_year)}</td>'
             + cell(r.cost, _count(r.cost)) + cell(r.back, f"{r.back:,.0f}" if r.back >= 10 else f"{r.back:.1f}")
             + f'<td class="num">{r.still:.2f}</td></tr>'
             for k, r in scores.iterrows()]
-    listed = table([th("Proposal"), th("Activities claimed", "num"), th("Hours per $1,000", "num"), th("Hours a year", "num"),
-                    th("Of them unpaid", "num"), th("Cost to make, hours", "num"), th("Hours a year for each hour of cost", "num"),
+    listed = table([th("Proposal"), th("Hours per $1,000", "num"), th("Hours a year", "num"),
+                    th("Of them unpaid", "num"), th("Of them unpleasant", "num"), th("Cost to make, hours", "num"), th("Hours a year for each hour of cost", "num"),
                     th(f"Its paid work: hours in {HR.YEAR} for each in {HR.SINCE}", "num")], rows, attrs=" data-scores",
                    caption="Hours per $1,000 are with the needs counted equally. Hours a year are as the needs were in fact paid for.")
     together = (tau.equal * left * C.max(axis=1)).sum()
@@ -2191,6 +2245,8 @@ def proposal_page(d: Data, key: str) -> str:
                              "per need dollar."))
     spec.append(("In a year", f"{_count(score.a_year)} hours, as the needs were in fact paid for. {_count(score.unpaid_a_year)} of them "
                               "are unpaid work at home, which no job goes with."))
+    spec.append(("Of them unpleasant", f"{_count(score.unpleasant_a_year)} hours a year, at the rates people report for such work: "
+                                       f"its claims' part of {_m(_sym(ZETA))}."))
     if x.cost:
         spec.append(("Cost to make", f"{_count(x.cost)} hours of people's work, by the proposer's estimate. {e(x.cost_basis)}"))
         spec.append(("For each hour of cost", f"{score.back:,.0f} hours a year, if it did all it claims."))

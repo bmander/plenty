@@ -373,6 +373,9 @@ an hour by the time of someone's life it takes. Paid hours are the hours worked 
 industry in 2016 (`data/bea/hours_2016.csv`, read by `plenty/hours.py`), divided among
 occupations by their jobs; unpaid hours are the time-use survey's. Unpaid work at home is
 about a quarter of the work behind the needs in dollars and about three fifths of it in hours.
+The time-use survey's wellbeing module says how people feel during each kind of activity
+(`data/households/wellbeing_by_activity.csv`), and the account counts the hours they find
+unpleasant: about a quarter of the time at a job, and about a seventh of the time on work at home.
 
 Last come the proposals: things that could be built, one file each in
 [`proposals/`](proposals/), which says how to write one. A proposal states what it is, how a

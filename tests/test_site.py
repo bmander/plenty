@@ -101,9 +101,9 @@ def test_every_unit_has_a_page_and_every_term_links_to_its_units(built):
             for term in terms:
                 assert f'<a href="{built.sheets[term].href}"' in page.split(f"<dt>{how}</dt>")[1].split("</dd>")[0], (key, how, term)
     x = site.unit_users(built, units["need-dollar"])
-    in_hours = [site.ETA, site.TAU, site.PI, "X", site.PSI]
+    in_hours = [site.ETA, site.TAU, site.PI, "X", site.ZETA, site.PSI]
     assert x["Entries of"] == list("xpfhdGb") + in_hours + [site.RHO, site.ALPHA, "k", "o"] and not x["Rows of"] and not x["Columns of"]
-    assert site.unit_users(built, units["hour"])["Entries of"] == [site.ETA, site.TAU, site.PI, site.CHI, "l", "X", site.PSI]
+    assert site.unit_users(built, units["hour"])["Entries of"] == [site.ETA, site.TAU, site.PI, site.CHI, "l", "X", site.ZETA, site.PSI]
     assert site.unit_users(built, units["proposal"]) == {"Rows of": [site.PSI], "Columns of": ["C"], "Entries of": []}
     assert site.unit_users(built, units["need"]) == {"Rows of": [site.OMEGA], "Columns of": ["x", "d", "Y", "v"], "Entries of": []}
 
@@ -296,7 +296,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert (at[0] >= 0).all() and (at[1] >= 0).all() and len(csv) == (x != 0).sum(), key
             got[at] = csv.value
             assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA)
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA)
     assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == [site.LAMBDA, "R"]
     assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
@@ -584,7 +584,7 @@ def test_the_account_is_kept_in_hours_beside_dollars(built):
     place = v["h"].equal.rank(ascending=False).astype(int)
     for a, hours in first.items():
         assert f'{markup.escape(names[a])}</th><td class="num">{hours:.1f}</td>' in section and f'<td class="num">{place[a]}</td></tr>' in section, a
-    assert section.count("<tr><th scope=\"row\"") == site.HOURS_ROWS
+    assert section.count("<tr><th scope=\"row\"") == site.HOURS_ROWS + 1 + (built.unpaid[1].hours_per_day >= site.FELT_HOURS).sum()
 
 
 def test_proposals_are_read_from_their_files_scored_and_given_pages(built, tmp_path):
@@ -644,3 +644,47 @@ def test_proposals_are_read_from_their_files_scored_and_given_pages(built, tmp_p
     (tmp_path / "ok" / "fine.toml").write_text(whole.format(a=a, share=1, basis="b"))
     fine = site.proposals(acts, tmp_path / "ok")["fine"]
     assert fine.cost is None and fine.does.share[a] == 1 and fine.href == "proposal-fine.html"
+
+
+def test_hours_are_weighed_by_how_people_say_they_feel(built):
+    v = {k: s.values for k, s in built.sheets.items()}
+    occ, acts = list(v["p"].index), list(v[site.THETA].columns)
+    felt, detail = built.feelings, built.unpaid[1]
+    # the extract: a row for each rated code, the shares of time adding up, every mean within its scale
+    assert felt.index.str.fullmatch(r"\d{6}").all() and felt.index.is_unique and felt.ratings.sum() > 100_000
+    assert np.isclose(felt.share_of_time.sum(), 1, atol=1e-3) and felt.unpleasant.between(0, 1).all()
+    assert felt[["happy", "meaningful", "pain", "sad", "stress", "tired"]].stack().between(0, 6).all()
+    # a rate is the mean over the codes named, weighted by the time rated in each
+    cleaning = felt.loc["020101"]
+    assert built.unpleasant("020101") == cleaning.unpleasant and cleaning.ratings > 2000
+    both = felt.loc[["020101", "020102"]]
+    assert np.isclose(built.unpleasant("020101;020102"), (both.unpleasant * both.share_of_time).sum() / both.share_of_time.sum())
+    housework = felt[felt.index.str.startswith("0201")]
+    assert np.isclose(built.unpleasant("0201"), (housework.unpleasant * housework.share_of_time).sum() / housework.share_of_time.sum())
+    # every kind of unpaid work names codes that were rated, and takes their rate
+    work = pd.read_csv(site.M.CONFIG / "unpaid_work.csv", dtype={"time_use_codes": str})
+    assert list(detail.activity) == list(work.activity) and work.time_use_codes.str.fullmatch(r"\d{2,6}(;\d{2,6})*").all()
+    for codes, rate in zip(work.time_use_codes, detail.unpleasant):
+        assert all(felt.index.str.startswith(c).any() for c in codes.split(";")) and rate == built.unpleasant(codes), codes
+    at_work, at_home = built.unpleasant(site.WORKING), (detail.hours * detail.unpleasant).sum() / detail.hours.sum()
+    assert 0.1 < at_home < at_work < 0.4                         # people rate a job worse than work at home
+    # zeta: paid hours at the rate of a job, unpaid hours at the rate of each kind of work at home
+    paid = v[site.THETA].loc[occ, acts].values.T @ v[site.PI].loc[occ].values
+    home = (detail.hours * detail.unpleasant).groupby(detail.work_activity).sum().reindex(acts).fillna(0.0).values / built.spent * 1000
+    zeta, tau = v[site.ZETA].loc[acts], v[site.TAU].loc[acts]
+    assert np.allclose(zeta.values, paid * at_work + home[:, None]) and (zeta.values <= tau.values + 1e-12).all()
+    assert np.isclose(home.sum(), at_home * v["X"].values.sum())
+    html = (site.SITE / site.HOME).read_text()
+    section = html[html.index('id="hours"'):html.index('id="proposals"')]
+    assert f"unpleasant\n{at_work * 100:.0f}% of the time, and unpaid work at home {at_home * 100:.0f}%" in section
+    assert f"{zeta.equal.sum():.1f} are unpleasant" in section and f"{home.sum():.1f} unpaid" in section
+    assert f'Working at a job</th><td class="num">{built.time_use["Working"]:.2f}</td><td class="num">{at_work * 100:.0f}%</td>' in section
+    for r in detail[detail.hours_per_day >= site.FELT_HOURS].itertuples():
+        assert f'{markup.escape(r.activity)}</th><td class="num">{r.hours_per_day:.2f}</td><td class="num">{r.unpleasant * 100:.0f}%</td>' in section, r.activity
+    # and each proposal says how many of its hours are unpleasant
+    C, left = v["C"].loc[acts], (1 - v["e"].iloc[:, 0][acts]).values
+    scores = site.proposal_scores(built)
+    assert np.allclose(scores.unpleasant_a_year, C.values.T @ (zeta.spending.values * left) * built.spent / 1000)
+    assert (scores.unpleasant_a_year < scores.a_year).all()
+    for key, x in built.proposals.items():
+        assert f"{site._count(scores.unpleasant_a_year[key])} hours a year, at the rates" in (site.SITE / x.href).read_text(), key
