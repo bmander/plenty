@@ -445,7 +445,7 @@ DEFINED = {"yes": 1.0, "partly": 0.5, "no": 0.0}     # how far a task the taxono
 PER_NEED = "dxv"                      # the vectors there is one of for each need, written with a subscript n
 # what each computed term is made from; a term that is not here is data
 USES = {ETA: [TAU, "m", "e"], TAU: [PI, THETA, "X"], PI: [OMEGA, "v", CHI, "Z"], CHI: ["l", "g", "D", "r"], "Z": ["T", "E"], "X": ["Y"],
-        PSI: ["C", TAU, "e"], KAPPA: [SIGMA, OMEGA, "v", CHI, "Z", THETA], SIGMA: ["l", "g", "V"],
+        PSI: ["C", TAU, "e"], KAPPA: [OMEGA, "v", SIGMA, CHI, "Z", THETA, PI], SIGMA: ["l", "g", "V"],
         ZETA: [PI, THETA, "X"], XI: [PI, THETA, "X"],
         "x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "h": ["f", "m", "e"], RHO: [ALPHA, MU], ALPHA: ["p", THETA, "G", "m", "e", GAMMA, LAMBDA], "o": ["k", "a", "c"], PHI: ["J", "Q", "R", "u"], "u": ["Q", "R"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
         "f": ["p", THETA, "G"], "G": ["E", "M", "Y"], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
@@ -563,8 +563,7 @@ def _term(key: str, here: str = "") -> str:
     return _vec(key, here) if key in PER_NEED else _sym(key, here)
 
 
-_ITALIC = {"h": "&#x210E;", "α": "&#x1D6FC;", "γ": "&#x1D6FE;", "θ": "&#x1D703;", "λ": "&#x1D706;", "μ": "&#x1D707;", "ρ": "&#x1D70C;",
-           "κ": "&#x1D705;", "σ": "&#x1D70E;", "χ": "&#x1D712;", "ω": "&#x1D714;"}
+_ITALIC = {"h": "&#x210E;", "α": "&#x1D6FC;", "γ": "&#x1D6FE;", "θ": "&#x1D703;", "λ": "&#x1D706;", "μ": "&#x1D707;", "ρ": "&#x1D70C;"}
 
 
 def _elt(shown: str, sub: str, page: str = "", here: str = "") -> str:
@@ -637,10 +636,8 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
         TE = f'{S("T")}{_TIMES}{S("E")}'
         return S("Z"), f'{_inv(_diag(TE + _TIMES + _ONES))}{_TIMES}{TE}'
     if key == KAPPA:      # the mean of sigma over the sectors an activity is done in for pay, weighted by its paid hours in each
-        E = lambda letter, script, page: _elt(letter, script, page, here)
-        placed = _TIMES.join([E("ω", "n", OMEGA), E("v", "sn", "v"), E("χ", "s", CHI), E("z", "so", "Z"), E("θ", "oa", THETA)])
-        over = _sum("n") + _sum("s") + _sum("o")
-        return E("κ", "a", KAPPA), f'<mfrac><mrow>{over}{placed}{_TIMES}{E("σ", "s", SIGMA)}</mrow><mrow>{over}{placed}</mrow></mfrac>'
+        placed = _TIMES.join([_diag(S(SIGMA) + _HADAMARD + S(CHI)), S("Z"), S(THETA)])      # pi's equation, each sector's hours times its sigma, carried to activities
+        return S(KAPPA, T=True), f'{_sum("n")}{weight}{_TIMES}{V("v", T=True)}{_TIMES}{placed}{_TIMES}{_inv(_diag(S(THETA, T=True) + _TIMES + S(PI)))}'
     if key == PSI:        # the hours in the parts of activities a proposal claims, less what is already open
         return S(PSI), f'{S("C", T=True)}{_TIMES}{_paren(f"{S(TAU)}{_HADAMARD}{less_open}")}'
     if key == "f":        # the same dollar by what the work is, with the unpaid work done at home
@@ -1149,9 +1146,9 @@ def sheets(d: Data) -> dict[str, Sheet]:
               rows="O*NET's intermediate work activities",
               entries=f"For the same output, the hours taken in {span}, in the sectors where the activity is done for pay: "
                       f"the mean of {_m(_sym(SIGMA))} over those sectors, each weighted by the activity's paid hours in it.",
-              source=f"The sums run over needs {_m('<mi>n</mi>')}, sectors {_m('<mi>s</mi>')} and occupations "
-                     f"{_m('<mi>o</mi>')}. What is summed below the line is the paid hours of the activity that one occupation "
-                     "works in one sector.",
+              source=f"It is the equation of {_m(_sym(PI))} with {_m(_sym(SIGMA))} beside {_m(_sym(CHI))}, so that each "
+                     f"sector's hours count by what they still take, carried to activities by {_m(_sym(THETA))}. The last "
+                     f"factor divides each activity's sum by its paid hours, {_m(_sym(THETA, T=True) + _TIMES + _sym(PI))}.",
               note="Under a half, paid work of this kind has been going anyway. Near one or over, it is stuck. It is a measure "
                    "of the sectors an activity is done in and not of the activity itself, and it says nothing of work done "
                    "unpaid. Zero means the activity has no paid hours.",

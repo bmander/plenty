@@ -568,6 +568,10 @@ def test_the_account_is_kept_in_hours_beside_dollars(built):
         total = placed.sum(axis=0)
         assert np.allclose(v[site.KAPPA].loc[acts, way][total > 0], (sigma.values @ placed)[total > 0] / total[total > 0])
         assert not v[site.KAPPA].loc[acts, way][total == 0].any()
+        # as its page writes it: pi's equation with sigma beside chi, carried to activities, over each activity's paid hours
+        assert np.allclose(total, theta.T @ pi[way].values)
+        written = (v["v"].loc[com, omega.index].values @ omega[way].values) @ np.diag(sigma.values * chi.values) @ Z @ theta
+        assert np.allclose(written[total > 0] / total[total > 0], v[site.KAPPA].loc[acts, way][total > 0])
     assert 0.2 < v[site.KAPPA].values[v[site.KAPPA].values > 0].min() and v[site.KAPPA].values.max() < 2
     # the paid hours behind the needs are most of the hours worked, and less than all of them
     behind = pi.spending.sum() * built.spent / 1000 / 1e6
