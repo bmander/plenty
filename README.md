@@ -376,12 +376,16 @@ about a quarter of the work behind the needs in dollars and about three fifths o
 The time-use survey's wellbeing module says how people feel during each kind of activity
 (`data/households/wellbeing_by_activity.csv`), and the account counts the hours they find
 unpleasant: about a quarter of the time at a job, and about a seventh of the time on work at home.
+It also weighs each hour by how far people rate such work below the rest of their own day, on a
+scale from 0 to 10, and counts the cost in experienced WELLBYs, a WELLBY being one point for one
+person for one year: a job is rated about three quarters of a point below the rest of the day,
+and work at home about a fifth of one.
 
 Last come the proposals: things that could be built, one file each in
 [`proposals/`](proposals/), which says how to write one. A proposal states what it is, how a
 stranger would check it, the part of each work activity it would do and what it would cost to
-make, and the site says how many hours of work a year its claims come to and how many for each
-hour of cost. The shares and the costs are each proposer's own. It also says whether the paid
+make, and the site says how many hours of work a year its claims come to, what those hours cost
+the people who work them in experienced WELLBYs, and how much of each there is for its cost. The shares and the costs are each proposer's own. It also says whether the paid
 work a proposal claims has been going anyway: the hours it took in 2016 for each hour in 1987, for
 the same output, in the sectors where it is done (`data/bea/production_account_1987_2016.csv`).
 

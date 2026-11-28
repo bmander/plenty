@@ -24,6 +24,7 @@
   function thousands(x) { return x >= 99500 ? Math.round(x / 1000) + "k" : x >= 999.5 ? (x / 1000).toFixed(1) + "k" : String(Math.round(x)); }
   // hours: to three figures or so, never more than three places
   function hours(x) { return x >= 99.5 ? x.toFixed(0) : x >= 9.95 ? x.toFixed(1) : x >= 0.0995 ? x.toFixed(2) : x.toFixed(3); }
+  function micro(x) { var a = Math.abs(x); return (x < 0 ? "\u2212" : "") + (a >= 99.5 ? a.toFixed(0) : a >= 9.95 ? a.toFixed(1) : a.toFixed(2)); }
   var KINDS = {
     per_dollar: {
       say: function (v) { return cents(v) + " per dollar"; }, cell: hundredths,
@@ -56,6 +57,10 @@
     hours: {
       say: function (v) { return hours(v) + " hours per $1,000"; }, cell: hours,
       sum: function (v) { return hours(v) + " hours per $1,000"; }, brief: hours
+    },
+    wellbeing: {
+      say: function (v) { return micro(v) + " microWELLBYs per $1,000"; }, cell: micro,
+      sum: function (v) { return micro(v) + " microWELLBYs per $1,000"; }, brief: micro
     },
     hours_worked: {
       say: function (v) { return Math.round(v).toLocaleString("en-US") + " million hours"; }, cell: thousands,

@@ -101,9 +101,10 @@ def test_every_unit_has_a_page_and_every_term_links_to_its_units(built):
             for term in terms:
                 assert f'<a href="{built.sheets[term].href}"' in page.split(f"<dt>{how}</dt>")[1].split("</dd>")[0], (key, how, term)
     x = site.unit_users(built, units["need-dollar"])
-    in_hours = [site.ETA, site.TAU, site.PI, "X", site.ZETA, site.PSI]
+    in_hours = [site.ETA, site.TAU, site.PI, "X", site.ZETA, site.XI, site.PSI]
     assert x["Entries of"] == list("xpfhdGb") + in_hours + [site.RHO, site.ALPHA, "k", "o"] and not x["Rows of"] and not x["Columns of"]
     assert site.unit_users(built, units["hour"])["Entries of"] == [site.ETA, site.TAU, site.PI, site.CHI, "l", "X", site.ZETA, site.PSI]
+    assert site.unit_users(built, units["microwellby"]) == {"Rows of": [], "Columns of": [], "Entries of": [site.XI]}
     assert site.unit_users(built, units["proposal"]) == {"Rows of": [site.PSI], "Columns of": ["C"], "Entries of": []}
     assert site.unit_users(built, units["need"]) == {"Rows of": [site.OMEGA], "Columns of": ["x", "d", "Y", "v"], "Entries of": []}
 
@@ -296,7 +297,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert (at[0] >= 0).all() and (at[1] >= 0).all() and len(csv) == (x != 0).sum(), key
             got[at] = csv.value
             assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA)
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA + site.XI)
     assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == [site.LAMBDA, "R"]
     assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
@@ -688,3 +689,60 @@ def test_hours_are_weighed_by_how_people_say_they_feel(built):
     assert (scores.unpleasant_a_year < scores.a_year).all()
     for key, x in built.proposals.items():
         assert f"{site._count(scores.unpleasant_a_year[key])} hours a year, at the rates" in (site.SITE / x.href).read_text(), key
+
+
+def test_work_is_weighed_by_what_it_costs_those_who_do_it(built):
+    v = {k: s.values for k, s in built.sheets.items()}
+    occ, acts = list(v["p"].index), list(v[site.THETA].columns)
+    felt, detail = built.feelings, built.unpaid[1]
+    # the extract: one scale from 0 to 10 made of the feelings, and each code against the same person's other time
+    assert np.allclose(felt.points, (felt.happy - felt[["pain", "sad", "stress"]].mean(axis=1) + 6) / 12 * 10, atol=1e-3)
+    assert felt.points.between(0, 10).all() and felt.severe.between(0, 1).all()
+    assert (felt.compared <= felt.ratings).all() and (felt.compared_time <= felt.share_of_time + 1e-6).all()
+    assert (felt.below_rest.notna() == (felt.compared > 0)).all() and felt.below_rest.dropna().between(-10, 10).all()
+    assert felt.compared.sum() > 0.75 * felt.ratings.sum()
+    # time that is not work is neither a job nor a kind of unpaid work, and is rated level with itself
+    rest = built.not_work.split(";")
+    work = (site.WORKING, *(c for codes in detail.time_use_codes for c in codes.split(";")))
+    assert sorted(rest) == sorted(c for c in felt.index if not c.startswith(work)) and 0.5 < felt.share_of_time[rest].sum() < 0.7
+    assert abs(built.below_rest(built.not_work)) < 0.05
+    cleaning = felt.loc[["020101", "020102"]]
+    assert np.isclose(built.below_rest("020101;020102"), (cleaning.below_rest * cleaning.compared_time).sum() / cleaning.compared_time.sum())
+    for codes, r in zip(detail.time_use_codes, detail.itertuples()):
+        assert r.below_rest == built.below_rest(codes) and r.severe == built.felt(codes, "severe"), codes
+    # people rate a job further below the rest of their day than work at home, and the care of children above it
+    job, below = built.below_rest(site.WORKING), detail.set_index("activity").below_rest
+    at_home = (detail.hours * detail.below_rest).sum() / detail.hours.sum()
+    assert 0 < at_home < job < 1.5 and below["Caring for and helping household children"] < 0 < below["Interior cleaning"]
+    # xi: paid hours at a job's points, unpaid hours at those of each kind of work at home, a point for an hour in microWELLBYs
+    assert np.isclose(site.POINT_HOUR * 365.25 * 24, 1e6)
+    paid = v[site.THETA].loc[occ, acts].values.T @ v[site.PI].loc[occ].values
+    home = (detail.hours * detail.below_rest).groupby(detail.work_activity).sum().reindex(acts).fillna(0.0).values / built.spent * 1000
+    xi = v[site.XI].loc[acts]
+    assert np.allclose(xi.values, (paid * job + home[:, None]) * site.POINT_HOUR) and xi.values.min() < 0 < xi.equal.sum()
+    assert np.isclose(home.sum(), at_home * v["X"].values.sum())
+    html = (site.SITE / site.HOME).read_text()
+    section = html[html.index('id="hours"'):html.index('id="proposals"')]
+    assert f"is rated {job:.2f} points below the rest of the day and unpaid work at home {at_home:.2f}" in section
+    assert f"costs those who do it {xi.equal.sum():,.0f}\nexperienced microWELLBYs" in section
+    assert f"{(xi.equal.sum() - home.sum() * site.POINT_HOUR):,.0f} paid and {home.sum() * site.POINT_HOUR:,.0f} unpaid" in section
+    assert f"comes to {site._wellbys(xi.spending.sum() * built.spent / 1e9)} WELLBYs a year" in section
+    assert (f'Working at a job</th><td class="num">{built.time_use["Working"]:.2f}</td><td class="num">{built.unpleasant(site.WORKING) * 100:.0f}%</td>'
+            f'<td class="num">{built.felt(site.WORKING, "severe") * 100:.0f}%</td><td class="num">{job:.2f}</td></tr>') in section
+    for r in detail[detail.hours_per_day >= site.FELT_HOURS].itertuples():
+        assert f'<td class="num">{r.severe * 100:.0f}%</td><td class="num">{site._signed(r.below_rest)}</td></tr>' in section, r.activity
+    assert site._signed(-0.257) == "&minus;0.26" and site._signed(0.004) == "0.00" and site._signed(-0.004) == "0.00"
+    # and each proposal says what its hours cost those who work them, and what that comes to for its cost
+    C, left = v["C"].loc[acts], (1 - v["e"].iloc[:, 0][acts]).values
+    scores = site.proposal_scores(built)
+    assert np.allclose(scores.wellbys_a_year, C.values.T @ (xi.spending.values * left) * built.spent / 1000 / 1e6)
+    assert np.allclose(scores.wellbys_back, scores.wellbys_a_year / scores.cost * 1000)
+    points = scores.wellbys_a_year * 1e6 / site.POINT_HOUR / scores.a_year
+    assert points.between(0, job + 0.2).all() and points["who-owes-whom"] > points["household-handwork"] > points["driving"]
+    proposals = html[html.index('id="proposals"'):html.index('id="terms"')]
+    for key, x in built.proposals.items():
+        page = (site.SITE / x.href).read_text()
+        assert f"{site._wellbys(scores.wellbys_a_year[key])} experienced WELLBYs a year" in page and f"{points[key]:.2f} points for each of its hours" in page, key
+        assert f"hours of cost {site._few(scores.wellbys_back[key])} WELLBYs a year" in page, key
+        assert f'<td class="num">{site._wellbys(scores.wellbys_a_year[key])}</td>' in proposals and f'<td class="num">{site._few(scores.wellbys_back[key])}</td>' in proposals, key
+    assert site._wellbys(306_157) == "306,000" and site._wellbys(4.67e6) == "4.7 million" and site._few(101.02) == "101" and site._few(0.306) == "0.31"
