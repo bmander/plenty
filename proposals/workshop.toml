@@ -1,0 +1,23 @@
+name  = "A workshop that makes its own machines"
+by    = "Claude, for discussion"
+what  = "Open designs for a set of machines, run on sunlight, that turn scrap and local minerals into most of the parts of household goods, and into most of the parts of the machines themselves."
+check = "A workshop built from the designs makes a named list of goods, and then a second workshop, and the hours of people and the parts bought in are counted for each."
+
+[cost]
+hours = 1e8
+basis = "A guess at the order of magnitude: fifty thousand person-years, a large engineering programme."
+
+[[replaces]]
+sectors = "31"             # food, drink, textiles, clothing
+share   = 0.2
+basis   = "Cloth and containers, not food."
+
+[[replaces]]
+sectors = "32"             # wood, paper, chemicals, plastics, glass, cement
+share   = 0.4
+basis   = "The shaped and moulded goods. Not the chemistry that wants a refinery."
+
+[[replaces]]
+sectors = "33"             # metals, machinery, electronics, vehicles, furniture
+share   = 0.5
+basis   = "Most parts of most machines, its own among them. Not chips, and not what is too large for a workshop."

@@ -1,0 +1,13 @@
+name  = "The household's shopping done"
+by    = "Claude, for discussion"
+what  = "A service that keeps a household in what it regularly uses: it knows what is running out, orders it at a good price and has it brought."
+check = "Households that use it record the hours they spend shopping and going to shop, and what they pay for the same goods, before and after."
+
+[cost]
+hours = 1e7
+basis = "A guess at the order of magnitude: five thousand person-years. Most of its parts exist."
+
+[[does]]
+activity = "4.A.4.c.3.e"   # Purchase goods or services
+share    = 0.5
+basis    = "Regular goods are most of a household's trips. Choosing a coat or a sofa is not this."

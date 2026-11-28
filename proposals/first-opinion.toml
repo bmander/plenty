@@ -1,0 +1,48 @@
+name  = "A first opinion for anyone"
+by    = "Claude, for discussion"
+what  = "Software that takes a person's account of what is wrong, with their records and whatever they can measure, and says what it probably is, what to do next and how soon."
+check = "Its opinions on recorded cases are compared with what the cases turned out to be, beside those of clinicians given the same information."
+
+[cost]
+hours = 1e7
+basis = "A guess at the order of magnitude: five thousand person-years, most of it trials."
+
+[[does]]
+activity = "4.A.2.b.1.f"   # Diagnose health conditions or disorders
+share    = 0.5
+basis    = "What can be told without a procedure."
+
+[[does]]
+activity = "4.A.2.a.1.f"   # Evaluate patient or client condition or treatment options
+share    = 0.3
+basis    = "The first evaluation, not the following of a treatment."
+
+[[does]]
+activity = "4.A.2.a.4.f"   # Analyze health or medical data
+share    = 0.5
+basis    = "Reading results and records."
+
+[[does]]
+activity = "4.A.1.a.1.l"   # Collect information about patients or clients
+share    = 0.5
+basis    = "Taking the history."
+
+[[does]]
+activity = "4.A.4.a.1.e"   # Explain medical information to patients or family members
+share    = 0.5
+basis    = "Explaining, as often as it is asked."
+
+[[does]]
+activity = "4.A.4.b.6.a"   # Advise patients or clients on medical issues
+share    = 0.5
+basis    = "Advice that needs no examination."
+
+[[does]]
+activity = "4.A.4.c.3.b"   # Order medical tests or procedures
+share    = 0.3
+basis    = "Saying which test is wanted next."
+
+[[lifts]]
+cause = "0"                # All causes
+share = 0.01
+basis = "A guess. Being told sooner and more rightly what is wrong takes a little off nearly every cause, and most of ill health is not for want of a diagnosis."

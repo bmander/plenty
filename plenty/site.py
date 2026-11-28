@@ -49,6 +49,8 @@ class Proposal:
     what: str
     check: str
     does: pd.DataFrame             # by work activity: the share of it claimed, and why
+    replaces: pd.DataFrame         # by the start of a sector's code: the share of those sectors it would replace, and why
+    lifts: pd.DataFrame            # by cause of ill health: the share of its burden it would lift, and why
     cost: float | None = None      # hours of people's work to make it, as the proposer estimates
     cost_basis: str = ""
 
@@ -58,10 +60,10 @@ class Proposal:
     def file(self) -> str: return f"proposals/{self.key}.toml"
 
 
-def proposals(activities, folder: Path | None = None) -> dict[str, Proposal]:
+def proposals(activities, folder: Path | None = None, sectors=None, causes=None) -> dict[str, Proposal]:
     """Read every proposal in the folder, in the order of their files' names, and refuse one that is not
-    whole: it must say what it is and how it is checked, and claim a share above zero and at most
-    one of activities there are, each once and each with a reason."""
+    whole: it must say what it is and how it is checked, and claim a share above
+    zero and at most one of activities, sectors or causes of ill health there are, each once and each with a reason."""
     out = {}
     for path in sorted((folder or PROPOSALS).glob("*.toml")):
         x = tomllib.loads(path.read_text(encoding="utf-8"))
@@ -71,14 +73,28 @@ def proposals(activities, folder: Path | None = None) -> dict[str, Proposal]:
         wrong += [f"{a} is claimed twice" for a in does.index[does.index.duplicated()]]
         wrong += [f"{a} has a share of {v}" for a, v in does.share.items() if not 0 < v <= 1]
         wrong += [f"{a} has no reason" for a, v in does.basis.items() if not str(v).strip()]
-        if does.empty:
-            wrong.append("it claims no activity")
+        replaces = pd.DataFrame(x.get("replaces", []), columns=["sectors", "share", "basis"]).set_index("sectors")
+        replaces.index = replaces.index.astype(str)
+        if sectors is not None:
+            wrong += [f"{a} is the start of no sector's code" for a in replaces.index if not any(c.startswith(a) for c in sectors)]
+        wrong += [f"{a} is replaced twice" for a in replaces.index[replaces.index.duplicated()]]
+        wrong += [f"{a} has a share of {v}" for a, v in replaces.share.items() if not 0 < v <= 1]
+        wrong += [f"{a} has no reason" for a, v in replaces.basis.items() if not str(v).strip()]
+        lifts = pd.DataFrame(x.get("lifts", []), columns=["cause", "share", "basis"]).set_index("cause")
+        lifts.index = lifts.index.astype(str)
+        if causes is not None:
+            wrong += [f"{a} is not a cause of ill health" for a in lifts.index.difference(causes)]
+        wrong += [f"{a} is lifted twice" for a in lifts.index[lifts.index.duplicated()]]
+        wrong += [f"{a} has a share of {v}" for a, v in lifts.share.items() if not 0 < v <= 1]
+        wrong += [f"{a} has no reason" for a, v in lifts.basis.items() if not str(v).strip()]
+        if does.empty and replaces.empty and lifts.empty:
+            wrong.append("it claims no activity, replaces no sector and lifts no cause of ill health")
         cost = x.get("cost", {})
         if cost and not (cost.get("hours", 0) > 0 and str(cost.get("basis", "")).strip()):
             wrong.append("its cost needs hours above zero and a basis")
         if wrong:
             raise ValueError(f"{path.name}: " + "; ".join(wrong))
-        out[path.stem] = Proposal(path.stem, x["name"], x.get("by", ""), x["what"], x["check"], does,
+        out[path.stem] = Proposal(path.stem, x["name"], x.get("by", ""), x["what"], x["check"], does, replaces, lifts,
                                   cost.get("hours"), cost.get("basis", ""))
     return out
 
@@ -103,12 +119,25 @@ class Data:
         self.spending = pd.read_csv(households / "spending_quintiles_2017.csv").set_index("item")
         # and how people felt during each kind of activity, by the time-use survey's six-digit code
         self.feelings = pd.read_csv(households / "wellbeing_by_activity.csv", dtype={"code": str}).set_index("code")
+        # Health (data/health): the years of healthy life lost to each cause in the United States, in the World Health
+        # Organization's list of causes, each filed under another down to those with nothing under them
+        self.burden = pd.read_csv(M.ROOT / "data" / "health" / "burden_2019.csv", dtype={"code": str, "under": str}).fillna({"under": ""})
+
+    def felt(self, codes: str, measure: str, time: str = "share_of_time") -> float:
+        """The mean of one measure of how people felt, over the time spent in activities of these codes
+        (each a code or the start of several, with semicolons between)."""
+        rated = self.feelings[self.feelings.index.str.startswith(tuple(codes.split(";")))]
+        return float((rated[measure] * rated[time]).sum() / rated[time].sum())
 
     def unpleasant(self, codes: str) -> float:
-        """The share of the time spent in activities of these codes (each a code or the start of several,
-        with semicolons between) that was unpleasant: pain, sadness or stress rated above happiness."""
-        rated = self.feelings[self.feelings.index.str.startswith(tuple(codes.split(";")))]
-        return float((rated.unpleasant * rated.share_of_time).sum() / rated.share_of_time.sum())
+        """The share of that time that was unpleasant: pain, sadness or stress rated above happiness."""
+        return self.felt(codes, "unpleasant")
+
+    @functools.cached_property
+    def not_work(self) -> str:
+        """The codes of the rated time that was not work: neither a job nor a kind of unpaid work at home."""
+        work = (WORKING, *(c for codes in self.unpaid[1].time_use_codes for c in codes.split(";")))
+        return ";".join(self.feelings.index[~self.feelings.index.str.startswith(work)])
 
     @functools.cached_property
     def io(self) -> M.Model:
@@ -256,7 +285,8 @@ class Data:
         x work activity: each kind of household work is filed under the work activity it is and the
         occupation that does it for pay (config/unpaid_work.csv), and is worth its hours a day for each
         adult, times the adults there are, times that occupation's mean wage. detail has each kind's
-        hours and its value in dollars a year, and the share of the time spent on it that people found unpleasant."""
+        hours and its value in dollars a year, the share of the time spent on it that people found unpleasant and the
+        share when a bad feeling was severe, and the points they rated it below the rest of their day."""
         E, wage, _, _ = self.survey
         jobs = E.fillna(0.0).where(wage.notna(), 0.0)
         hourly = (jobs * wage.fillna(0.0)).sum() / jobs.sum() / HOURS_A_YEAR      # an occupation's mean wage, wherever it is published
@@ -265,7 +295,8 @@ class Data:
         work = pd.read_csv(M.CONFIG / "unpaid_work.csv", dtype={"time_use_codes": str})
         hours = self.time_use[work.activity].values
         detail = work.assign(hours_per_day=hours, hours=hours * 365 * adults, usd=hours * 365 * adults * hourly[work.occupation].values,
-                             unpleasant=[self.unpleasant(codes) for codes in work.time_use_codes])
+                             unpleasant=[self.unpleasant(codes) for codes in work.time_use_codes],
+                             severe=[self.felt(codes, "severe") for codes in work.time_use_codes])
         G = detail.groupby(["occupation", "work_activity"]).usd.sum().unstack(fill_value=0.0) / self.spent
         return G.reindex(index=self.wages[0].columns, columns=self.theta.columns, fill_value=0.0), detail
 
@@ -274,6 +305,25 @@ class Data:
         """What households and governments spent on the needs in 2017, in dollars."""
         needs = list(self.need_dollars[0].columns)
         return A.need_demand(self.io.t)[needs].values.sum() * 1e6
+
+    @functools.cached_property
+    def people(self) -> float:
+        """The people of the United States in 2017, as the survey of what households spend counts them."""
+        s = self.spending["all"].astype(float)
+        return s["Number of consumer units (in thousands)"] * 1e3 * s["People"]
+
+    @functools.cached_property
+    def prices(self) -> pd.Series:
+        """What people pay, in dollars of 2017: for an hour of healthy life, for an hour of their own time, and for an
+        hour of work. And the rates those make: the hours of healthy life an hour given back is worth, and those a
+        full-time job's pay for a year is priced as. Health is the part of full health an ordinary year is lived at."""
+        p = published_prices().value
+        health = 1 - self.burden.yld_thousands[self.burden.level == 0].sum() * 1e3 / self.people
+        life = p.life / (p.life_left * YEAR_HOURS * health)
+        time = p.time_share * p.household_income / HOURS_A_YEAR
+        pay = self.io.t.VA.loc[HR.PAY].sum() / HR.industry_hours(self.io.t).sum()
+        return pd.Series({"health": health, "life": life, "time": time, "pay": pay,
+                          "hour_back": time / life, "job_lost": HOURS_A_YEAR * pay / life})
 
     @functools.cached_property
     def unpaid_hours(self) -> pd.DataFrame:
@@ -285,7 +335,7 @@ class Data:
     @functools.cached_property
     def proposals(self) -> dict[str, Proposal]:
         """The proposals (proposals/*.toml), by the name each is filed under."""
-        return proposals(self.theta.columns)
+        return proposals(self.theta.columns, sectors=list(self.need_value_added.index), causes=list(self.burden.code))
 
     @functools.cached_property
     def defined_share(self) -> pd.Series:
@@ -398,12 +448,24 @@ LAMBDA, GAMMA, ALPHA, MU, RHO = "Λ", "Γ", "α", "μ", "ρ"
 PI, TAU, ETA, CHI, PSI = "π", "τ", "η", "χ", "ψ"       # the account in hours: the Greek of p and of h, and tau for time
 KAPPA, SIGMA = "κ", "σ"                                 # and whether those hours have been going anyway
 ZETA = "ζ"                                              # and the part of them people find unpleasant
+BETA = "β"                                              # the hours each sector works, which pi and kappa are both made from
+LABOUR, BOUGHT = "λ", "υ"                               # the hours behind a dollar of each commodity, and what a need dollar buys of each
+REPLACED, WITH, BEHIND = "Ψ", "Π", "φ"                  # the sectors a proposal replaces, the hours behind a commodity with it in place, and the hours that saves
+JOBS, BACK = "j", "ε"                                   # the jobs in a proposal's paid hours, and what all its hours cost those who work them
+KEPT, LOST = "Ξ", "Ω"                               # what a proposal that works gives back, with the jobs in its hours kept and with them lost
+ILL, LIFTS = "ι", "Δ"                                   # the healthy life each cause of ill health takes, and the part of each a proposal would lift
+YEAR_HOURS = 365.25 * 24                                # the hours in a year of life
+HOUR_BACK = "0.43"                                      # the hours of healthy life an hour given back is worth, as epsilon's equation prints it; a test holds it to the prices
+JOB_LOST = "2.36"                                       # the thousands of hours of healthy life a job's pay for a year is priced as, as Omega's equation prints it; held likewise
 WORKING = "0501"                                        # the time-use survey's code for working at a job
 # a Greek letter's name in a file, and its bold
 GREEK = {THETA: ("Theta", "&#x1D6AF;"), PHI: ("Phi", "&#x1D6BD;"), OMEGA: ("omega", "&#x1D6DA;"), LAMBDA: ("Lambda", "&#x1D6B2;"),
          GAMMA: ("Gamma", "&#x1D6AA;"), ALPHA: ("alpha", "&#x1D6C2;"), MU: ("mu", "&#x1D6CD;"), RHO: ("rho", "&#x1D6D2;"),
          PI: ("pi", "&#x1D6D1;"), TAU: ("tau", "&#x1D6D5;"), ETA: ("eta", "&#x1D6C8;"), CHI: ("chi", "&#x1D6D8;"), PSI: ("psi", "&#x1D6D9;"),
-         KAPPA: ("kappa", "&#x1D6CB;"), SIGMA: ("sigma", "&#x1D6D4;"), ZETA: ("zeta", "&#x1D6C7;")}
+         KAPPA: ("kappa", "&#x1D6CB;"), SIGMA: ("sigma", "&#x1D6D4;"), ZETA: ("zeta", "&#x1D6C7;"), BETA: ("beta", "&#x1D6C3;"),
+         LABOUR: ("lambda", "&#x1D6CC;"), BOUGHT: ("upsilon", "&#x1D6D6;"), REPLACED: ("Psi", "&#x1D6BF;"), WITH: ("Pi", "&#x1D6B7;"),
+         BEHIND: ("phi", "&#x1D6D7;"), BACK: ("epsilon", "&#x1D6C6;"), KEPT: ("Xi", "&#x1D6B5;"),
+         LOST: ("Omega", "&#x1D6C0;"), ILL: ("iota", "&#x1D6CA;"), LIFTS: ("Delta", "&#x1D6AB;")}
 ABILITY_FAMILY = {"1.A.1": "Cognitive", "1.A.2": "Psychomotor", "1.A.3": "Physical", "1.A.4": "Sensory"}   # O*NET's four families of abilities, by the start of the ability's code
 HOURS_A_YEAR = 2080                   # a year of full-time work, which turns a yearly wage into an hourly one
 # the terms, in the order the account's table lists them
@@ -415,8 +477,8 @@ GROUPS = [
     ("Value added", ["v", "r", "y"]),
     ("Work", ["W", "P", "T", "E", "M"]),
     ("Work activities", [THETA, "G", "m", "e", "s", "b"]),
-    ("Hours", [ETA, TAU, PI, CHI, "Z", "l", "X", ZETA, KAPPA, SIGMA]),
-    ("Proposals", [PSI, "C"]),
+    ("Hours", [ETA, TAU, PI, BETA, LABOUR, BOUGHT, CHI, "Z", "l", "X", ZETA, KAPPA, SIGMA]),
+    ("Proposals", [KEPT, LOST, BACK, JOBS, PSI, "C", BEHIND, WITH, REPLACED, LIFTS, ILL]),
     ("Abilities", [RHO, ALPHA, MU, LAMBDA, GAMMA]),
     ("Software capabilities", ["k", "o", PHI, "J", "Q", "R", "u", "a", "c", "N", "t", "w"]),
 ]
@@ -424,8 +486,10 @@ TERMS = [k for _, keys in GROUPS for k in keys]
 DEFINED = {"yes": 1.0, "partly": 0.5, "no": 0.0}     # how far a task the taxonomy calls benchmarkable counts as well defined
 PER_NEED = "dxv"                      # the vectors there is one of for each need, written with a subscript n
 # what each computed term is made from; a term that is not here is data
-USES = {ETA: [TAU, "m", "e"], TAU: [PI, THETA, "X"], PI: [OMEGA, "v", CHI, "Z"], CHI: ["l", "g", "D", "r"], "Z": ["T", "E"], "X": ["Y"],
-        PSI: ["C", TAU, "e"], KAPPA: [SIGMA, OMEGA, "v", CHI, "Z", THETA], SIGMA: ["l", "g", "V"],
+USES = {ETA: [TAU, "m", "e"], TAU: [PI, THETA, "X"], PI: [BETA, "Z"], BETA: [CHI, OMEGA, "v"], CHI: ["l", "g", "D", "r"], "Z": ["T", "E"], "X": ["Y"],
+        LABOUR: [CHI, "r", "L"], BOUGHT: [OMEGA, "d", "r", "x"], WITH: [CHI, "r", REPLACED, "A"], BEHIND: [LABOUR, WITH, BOUGHT],
+        JOBS: ["C", THETA, PI, "e", BEHIND], BACK: [PSI, BEHIND], KEPT: [BACK, LIFTS, ILL], LOST: [KEPT, JOBS],
+        PSI: ["C", TAU, "e"], KAPPA: [SIGMA, BETA, "Z", THETA, PI], SIGMA: ["l", "g", "V"],
         ZETA: [PI, THETA, "X"],
         "x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "h": ["f", "m", "e"], RHO: [ALPHA, MU], ALPHA: ["p", THETA, "G", "m", "e", GAMMA, LAMBDA], "o": ["k", "a", "c"], PHI: ["J", "Q", "R", "u"], "u": ["Q", "R"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
         "f": ["p", THETA, "G"], "G": ["E", "M", "Y"], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
@@ -490,6 +554,18 @@ MATRIX_KINDS = {
     "hours_worked": {"unit": 0.1, "cut": 0.05, "scale": (1.0, 1e4), "ticks": ("1M", "10M", "100M", "1B", "10B"),
                      "blank": "under 50,000 hours", "small": "under fifty thousand hours", "colour": "millions of hours",
                      "in_cell": "in millions of hours, with k for thousands"},
+    # full-time jobs for every million dollars
+    "jobs": {"unit": 1e-4, "cut": 1e-3, "scale": (1e-3, 10.0), "ticks": ("0.001", "0.01", "0.1", "1", "10"),
+             "blank": "under 0.001 jobs per $1 million", "small": "under a thousandth of a job", "colour": "full-time jobs per million dollars",
+             "in_cell": "in jobs"},
+    # years of healthy life for every million dollars
+    "years": {"unit": 1e-4, "cut": 1e-3, "scale": (1e-3, 10.0), "ticks": ("0.001", "0.01", "0.1", "1", "10"),
+              "blank": "under 0.001 years per $1 million", "small": "under a thousandth of a year",
+              "colour": "years of healthy life per million dollars", "in_cell": "in years"},
+    # hours of healthy life for every thousand dollars; it can be negative
+    "life": {"unit": 1e-4, "cut": 1e-3, "scale": (1e-3, 100.0), "ticks": ("0.001", "0.01", "0.1", "1", "10", "100"),
+             "blank": "under 0.001 hours of healthy life per $1,000", "small": "under a thousandth of an hour",
+             "colour": "hours of healthy life per thousand dollars", "in_cell": "in hours"},
     # a number with no unit, such as a logarithm
     "number": {"unit": 1e-3, "cut": 1e-3, "scale": (0.1, 10.0), "ticks": ("0.1", "1", "10"),
                "blank": "under 0.001", "small": "under a thousandth", "colour": "the number", "in_cell": "to two places"},
@@ -539,8 +615,7 @@ def _term(key: str, here: str = "") -> str:
     return _vec(key, here) if key in PER_NEED else _sym(key, here)
 
 
-_ITALIC = {"h": "&#x210E;", "α": "&#x1D6FC;", "γ": "&#x1D6FE;", "θ": "&#x1D703;", "λ": "&#x1D706;", "μ": "&#x1D707;", "ρ": "&#x1D70C;",
-           "κ": "&#x1D705;", "σ": "&#x1D70E;", "χ": "&#x1D712;", "ω": "&#x1D714;"}
+_ITALIC = {"h": "&#x210E;", "α": "&#x1D6FC;", "γ": "&#x1D6FE;", "θ": "&#x1D703;", "λ": "&#x1D706;", "μ": "&#x1D707;", "ρ": "&#x1D70C;"}
 
 
 def _elt(shown: str, sub: str, page: str = "", here: str = "") -> str:
@@ -601,8 +676,10 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     less_open = _paren(f"{_ONES}<mo>&minus;</mo>{S('e')}")
     if key == "p":        # a need dollar by occupation, however the needs are weighed
         return S("p", T=True), f'{_sum("n")}{weight}{_TIMES}{V("v", T=True)}{_TIMES}{S("W")}'
-    if key == PI:         # the same, in hours: a sector's hours for each dollar of its value added, divided among occupations by their jobs
-        return S(PI, T=True), f'{_sum("n")}{weight}{_TIMES}{V("v", T=True)}{_TIMES}{_diag(S(CHI))}{_TIMES}{S("Z")}'
+    if key == BETA:       # the same dollar in hours, by sector: the value added a sector earns from it, times its hours for each dollar of value added
+        return S(BETA), f'{_diag(S(CHI))}{_TIMES}{_sum("n")}{weight}{_TIMES}{V("v")}'
+    if key == PI:         # and by occupation: each sector's hours divided among occupations by their jobs
+        return S(PI, T=True), f'{S(BETA, T=True)}{_TIMES}{S("Z")}'
     if key == TAU:        # by what the work is, with the unpaid hours at home
         return S(TAU, T=True), f'{S(PI, T=True)}{_TIMES}{S(THETA)}<mo>+</mo><msup>{_ONES}{_TR}</msup>{_TIMES}{S("X")}'
     if key == ETA:        # and the part of it that is well defined and has no open implementation
@@ -612,11 +689,32 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     if key == "Z":        # the jobs of the surveyed industries that cover a sector, as shares of a row
         TE = f'{S("T")}{_TIMES}{S("E")}'
         return S("Z"), f'{_inv(_diag(TE + _TIMES + _ONES))}{_TIMES}{TE}'
+    leaves = f"{_ONES}<mo>&minus;</mo>{_vec(REPLACED, here, sub='k')}"                # what proposal k leaves of each sector
+    kept = _paren(leaves)
+    if key == LABOUR:     # a sector's hours for a dollar of what it makes, and those of all it buys, all the way back
+        return S(LABOUR, T=True), f'<msup>{_paren(S(CHI) + _HADAMARD + S("r"))}{_TR}</msup>{_TIMES}{S("L")}'
+    if key == WITH:       # the same with proposal k in place: the sectors it replaces buy and work only the part it leaves them
+        left_hours = _paren(S(CHI) + _HADAMARD + S("r") + _HADAMARD + kept)
+        return (_vec(WITH, here, sub="k", T=True),
+                f'<msup>{left_hours}{_TR}</msup>{_TIMES}{_inv(_paren(_sym("I") + "<mo>&minus;</mo>" + S("A") + _TIMES + _diag(leaves)))}')
+    if key == BOUGHT:     # what the need dollar buys, for each dollar of value added behind it
+        return S(BOUGHT), f'{_sum("n")}{weight}{_TIMES}<mfrac>{V("d")}<mrow>{S("r", T=True)}{_TIMES}{V("x")}</mrow></mfrac>'
+    if key == BEHIND:     # the hours behind what is bought, as things are less the same with each proposal in place
+        now = f'{S(LABOUR)}{_TIMES}<msup>{_ONES}{_TR}</msup>'
+        return S(BEHIND), f'<msup>{_paren(now + "<mo>&minus;</mo>" + S(WITH))}{_TR}</msup>{_TIMES}{S(BOUGHT)}'
+    if key == JOBS:       # the paid hours a proposal would do, claimed by activity and behind the sectors it replaces, in full-time jobs
+        claimed = f'{S("C", T=True)}{_TIMES}{_paren(_paren(S(THETA, T=True) + _TIMES + S(PI)) + _HADAMARD + less_open)}'
+        return S(JOBS), f'<mfrac><mn>1</mn><mn>{HOURS_A_YEAR / 1000:g}</mn></mfrac>{_TIMES}{_paren(claimed + "<mo>+</mo>" + S(BEHIND))}'
+    if key == BACK:       # what those hours are worth to the people who work them: each at what people pay for an hour of their own time
+        return S(BACK), f'<mn>{HOUR_BACK}</mn>{_TIMES}{_paren(S(PSI) + "<mo>+</mo>" + S(BEHIND))}'
+    if key == KEPT:       # with the healthy life it gives back to those it serves: a year for a million dollars, in hours for a thousand
+        health = f'<mn>{YEAR_HOURS / 1000:.3f}</mn>{_TIMES}{S(LIFTS, T=True)}{_TIMES}{S(ILL)}{_TIMES}<msup>{_ONES}{_TR}</msup>'
+        return S(KEPT), f'{S(BACK)}<mo>+</mo>{health}'
+    if key == LOST:       # less the pay of each of the jobs that were in the hours, at the price of healthy life
+        return S(LOST), f'{S(KEPT)}<mo>&minus;</mo><mn>{JOB_LOST}</mn>{_TIMES}{S(JOBS)}'
     if key == KAPPA:      # the mean of sigma over the sectors an activity is done in for pay, weighted by its paid hours in each
-        E = lambda letter, script, page: _elt(letter, script, page, here)
-        placed = _TIMES.join([E("ω", "n", OMEGA), E("v", "sn", "v"), E("χ", "s", CHI), E("z", "so", "Z"), E("θ", "oa", THETA)])
-        over = _sum("n") + _sum("s") + _sum("o")
-        return E("κ", "a", KAPPA), f'<mfrac><mrow>{over}{placed}{_TIMES}{E("σ", "s", SIGMA)}</mrow><mrow>{over}{placed}</mrow></mfrac>'
+        counted = f'<msup>{_paren(S(SIGMA) + _HADAMARD + S(BETA))}{_TR}</msup>'             # each sector's hours, counted at what they still take
+        return S(KAPPA, T=True), _TIMES.join([counted, S("Z"), S(THETA), _inv(_diag(S(THETA, T=True) + _TIMES + S(PI)))])
     if key == PSI:        # the hours in the parts of activities a proposal claims, less what is already open
         return S(PSI), f'{S("C", T=True)}{_TIMES}{_paren(f"{S(TAU)}{_HADAMARD}{less_open}")}'
     if key == "f":        # the same dollar by what the work is, with the unpaid work done at home
@@ -688,22 +786,34 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     raise KeyError(key)
 
 
-EQUATIONS = [ETA, TAU, PI, CHI, "Z", KAPPA, PSI, "x", "p", "f", "h", RHO, ALPHA, "k", "o", PHI, "u", "a", "c", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
+EQUATIONS = [KEPT, LOST, BACK, JOBS, BEHIND, WITH, LABOUR, BOUGHT, ETA, TAU, PI, BETA, CHI, "Z", KAPPA, PSI, "x", "p", "f", "h", RHO, ALPHA, "k", "o", PHI, "u", "a", "c", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
 # What one entry of each term is measured in, in a few words. A unit that has a page is written
 # [as it reads here|the name its page is filed under], and is a link wherever this is set as HTML.
 _WORK = "[work dollars|work-dollar] per [need dollar|need-dollar]"
 _MILLIONS, _MARK = "[millions of dollars|million-dollars], in 2017", "[one or zero|one-or-zero]"
 _HOURS = "[hours|hour] of work per thousand [need dollars|need-dollar]"
+_LIFE = "[hours of healthy life|healthy-hour] per thousand [need dollars|need-dollar]"
 _STILL = f"hours in {HR.YEAR} for each hour in {HR.SINCE}, a [number|number] with no unit"
 MEASURED_IN = {
-    ETA: _HOURS, TAU: _HOURS, PI: _HOURS, "X": _HOURS, PSI: _HOURS,
+    ETA: _HOURS, TAU: _HOURS, PI: _HOURS, BETA: _HOURS, "X": _HOURS, PSI: _HOURS,
     CHI: "[hours|hour] of work per thousand [value-added dollars|value-added-dollar]",
     "Z": "the occupation's [share|share] of the sector's jobs",
     "l": "millions of [hours|hour] a year, in 2016",
     "C": "the part of the activity the proposal would do, a [share|share] of one",
     KAPPA: _STILL, SIGMA: _STILL,
     ZETA: "unpleasant [hours|hour] of work per thousand [need dollars|need-dollar]",
+    LABOUR: "[hours|hour] of work per thousand [commodity dollars|commodity-dollar] delivered",
+    WITH: "[hours|hour] of work per thousand [commodity dollars|commodity-dollar] delivered",
+    BOUGHT: "[commodity dollars|commodity-dollar] bought per [value-added dollar|value-added-dollar] behind the needs",
+    REPLACED: "the part of the sector the proposal would replace, a [share|share] of one",
+    BEHIND: _HOURS,
+    JOBS: "[full-time jobs|job-year] per million [need dollars|need-dollar]",
+    BACK: _LIFE,
+    ILL: "[years of healthy life|healthy-year] lost in a year, per million [need dollars|need-dollar]",
+    LIFTS: "the part of what the cause takes that the proposal would give back, a [share|share] of one",
+    KEPT: _LIFE,
+    LOST: _LIFE,
     "x": "[commodity dollars|commodity-dollar] produced per [need dollar|need-dollar]",
     "p": _WORK, "k": _WORK, "o": _WORK, "f": _WORK, "h": _WORK, "b": _WORK, "G": _WORK,
     ALPHA: _WORK, RHO: _WORK, GAMMA: _MARK,
@@ -747,6 +857,7 @@ COUNTED = {
     "capability": ("software capability", "software capabilities"), "task": ("task", "tasks"),
     "activity": ("work activity", "work activities"),
     "proposal": ("proposal", "proposals"),
+    "cause": ("cause of ill health", "causes of ill health"),
 }
 _UNIT_LINK = re.compile(r"\[([^|\]]+)\|([a-z-]+)\]")
 
@@ -809,6 +920,15 @@ class Sheet:
     def shown(self) -> np.ndarray:
         """Which entries the picture and the data file hold."""
         return np.abs(self.values.values) >= MATRIX_KINDS[self.kind]["cut"]
+
+
+def _above(code: str, under: pd.Series) -> list[str]:
+    """The causes a cause is filed under, nearest first."""
+    out = []
+    while under[code]:
+        code = under[code]
+        out.append(code)
+    return out
 
 
 def matrix_a(d: Data):
@@ -919,8 +1039,41 @@ def sheets(d: Data) -> dict[str, Sheet]:
     span = f"{HR.YEAR} for each hour in {HR.SINCE}"
     # what each proposal claims of each activity, and the hours that comes to
     proposed = pd.Series({k: x.name for k, x in d.proposals.items()})
-    claims = pd.DataFrame({k: x.does.share for k, x in d.proposals.items()}).reindex(act.index).fillna(0.0)      # C
+    claims = pd.DataFrame({k: x.does.share.astype(float) for k, x in d.proposals.items()}).reindex(act.index).fillna(0.0).astype(float)      # C
     would_do = frame(claims.values.T @ hours_to_activity.mul(1 - opened, axis=0).values, claims.columns)          # psi
+    # a proposal that replaces sectors: the hours behind a dollar of each commodity, as things are and with each proposal in place
+    direct = hours_per.loc[com].values * per_value_added.loc[com].values             # a sector's own hours per thousand dollars it makes
+    recipe = A_.loc[com, com].values
+    labour = pd.Series(direct @ m.L.loc[com, com].values, index=com)                                               # lambda
+    replaced = pd.DataFrame(0.0, index=com, columns=claims.columns)                                               # Psi
+    for key, x in d.proposals.items():
+        for start, share in sorted(x.replaces.share.items(), key=lambda kv: len(kv[0])):      # the longest start of a code has the last word
+            replaced.loc[[c for c in com if c.startswith(start)], key] = share
+    with_ = pd.DataFrame({k: (direct * (1 - z)) @ np.linalg.inv(np.eye(len(com)) - recipe * (1 - z)[None, :]) if z.any() else labour.values
+                          for k, z in ((k, replaced[k].values) for k in replaced.columns)}, index=com)             # Pi
+    bought = frame((dn.loc[com, needs].values / (per_value_added.loc[com].values @ xn.loc[com, needs].values)) @ weights.loc[needs].values, com)   # upsilon
+    behind = frame((labour.values[:, None] - with_.values).T @ bought.values, claims.columns)                    # phi
+    # what a proposal's hours hold and are worth: the jobs in its paid hours, and what people pay for all of them as hours of their own
+    paid_claimed = frame(claims.values.T @ frame(d.theta.values.T @ paid_hours.values, act.index).mul(1 - opened, axis=0).values, claims.columns)
+    jobs = (paid_claimed + behind) / (HOURS_A_YEAR / 1000)                                                         # j, for every million need dollars
+    given_back = (would_do + behind) * d.prices.hour_back                                                         # epsilon, in hours of healthy life
+    # and the health of those it serves: the years of healthy life each cause takes, and the part of each a proposal would give back
+    ills = d.burden[d.burden["last"]].set_index("code")
+    healthy_years = (ills.yld_thousands + ills.yll_thousands) * 1e3 / (d.spent / 1e6)                              # iota, for every million need dollars
+    lifted = pd.DataFrame(0.0, index=ills.index, columns=claims.columns)                                          # Delta
+    under = d.burden.set_index("code").under
+    depth = d.burden.set_index("code").level
+    def filed_under(code: str) -> list[str]:       # the causes with nothing under them that are the cause or are filed, however far down, under it
+        return [c for c in ills.index if c == code or code in _above(c, under)]
+    for key, x in d.proposals.items():
+        for code, share in sorted(x.lifts.share.items(), key=lambda kv: depth[kv[0]]):       # the deeper cause has the last word
+            lifted.loc[filed_under(code), key] = share
+    health_back = lifted.T @ healthy_years * YEAR_HOURS / 1000                                                    # hours of healthy life per thousand need dollars
+    kept = given_back.add(health_back, axis=0)                                                                    # Xi, if the proposal works
+    names_of = d.burden.set_index("code").cause
+    ill_groups = pd.Series({c: names_of[([c] + _above(c, under))[max(0, depth[c] - 2)]] for c in ills.index})     # the cause two steps down the list that it is filed under
+    ill_order = f"Causes are in the Organization's order within its {ill_groups.nunique()} groups."
+    if_lost = kept - jobs * d.prices.job_lost / 1000                                                              # Omega
     of_proposals = pd.Series("Proposals", index=claims.columns)
     proposal_order = "Proposals are in the order of their files' names."
     production_account = ("The integrated industry-level production account of the U.S. Bureau of Economic Analysis and Bureau of "
@@ -1046,6 +1199,13 @@ def sheets(d: Data) -> dict[str, Sheet]:
                    f"Sectors the survey does not reach hold {(by_sector_hours.sum(axis=0)[0] - paid_hours.equal.sum()) / by_sector_hours.sum(axis=0)[0] * 100:.0f}% "
                    "of the paid hours, with the needs counted equally, and those are not placed.",
               row_tip="Occupation", code="plenty/site.py", sums="cols"),
+        Sheet(BETA, "the hours each sector works behind a need dollar", "hours", frame(by_sector_hours, com), t.names, **by_weighing,
+              rows="sectors that do the work, each a commodity",
+              entries="Hours worked in the sector for every thousand need dollars: the value added it earns from them, "
+                      "times its hours for each dollar of value added.",
+              note=f"These are all the paid hours behind the needs. {_m(_sym(PI))} places them in occupations, and can "
+                   "place only those of sectors the survey of occupations reaches.",
+              row_tip="Sector", code="plenty/site.py", sums="cols"),
         Sheet(CHI, "the hours of work in a value-added dollar of each commodity", "hours",
               **lone(hours_per.loc[com], CHI, "Hours per thousand dollars of value added", "hours"), row_names=t.names,
               rows="produced commodities",
@@ -1100,9 +1260,11 @@ def sheets(d: Data) -> dict[str, Sheet]:
               rows="O*NET's intermediate work activities",
               entries=f"For the same output, the hours taken in {span}, in the sectors where the activity is done for pay: "
                       f"the mean of {_m(_sym(SIGMA))} over those sectors, each weighted by the activity's paid hours in it.",
-              source=f"The sums run over needs {_m('<mi>n</mi>')}, sectors {_m('<mi>s</mi>')} and occupations "
-                     f"{_m('<mi>o</mi>')}. What is summed below the line is the paid hours of the activity that one occupation "
-                     "works in one sector.",
+              source=f"Read from the left. Each sector's hours, {_m(_sym(BETA))}, are counted at what they still take, "
+                     f"{_m(_sym(SIGMA))}. {_m(_sym('Z'))} passes them to the occupations that work them and "
+                     f"{_m(_sym(THETA))} to the activities those occupations do. The last factor divides each activity's "
+                     f"sum by its paid hours, {_m(_sym(THETA, T=True) + _TIMES + _sym(PI))}, which is the same sum without "
+                     f"{_m(_sym(SIGMA))}.",
               note="Under a half, paid work of this kind has been going anyway. Near one or over, it is stuck. It is a measure "
                    "of the sectors an activity is done in and not of the activity itself, and it says nothing of work done "
                    "unpaid. Zero means the activity has no paid hours.",
@@ -1126,6 +1288,67 @@ def sheets(d: Data) -> dict[str, Sheet]:
               note="It is a ceiling: the work the claims cover, if the proposal did all of it. A claim is the proposer's own. "
                    "Proposals overlap, so the rows do not add up.",
               row_tip="Proposal", code="plenty/site.py", order=proposal_order),
+        Sheet(KEPT, "what each proposal would give back, the jobs kept", "life", kept, proposed, **by_weighing,
+              rows="scored proposals", row_groups=of_proposals,
+              entries="Hours of healthy life for every thousand need dollars, if the proposal works: what the hours it would do "
+                      "are worth to those who work them, and the healthy life it would give back to those it serves.",
+              row_tip="Proposal", code="plenty/site.py", order=proposal_order),
+        Sheet(LOST, "what each proposal would give back, the jobs lost", "life", if_lost, proposed, **by_weighing,
+              rows="scored proposals", row_groups=of_proposals,
+              entries="The same, less a year's pay for each job that was in those hours, at the price of healthy life.",
+              row_tip="Proposal", code="plenty/site.py", order=proposal_order),
+        Sheet(BACK, "what the hours each proposal would do are worth to those who work them", "life", given_back, proposed, **by_weighing,
+              rows="scored proposals", row_groups=of_proposals,
+              entries="Hours of healthy life for every thousand need dollars: the hours in the activities the proposal claims and "
+                      f"behind the sectors it replaces, each at the {HOUR_BACK} of an hour of healthy life that people pay for an "
+                      "hour of their own time.",
+              row_tip="Proposal", code="plenty/site.py", order=proposal_order),
+        Sheet(JOBS, "the full-time jobs in the paid hours each proposal would do", "jobs", jobs, proposed, **by_weighing,
+              rows="scored proposals", row_groups=of_proposals,
+              entries=f"Full-time jobs, each of {HOURS_A_YEAR:,} hours a year, for every million need dollars: in the paid hours of "
+                      "the activities the proposal claims, and in the hours behind the sectors it replaces.",
+              row_tip="Proposal", code="plenty/site.py", order=proposal_order),
+        Sheet(BEHIND, "the hours behind the sectors each proposal would replace", "hours", behind, proposed, **by_weighing,
+              rows="scored proposals", row_groups=of_proposals,
+              entries="Hours of paid work for every thousand need dollars that are not needed with the proposal in place: in "
+                      "the sectors it replaces, and in all they bought.",
+              row_tip="Proposal", code="plenty/site.py", order=proposal_order),
+        Sheet(WITH, "the hours behind a dollar of each commodity with each proposal in place", "hours", with_, t.names, proposed,
+              rows="delivered commodities", cols="scored proposals",
+              entries="Hours worked to deliver a thousand dollars of the commodity when the sectors the proposal replaces buy, "
+                      "and work, only the part it leaves them.",
+              row_tip="Commodity", col_tip="Proposal", axis="Proposals", code="plenty/site.py", col_groups=of_proposals,
+              order=f"Sectors are in the Bureau's order within fifteen groups. {proposal_order}"),
+        Sheet(REPLACED, "the part of each sector each proposal would replace", "share", replaced, t.names, proposed,
+              rows="replaced sectors, each a commodity", cols="scored proposals",
+              entries="The part of what the sector makes that the proposal would make in its place, buying nothing and with "
+                      "nobody's hours: one for all of it.",
+              source=f"The proposals, one file each, with the reason for every share: {_file('proposals/')}.",
+              row_tip="Sector", col_tip="Proposal", axis="Proposals", code="plenty/site.py", col_groups=of_proposals,
+              order=f"Sectors are in the Bureau's order within fifteen groups. {proposal_order}"),
+        Sheet(LIFTS, "the part of each cause of ill health each proposal would lift", "share", lifted, ills.cause, proposed,
+              rows="the World Health Organization's causes of ill health", cols="scored proposals",
+              entries="The part of the healthy life the cause takes that the proposal would give back: one for all of it.",
+              source=f"The proposals, one file each, with the reason for every share: {_file('proposals/')}.",
+              row_tip="Cause", col_tip="Proposal", axis="Proposals", code="plenty/site.py",
+              row_groups=ill_groups, col_groups=of_proposals, order=f"{ill_order} {proposal_order}"),
+        Sheet(ILL, "the healthy life each cause of ill health takes", "years",
+              **lone(healthy_years, ILL, "Years of healthy life lost in a year", "years"), row_names=ills.cause,
+              rows="the World Health Organization's causes of ill health", row_groups=ill_groups,
+              entries="Years of healthy life lost to the cause in the United States in 2019, to early death and to living "
+                      "with it, for every million dollars spent on the needs.",
+              source=f"World Health Organization, Global Health Estimates, 2019: {_file('data/health/burden_2019.csv')}.",
+              row_tip="Cause", code="plenty/site.py", order=ill_order),
+        Sheet(LABOUR, "the hours behind a dollar of each commodity", "hours",
+              **lone(labour, LABOUR, "Hours per thousand dollars delivered", "hours"), row_names=t.names,
+              rows="delivered commodities",
+              entries="Hours worked to deliver a thousand dollars of the commodity: its makers' hours, and those behind "
+                      "everything bought to make it, all the way back.",
+              row_tip="Commodity", code="plenty/site.py"),
+        Sheet(BOUGHT, "what a need dollar buys of each commodity", "per_dollar", bought, t.names, **by_weighing,
+              rows="bought commodities",
+              entries="Commodity dollars bought for the needs, for each dollar of value added behind them.",
+              row_tip="Commodity", code="plenty/site.py", sums="cols"),
         Sheet("C", "the part of each work activity each proposal would do", "share", claims, act.name, proposed,
               rows="O*NET's intermediate work activities", cols="scored proposals",
               entries="The part of the activity the proposal claims it would do: one for the whole of it, less for a part.",
@@ -1698,6 +1921,19 @@ def units(d: Data) -> dict[str, Unit]:
     occ, surveyed = d.wage_bill[2], d.survey[3]
     needs = [NEED_NAME[n].lower() for n in d.sheets["Y"].values.columns]
     ways = d.sheets[OMEGA].values
+    pub, price = published_prices(), d.prices
+    def said(key: str, text: str) -> str:              # a published figure, as a link to where it is published
+        return f'<a href="{e(pub.url[key])}">{text}</a>'
+    def priced(dollars: float) -> str:
+        return f"${dollars / 1e6:.1f} million" if dollars >= 1e6 else f"${dollars:,.0f}" if dollars >= 100 else f"${dollars:.2f}"
+    def in_hours(hours: float) -> str:
+        return f"{float(f'{hours:.3g}'):,.0f}" if hours >= 1e5 else f"{hours:,.0f}" if hours >= 10 else f"{hours:.2f}"
+    traded = [("An hour of healthy life", price.life), ("An hour of a person's own time", price.time),
+              ("An hour of work, as it is paid", price.pay), ("A full-time job's pay for a year", price.pay * HOURS_A_YEAR),
+              ("A year of healthy life", price.life * YEAR_HOURS), ("A statistical life", pub.value.life)]
+    exchange = table([th("What is traded"), th("Priced at, in dollars of 2017", "num"), th("Hours of healthy life", "num")],
+                     [f'<tr><th scope="row">{what}</th><td class="num">{priced(x)}</td><td class="num">{in_hours(x / price.life)}</td></tr>'
+                      for what, x in traded], attrs=" data-scores")
     out = [
         Unit("commodity", *COUNTED["commodity"], True,
              "One of the goods and services the Bureau of Economic Analysis divides the economy's output into.",
@@ -1792,6 +2028,11 @@ puts capabilities in order, not tasks.</p>"""),
 the part of each {_unit("activity", "work activity")} it would do, {T("C")}, and what it would cost to make. There are
 {len(d.proposals)}, in {_file('proposals/')}, and the page there says how to write one.</p>
 <p>The account does not check a proposal. It says how many hours of work the claims come to, {T(PSI)}.</p>"""),
+        Unit("cause", *COUNTED["cause"], True,
+             "One of the causes the World Health Organization divides ill health among.",
+             f"""<p>One of the causes among which the World Health Organization divides early death and ill health in its
+Global Health Estimates: a disease, a condition or a kind of injury. Its list files each cause under a broader one. The
+{int(d.burden["last"].sum())} that have nothing filed under them are the rows of {T(ILL)}, and together they are all of it.</p>"""),
         Unit("ability", *COUNTED["ability"], True,
              "One of the enduring capacities of a person that O*NET rates occupations by.",
              f"""<p>One of the {len(d.abilities[2])} abilities of O*NET 31.0, the U.S. Department of Labor's database of
@@ -1892,6 +2133,47 @@ them: {d.sheets[TAU].values.equal.sum() - d.sheets["X"].values.values.sum():.0f}
 {d.sheets["X"].values.values.sum():.0f} unpaid.</p>
 <p>An hour is what work costs the person who does it, and that is the same whatever the hour earns. It is not a measure of
 what the hour brings about, which differs from one hour to the next by many orders of magnitude.</p>"""),
+        Unit("healthy-year", "year of healthy life", "years of healthy life", False,
+             "A year of one person's life in full health.",
+             f"""<p>A year of one person's life in full health. The World Health Organization counts the years lost to each
+{_unit("cause", "cause of ill health")}: those lost to dying early, and those lived with the cause, each counted for the part
+of full health it takes. In the United States in 2019 they came to
+{(d.burden.yld_thousands + d.burden.yll_thousands)[d.burden.level == 0].sum() / 1e3:.0f} million. {T(ILL)} counts them for
+every million {_unit("need-dollar", "need dollars")}.</p>
+<p>It is {YEAR_HOURS:,.0f} {_unit("healthy-hour", "hours of healthy life")}, so one year for every million need dollars is
+{YEAR_HOURS / 1000:.3f} hours for every thousand: the figure in {T(KEPT)}.</p>"""),
+        Unit("healthy-hour", "hour of healthy life", "hours of healthy life", False,
+             "An hour of one person's life in full health: what an hour of anything else is traded for.",
+             f"""<p>An hour of one person's life in full health. The account weighs everything else against it, at the rates
+people trade at: an hour of one thing for so many hours of another. A {_unit("healthy-year", "year of healthy life")} is
+{YEAR_HOURS:,.0f} of them.</p>
+<p>The rates are from what people pay, in dollars of 2017. The published figures are in {_file('config/prices.csv')}.</p>
+<p>The {said("life", "U.S. Department of Transportation")} values a statistical life at ${pub.value.life / 1e6:.1f} million,
+from what people accept in pay to bear a small risk of death. At forty, about the age of those people, a life has
+{said("life_left", f"{pub.value.life_left:g} years")} left. By the World Health Organization's count an ordinary year in
+the United States is lived at {price.health:.2f} of full health. So an hour of healthy life is priced at
+${price.life:.2f}.</p>
+<p>The Department values an hour of a person's own time at {said("time_share", f"{pub.value.time_share:g} of the median household's income")}
+for the hour, from what people pay to save time on the road. That income was
+{said("household_income", f"${pub.value.household_income:,.0f}")} a year, so the hour is ${price.time:.2f}, and an hour
+given back is worth {HOUR_BACK} of an hour of healthy life: the figure in {T(BACK)}.</p>
+<p>An hour of work was paid ${price.pay:.2f} in the account's year, pay and benefits together. A full-time job's pay
+for a year is priced as {price.job_lost:,.0f} hours of healthy life, so a job for every million need dollars is
+{JOB_LOST} hours for every thousand: the figure in {T(LOST)}.</p>
+{exchange}
+<p>These are prices and not ratings. A price says what people give up for an hour, which rises with what they have to
+give. The account uses one rate for everyone, and one for every hour given back whatever the work: nothing here prices
+an hour of cooking against an hour of cleaning. A price holds at the margin, for an hour more or less, and need not
+hold for a year.</p>"""),
+        Unit("job-year", "full-time job", "full-time jobs", False,
+             f"A year of one person's paid work: {HOURS_A_YEAR:,} hours.",
+             f"""<p>A year of one person's paid work, taken as {HOURS_A_YEAR:,} hours. {T(JOBS)} counts them for every million
+{_unit("need-dollar", "need dollars")}, so an hour for every thousand need dollars is 1 &frasl; {HOURS_A_YEAR / 1000:g} of a
+job.</p>
+<p>It is the measure of what is at stake for the people whose work a proposal does. A job's pay for a year,
+{HOURS_A_YEAR:,} hours at ${price.pay:.2f}, is priced as {price.job_lost:,.0f}
+{_unit("healthy-hour", "hours of healthy life")}, so one job for every million need dollars is {JOB_LOST} of them for
+every thousand: the figure in {T(LOST)}.</p>"""),
         Unit("dollar-a-year", "dollar a year", "dollars a year", False,
              "A dollar of an occupation's mean annual wage, in May 2021.",
              f"""<p>A dollar of the mean annual wage of an {_unit("occupation")} in a
@@ -2116,6 +2398,25 @@ def _count(x: float) -> str:
     return f"{x:,.0f}"
 
 
+def _few(x: float) -> str:
+    """A number to two or three figures: 4,300, 45, 4.7, 0.31, with a true minus for one below zero."""
+    a = abs(x)
+    said = f"{a:,.0f}" if a >= 9.95 else f"{a:.1f}" if a >= 0.995 else f"{a:.2f}"
+    return ("&minus;" if x < 0 and said.strip("0.") else "") + said
+
+
+def _about(x: float) -> str:
+    """A count of years or of jobs, to three figures under a million, with a true minus for one below zero."""
+    a = abs(x)
+    said = _count(a) if a >= 1e6 else f"{float(f'{a:.3g}'):,.0f}"
+    return ("&minus;" if x < 0 and said != "0" else "") + said
+
+
+def published_prices() -> pd.DataFrame:
+    """What others have found people to pay, and what the rates of exchange are made from, by key (config/prices.csv)."""
+    return pd.read_csv(M.CONFIG / "prices.csv").set_index("key")
+
+
 def hours_section(d: Data) -> str:
     """The account again in hours, and what changes when work is counted by the time it takes and not by its pay."""
     f, h, tau, eta = (d.sheets[key].values for key in ("f", "h", TAU, ETA))
@@ -2135,18 +2436,23 @@ def hours_section(d: Data) -> str:
     zeta, detail, at_work = d.sheets[ZETA].values, d.unpaid[1], d.unpleasant(WORKING)
     at_home = (detail.hours * detail.unpleasant).sum() / detail.hours.sum()
     unpleasant_unpaid = at_home * unpaid_hours
-    kinds = [("Working at a job", d.time_use["Working"], at_work)] + [
-        (r.activity, r.hours_per_day, r.unpleasant) for r in detail.sort_values("hours_per_day", ascending=False).itertuples()
+    kinds = [("Working at a job", d.time_use["Working"], at_work, d.felt(WORKING, "severe"))] + [
+        (r.activity, r.hours_per_day, r.unpleasant, r.severe) for r in detail.sort_values("hours_per_day", ascending=False).itertuples()
         if r.hours_per_day >= FELT_HOURS]
-    felt = table([th("Kind of time"), th("Hours a day for each person", "num"), th("Part of it that is unpleasant", "num")],
-                 [f'<tr><th scope="row" class="wrap">{e(name)}</th><td class="num">{hours:.2f}</td><td class="num">{part * 100:.0f}%</td></tr>'
-                  for name, hours, part in kinds], attrs=" data-scores",
+    felt = table([th("Kind of time"), th("Hours a day for each person", "num"), th("Part of it that is unpleasant", "num"),
+                  th("Part with a bad feeling at 5 or 6", "num")],
+                 [f'<tr><th scope="row" class="wrap">{e(name)}</th><td class="num">{hours:.2f}</td><td class="num">{part * 100:.0f}%</td>'
+                  f'<td class="num">{severe * 100:.0f}%</td></tr>'
+                  for name, hours, part, severe in kinds], attrs=" data-scores",
+                 foot=f'<tr><td>Time that is not work</td><td></td><td class="num">{d.unpleasant(d.not_work) * 100:.0f}%</td>'
+                      f'<td class="num">{d.felt(d.not_work, "severe") * 100:.0f}%</td></tr>',
                  caption=f"Paid work, and the kinds of unpaid work at home that take at least {FELT_HOURS} hours a day, as people "
-                         "of 15 and over reported them.")
-    return f"""{_eqs([equation(key) for key in (PI, TAU, ETA)])}
+                         "of 15 and over reported them. A bad feeling is pain, sadness or stress, rated from 0 to 6.")
+    return f"""{_eqs([equation(key) for key in (BETA, PI, TAU, ETA)])}
 <p>A dollar counts work by what it is paid. An hour counts it by the time of someone's life it takes, which is the same
-whatever it earns. {_m(_sym(CHI))} is the hours worked for each dollar of a sector's value added, {_m(_sym("Z"))} divides
-a sector's hours among occupations by their jobs, and {_m(_sym("X"))} is the unpaid work at home, in hours.</p>
+whatever it earns. {_m(_sym(CHI))} is the hours worked for each dollar of a sector's value added, so {_m(_sym(BETA))} is
+the hours each sector works. {_m(_sym("Z"))} divides a sector's hours among occupations by their jobs, and
+{_m(_sym("X"))} is the unpaid work at home, in hours.</p>
 <p>With the needs counted equally, a thousand need dollars have {tau.equal.sum():.0f} hours of work behind them:
 {tau.equal.sum() - unpaid_hours:.0f} paid and {unpaid_hours:.0f} unpaid. Unpaid work is {unpaid_dollars / f.equal.sum() * 100:.0f}%
 of the work counted in dollars and {unpaid_hours / tau.equal.sum() * 100:.0f}% of it counted in hours: a paid work dollar is the
@@ -2162,60 +2468,65 @@ thousand need dollars, {zeta.equal.sum():.1f} are unpleasant, {_m(_sym(ZETA))}: 
 and {unpleasant_unpaid:.1f} unpaid. Unpaid work is {unpaid_hours / tau.equal.sum() * 100:.0f}% of the hours and
 {unpleasant_unpaid / zeta.equal.sum() * 100:.0f}% of the unpleasant ones.</p>
 {felt}
-<p>All paid work is given the one rate, because the files used here do not say what a respondent's job was.</p>
 """
 
 
 def proposal_scores(d: Data) -> pd.DataFrame:
-    """What each proposal comes to: the activities it claims, the work in them that is not already open, in cents
-    per need dollar and hours per thousand need dollars (needs counted equally), in hours a year (as the needs
-    were paid for), the unpaid part of those and the part people find unpleasant, its cost in hours, the hours a year for each hour of cost, and
-    the hours the paid work it claims still takes, now against then: the mean of kappa over its paid hours."""
+    """What each proposal comes to. For the activities it claims: how many, the work in them that is not already open, in
+    cents per need dollar and hours per thousand need dollars (needs counted equally), in hours a year (as the needs were
+    paid for), and the unpaid and the unpleasant part of those. For
+    the sectors it replaces: the hours a year behind them. For the causes of ill health it lifts: the years of healthy life
+    a year. For all of it: all its hours a year, the full-time jobs in the paid
+    ones, what all those hours are worth in years of healthy life a year, all it would give back if it works, with the jobs kept and with them lost,
+    its cost in hours and what there is for each of them, and the hours the paid work it claims still takes, now against
+    then: the mean of kappa over its paid hours."""
     f, tau, C = d.sheets["f"].values, d.sheets[TAU].values, d.sheets["C"].values
     left = 1 - d.sheets["e"].values.iloc[:, 0]
     a_year = d.spent / 1000              # an hour per thousand need dollars, in hours a year
     out = pd.DataFrame({"activities": (C > 0).sum(), "cents": C.T @ (f.equal * left) * 100, "hours": C.T @ (tau.equal * left),
                         "a_year": C.T @ (tau.spending * left) * a_year, "unpaid_a_year": C.T @ (d.unpaid_hours.sum() * left) * a_year,
                         "unpleasant_a_year": C.T @ (d.sheets[ZETA].values.spending * left) * a_year,
+                        "behind_a_year": d.sheets[BEHIND].values.spending * a_year,
+                        "jobs": d.sheets[JOBS].values.spending * d.spent / 1e6,
+                        "healthy_years": d.sheets[LIFTS].values.T @ d.sheets[ILL].values.iloc[:, 0] * d.spent / 1e6,
+                        "time": d.sheets[BACK].values.spending * a_year / YEAR_HOURS,
+                        "kept": d.sheets[KEPT].values.spending * a_year / YEAR_HOURS,
+                        "lost": d.sheets[LOST].values.spending * a_year / YEAR_HOURS,
                         "cost": pd.Series({k: x.cost for k, x in d.proposals.items()}, dtype=float)})
     paid = C.mul((tau.equal - d.unpaid_hours.sum()) * left, axis=0)                   # the paid hours each claims, by activity
-    still = paid.mul(d.sheets[KAPPA].values.equal, axis=0).sum() / paid.sum()
-    return out.assign(back=out.a_year / out.cost, still=still)
+    still = paid.mul(d.sheets[KAPPA].values.equal, axis=0).sum() / paid.sum().where(paid.sum() > 0)
+    return out.assign(hours_a_year=out.a_year + out.behind_a_year, back=out.a_year / out.cost,
+                      kept_back=out.kept / out.cost * 1000, still=still)
 
 
 def proposals_section(d: Data) -> str:
-    """The proposals there are, what each would do and cost, and what none of them claims."""
+    """The proposals there are, what each would give back if it works and what it would cost, and what none of them claims."""
     tau, eta, C = d.sheets[TAU].values, d.sheets[ETA].values, d.sheets["C"].values
     left = 1 - d.sheets["e"].values.iloc[:, 0]
-    scores = proposal_scores(d).sort_values("a_year", ascending=False)
+    scores = proposal_scores(d).sort_values("kept", ascending=False)
     def cell(x, text):
         return f'<td class="num">{text if pd.notna(x) else "none given"}</td>'
     rows = [f'<tr><th scope="row"><a href="{d.proposals[k].href}">{e(d.proposals[k].name)}</a></th>'
-            f'<td class="num">{r.hours:.{1 if r.hours >= 1 else 2}f}</td><td class="num">{_count(r.a_year)}</td><td class="num">{_count(r.unpaid_a_year)}</td>'
-            f'<td class="num">{_count(r.unpleasant_a_year)}</td>'
-            + cell(r.cost, _count(r.cost)) + cell(r.back, f"{r.back:,.0f}" if r.back >= 10 else f"{r.back:.1f}")
-            + f'<td class="num">{r.still:.2f}</td></tr>'
+            f'<td class="num">{_count(r.hours_a_year)}</td><td class="num">{_about(r.jobs)}</td><td class="num">{_about(r.time)}</td><td class="num">{_about(r.healthy_years)}</td>'
+            f'<td class="num">{_about(r.kept)}</td><td class="num">{_about(r.lost)}</td>'
+            + cell(r.cost, _count(r.cost)) + cell(r.kept_back, _few(r.kept_back)) + "</tr>"
             for k, r in scores.iterrows()]
-    listed = table([th("Proposal"), th("Hours per $1,000", "num"), th("Hours a year", "num"),
-                    th("Of them unpaid", "num"), th("Of them unpleasant", "num"), th("Cost to make, hours", "num"), th("Hours a year for each hour of cost", "num"),
-                    th(f"Its paid work: hours in {HR.YEAR} for each in {HR.SINCE}", "num")], rows, attrs=" data-scores",
-                   caption="Hours per $1,000 are with the needs counted equally. Hours a year are as the needs were in fact paid for.")
+    listed = table([th("Proposal"), th("Hours a year", "num"), th("Full-time jobs in them", "num"), th("What the hours are worth", "num"),
+                    th("Healthy life for those it serves", "num"),
+                    th("Both, the jobs kept", "num"), th("The jobs lost", "num"), th("Cost to make, hours", "num"),
+                    th("For each thousand hours of cost", "num")], rows, attrs=" data-scores",
+                   caption="Every figure is what the proposal comes to if it works. All but hours, jobs and cost are in years of "
+                           "healthy life a year. Hours and jobs are as the needs were in fact paid for. Ill health is that "
+                           "of the United States in 2019.")
     together = (tau.equal * left * C.max(axis=1)).sum()
     unclaimed = eta.equal[C.max(axis=1) == 0].nlargest(3)
     names = d.sheets[ETA].row_names
     return f"""<p>The account says where the work is. It cannot say what could be built to do it. A proposal says that: what it
 is, how a stranger would check that it works, the part of each work activity it would do, {_m(_sym("C"))}, and what it
 would cost to make. The account then says how many hours the claims come to, less what is already open:</p>
-{_eqs([equation(PSI)])}
+{_eqs([equation(key) for key in (PSI, BEHIND, JOBS, BACK, KEPT, LOST)])}
 {listed}
-<p>A proposal's hours are a ceiling: the work its claims cover, if it did all of it. The shares and the costs are each
-proposer's own, and the costs here are guesses at an order of magnitude, so the hours for each hour of cost are no
-firmer than that. The last column says whether the paid work a proposal claims has been going anyway: the hours it took
-in {HR.YEAR} for each hour it took in {HR.SINCE}, for the same output, in the sectors where it is done,
-{_m(_sym(KAPPA))}. Well under one, such work is already being done away with and a proposal adds less. Near one, it is
-stuck. It is a measure of the sectors the work is done in, so it says little of an activity that is spread over many,
-and health care's output is measured too poorly for its figure to be trusted.
-Proposals overlap, and where two claim the same activity the larger claim is counted once: together these claim
+<p>Proposals overlap, and where two claim the same activity the larger claim is counted once: together these claim
 {together:.0f} of the {tau.equal.sum():.0f} hours behind a thousand need dollars. The largest rows of {_m(_sym(ETA))}
 that none of them claims are {", ".join(e(names[a].rstrip(".")).lower() for a in unclaimed.index[:-1])} and
 {e(names[unclaimed.index[-1]].rstrip(".")).lower()}.</p>
@@ -2227,38 +2538,78 @@ def proposal_page(d: Data, key: str) -> str:
     """The page of one proposal: what it states, what it comes to, and each of its claims with the hours in it."""
     x, score, psi = d.proposals[key], proposal_scores(d).loc[key], d.sheets[PSI].values.loc[key]
     tau, opened, names = d.sheets[TAU].values.equal, d.sheets["e"].values.iloc[:, 0], d.sheets[TAU].row_names
-    does = x.does.assign(hours=tau[x.does.index] * (1 - opened[x.does.index]) * x.does.share).sort_values("hours", ascending=False)
-    rows = [f'<tr><th scope="row" class="wrap">{e(names[a])}</th><td class="num">{r.share:g}</td><td class="wrap">{e(r.basis)}</td>'
-            f'<td class="num">{tau[a]:.2f}</td><td class="num">{opened[a]:g}</td><td class="num">{r.hours:.2f}</td></tr>'
-            for a, r in does.iterrows()]
-    foot = f'<tr><td>All it claims</td><td></td><td></td><td></td><td></td><td class="num">{psi.equal:.2f}</td></tr>'
-    claims = table([th("Work activity"), th("Part claimed", "num"), th("Why"), th("Hours in the activity", "num"),
-                    th("Part already open", "num"), th("Hours it would do", "num")], rows, foot=foot, attrs=" data-scores",
-                   caption="Hours of work for every thousand need dollars, paid and unpaid, with the needs counted equally. "
-                           "The hours it would do are the hours in the activity, times the part claimed, times the part not already open.")
+    tables = ""
+    if len(x.does):
+        does = x.does.assign(hours=tau[x.does.index] * (1 - opened[x.does.index]) * x.does.share).sort_values("hours", ascending=False)
+        rows = [f'<tr><th scope="row" class="wrap">{e(names[a])}</th><td class="num">{r.share:g}</td><td class="wrap">{e(r.basis)}</td>'
+                f'<td class="num">{tau[a]:.2f}</td><td class="num">{opened[a]:g}</td><td class="num">{r.hours:.2f}</td></tr>'
+                for a, r in does.iterrows()]
+        foot = f'<tr><td>All it claims</td><td></td><td></td><td></td><td></td><td class="num">{psi.equal:.2f}</td></tr>'
+        tables += table([th("Work activity"), th("Part claimed", "num"), th("Why"), th("Hours in the activity", "num"),
+                         th("Part already open", "num"), th("Hours it would do", "num")], rows, foot=foot, attrs=" data-scores",
+                        caption="Hours of work for every thousand need dollars, paid and unpaid, with the needs counted equally. "
+                                "The hours it would do are the hours in the activity, times the part claimed, times the part not already open.")
+    if len(x.replaces):
+        sectors, beta = d.sheets[REPLACED].values.index, d.sheets[BETA].values.equal
+        rows = []
+        for start, r in x.replaces.iterrows():
+            under = [c for c in sectors if c.startswith(start)]
+            rows.append(f'<tr><th scope="row">{e(start)}</th><td class="num">{len(under)}</td><td class="num">{r.share:g}</td>'
+                        f'<td class="wrap">{e(r.basis)}</td><td class="num">{beta[under].sum():.2f}</td></tr>')
+        foot = (f'<tr><td>With all they bought</td><td></td><td></td><td></td>'
+                f'<td class="num">{d.sheets[BEHIND].values.equal[key]:.2f}</td></tr>')
+        tables += table([th("Sectors whose code starts"), th("Sectors", "num"), th("Part replaced", "num"), th("Why"),
+                         th("Hours worked in them", "num")], rows, foot=foot, attrs=" data-scores",
+                        caption="Hours of paid work for every thousand need dollars, with the needs counted equally. The last "
+                                f"line is the hours not needed with the proposal in place: its row of {_m(_sym(BEHIND))}.")
+    if len(x.lifts):
+        burden, ill = d.burden.set_index("code"), d.sheets[ILL].values.iloc[:, 0]
+        under = burden.under
+        rows = []
+        for code, r in x.lifts.iterrows():
+            last = [c for c in ill.index if c == code or code in _above(c, under)]
+            rows.append(f'<tr><th scope="row" class="wrap">{e(burden.cause[code])}</th><td class="num">{r.share:g}</td>'
+                        f'<td class="wrap">{e(r.basis)}</td><td class="num">{_about(ill[last].sum() * d.spent / 1e6)}</td></tr>')
+        foot = f'<tr><td>All it would give back</td><td></td><td></td><td class="num">{_about(score.healthy_years)}</td></tr>'
+        tables += table([th("Cause of ill health"), th("Part lifted", "num"), th("Why"), th("Years of healthy life it takes", "num")],
+                        rows, foot=foot, attrs=" data-scores",
+                        caption=f"Years of healthy life lost in the United States in 2019: {_m(_sym(ILL))}. The last line is the "
+                                f"part the proposal would give back, by {_m(_sym(LIFTS))}.")
     spec = [("What it is", e(x.what)), ("How it is checked", e(x.check))]
     if x.by:
         spec.append(("Proposed by", e(x.by)))
-    spec.append(("Would do", f"{psi.equal:.1f} hours of work for every thousand need dollars with the needs counted equally, "
-                             f"{psi.spending:.1f} weighing them by what is spent on each, and {psi.poorest:.1f} by the poorest "
-                             f"fifth's budget: its row of {_m(_sym(PSI))}. In dollars that is {score.cents:.1f} cents of work "
-                             "per need dollar."))
-    spec.append(("In a year", f"{_count(score.a_year)} hours, as the needs were in fact paid for. {_count(score.unpaid_a_year)} of them "
-                              "are unpaid work at home, which no job goes with."))
-    spec.append(("Of them unpleasant", f"{_count(score.unpleasant_a_year)} hours a year, at the rates people report for such work: "
-                                       f"its claims' part of {_m(_sym(ZETA))}."))
+    small = lambda x: f"{x:.1f}" if x >= 0.95 else f"{x:.2g}"         # a small proposal keeps two figures
+    if len(x.does):
+        spec.append(("Would do", f"{small(psi.equal)} hours of work for every thousand need dollars with the needs counted equally, "
+                                 f"{small(psi.spending)} weighing them by what is spent on each, and {small(psi.poorest)} by the poorest "
+                                 f"fifth's budget: its row of {_m(_sym(PSI))}. In dollars that is {small(score.cents)} cents of work "
+                                 "per need dollar."))
+    spec.append(("In a year", f"{_count(score.hours_a_year)} hours, as the needs were in fact paid for: {_count(score.a_year)} in the "
+                              f"activities it claims and {_count(score.behind_a_year)} behind the sectors it replaces. "
+                              f"{_count(score.unpaid_a_year)} of them are unpaid work at home, which no job goes with."))
+    if len(x.does):
+        spec.append(("Of them unpleasant", f"{_count(score.unpleasant_a_year)} hours a year, at the rates people report for such work: "
+                                           f"its claims' part of {_m(_sym(ZETA))}."))
+    spec.append(("Jobs in them", f"{_about(score.jobs)} full-time jobs: its row of {_m(_sym(JOBS))}."))
+    if len(x.lifts):
+        spec.append(("Healthy life", f"{_about(score.healthy_years)} years a year given back to those it serves."))
+    spec.append(("The hours are worth", f"{_about(score.time)} years of healthy life a year, at {HOUR_BACK} of an hour of "
+                                         f"healthy life for each: its row of {_m(_sym(BACK))}."))
+    spec.append(("If it works", f"{_about(score.kept)} years of healthy life a year if the jobs are kept, and {_about(score.lost)} if "
+                             f"they are lost: its rows of {_m(_sym(KEPT))} and {_m(_sym(LOST))}."))
     if x.cost:
         spec.append(("Cost to make", f"{_count(x.cost)} hours of people's work, by the proposer's estimate. {e(x.cost_basis)}"))
-        spec.append(("For each hour of cost", f"{score.back:,.0f} hours a year, if it did all it claims."))
-    spec.append(("Has it been moving", f"The paid work it claims took {score.still:.2f} hours in {HR.YEAR} for each hour in {HR.SINCE}, "
-                                       f"for the same output, in the sectors where it is done: the mean of {_m(_sym(KAPPA))} over "
-                                       "its paid hours. Well under one, such work is going anyway. Near one, it is stuck."))
+        spec.append(("For each thousand hours of cost", f"{_few(score.kept_back)} years of healthy life a year, the jobs kept."))
+    if pd.notna(score.still):
+        spec.append(("Has it been moving", f"The paid work it claims took {score.still:.2f} hours in {HR.YEAR} for each hour in {HR.SINCE}, "
+                                           f"for the same output, in the sectors where it is done: the mean of {_m(_sym(KAPPA))} over "
+                                           "its paid hours. Well under one, such work is going anyway. Near one, it is stuck."))
     spec.append(("File", _file(x.file)))
     body = f"""
 <p class="crumbs"><a href="{HOME}">The account</a> &rsaquo; <a href="{HOME}#proposals">Proposals</a></p>
 <h1 class="long">{e(x.name)}</h1>
 <dl class="spec">{"".join(f"<dt>{k}</dt><dd>{v}</dd>" for k, v in spec)}</dl>
-{claims}
+{tables}
 """
     return page(x.name, body)
 

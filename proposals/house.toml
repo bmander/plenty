@@ -1,0 +1,18 @@
+name  = "A machine that builds a house"
+by    = "Claude, for discussion"
+what  = "Machines that put up the shell of a house on an ordinary lot from its plan, and fit its pipes, wires and heating."
+check = "Houses it builds are inspected against the building code, and the hours of people on site are counted beside those of an ordinary crew."
+
+[cost]
+hours = 1e8
+basis = "A guess at the order of magnitude: fifty thousand person-years."
+
+[[replaces]]
+sectors = "233411"         # single-family residential structures
+share   = 0.5
+basis   = "The shell and the fitting of a new house. Not the land, the design or the finishing by hand."
+
+[[replaces]]
+sectors = "233412"         # multifamily residential structures
+share   = 0.3
+basis   = "Low buildings of the same kind. Not towers."

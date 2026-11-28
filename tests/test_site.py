@@ -101,10 +101,15 @@ def test_every_unit_has_a_page_and_every_term_links_to_its_units(built):
             for term in terms:
                 assert f'<a href="{built.sheets[term].href}"' in page.split(f"<dt>{how}</dt>")[1].split("</dd>")[0], (key, how, term)
     x = site.unit_users(built, units["need-dollar"])
-    in_hours = [site.ETA, site.TAU, site.PI, "X", site.ZETA, site.PSI]
+    in_hours = [site.ETA, site.TAU, site.PI, site.BETA, "X", site.ZETA, site.KEPT, site.LOST, site.BACK, site.JOBS, site.PSI, site.BEHIND, site.ILL]
     assert x["Entries of"] == list("xpfhdGb") + in_hours + [site.RHO, site.ALPHA, "k", "o"] and not x["Rows of"] and not x["Columns of"]
-    assert site.unit_users(built, units["hour"])["Entries of"] == [site.ETA, site.TAU, site.PI, site.CHI, "l", "X", site.ZETA, site.PSI]
-    assert site.unit_users(built, units["proposal"]) == {"Rows of": [site.PSI], "Columns of": ["C"], "Entries of": []}
+    assert site.unit_users(built, units["hour"])["Entries of"] == [site.ETA, site.TAU, site.PI, site.BETA, site.LABOUR, site.CHI, "l", "X", site.ZETA, site.PSI, site.BEHIND, site.WITH]
+    assert site.unit_users(built, units["healthy-hour"]) == {"Rows of": [], "Columns of": [], "Entries of": [site.KEPT, site.LOST, site.BACK]}
+    assert site.unit_users(built, units["job-year"]) == {"Rows of": [], "Columns of": [], "Entries of": [site.JOBS]}
+    assert site.unit_users(built, units["healthy-year"]) == {"Rows of": [], "Columns of": [], "Entries of": [site.ILL]}
+    assert site.unit_users(built, units["cause"]) == {"Rows of": [site.LIFTS, site.ILL], "Columns of": [], "Entries of": []}
+    assert site.unit_users(built, units["proposal"]) == {"Rows of": [site.KEPT, site.LOST, site.BACK, site.JOBS, site.PSI, site.BEHIND],
+                                                             "Columns of": ["C", site.WITH, site.REPLACED, site.LIFTS], "Entries of": []}
     assert site.unit_users(built, units["need"]) == {"Rows of": [site.OMEGA], "Columns of": ["x", "d", "Y", "v"], "Entries of": []}
 
 
@@ -296,7 +301,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert (at[0] >= 0).all() and (at[1] >= 0).all() and len(csv) == (x != 0).sum(), key
             got[at] = csv.value
             assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA)
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA + site.BETA + site.WITH + site.REPLACED + site.LABOUR + site.BOUGHT + site.ILL + site.LIFTS)
     assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == [site.LAMBDA, "R"]
     assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
@@ -534,8 +539,10 @@ def test_the_account_is_kept_in_hours_beside_dollars(built):
     # pi, tau and eta: the account's second, third and fourth lines again, in hours
     omega = v[site.OMEGA]
     by_sector = (v["v"].loc[com, omega.index].values * chi.values[:, None]) @ omega.values
-    pi = v[site.PI].loc[occ]
-    assert list(pi.columns) == list(omega.columns) and np.allclose(pi.values, Z.T @ by_sector)
+    beta, pi = v[site.BETA].loc[com], v[site.PI].loc[occ]
+    assert list(beta.columns) == list(omega.columns) and np.allclose(beta.values, by_sector)
+    assert list(pi.columns) == list(omega.columns) and np.allclose(pi.values, Z.T @ beta.values)
+    assert (pi.sum() < beta.sum()).all() and (pi.sum() > 0.9 * beta.sum()).all()       # the survey reaches most sectors' hours, not all
     X, tau = v["X"].loc[occ, acts], v[site.TAU].loc[acts]
     assert np.allclose(tau.values, v[site.THETA].loc[occ, acts].values.T @ pi.values + X.values.sum(axis=0)[:, None])
     kept = (col("m")[acts] * (1 - col("e")[acts])).values
@@ -567,6 +574,10 @@ def test_the_account_is_kept_in_hours_beside_dollars(built):
         total = placed.sum(axis=0)
         assert np.allclose(v[site.KAPPA].loc[acts, way][total > 0], (sigma.values @ placed)[total > 0] / total[total > 0])
         assert not v[site.KAPPA].loc[acts, way][total == 0].any()
+        # as its page writes it: each sector's hours counted at sigma, passed to occupations and activities, over each activity's paid hours
+        assert np.allclose(total, theta.T @ pi[way].values)
+        written = (sigma.values * beta[way].values) @ Z @ theta
+        assert np.allclose(written[total > 0] / total[total > 0], v[site.KAPPA].loc[acts, way][total > 0])
     assert 0.2 < v[site.KAPPA].values[v[site.KAPPA].values > 0].min() and v[site.KAPPA].values.max() < 2
     # the paid hours behind the needs are most of the hours worked, and less than all of them
     behind = pi.spending.sum() * built.spent / 1000 / 1e6
@@ -576,7 +587,7 @@ def test_the_account_is_kept_in_hours_beside_dollars(built):
     assert X.values.sum() / tau.equal.sum() > G.sum() / f.equal.sum()
     home = (site.SITE / site.HOME).read_text()
     section = home[home.index('id="hours"'):home.index('id="proposals"')]
-    assert section.count("<mtr>") == 3
+    assert section.count("<mtr>") == 4
     assert f"{tau.equal.sum():.0f} hours of work behind them" in section and f"{X.values.sum():.0f} unpaid" in section
     assert f"is {eta.equal.sum():.0f} of the {tau.equal.sum():.0f} hours" in section
     names = built.sheets[site.ETA].row_names
@@ -595,10 +606,11 @@ def test_proposals_are_read_from_their_files_scored_and_given_pages(built, tmp_p
     assert list(props) == [p.stem for p in files] == list(C.columns) == list(psi.index) and len(props) >= 4
     for key, x in props.items():
         raw = tomllib.loads((site.PROPOSALS / f"{key}.toml").read_text())
-        claimed = pd.Series({r["activity"]: r["share"] for r in raw["does"]})
+        claimed = pd.Series({r["activity"]: r["share"] for r in raw.get("does", [])}, dtype=float)
         assert (x.name, x.what, x.check) == (raw["name"], raw["what"], raw["check"]) and x.cost == raw.get("cost", {}).get("hours")
         assert (C[key][claimed.index] == claimed).all() and np.isclose(C[key].sum(), claimed.sum()) and ((claimed > 0) & (claimed <= 1)).all()
-        assert all(r["basis"].strip() for r in raw["does"])
+        assert all(r["basis"].strip() for r in raw.get("does", []) + raw.get("replaces", [])) and (raw.get("does") or raw.get("replaces"))
+        assert "chance" not in raw, key                                           # each is scored as if it works
     # psi: the hours in what each claims, less what is already open
     left = (1 - v["e"].iloc[:, 0][acts]).values
     assert np.allclose(psi.values, C.values.T @ (tau.values * left[:, None]))
@@ -608,7 +620,9 @@ def test_proposals_are_read_from_their_files_scored_and_given_pages(built, tmp_p
     assert (scores.unpaid_a_year <= scores.a_year + 1).all() and np.allclose(scores.back, scores.a_year / scores.cost)
     assert (scores.activities == (C > 0).sum()).all()
     paid = C.mul((tau.equal - v["X"][acts].sum()).values * left, axis=0)
-    assert np.allclose(scores.still, paid.mul(v[site.KAPPA].loc[acts].equal, axis=0).sum() / paid.sum()) and scores.still.between(0.3, 1.3).all()
+    claims_paid = paid.sum() > 0                               # a proposal that only replaces sectors claims no activity's paid hours
+    assert np.allclose(scores.still[claims_paid], (paid.mul(v[site.KAPPA].loc[acts].equal, axis=0).sum() / paid.sum())[claims_paid])
+    assert scores.still[claims_paid].between(0.3, 1.3).all() and scores.still[~claims_paid].isna().all()
     # one proposal can lie inside another, and then it comes to less
     assert (C["code-assignment"] <= C["who-owes-whom"]).all() and psi.equal["code-assignment"] < psi.equal["who-owes-whom"]
     home = (site.SITE / site.HOME).read_text()
@@ -619,31 +633,52 @@ def test_proposals_are_read_from_their_files_scored_and_given_pages(built, tmp_p
         assert f'<a href="{x.href}">{markup.escape(x.name)}</a>' in section, key
         page = (site.SITE / x.href).read_text()
         assert f'<h1 class="long">{markup.escape(x.name)}</h1>' in page and markup.escape(x.what) in page and markup.escape(x.check) in page, key
-        assert f'<td class="num">{psi.equal[key]:.2f}</td></tr>' in page and markup.escape(x.cost_basis) in page, key
-        assert f"{scores.back[key]:,.0f} hours a year" in page and f"proposals/{key}.toml" in page, key
-        assert f"took {scores.still[key]:.2f} hours in {site.HR.YEAR}" in page and f'<td class="num">{scores.still[key]:.2f}</td></tr>' in section, key
+        assert markup.escape(x.cost_basis) in page and f"proposals/{key}.toml" in page, key
+        assert ("Has it been moving" in page) == bool(len(x.does)) == ("All it claims" in page) and ("With all they bought" in page) == bool(len(x.replaces)), key
+        if len(x.does):
+            assert f'<td class="num">{psi.equal[key]:.2f}</td></tr>' in page and f"took {scores.still[key]:.2f} hours in {site.HR.YEAR}" in page, key
         names = built.sheets[site.TAU].row_names
         for a, row in x.does.iterrows():
             assert markup.escape(names[a]) in page and markup.escape(row.basis) in page, (key, a)
+        for start, row in x.replaces.iterrows():
+            assert f'<th scope="row">{start}</th>' in page and markup.escape(row.basis) in page, (key, start)
     # a file that is not whole is refused, and the refusal says why
     whole = 'name = "N"\nwhat = "W"\ncheck = "K"\n[[does]]\nactivity = "{a}"\nshare = {share}\nbasis = "{basis}"\n'
     a = acts[0]
     cases = {"share of 1.5": whole.format(a=a, share=1.5, basis="b"), "has no reason": whole.format(a=a, share=0.5, basis=" "),
              "is not a work activity": whole.format(a="9.Z", share=0.5, basis="b"),
              "no check": whole.format(a=a, share=0.5, basis="b").replace('check = "K"', 'check = ""'),
-             "claimed twice": whole.format(a=a, share=0.5, basis="b") + whole.format(a=a, share=0.5, basis="b").split("\n", 3)[3],
-             "claims no activity": 'name = "N"\nwhat = "W"\ncheck = "K"\n',
+             "claimed twice": whole.format(a=a, share=0.5, basis="b") + whole.format(a=a, share=0.5, basis="b").split("[[does]]", 1)[1].join(["[[does]]", ""]),
+             "claims no activity, replaces no sector and lifts no cause": 'name = "N"\nwhat = "W"\ncheck = "K"\n',
              "cost needs hours": whole.format(a=a, share=0.5, basis="b") + "[cost]\nhours = 5\n"}
+    sectors = list(v["A"].index)
+    replacing = 'name = "N"\nwhat = "W"\ncheck = "K"\n[[replaces]]\nsectors = "{start}"\nshare = {share}\nbasis = "{basis}"\n'
+    cases |= {"the start of no sector's code": replacing.format(start="99", share=0.5, basis="b"),
+              "33 has a share of 0": replacing.format(start="33", share=0, basis="b"),
+              "33 has no reason": replacing.format(start="33", share=0.5, basis=""),
+              "replaced twice": replacing.format(start="33", share=0.5, basis="b") + replacing.format(start="33", share=0.5, basis="b").split("[[replaces]]", 1)[1].join(["[[replaces]]", ""])}
+    causes = list(built.burden.code)
+    lifting = 'name = "N"\nwhat = "W"\ncheck = "K"\n[[lifts]]\ncause = "{cause}"\nshare = {share}\nbasis = "{basis}"\n'
+    cases |= {"9999 is not a cause of ill health": lifting.format(cause="9999", share=0.5, basis="b"),
+              "1530 has a share of 2": lifting.format(cause="1530", share=2, basis="b"),
+              "lifted twice": lifting.format(cause="1530", share=0.5, basis="b") + lifting.format(cause="1530", share=0.5, basis="b").split("[[lifts]]", 1)[1].join(["[[lifts]]", ""])}
     for why, text in cases.items():
-        folder = tmp_path / why.replace(" ", "-")
+        folder = tmp_path / why.replace(" ", "-").replace("'", "").replace(",", "")
         folder.mkdir()
         (folder / "x.toml").write_text(text)
         with pytest.raises(ValueError, match=why):
-            site.proposals(acts, folder)
+            site.proposals(acts, folder, sectors, causes)
+    (tmp_path / "well").mkdir()
+    (tmp_path / "well" / "cure.toml").write_text(lifting.format(cause="1530", share=0.5, basis="b"))
+    cure = site.proposals(acts, tmp_path / "well", sectors, causes)["cure"]
+    assert cure.does.empty and cure.replaces.empty and cure.lifts.share["1530"] == 0.5
     (tmp_path / "ok").mkdir()
     (tmp_path / "ok" / "fine.toml").write_text(whole.format(a=a, share=1, basis="b"))
-    fine = site.proposals(acts, tmp_path / "ok")["fine"]
-    assert fine.cost is None and fine.does.share[a] == 1 and fine.href == "proposal-fine.html"
+    (tmp_path / "ok" / "swap.toml").write_text(replacing.format(start="33", share=0.5, basis="b"))
+    read = site.proposals(acts, tmp_path / "ok", sectors)
+    fine, swap = read["fine"], read["swap"]
+    assert fine.cost is None and fine.does.share[a] == 1 and fine.href == "proposal-fine.html" and fine.replaces.empty
+    assert swap.does.empty and swap.replaces.share["33"] == 0.5
 
 
 def test_hours_are_weighed_by_how_people_say_they_feel(built):
@@ -685,6 +720,151 @@ def test_hours_are_weighed_by_how_people_say_they_feel(built):
     C, left = v["C"].loc[acts], (1 - v["e"].iloc[:, 0][acts]).values
     scores = site.proposal_scores(built)
     assert np.allclose(scores.unpleasant_a_year, C.values.T @ (zeta.spending.values * left) * built.spent / 1000)
-    assert (scores.unpleasant_a_year < scores.a_year).all()
+    assert (scores.unpleasant_a_year < scores.a_year)[scores.a_year > 0].all()
     for key, x in built.proposals.items():
-        assert f"{site._count(scores.unpleasant_a_year[key])} hours a year, at the rates" in (site.SITE / x.href).read_text(), key
+        assert (f"{site._count(scores.unpleasant_a_year[key])} hours a year, at the rates" in (site.SITE / x.href).read_text()) == bool(len(x.does)), key
+
+
+def test_the_survey_says_how_each_kind_of_time_feels_and_nothing_weighs_it_in_points(built):
+    felt, detail = built.feelings, built.unpaid[1]
+    # the extract: the feelings on one scale from 0 to 10, and each code against the same person's other time
+    assert np.allclose(felt.points, (felt.happy - felt[["pain", "sad", "stress"]].mean(axis=1) + 6) / 12 * 10, atol=1e-3)
+    assert felt.points.between(0, 10).all() and felt.severe.between(0, 1).all()
+    assert (felt.compared <= felt.ratings).all() and (felt.compared_time <= felt.share_of_time + 1e-6).all()
+    assert (felt.below_rest.notna() == (felt.compared > 0)).all() and felt.below_rest.dropna().between(-10, 10).all()
+    assert felt.compared.sum() > 0.75 * felt.ratings.sum()
+    # time that is not work is neither a job nor a kind of unpaid work
+    rest = built.not_work.split(";")
+    work = (site.WORKING, *(c for codes in detail.time_use_codes for c in codes.split(";")))
+    assert sorted(rest) == sorted(c for c in felt.index if not c.startswith(work)) and 0.5 < felt.share_of_time[rest].sum() < 0.7
+    for codes, r in zip(detail.time_use_codes, detail.itertuples()):
+        assert r.severe == built.felt(codes, "severe"), codes
+    # the home page says how each kind of time feels, and the site weighs none of it in points or WELLBYs
+    home = (site.SITE / site.HOME).read_text()
+    section = home[home.index('id="hours"'):home.index('id="proposals"')]
+    assert (f'Working at a job</th><td class="num">{built.time_use["Working"]:.2f}</td><td class="num">{built.unpleasant(site.WORKING) * 100:.0f}%</td>'
+            f'<td class="num">{built.felt(site.WORKING, "severe") * 100:.0f}%</td></tr>') in section
+    for r in detail[detail.hours_per_day >= site.FELT_HOURS].itertuples():
+        assert f'<td class="num">{r.unpleasant * 100:.0f}%</td><td class="num">{r.severe * 100:.0f}%</td></tr>' in section, r.activity
+    for page in site.SITE.glob("*.html"):
+        assert "WELLBY" not in page.read_text(), page.name
+    assert "microwellby" not in built.units and not {"ξ", "δ"} & set(built.sheets) and not list(site.M.CONFIG.glob("wellby*"))
+    assert site._about(-90_012) == "&minus;90,000" and site._few(-0.09) == "&minus;0.09" and site._few(-0.001) == "0.00"
+    assert site._about(306_157) == "306,000" and site._about(4.67e6) == "4.7 million" and site._few(101.02) == "101" and site._few(0.306) == "0.31"
+
+
+def test_a_proposal_that_works_gives_back_what_its_hours_cost_with_the_jobs_kept_or_lost(built):
+    v = {k: s.values for k, s in built.sheets.items()}
+    occ, acts, com = list(v["p"].index), list(v[site.THETA].columns), list(v["A"].index)
+    ways, props = list(v[site.OMEGA].columns), built.proposals
+    r, chi = v["r"].loc[com].iloc[:, 0].values, v[site.CHI].loc[com].iloc[:, 0].values
+    A, L = v["A"].loc[com, com].values, v["L"].loc[com, com].values
+    # lambda: the hours behind a dollar of each commodity; with what the need dollar buys, upsilon, it comes to all the paid hours
+    lam, ups, beta = v[site.LABOUR].loc[com].iloc[:, 0].values, v[site.BOUGHT].loc[com], v[site.BETA].loc[com]
+    assert np.allclose(lam, (chi * r) @ L) and np.allclose(L, np.linalg.inv(np.eye(len(com)) - A))
+    needs = list(v["d"].columns)
+    scale = r @ v["x"].loc[com, needs].values
+    assert np.allclose(ups.values, (v["d"].loc[com, needs].values / scale) @ v[site.OMEGA].loc[needs, ways].values)
+    assert np.allclose(lam @ ups.values, beta.sum().values) and (lam >= chi * r - 1e-9).all()
+    # Psi: the part of each sector a proposal replaces, by the start of its code
+    Psi = v[site.REPLACED].loc[com]
+    for key, x in props.items():
+        want = pd.Series(0.0, index=com)
+        for start, share in sorted(x.replaces.share.items(), key=lambda kv: len(kv[0])):
+            want[[c for c in com if c.startswith(start)]] = share
+        assert (Psi[key] == want).all() and (Psi[key].any() == bool(len(x.replaces))), key
+    assert Psi["workshop"].any() and not Psi["shopping"].any() and Psi.values.max() <= 1
+    # Pi: the same hours with each proposal in place, never more than now; phi: the hours that saves
+    Pi, phi = v[site.WITH].loc[com], v[site.BEHIND]
+    for key in props:
+        left = 1 - Psi[key].values
+        assert np.allclose(Pi[key], (chi * r * left) @ np.linalg.inv(np.eye(len(com)) - A * left[None, :])), key
+        assert (Pi[key].values <= lam + 1e-9).all() and np.allclose(phi.loc[key], (lam - Pi[key].values) @ ups.values), key
+    assert (phi.loc[[k for k, x in props.items() if x.replaces.empty]] == 0).all().all()
+    own = (Psi["workshop"].values[:, None] * beta.values).sum(axis=0)             # the hours worked in the sectors themselves, in the part replaced
+    assert (phi.loc["workshop"].values > 1.3 * own).all() and (phi.loc["workshop"].values < beta.sum().values).all()
+    # j: the paid hours a proposal would do, in full-time jobs for every million need dollars
+    C, left = v["C"].loc[acts], (1 - v["e"].iloc[:, 0][acts]).values
+    paid = v[site.THETA].loc[occ, acts].values.T @ v[site.PI].loc[occ, ways].values
+    jobs = v[site.JOBS]
+    assert np.allclose(jobs.values, (C.values.T @ (paid * left[:, None]) + phi.values) / (site.HOURS_A_YEAR / 1000))
+    # the prices: an hour of healthy life from a statistical life, an hour of one's own time from what is paid to save it, an hour's pay from the account
+    price, pub = built.prices, site.published_prices()
+    assert list(pub.index) == ["life", "life_left", "household_income", "time_share"] and pub.url.str.startswith("https://").all() and pub.source.str.len().min() > 40
+    assert np.isclose(price.health, 1 - built.burden.yld_thousands[built.burden.level == 0].sum() * 1e3 / built.people) and 0.8 < price.health < 0.9 and 3.0e8 < built.people < 3.4e8
+    assert np.isclose(price.life, pub.value.life / (pub.value.life_left * site.YEAR_HOURS * price.health)) and site.YEAR_HOURS == 8766
+    assert np.isclose(price.time, pub.value.time_share * pub.value.household_income / site.HOURS_A_YEAR)
+    assert np.isclose(price.pay, built.io.t.VA.loc["V00100"].sum() / site.HR.industry_hours(built.io.t).sum()) and price.time < price.life < price.pay
+    assert np.isclose(price.hour_back, price.time / price.life) and np.isclose(price.job_lost, site.HOURS_A_YEAR * price.pay / price.life)
+    assert f"{price.hour_back:.2f}" == site.HOUR_BACK and f"{price.job_lost / 1000:.2f}" == site.JOB_LOST
+    # epsilon: what all its hours are worth to those who work them; Xi and Omega: that and the healthy life, with the jobs kept and lost
+    back = v[site.BACK]
+    assert np.allclose(back.values, (v[site.PSI].values + phi.values) * price.hour_back) and list(back.index) == list(props) == list(v[site.PSI].index)
+    # iota: the years of healthy life each cause takes, for every million need dollars; Delta: the part of each a proposal would give back
+    burden = built.burden.set_index("code")
+    last = burden[burden["last"]]
+    whole = burden[burden.level == 0].iloc[0]
+    assert np.isclose(last.yld_thousands.sum(), whole.yld_thousands, rtol=1e-4) and np.isclose(last.yll_thousands.sum(), whole.yll_thousands, rtol=1e-4)
+    assert burden.index.is_unique and (burden.under[burden.level > 0] != "").all() and burden.under[burden.level > 0].isin(burden.index).all()
+    assert (burden.level[burden.under[burden.level > 0]].values == burden.level[burden.level > 0].values - 1).all()
+    iota, Delta = v[site.ILL].iloc[:, 0], v[site.LIFTS]
+    assert list(iota.index) == list(last.index) == list(Delta.index) and list(Delta.columns) == list(props)
+    assert np.allclose(iota, (last.yld_thousands + last.yll_thousands) * 1e3 / (built.spent / 1e6))
+    assert 80e6 < iota.sum() * built.spent / 1e6 < 150e6                           # about a third of a year for each person
+    for key, x in props.items():
+        want = pd.Series(0.0, index=last.index)
+        for code, share in sorted(x.lifts.share.items(), key=lambda kv: burden.level[kv[0]]):
+            want[[c for c in last.index if c == code or code in site._above(c, burden.under)]] = share
+        assert (Delta[key] == want).all() and (Delta[key].any() == bool(len(x.lifts))), key
+    assert (Delta["first-opinion"] == props["first-opinion"].lifts.share["0"]).all()          # all causes stands for every one of them
+    assert Delta["driving"].astype(bool).sum() == 1 and site._above("1530", burden.under)[-1] == "0"
+    health = Delta.values.T @ iota.values * site.YEAR_HOURS / 1000
+    kept, lost = v[site.KEPT], v[site.LOST]
+    assert np.allclose(kept.values, back.values + health[:, None])
+    assert np.allclose(lost.values, kept.values - price.job_lost / 1000 * jobs.values) and (lost.values <= kept.values + 1e-9).all()
+    assert lost.spending["who-owes-whom"] < 0 < kept.spending["who-owes-whom"]      # paid work: its sign turns on the jobs
+    assert lost.spending["shopping"] > 0                                           # unpaid work: it does not
+    # in a year, and on the pages
+    scores = site.proposal_scores(built)
+    assert np.allclose(scores.behind_a_year, phi.spending * built.spent / 1000) and np.allclose(scores.hours_a_year, scores.a_year + scores.behind_a_year)
+    assert np.allclose(scores.healthy_years, Delta.values.T @ iota.values * built.spent / 1e6)
+    a_year = built.spent / 1000 / site.YEAR_HOURS                                  # an hour of healthy life per thousand need dollars, in years a year
+    assert np.allclose(scores.time, back.spending * a_year) and np.allclose(scores.kept, scores.time + scores.healthy_years)
+    assert 0.5 < scores.time["driving"] / scores.healthy_years["driving"] < 2      # its hours and the injuries it avoids are of a size
+    assert np.allclose(scores.time, scores.hours_a_year * price.hour_back / site.YEAR_HOURS)
+    assert np.allclose(scores.jobs, jobs.spending * built.spent / 1e6) and np.allclose(scores.kept, kept.spending * a_year)
+    assert np.allclose(scores.lost, lost.spending * a_year) and np.allclose(scores.kept_back, scores.kept / scores.cost * 1000)
+    assert np.allclose(scores.lost, scores.kept - scores.jobs * price.job_lost / site.YEAR_HOURS)
+    assert 0.5 * site.HR.industry_hours(built.io.t).sum() * 1e6 / site.HOURS_A_YEAR > scores.jobs.max()        # no proposal holds half of all jobs
+    home = (site.SITE / site.HOME).read_text()
+    section = home[home.index('id="proposals"'):home.index('id="terms"')]
+    assert section.count("<mtr>") == 6
+    order = [section.index(f'<a href="{props[k].href}">') for k in scores.sort_values("kept", ascending=False).index]
+    assert order == sorted(order)
+    for key, x in props.items():
+        row = (f'<td class="num">{site._count(scores.hours_a_year[key])}</td><td class="num">{site._about(scores.jobs[key])}</td>'
+               f'<td class="num">{site._about(scores.time[key])}</td><td class="num">{site._about(scores.healthy_years[key])}</td><td class="num">{site._about(scores.kept[key])}</td><td class="num">{site._about(scores.lost[key])}</td>')
+        assert row in section, key
+        page = (site.SITE / x.href).read_text()
+        assert f"{site._about(scores.jobs[key])} full-time jobs" in page and "<dt>If it works</dt>" in page and "hance it works" not in page, key
+        assert ("All it would give back" in page) == bool(len(x.lifts)) == ("<dt>Healthy life</dt>" in page), key
+        assert f"{site._about(scores.kept[key])} years of healthy life a year if the jobs are kept, and {site._about(scores.lost[key])} if" in page, key
+        assert f"<dd>{site._about(scores.time[key])} years of healthy life a year, at {site.HOUR_BACK} of an hour" in page, key
+        assert f"{site._few(scores.kept_back[key])} years of healthy life a year, the jobs kept" in page, key
+    # every one of the new terms has its equation on its page, and none has prose under it
+    for key in (site.LABOUR, site.BOUGHT, site.WITH, site.BEHIND, site.JOBS, site.BACK, site.KEPT, site.LOST):
+        page = (site.SITE / built.sheets[key].href).read_text()
+        assert "<dt>Computed</dt>" in page and "<dt>Where</dt>" not in page and "<dt>Note</dt>" not in page and "<dt>Source</dt>" not in page, key
+    for key in (site.REPLACED, site.LIFTS, site.ILL):
+        page = (site.SITE / built.sheets[key].href).read_text()
+        assert "<dt>Source</dt>" in page and "<dt>Computed</dt>" not in page and "<dt>Note</dt>" not in page, key
+    healthy = (site.SITE / built.units["healthy-year"].href).read_text()
+    assert f"{site.YEAR_HOURS / 1000:.3f}" in healthy and f"{int(built.burden['last'].sum())}" in (site.SITE / built.units["cause"].href).read_text()
+    unit = (site.SITE / built.units["job-year"].href).read_text()
+    assert f"{site.HOURS_A_YEAR:,} hours" in unit and f"is {site.JOB_LOST} of them" in unit
+    hour = (site.SITE / built.units["healthy-hour"].href).read_text()
+    assert all(markup.escape(url) in hour for url in pub.url) and "config/prices.csv" in hour and f"worth {site.HOUR_BACK} of an hour" in hour
+    for what, dollars, hours in (("An hour of healthy life", f"${price.life:.2f}", "1.00"), ("An hour of a person's own time", f"${price.time:.2f}", site.HOUR_BACK),
+                                 ("A statistical life", f"${pub.value.life / 1e6:.1f} million", f"{float(f'{pub.value.life / price.life:.3g}'):,.0f}")):
+        assert f'<tr><th scope="row">{what}</th><td class="num">{dollars}</td><td class="num">{hours}</td></tr>' in hour, what
+

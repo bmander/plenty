@@ -1,0 +1,28 @@
+name  = "Robust open B-rep kernel"
+by    = "Claude, for discussion"
+what  = "An open geometry kernel for solid models that does not fail: unions, cuts, fillets, offsets and shells that return a valid solid, or say exactly why not, on the parts that commercial kernels handle."
+check = "It is run on a public set of real parts with the operations recorded in their histories, and each result is compared with a commercial kernel's: valid or not, and how far apart in volume and surface."
+
+[cost]
+hours = 5e6
+basis = "A guess at the order of magnitude: 2,500 person-years, about what a commercial kernel has taken over its decades."
+
+[[does]]
+activity = "4.A.3.b.2.d"   # Develop models of systems, processes, or products
+share    = 0.1
+basis    = "A kernel does not make the model. It would save the part of modelling spent working around operations that fail and files that do not translate, and that part is a guess."
+
+[[does]]
+activity = "4.A.3.b.2.c"   # Design industrial systems or equipment
+share    = 0.05
+basis    = "The same saving, on the part of this design that is done in a solid modeller."
+
+[[does]]
+activity = "4.A.2.b.2.k"   # Design materials or devices
+share    = 0.05
+basis    = "The same saving, on the part of this design that is done in a solid modeller."
+
+[[does]]
+activity = "4.A.2.a.4.e"   # Evaluate designs, specifications, or other technical data
+share    = 0.02
+basis    = "Analysis that starts from a solid model fails less often on its geometry."

@@ -1,0 +1,28 @@
+name  = "Help at home for the frail"
+by    = "Claude, for discussion"
+what  = "A helper in the home that lifts, steadies, fetches, reminds and keeps watch for a frail adult, so that they can stay there and whoever cares for them can rest."
+check = "Frail adults who have it are compared with ones who do not: their falls, their moves into nursing homes, and the hours and the strain their carers report."
+
+[cost]
+hours = 1e9
+basis = "A guess at the order of magnitude: it wants a machine as able with its hands as household handwork does."
+
+[[does]]
+activity = "4.A.4.a.5.i"   # Assist individuals with special needs
+share    = 0.15
+basis    = "Adults are about a fifth of the hours of care at home filed here, the rest being children, and not all of their care is of this kind."
+
+[[does]]
+activity = "4.A.3.a.1.m"   # Transport patients or clients
+share    = 0.3
+basis    = "Moving someone about their own home."
+
+[[does]]
+activity = "4.A.1.a.2.e"   # Monitor health conditions of humans or animals
+share    = 0.2
+basis    = "Keeping watch at home, not in a ward."
+
+[[lifts]]
+cause = "1550"             # Falls
+share = 0.1
+basis = "The falls of frail people at home are a part of all falls, and watching and steadying would prevent some of those."

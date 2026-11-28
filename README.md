@@ -380,8 +380,16 @@ unpleasant: about a quarter of the time at a job, and about a seventh of the tim
 Last come the proposals: things that could be built, one file each in
 [`proposals/`](proposals/), which says how to write one. A proposal states what it is, how a
 stranger would check it, the part of each work activity it would do and what it would cost to
-make, and the site says how many hours of work a year its claims come to and how many for each
-hour of cost. The shares and the costs are each proposer's own. It also says whether the paid
+make, and the site says how many hours of work a year its claims come to, what those hours are
+worth to the people who work them, and how much there is for its cost. Worth is counted in hours
+of healthy life, at the rates people trade at when they pay: a statistical life against an hour
+of their own time and against an hour's pay, from the published figures in `config/prices.csv`.
+A proposal can also name sectors it would replace, and is then given the hours behind them and
+behind all they bought, by solving the model again with it in place. Each is scored as if
+it works, on what it would give back, twice over: with the jobs in its
+paid hours kept, and with them lost. A proposal can also name causes of ill health it would take
+something off, and is then given the years of healthy life that comes to, from the World Health
+Organization's estimates for the United States (`data/health/burden_2019.csv`). The shares and the costs are each proposer's own. It also says whether the paid
 work a proposal claims has been going anyway: the hours it took in 2016 for each hour in 1987, for
 the same output, in the sectors where it is done (`data/bea/production_account_1987_2016.csv`).
 

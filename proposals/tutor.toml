@@ -1,0 +1,28 @@
+name  = "A tutor for every learner"
+by    = "Claude, for discussion"
+what  = "Software that teaches one learner at a time: explains, sets work, marks it, and changes course on what the learner gets wrong."
+check = "Learners given it are compared with learners who are not, on tests that neither has seen and someone else set."
+
+[cost]
+hours = 1e7
+basis = "A guess at the order of magnitude: five thousand person-years, most of it trials."
+
+[[does]]
+activity = "4.A.4.b.3.b"   # Teach academic or vocational subjects
+share    = 0.5
+basis    = "Explaining and practising. Keeping a room of children at it is not this."
+
+[[does]]
+activity = "4.A.2.a.1.c"   # Assess student capabilities, needs, or performance
+share    = 0.5
+basis    = "Marking, and finding what a learner has not understood."
+
+[[does]]
+activity = "4.A.2.b.2.l"   # Develop educational programs, plans, or procedures
+share    = 0.3
+basis    = "Planning the next lesson for one learner."
+
+[[does]]
+activity = "4.A.4.b.6.g"   # Advise others on educational or vocational matters
+share    = 0.2
+basis    = "What to study next."
