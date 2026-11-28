@@ -101,13 +101,15 @@ def test_every_unit_has_a_page_and_every_term_links_to_its_units(built):
             for term in terms:
                 assert f'<a href="{built.sheets[term].href}"' in page.split(f"<dt>{how}</dt>")[1].split("</dd>")[0], (key, how, term)
     x = site.unit_users(built, units["need-dollar"])
-    in_hours = [site.ETA, site.TAU, site.PI, site.BETA, "X", site.ZETA, site.XI, site.EXPECTED, site.LOST, site.BACK, site.JOBS, site.PSI, site.BEHIND]
+    in_hours = [site.ETA, site.TAU, site.PI, site.BETA, "X", site.ZETA, site.XI, site.EXPECTED, site.LOST, site.BACK, site.JOBS, site.PSI, site.BEHIND, site.ILL]
     assert x["Entries of"] == list("xpfhdGb") + in_hours + [site.RHO, site.ALPHA, "k", "o"] and not x["Rows of"] and not x["Columns of"]
     assert site.unit_users(built, units["hour"])["Entries of"] == [site.ETA, site.TAU, site.PI, site.BETA, site.LABOUR, site.CHI, "l", "X", site.ZETA, site.PSI, site.BEHIND, site.WITH]
     assert site.unit_users(built, units["microwellby"]) == {"Rows of": [], "Columns of": [], "Entries of": [site.XI, site.EXPECTED, site.LOST, site.BACK]}
     assert site.unit_users(built, units["job-year"]) == {"Rows of": [], "Columns of": [], "Entries of": [site.JOBS]}
+    assert site.unit_users(built, units["healthy-year"]) == {"Rows of": [], "Columns of": [], "Entries of": [site.ILL]}
+    assert site.unit_users(built, units["cause"]) == {"Rows of": [site.LIFTS, site.ILL], "Columns of": [], "Entries of": []}
     assert site.unit_users(built, units["proposal"]) == {"Rows of": [site.EXPECTED, site.LOST, site.CHANCE, site.BACK, site.JOBS, site.PSI, site.BEHIND],
-                                                             "Columns of": ["C", site.WITH, site.REPLACED], "Entries of": []}
+                                                             "Columns of": ["C", site.WITH, site.REPLACED, site.LIFTS], "Entries of": []}
     assert site.unit_users(built, units["need"]) == {"Rows of": [site.OMEGA], "Columns of": ["x", "d", "Y", "v"], "Entries of": []}
 
 
@@ -299,7 +301,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert (at[0] >= 0).all() and (at[1] >= 0).all() and len(csv) == (x != 0).sum(), key
             got[at] = csv.value
             assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA + site.XI + site.BETA + site.DELTA + site.WITH + site.REPLACED + site.LABOUR + site.BOUGHT + site.CHANCE)
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA + site.XI + site.BETA + site.DELTA + site.WITH + site.REPLACED + site.LABOUR + site.BOUGHT + site.CHANCE + site.ILL + site.LIFTS)
     assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == [site.LAMBDA, "R"]
     assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
@@ -647,7 +649,7 @@ def test_proposals_are_read_from_their_files_scored_and_given_pages(built, tmp_p
              "is not a work activity": whole.format(a="9.Z", share=0.5, basis="b"),
              "no check": whole.format(a=a, share=0.5, basis="b").replace('check = "K"', 'check = ""'),
              "claimed twice": whole.format(a=a, share=0.5, basis="b") + whole.format(a=a, share=0.5, basis="b").split("[[does]]", 1)[1].join(["[[does]]", ""]),
-             "claims no activity and replaces no sector": 'name = "N"\nwhat = "W"\ncheck = "K"\n[chance]\nworks = 0.5\nbasis = "c"\n',
+             "claims no activity, replaces no sector and lifts no cause": 'name = "N"\nwhat = "W"\ncheck = "K"\n[chance]\nworks = 0.5\nbasis = "c"\n',
              "needs the chance that it works": whole.format(a=a, share=0.5, basis="b").replace("works = 0.5", "works = 1.5"),
              "cost needs hours": whole.format(a=a, share=0.5, basis="b") + "[cost]\nhours = 5\n"}
     sectors = list(v["A"].index)
@@ -656,12 +658,21 @@ def test_proposals_are_read_from_their_files_scored_and_given_pages(built, tmp_p
               "33 has a share of 0": replacing.format(start="33", share=0, basis="b"),
               "33 has no reason": replacing.format(start="33", share=0.5, basis=""),
               "replaced twice": replacing.format(start="33", share=0.5, basis="b") + replacing.format(start="33", share=0.5, basis="b").split("[[replaces]]", 1)[1].join(["[[replaces]]", ""])}
+    causes = list(built.burden.code)
+    lifting = 'name = "N"\nwhat = "W"\ncheck = "K"\n[chance]\nworks = 0.5\nbasis = "c"\n[[lifts]]\ncause = "{cause}"\nshare = {share}\nbasis = "{basis}"\n'
+    cases |= {"9999 is not a cause of ill health": lifting.format(cause="9999", share=0.5, basis="b"),
+              "1530 has a share of 2": lifting.format(cause="1530", share=2, basis="b"),
+              "lifted twice": lifting.format(cause="1530", share=0.5, basis="b") + lifting.format(cause="1530", share=0.5, basis="b").split("[[lifts]]", 1)[1].join(["[[lifts]]", ""])}
     for why, text in cases.items():
-        folder = tmp_path / why.replace(" ", "-").replace("'", "")
+        folder = tmp_path / why.replace(" ", "-").replace("'", "").replace(",", "")
         folder.mkdir()
         (folder / "x.toml").write_text(text)
         with pytest.raises(ValueError, match=why):
-            site.proposals(acts, folder, sectors)
+            site.proposals(acts, folder, sectors, causes)
+    (tmp_path / "well").mkdir()
+    (tmp_path / "well" / "cure.toml").write_text(lifting.format(cause="1530", share=0.5, basis="b"))
+    cure = site.proposals(acts, tmp_path / "well", sectors, causes)["cure"]
+    assert cure.does.empty and cure.replaces.empty and cure.lifts.share["1530"] == 0.5
     (tmp_path / "ok").mkdir()
     (tmp_path / "ok" / "fine.toml").write_text(whole.format(a=a, share=1, basis="b"))
     (tmp_path / "ok" / "swap.toml").write_text(replacing.format(start="33", share=0.5, basis="b"))
@@ -895,8 +906,29 @@ def test_a_proposal_is_expected_to_give_back_what_its_hours_cost_with_the_jobs_k
     back, nu = v[site.BACK], v[site.CHANCE].iloc[:, 0]
     assert np.allclose(back.values, C.values.T @ (xi * left[:, None]) + phi.values * job * site.POINT_HOUR)
     assert list(nu.index) == list(props) and all(nu[k] == x.chance for k, x in props.items()) and nu.between(0, 1).all()
+    # iota: the years of healthy life each cause takes, for every million need dollars; Delta: the part of each a proposal would give back
+    burden = built.burden.set_index("code")
+    last = burden[burden["last"]]
+    whole = burden[burden.level == 0].iloc[0]
+    assert np.isclose(last.yld_thousands.sum(), whole.yld_thousands, rtol=1e-4) and np.isclose(last.yll_thousands.sum(), whole.yll_thousands, rtol=1e-4)
+    assert burden.index.is_unique and (burden.under[burden.level > 0] != "").all() and burden.under[burden.level > 0].isin(burden.index).all()
+    assert (burden.level[burden.under[burden.level > 0]].values == burden.level[burden.level > 0].values - 1).all()
+    iota, Delta = v[site.ILL].iloc[:, 0], v[site.LIFTS]
+    assert list(iota.index) == list(last.index) == list(Delta.index) and list(Delta.columns) == list(props)
+    assert np.allclose(iota, (last.yld_thousands + last.yll_thousands) * 1e3 / (built.spent / 1e6))
+    assert 80e6 < iota.sum() * built.spent / 1e6 < 150e6                           # about a third of a year for each person
+    for key, x in props.items():
+        want = pd.Series(0.0, index=last.index)
+        for code, share in sorted(x.lifts.share.items(), key=lambda kv: burden.level[kv[0]]):
+            want[[c for c in last.index if c == code or code in site._above(c, burden.under)]] = share
+        assert (Delta[key] == want).all() and (Delta[key].any() == bool(len(x.lifts))), key
+    assert (Delta["first-opinion"] == props["first-opinion"].lifts.share["0"]).all()          # all causes stands for every one of them
+    assert Delta["driving"].astype(bool).sum() == 1 and site._above("1530", burden.under)[-1] == "0"
+    health = Delta.values.T @ iota.values * site.HEALTHY_YEAR * 1000
     kept, lost = v[site.EXPECTED], v[site.LOST]
-    assert np.allclose(kept.values, back.values * nu.values[:, None])
+    assert np.allclose(kept.values, (back.values + health[:, None]) * nu.values[:, None])
+    marks = site.wellby_benchmarks()
+    assert marks.wellbys[marks.what.str.startswith("A year in good health, set against")].iloc[0] == site.HEALTHY_YEAR
     assert np.allclose(lost.values, kept.values - site.JOBLESS_POINTS * 1000 * nu.values[:, None] * jobs.values) and (lost.values <= kept.values + 1e-9).all()
     marks = site.wellby_benchmarks()
     assert marks.wellbys[marks.what.str.startswith("A year unemployed, set against")].iloc[0] == -site.JOBLESS_POINTS
@@ -905,6 +937,8 @@ def test_a_proposal_is_expected_to_give_back_what_its_hours_cost_with_the_jobs_k
     # in a year, and on the pages
     scores = site.proposal_scores(built)
     assert np.allclose(scores.behind_a_year, phi.spending * built.spent / 1000) and np.allclose(scores.hours_a_year, scores.a_year + scores.behind_a_year)
+    assert np.allclose(scores.healthy_years, Delta.values.T @ iota.values * built.spent / 1e6)
+    assert scores.kept["driving"] > 10 * (back.spending["driving"] * nu["driving"] * built.spent / 1e9)       # its health is most of what it gives back
     assert np.allclose(scores.jobs, jobs.spending * built.spent / 1e6) and np.allclose(scores.kept, kept.spending * built.spent / 1e9)
     assert np.allclose(scores.lost, lost.spending * built.spent / 1e9) and np.allclose(scores.kept_back, scores.kept / scores.cost * 1000)
     assert 0.5 * site.HR.industry_hours(built.io.t).sum() * 1e6 / site.HOURS_A_YEAR > scores.jobs.max()        # no proposal holds half of all jobs
@@ -915,19 +949,22 @@ def test_a_proposal_is_expected_to_give_back_what_its_hours_cost_with_the_jobs_k
     assert order == sorted(order)
     for key, x in props.items():
         row = (f'<td class="num">{site._count(scores.hours_a_year[key])}</td><td class="num">{site._wellbys(scores.jobs[key])}</td>'
-               f'<td class="num">{x.chance:g}</td><td class="num">{site._wellbys(scores.kept[key])}</td><td class="num">{site._wellbys(scores.lost[key])}</td>')
+               f'<td class="num">{site._wellbys(scores.healthy_years[key])}</td><td class="num">{x.chance:g}</td><td class="num">{site._wellbys(scores.kept[key])}</td><td class="num">{site._wellbys(scores.lost[key])}</td>')
         assert row in section, key
         page = (site.SITE / x.href).read_text()
         assert f"{site._wellbys(scores.jobs[key])} full-time jobs" in page and f"<dd>{x.chance:g}. " in page, key
-        assert f"{site._wellbys(scores.kept[key])} experienced WELLBYs a year if the jobs are kept, and {site._wellbys(scores.lost[key])} if" in page, key
+        assert ("All it would give back" in page) == bool(len(x.lifts)) == ("<dt>Healthy life</dt>" in page), key
+        assert f"{site._wellbys(scores.kept[key])} WELLBYs a year if the jobs are kept, and {site._wellbys(scores.lost[key])} if" in page, key
         assert f"{site._few(scores.kept_back[key])} expected WELLBYs a year, the jobs kept" in page, key
     # every one of the new terms has its equation on its page, and none has prose under it
     for key in (site.LABOUR, site.BOUGHT, site.WITH, site.BEHIND, site.JOBS, site.BACK, site.EXPECTED, site.LOST):
         page = (site.SITE / built.sheets[key].href).read_text()
         assert "<dt>Computed</dt>" in page and "<dt>Where</dt>" not in page and "<dt>Note</dt>" not in page and "<dt>Source</dt>" not in page, key
-    for key in (site.REPLACED, site.CHANCE):
+    for key in (site.REPLACED, site.CHANCE, site.LIFTS, site.ILL):
         page = (site.SITE / built.sheets[key].href).read_text()
         assert "<dt>Source</dt>" in page and "<dt>Computed</dt>" not in page and "<dt>Note</dt>" not in page, key
+    healthy = (site.SITE / built.units["healthy-year"].href).read_text()
+    assert f"{site.HEALTHY_YEAR * 1000:,}" in healthy and f"{int(built.burden['last'].sum())}" in (site.SITE / built.units["cause"].href).read_text()
     unit = (site.SITE / built.units["job-year"].href).read_text()
     assert f"{site.HOURS_A_YEAR:,} hours" in unit and f"{site.JOBLESS_POINTS * 1000:.0f}" in unit
 

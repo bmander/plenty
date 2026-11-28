@@ -394,7 +394,9 @@ the people who work them in experienced WELLBYs, and how much of each there is f
 A proposal can also name sectors it would replace, and is then given the hours behind them and
 behind all they bought, by solving the model again with it in place. Each states the chance that
 it works, and is scored on what it is expected to give back twice over: with the jobs in its
-paid hours kept, and with them lost. The shares and the costs are each proposer's own. It also says whether the paid
+paid hours kept, and with them lost. A proposal can also name causes of ill health it would take
+something off, and is then given the years of healthy life that comes to, from the World Health
+Organization's estimates for the United States (`data/health/burden_2019.csv`). The shares and the costs are each proposer's own. It also says whether the paid
 work a proposal claims has been going anyway: the hours it took in 2016 for each hour in 1987, for
 the same output, in the sectors where it is done (`data/bea/production_account_1987_2016.csv`).
 

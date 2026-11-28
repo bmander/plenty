@@ -66,6 +66,10 @@
       say: function (v) { return hours(v) + " full-time jobs per $1 million"; }, cell: hours,
       sum: function (v) { return hours(v) + " full-time jobs per $1 million"; }, brief: hours
     },
+    years: {
+      say: function (v) { return hours(v) + " years of healthy life per $1 million"; }, cell: hours,
+      sum: function (v) { return hours(v) + " years of healthy life per $1 million"; }, brief: hours
+    },
     hours_worked: {
       say: function (v) { return Math.round(v).toLocaleString("en-US") + " million hours"; }, cell: thousands,
       sum: function (v) { return v >= 999.5 ? (v / 1e3).toFixed(1) + " billion hours" : Math.round(v) + " million hours"; },

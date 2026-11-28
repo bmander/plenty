@@ -25,3 +25,8 @@ basis    = "It is part of driving."
 activity = "4.A.3.a.1.m"   # Transport patients or clients
 share    = 0.5
 basis    = "The driving, not helping the passenger."
+
+[[lifts]]
+cause = "1530"             # Road injury
+share = 0.5
+basis = "Most crashes follow a driver's mistake. Not all would be avoided, and not everyone on the road is in a car."

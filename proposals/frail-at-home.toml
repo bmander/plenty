@@ -25,3 +25,8 @@ basis    = "Moving someone about their own home."
 activity = "4.A.1.a.2.e"   # Monitor health conditions of humans or animals
 share    = 0.2
 basis    = "Keeping watch at home, not in a ward."
+
+[[lifts]]
+cause = "1550"             # Falls
+share = 0.1
+basis = "The falls of frail people at home are a part of all falls, and watching and steadying would prevent some of those."

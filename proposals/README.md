@@ -29,11 +29,16 @@ basis    = "Why that much of it."
 sectors = "33"            # the start of the sectors' codes in the Bureau's accounts: every sector whose code begins so
 share   = 0.5             # the part of what they make that it would make, buying nothing and with nobody's hours
 basis   = "Why that much of it."
+
+[[lifts]]                 # one for each cause of ill health it would take something off
+cause = "1530"            # the cause's code in data/health/burden_2019.csv; a cause that others are filed under stands for all of them
+share = 0.5               # the part of the healthy life the cause takes that it would give back
+basis = "Why that much of it."
 ```
 
-A proposal claims activities, replaces sectors, or both. The work of a sector it replaces is counted
-there, with the work behind everything the sector bought, so the same work is not also claimed by
-activity.
+A proposal claims activities, replaces sectors, lifts causes of ill health, or any of these
+together. The work of a sector it replaces is counted there, with the work behind everything the
+sector bought, so the same work is not also claimed by activity.
 
 The rules:
 
