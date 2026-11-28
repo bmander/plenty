@@ -297,7 +297,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert (at[0] >= 0).all() and (at[1] >= 0).all() and len(csv) == (x != 0).sum(), key
             got[at] = csv.value
             assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA + site.XI + site.BETA)
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA + site.XI + site.BETA + site.DELTA)
     assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == [site.LAMBDA, "R"]
     assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
@@ -727,6 +727,32 @@ def test_work_is_weighed_by_what_it_costs_those_who_do_it(built):
     xi = v[site.XI].loc[acts]
     assert np.allclose(xi.values, (paid * job + home[:, None]) * site.POINT_HOUR) and xi.values.min() < 0 < xi.equal.sum()
     assert np.isclose(home.sum(), at_home * v["X"].values.sum())
+    # delta: the points of the work at home filed under each activity, weighted by its hours; and xi as its page writes it
+    delta = v[site.DELTA].loc[acts].iloc[:, 0]
+    by_activity = detail.groupby("work_activity")
+    filed = ((detail.hours * detail.below_rest).groupby(detail.work_activity).sum() / by_activity.hours.sum())
+    assert np.allclose(delta[filed.index], filed) and not delta.drop(filed.index).any() and delta.min() < 0 < delta.max() < job + 1
+    unpaid = v["X"].loc[occ, acts].values.sum(axis=0)
+    assert np.allclose(xi.values, site.POINT_HOUR * (job * paid + (delta.values * unpaid)[:, None]))
+    assert site.JOB_POINTS == f"{job:.2f}"                        # the number the equation prints is the data's
+    page = (site.SITE / built.sheets[site.XI].href).read_text()
+    assert f"<mn>{site.POINT_HOUR:.0f}</mn>" in page and f"<mn>{site.JOB_POINTS}</mn>" in page and "<dt>Computed</dt>" in page and "<dt>Where</dt>" in page
+    # its largest rows are taken apart on its page: paid hours at a job's points, unpaid hours at their own, adding up to the row
+    worked = page[page.index("Its largest rows, taken apart"):page.index("<figure")]
+    names = built.sheets[site.XI].row_names
+    shown = [*xi.equal.nlargest(site.WORKED_ROWS).index, xi.equal.idxmin()]
+    assert worked.count('<tr><th scope="row"') == len(shown) == site.WORKED_ROWS + 1
+    for a in shown:
+        i = acts.index(a)
+        from_paid, from_unpaid = paid[i, 0] * job * site.POINT_HOUR, unpaid[i] * delta[a] * site.POINT_HOUR
+        assert np.isclose(from_paid + from_unpaid, xi.equal[a])
+        assert (f'{markup.escape(names[a])}</th><td class="num">{paid[i, 0]:.2f}</td><td class="num">{from_paid:,.0f}</td>'
+                f'<td class="num">{unpaid[i]:.2f}</td><td class="num">{site._signed(delta[a])}</td>'
+                f'<td class="num">{site._signed_whole(from_unpaid)}</td><td class="num">{site._signed_whole(xi.equal[a])}</td></tr>') in worked, a
+    assert (f'<td>All the activities</td><td class="num">{paid[:, 0].sum():.2f}</td><td class="num">{paid[:, 0].sum() * job * site.POINT_HOUR:,.0f}</td>'
+            f'<td class="num">{unpaid.sum():.2f}</td><td class="num"></td><td class="num">{home.sum() * site.POINT_HOUR:,.0f}</td>'
+            f'<td class="num">{xi.equal.sum():,.0f}</td></tr>') in worked
+    assert site._signed_whole(-60.4) == "&minus;60" and site._signed_whole(-0.2) == "0"
     html = (site.SITE / site.HOME).read_text()
     section = html[html.index('id="hours"'):html.index('id="proposals"')]
     assert f"is rated {job:.2f} points below the rest of the day and unpaid work at home {at_home:.2f}" in section
