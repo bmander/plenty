@@ -766,6 +766,19 @@ def test_the_guide_sets_wellbys_of_every_size_beside_things_of_that_size(built):
     year = 365.25 * 24
     job = built.below_rest(site.WORKING)
     assert np.isclose(by["An hour at a job"][0], -job / year) and by["An hour at a job"][1] == ""
+    # moments are so many points for so long: measured by someone named, or a judgment that says its points and its time
+    moments = site.wellby_moments()
+    assert moments.what.is_unique and moments.points.abs().between(0.01, 8).all() and (moments.hours > 0).all() and (moments.time != "").all()
+    assert ((moments.by == "") == (moments.source == "")).all() and ((moments.by == "") == (moments.url == "")).all()
+    assert (moments.by == "").sum() >= 10 and (moments.by != "").sum() >= 10
+    for r in moments.itertuples():
+        w, source = by[markup.escape(r.what)]
+        assert np.isclose(w, r.points * r.hours / year), r.what
+        assert source == (f'<a href="{markup.escape(r.url)}">{markup.escape(r.by)}</a>' if r.by else
+                          f"{abs(r.points):g} point{'' if abs(r.points) == 1 else 's'} {'up' if r.points > 0 else 'down'} for {r.time}, a judgment"), r.what
+    assert by["Stubbing a toe"][1] == "4 points down for two minutes, a judgment" and by["Finding a cool rock"][1] == "1 point up for ten minutes, a judgment"
+    trench = by["Three months in the trenches of the First World War, and nothing of what came after"][0]
+    assert np.isclose(trench, -7 / 4) and trench < 2 * by[markup.escape("A year unemployed, set against a year employed")][0]
     assert np.isclose(by["A year of full-time work"][0], -job * site.HOURS_A_YEAR / year)
     assert np.isclose(by["A day off, in place of a working day of eight hours"][0], -by["A working day of eight hours"][0])
     assert np.isclose(by["A minute of play with one's child"][0], -built.below_rest(site.FELT["play"]) / year / 60) and by["A minute of play with one's child"][0] > 0
@@ -791,9 +804,11 @@ def test_the_guide_sets_wellbys_of_every_size_beside_things_of_that_size(built):
         assert 10 ** (k - 0.5) <= abs(w) < 10 ** (k + 0.5), what
     assert sum(1 for r in rows if '<td class="wrap"></td><td class="wrap"></td>' in r) <= 1       # few sizes have nothing beside them
     assert site._size(-85.3e-6) == "&minus;85 microWELLBYs" and site._size(1e-6) == "+1 microWELLBY" and site._size(0.0148) == "+0.015 WELLBYs"
+    assert site._size(-1.369e-3) == "&minus;1,370 microWELLBYs" and site._size(3.7e-3) == "+0.0037 WELLBYs"
     assert site._size(-7) == "&minus;7 WELLBYs" and site._size(45_728) == "+45,700 WELLBYs" and site._size(22.6e6) == "+22.6 million WELLBYs"
-    for source in marks.source.unique():
+    for source in [*marks.source.unique(), *moments.source[moments.by != ""].unique()]:
         assert page.count(markup.escape(source)) == 1, source
+    assert "The scale has a floor and a ceiling." in page
     # and the account points to it
     home = (site.SITE / site.HOME).read_text()
     assert f'<a href="{built.units["microwellby"].href}#{site.GUIDE}">guide to sizes</a>' in home

@@ -1965,9 +1965,14 @@ WELLBY counted the usual way without saying so.</p>
 <h2>A guide to sizes</h2>
 <p>A WELLBY is an amount and not a rate, as a kilowatt-hour is: a point held for a time. What follows sets amounts of
 every size beside things that come to about that much. The benchmarks of life as a whole are in
-{_file('config/wellby_benchmarks.csv')}. The British Treasury, whose guidance several are from, values one WELLBY at
-£13,000 in the prices of 2019, between a low of £10,000 and a high of £16,000.</p>
-{wellby_guide(d)}"""),
+{_file('config/wellby_benchmarks.csv')}, and the moments, measured and judged, in {_file('config/wellby_moments.csv')}.
+The British Treasury, whose guidance several are from, values one WELLBY at £13,000 in the prices of 2019, between a low
+of £10,000 and a high of £16,000.</p>
+{wellby_guide(d)}
+<p>The scale has a floor and a ceiling. People rate an ordinary hour at 7 or 8 of 10, so nothing can add more than 2 or 3
+points and nothing can take away more than 7 or 8. That is why three months in a trench come to under two WELLBYs, about
+what two and a half years without a job come to. Whoever finds that too little is finding that the scale is too even at
+its ends, and that what such months do to the years after them is not counted in them.</p>"""),
         Unit("dollar-a-year", "dollar a year", "dollars a year", False,
              "A dollar of an occupation's mean annual wage, in May 2021.",
              f"""<p>A dollar of the mean annual wage of an {_unit("occupation")} in a
@@ -2215,14 +2220,14 @@ FELT = {"cleanup": "020203", "cleaning": "020101", "commute": "1805", "homework"
 
 
 def _size(w: float) -> str:
-    """An amount of wellbeing with its sign: in microWELLBYs under a thousandth of a WELLBY, in WELLBYs from there."""
+    """An amount of wellbeing with its sign: in microWELLBYs up to the row of a thousand of them, in WELLBYs from there."""
     a, sign = abs(w), "&minus;" if w < 0 else "+"
     def figures(x):                  # to two figures under a hundred and three from there, a million or more in words
         if x >= 1e6:
             return _count(x)
         v = float(f"{x:.2g}" if x < 100 else f"{x:.3g}")
         return f"{v:,.0f}" if v >= 100 else f"{v:g}"
-    micro = a < 0.9995e-3
+    micro = a < 10 ** -2.5
     said = figures(a * 1e6 if micro else a)
     return f"{sign}{said} {'microWELLBY' if micro else 'WELLBY'}{'' if said == '1' else 's'}"
 
@@ -2232,24 +2237,31 @@ def wellby_benchmarks() -> pd.DataFrame:
     return pd.read_csv(M.CONFIG / "wellby_benchmarks.csv")
 
 
+def wellby_moments() -> pd.DataFrame:
+    """Moments, each so many points of a scale from 0 to 10 for so many hours: as others have measured them, or, with
+    nobody named, as judged here (config/wellby_moments.csv)."""
+    return pd.read_csv(M.CONFIG / "wellby_moments.csv", keep_default_na=False)
+
+
 def wellby_examples(d: Data) -> list[tuple[float, str, str]]:
     """Things of every size, each as (WELLBYs, what it is, where the figure is from as HTML). The first are experienced,
-    counted from how people rated their time against the rest of their own day; the last are of life as a whole, from
-    config/wellby_benchmarks.csv."""
+    counted from how people rated their time against the rest of their own day. Then moments, each so many points for
+    so long, as others have measured them or as judged here (config/wellby_moments.csv). The last are of life as a
+    whole, from config/wellby_benchmarks.csv."""
     detail, xi, scores = d.unpaid[1], d.sheets[XI].values, proposal_scores(d)
     hour = {k: -d.below_rest(codes) / (365.25 * 24) for k, codes in {"job": WORKING, **FELT}.items()}      # WELLBYs for an hour of it, in place of other time that is not work
     home = -(detail.hours * detail.below_rest).sum() / detail.hours.sum() / (365.25 * 24)
     people = d.spending["all"].astype(float)
     people = people["Number of consumer units (in thousands)"] * 1e3 * people["People"]
     felt = [
-        (hour["job"] * 5 / 3600, "Five seconds at a job"), (hour["job"] / 60, "A minute at a job"),
+        (hour["job"] / 60, "A minute at a job"),
         (hour["cleanup"] / 6, "Ten minutes of cleaning up the kitchen"), (hour["commute"] / 6, "Ten minutes of travel to or from work"),
         (hour["job"], "An hour at a job"), (hour["cleaning"], "An hour of cleaning the house"), (hour["homework"], "An hour of homework for a class"),
-        (hour["job"] * 8, "A working day of eight hours"), (hour["job"] * HOURS_A_YEAR / 12, "A month of full-time work"),
+        (hour["job"] * 8, "A working day of eight hours"),
         (home * detail.hours_per_day.sum() * 365, f"A year of the unpaid work at home an adult does, {detail.hours_per_day.sum():.0f} hours a day"),
         (hour["job"] * HOURS_A_YEAR, "A year of full-time work"), (hour["job"] * HOURS_A_YEAR * 45, "Forty-five years of full-time work"),
         (-xi.spending.sum() * d.spent / 1e9, "All the work behind the needs of the United States, for a year"),
-        (hour["play"] * 5 / 3600, "Five seconds of play with one's child"), (hour["play"] / 60, "A minute of play with one's child"),
+        (hour["play"] / 60, "A minute of play with one's child"),
         (hour["play"] / 6, "Ten minutes of play with one's child"), (hour["friends"], "An hour with friends or family"),
         (hour["eating"], "An hour of eating and drinking"), (hour["sport"], "An hour of sport or exercise"),
         (-hour["job"] * 8, "A day off, in place of a working day of eight hours"),
@@ -2262,7 +2274,11 @@ def wellby_examples(d: Data) -> list[tuple[float, str, str]]:
     treasury = marks[marks.wellbys == HEALTHY_YEAR].iloc[0]
     life.append((HEALTHY_YEAR * people, f"A year in good health for everyone in the United States, {_count(people)} people",
                  f'<a href="{e(treasury.url)}">{e(treasury.by)}</a>'))
-    return [(w, what, "") for w, what in felt] + life
+    def judged(r) -> str:            # a moment nobody has measured says the points and the time it is taken to be
+        return f"{abs(r.points):g} point{'' if abs(r.points) == 1 else 's'} {'up' if r.points > 0 else 'down'} for {e(r.time)}, a judgment"
+    moments = [(r.points * r.hours / (365.25 * 24), e(r.what), f'<a href="{e(r.url)}">{e(r.by)}</a>' if r.by else judged(r))
+               for r in wellby_moments().itertuples()]
+    return [(w, what, "") for w, what in felt] + moments + life
 
 
 def wellby_guide(d: Data) -> str:
@@ -2285,13 +2301,16 @@ def wellby_guide(d: Data) -> str:
         return "1,000 microWELLBYs" if k == -3 else _size(10.0 ** k)[1:]
     rows = [f'<tr><th scope="row">{amount(k)}</th><td class="wrap">{one_point_for(k)}</td>'
             f'<td class="wrap">{cell(k, -1)}</td><td class="wrap">{cell(k, 1)}</td></tr>' for k in rungs]
-    cited = wellby_benchmarks().drop_duplicates("source")
+    moments = wellby_moments()
+    cited = pd.concat([moments[moments.by != ""], wellby_benchmarks()]).drop_duplicates("source")
     sources = " ".join(f'<a href="{e(r.url)}">{e(r.source)}</a>.' for r in cited.itertuples())
     return table([th("Amount"), th("That is one point for"), th("Takes about that much away"), th("Adds about that much")], rows,
                  attrs=f' data-scores id="{GUIDE}"',
                  caption="Each row is ten times the one above, and a thing is put in the row nearest its size. A figure with "
-                         "no source named is experienced: counted here from how people rated that time against the rest of "
-                         "their own day. A figure with a source is of life as a whole, and the two are not the same measure. "
+                         "nothing after it is counted here, from how people rated that time against the rest of their own "
+                         "day. A figure called a judgment is nobody's measurement: it is the points and the time it says, "
+                         "multiplied. A figure with a name after it is that source's, of feelings at the time or of life as "
+                         "a whole, each on its own scale from 0 to 10, and the three are not the same measure. "
                          f"The sources: {sources}")
 
 

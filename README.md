@@ -382,7 +382,9 @@ person for one year: a job is rated about three quarters of a point below the re
 and work at home about a fifth of one.
 The unit's page has a guide to sizes, from a tenth of a microWELLBY to a billion WELLBYs, each
 beside things that take away or add about that much. Its benchmarks of life as a whole are
-others' findings, in `config/wellby_benchmarks.csv`.
+others' findings, in `config/wellby_benchmarks.csv`. Its moments, from a stubbed toe to three
+months in a trench, are in `config/wellby_moments.csv`: some are others' measurements of how
+people feel at the time, and the rest are judgments that say their points and their time.
 
 Last come the proposals: things that could be built, one file each in
 [`proposals/`](proposals/), which says how to write one. A proposal states what it is, how a
