@@ -1970,8 +1970,9 @@ The British Treasury, whose guidance several are from, values one WELLBY at £13
 of £10,000 and a high of £16,000.</p>
 {wellby_guide(d)}
 <p>The scale has a floor and a ceiling. People rate an ordinary hour at 7 or 8 of 10, so nothing can add more than 2 or 3
-points and nothing can take away more than 7 or 8. That is why three months in a trench come to under two WELLBYs, about
-what two and a half years without a job come to. Whoever finds that too little is finding that the scale is too even at
+points and nothing can take away more than 7 or 8. That is why the best day of a life adds little more than a day sick
+in bed takes away, why the best hour of making love is only about twice the average one, and why three months in a
+trench come to under two WELLBYs, about what two and a half years without a job come to. Whoever finds that too little is finding that the scale is too even at
 its ends, and that what such months do to the years after them is not counted in them.</p>"""),
         Unit("dollar-a-year", "dollar a year", "dollars a year", False,
              "A dollar of an occupation's mean annual wage, in May 2021.",
@@ -2247,8 +2248,8 @@ def wellby_examples(d: Data) -> list[tuple[float, str, str]]:
     """Things of every size, each as (WELLBYs, what it is, where the figure is from as HTML). The first are experienced,
     counted from how people rated their time against the rest of their own day. Then moments, each so many points for
     so long, as others have measured them or as judged here (config/wellby_moments.csv). The last are of life as a
-    whole, from config/wellby_benchmarks.csv."""
-    detail, xi, scores = d.unpaid[1], d.sheets[XI].values, proposal_scores(d)
+    whole, from config/wellby_benchmarks.csv. No proposal is among them: these are what a proposal is measured against."""
+    detail, xi = d.unpaid[1], d.sheets[XI].values
     hour = {k: -d.below_rest(codes) / (365.25 * 24) for k, codes in {"job": WORKING, **FELT}.items()}      # WELLBYs for an hour of it, in place of other time that is not work
     home = -(detail.hours * detail.below_rest).sum() / detail.hours.sum() / (365.25 * 24)
     people = d.spending["all"].astype(float)
@@ -2266,8 +2267,6 @@ def wellby_examples(d: Data) -> list[tuple[float, str, str]]:
         (hour["eating"], "An hour of eating and drinking"), (hour["sport"], "An hour of sport or exercise"),
         (-hour["job"] * 8, "A day off, in place of a working day of eight hours"),
         (hour["friends"] * 365, "An hour a day with friends or family, for a year"),
-        *((r.wellbys_a_year, f'<a href="{d.proposals[k].href}">{e(d.proposals[k].name)}</a>, if it did all it claims, for a year')
-          for k, r in scores.iterrows()),
     ]
     marks = wellby_benchmarks()
     life = [(r.wellbys, e(r.what), f'<a href="{e(r.url)}">{e(r.by)}</a>') for r in marks.itertuples()]
@@ -2309,7 +2308,9 @@ def wellby_guide(d: Data) -> str:
                  caption="Each row is ten times the one above, and a thing is put in the row nearest its size. A figure with "
                          "nothing after it is counted here, from how people rated that time against the rest of their own "
                          "day. A figure called a judgment is nobody's measurement: it is the points and the time it says, "
-                         "multiplied. A figure with a name after it is that source's, of feelings at the time or of life as "
+                         "multiplied. Points up or down are counted from an ordinary hour, which people rate at 7 or 8 of "
+                         "10, and not from nothing. A measured figure is the average over everyone and every occasion, and "
+                         "any one occasion can be far from it. A figure with a name after it is that source's, of feelings at the time or of life as "
                          "a whole, each on its own scale from 0 to 10, and the three are not the same measure. "
                          f"The sources: {sources}")
 

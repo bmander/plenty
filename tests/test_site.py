@@ -768,7 +768,7 @@ def test_the_guide_sets_wellbys_of_every_size_beside_things_of_that_size(built):
     assert np.isclose(by["An hour at a job"][0], -job / year) and by["An hour at a job"][1] == ""
     # moments are so many points for so long: measured by someone named, or a judgment that says its points and its time
     moments = site.wellby_moments()
-    assert moments.what.is_unique and moments.points.abs().between(0.01, 8).all() and (moments.hours > 0).all() and (moments.time != "").all()
+    assert moments.what.is_unique and moments.points.abs().between(0.01, 10).all() and (moments.hours > 0).all() and (moments.time != "").all()
     assert ((moments.by == "") == (moments.source == "")).all() and ((moments.by == "") == (moments.url == "")).all()
     assert (moments.by == "").sum() >= 10 and (moments.by != "").sum() >= 10
     for r in moments.itertuples():
@@ -777,17 +777,19 @@ def test_the_guide_sets_wellbys_of_every_size_beside_things_of_that_size(built):
         assert source == (f'<a href="{markup.escape(r.url)}">{markup.escape(r.by)}</a>' if r.by else
                           f"{abs(r.points):g} point{'' if abs(r.points) == 1 else 's'} {'up' if r.points > 0 else 'down'} for {r.time}, a judgment"), r.what
     assert by["Stubbing a toe"][1] == "4 points down for two minutes, a judgment" and by["Finding a cool rock"][1] == "1 point up for ten minutes, a judgment"
-    trench = by["Three months in the trenches of the First World War, and nothing of what came after"][0]
+    trench = by["Three months in the trenches of the First World War, rated at the bottom of the scale, and nothing of what came after"][0]
+    love, tv = by["An hour of making love, as people rate it on average"][0], by["An hour of television or a film, as people rate it on average"][0]
+    assert love > 5 * tv > 0 and by["An hour of making love at its best, rated at the top of the scale"][0] > 2 * love       # like is set beside like: an hour of each
     assert np.isclose(trench, -7 / 4) and trench < 2 * by[markup.escape("A year unemployed, set against a year employed")][0]
     assert np.isclose(by["A year of full-time work"][0], -job * site.HOURS_A_YEAR / year)
     assert np.isclose(by["A day off, in place of a working day of eight hours"][0], -by["A working day of eight hours"][0])
     assert np.isclose(by["A minute of play with one's child"][0], -built.below_rest(site.FELT["play"]) / year / 60) and by["A minute of play with one's child"][0] > 0
     assert all(built.feelings.index.str.startswith(codes).any() and built.feelings[built.feelings.index.str.startswith(codes)].compared.sum() > 300
                for codes in site.FELT.values())
-    xi, scores = built.sheets[site.XI].values, site.proposal_scores(built)
+    xi = built.sheets[site.XI].values
     assert np.isclose(by["All the work behind the needs of the United States, for a year"][0], -xi.spending.sum() * built.spent / 1e9)
-    for key, x in built.proposals.items():
-        assert np.isclose(by[f'<a href="{x.href}">{markup.escape(x.name)}</a>, if it did all it claims, for a year'][0], scores.wellbys_a_year[key]), key
+    # no proposal is in the guide: it is what proposals are measured against
+    assert not any(x.name in what or x.href in what for x in built.proposals.values() for what in by)
     # the table: a row for each power of ten, each example once and in the row nearest its size, under the column of its sign
     page = (site.SITE / built.units["microwellby"].href).read_text()
     table = page[page.index(f'id="{site.GUIDE}"'):page.index("</table>")]
