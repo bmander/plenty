@@ -8,3 +8,13 @@ They were extracted with `scripts/00_extract_bea.py` from the `.rda` files shipp
 U.S. EPA's [useeior](https://github.com/USEPA/useeior) package (MIT license, see
 `LICENSE-useeior`), which mirrors the BEA originals at
 https://www.bea.gov/industry/input-output-accounts-data. No values were changed.
+
+# Hours worked by industry, 2016
+
+`hours_2016.csv` has, for each of 63 industries, the hours worked in 2016 (millions, employees and
+the self-employed), what labor was paid and value added (millions of dollars). It was extracted with
+`scripts/00_extract_hours.py` from the underlying data of the BEA-BLS integrated industry-level
+production account, 1947-2016 (`KLEMS-Research-Tables-Underlying-Data_0.xlsx`, at
+https://www.bea.gov/products/integrated-industry-level-production-account-klems), downloaded
+2026-11-27. Only the last year was kept and no values were changed. The Bureau calls these data
+experimental. They are a U.S. government work in the public domain.

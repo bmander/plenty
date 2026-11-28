@@ -1,0 +1,64 @@
+industry,name,hours_millions,labor_musd,value_added_musd
+1,Farms,4419.509,89481.4,136673.0
+2,"Forestry, fishing, and related activities",1293.586,27628.4,40907.0
+3,Oil and gas extraction,358.841,34695.3,162121.0
+4,"Mining, except oil and gas",395.491,16502.7,61628.0
+5,Support activities for mining,636.283,25906.2,36844.0
+6,Utilities,1104.0,80034.0,287088.0
+7,Construction,17040.818,595976.8,792509.0
+8,Wood products,806.827,21939.6,30323.0
+9,Nonmetallic mineral products,845.686,29186.6,53839.0
+10,Primary metals,768.165,30498.1,53626.0
+11,Fabricated metal products,2913.178,97952.4,147981.0
+12,Machinery,2172.55,91479.1,142167.0
+13,Computer and electronic products,2064.257,144084.6,287247.0
+14,"Electrical equipment, appliances, and components",759.442,34675.9,55948.0
+15,"Motor vehicles, bodies and trailers, and parts",1963.137,72329.2,166257.0
+16,Other transportation equipment,1372.901,77161.0,129903.0
+17,Furniture and related products,795.065,22457.9,30348.0
+18,Miscellaneous manufacturing,1261.874,56551.0,80220.0
+19,Food and beverage and tobacco products,3644.174,109297.7,283659.0
+20,Textile mills and textile product mills,471.921,13137.1,18193.0
+21,Apparel and leather and allied products,330.437,9188.3,9657.0
+22,Paper products,745.427,29934.5,58620.0
+23,Printing and related support activities,871.961,27245.8,38606.0
+24,Petroleum and coal products,232.009,19415.5,125810.0
+25,Chemical products,1611.442,99756.3,387853.0
+26,Plastics and rubber products,1416.92,44952.2,82693.0
+27,Wholesale trade,11271.429,530293.1,1102642.0
+28,Retail trade,24270.254,628701.8,1096858.0
+29,Air transportation,736.996,53139.1,104122.0
+30,Rail transportation,392.26,23338.9,43768.0
+31,Water transportation,132.736,7032.6,17430.0
+32,Truck transportation,3426.601,106954.6,150571.0
+33,Transit and ground passenger transportation,1046.88,27033.9,36640.0
+34,Pipeline transportation,102.181,7200.7,28101.0
+35,Other transportation and support activities,2420.33,85219.6,121801.0
+36,Warehousing and storage,1877.926,48577.3,60095.0
+37,"Publishing industries, except internet (includes software)",1433.733,122925.8,233733.0
+38,Motion picture and sound recording industries,709.833,45627.5,124619.0
+39,Broadcasting and telecommunications,2102.569,114787.5,424200.0
+40,"Data processing, internet publishing, and other information services",1058.773,63029.6,121442.0
+41,"Federal Reserve banks, credit intermediation, and related activities",4881.569,251286.8,535167.0
+42,"Securities, commodity contracts, and investments",1827.093,220263.3,235080.0
+43,Insurance carriers and related activities,5091.073,271866.7,585919.0
+44,"Funds, trusts, and other financial vehicles",18.499,1601.4,48762.0
+45,Real estate,3377.068,139319.5,2275190.0
+46,Rental and leasing services and lessors of intangible assets,1061.715,35126.3,203637.0
+47,Legal services,2296.07,165869.6,244999.0
+48,Computer systems design and related services,4003.713,264189.9,279609.0
+49,"Miscellaneous professional, scientific, and technical services",11569.081,652581.6,801645.0
+50,Management of companies and enterprises,4109.614,303760.1,358072.0
+51,Administrative and support services,16501.443,421609.0,522220.0
+52,Waste management and remediation services,902.096,29292.6,45134.0
+53,Educational services,6222.904,193901.9,206343.0
+54,Ambulatory health care services,12385.142,578955.0,655291.0
+55,Hospitals and Nursing and residential care,14798.076,511230.8,570426.0
+56,Social assistance,6332.079,120419.5,123580.0
+57,"Performing arts, spectator sports, museums, and related activities",1459.14,95376.2,103646.0
+58,"Amusements, gambling, and recreation industries",2251.342,57547.1,88265.0
+59,Accommodation,3201.186,80578.6,158529.0
+60,Food services and drinking places,16890.02,286179.7,400708.0
+61,"Other services, except government",12291.181,336396.1,415680.0
+62,Federal,4752.168,481179.5,1001118.6
+63,State and local,30917.832,1428281.9,2360205.5
