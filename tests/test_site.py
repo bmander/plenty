@@ -101,9 +101,9 @@ def test_every_unit_has_a_page_and_every_term_links_to_its_units(built):
             for term in terms:
                 assert f'<a href="{built.sheets[term].href}"' in page.split(f"<dt>{how}</dt>")[1].split("</dd>")[0], (key, how, term)
     x = site.unit_users(built, units["need-dollar"])
-    in_hours = [site.ETA, site.TAU, site.PI, "X", site.ZETA, site.XI, site.PSI]
+    in_hours = [site.ETA, site.TAU, site.PI, site.BETA, "X", site.ZETA, site.XI, site.PSI]
     assert x["Entries of"] == list("xpfhdGb") + in_hours + [site.RHO, site.ALPHA, "k", "o"] and not x["Rows of"] and not x["Columns of"]
-    assert site.unit_users(built, units["hour"])["Entries of"] == [site.ETA, site.TAU, site.PI, site.CHI, "l", "X", site.ZETA, site.PSI]
+    assert site.unit_users(built, units["hour"])["Entries of"] == [site.ETA, site.TAU, site.PI, site.BETA, site.CHI, "l", "X", site.ZETA, site.PSI]
     assert site.unit_users(built, units["microwellby"]) == {"Rows of": [], "Columns of": [], "Entries of": [site.XI]}
     assert site.unit_users(built, units["proposal"]) == {"Rows of": [site.PSI], "Columns of": ["C"], "Entries of": []}
     assert site.unit_users(built, units["need"]) == {"Rows of": [site.OMEGA], "Columns of": ["x", "d", "Y", "v"], "Entries of": []}
@@ -297,7 +297,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert (at[0] >= 0).all() and (at[1] >= 0).all() and len(csv) == (x != 0).sum(), key
             got[at] = csv.value
             assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA + site.XI)
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA + site.XI + site.BETA)
     assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == [site.LAMBDA, "R"]
     assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
@@ -535,8 +535,10 @@ def test_the_account_is_kept_in_hours_beside_dollars(built):
     # pi, tau and eta: the account's second, third and fourth lines again, in hours
     omega = v[site.OMEGA]
     by_sector = (v["v"].loc[com, omega.index].values * chi.values[:, None]) @ omega.values
-    pi = v[site.PI].loc[occ]
-    assert list(pi.columns) == list(omega.columns) and np.allclose(pi.values, Z.T @ by_sector)
+    beta, pi = v[site.BETA].loc[com], v[site.PI].loc[occ]
+    assert list(beta.columns) == list(omega.columns) and np.allclose(beta.values, by_sector)
+    assert list(pi.columns) == list(omega.columns) and np.allclose(pi.values, Z.T @ beta.values)
+    assert (pi.sum() < beta.sum()).all() and (pi.sum() > 0.9 * beta.sum()).all()       # the survey reaches most sectors' hours, not all
     X, tau = v["X"].loc[occ, acts], v[site.TAU].loc[acts]
     assert np.allclose(tau.values, v[site.THETA].loc[occ, acts].values.T @ pi.values + X.values.sum(axis=0)[:, None])
     kept = (col("m")[acts] * (1 - col("e")[acts])).values
@@ -568,9 +570,9 @@ def test_the_account_is_kept_in_hours_beside_dollars(built):
         total = placed.sum(axis=0)
         assert np.allclose(v[site.KAPPA].loc[acts, way][total > 0], (sigma.values @ placed)[total > 0] / total[total > 0])
         assert not v[site.KAPPA].loc[acts, way][total == 0].any()
-        # as its page writes it: pi's equation with sigma beside chi, carried to activities, over each activity's paid hours
+        # as its page writes it: each sector's hours counted at sigma, passed to occupations and activities, over each activity's paid hours
         assert np.allclose(total, theta.T @ pi[way].values)
-        written = (v["v"].loc[com, omega.index].values @ omega[way].values) @ np.diag(sigma.values * chi.values) @ Z @ theta
+        written = (sigma.values * beta[way].values) @ Z @ theta
         assert np.allclose(written[total > 0] / total[total > 0], v[site.KAPPA].loc[acts, way][total > 0])
     assert 0.2 < v[site.KAPPA].values[v[site.KAPPA].values > 0].min() and v[site.KAPPA].values.max() < 2
     # the paid hours behind the needs are most of the hours worked, and less than all of them
@@ -581,7 +583,7 @@ def test_the_account_is_kept_in_hours_beside_dollars(built):
     assert X.values.sum() / tau.equal.sum() > G.sum() / f.equal.sum()
     home = (site.SITE / site.HOME).read_text()
     section = home[home.index('id="hours"'):home.index('id="proposals"')]
-    assert section.count("<mtr>") == 3
+    assert section.count("<mtr>") == 4
     assert f"{tau.equal.sum():.0f} hours of work behind them" in section and f"{X.values.sum():.0f} unpaid" in section
     assert f"is {eta.equal.sum():.0f} of the {tau.equal.sum():.0f} hours" in section
     names = built.sheets[site.ETA].row_names

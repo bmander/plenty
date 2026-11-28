@@ -416,6 +416,7 @@ LAMBDA, GAMMA, ALPHA, MU, RHO = "Λ", "Γ", "α", "μ", "ρ"
 PI, TAU, ETA, CHI, PSI = "π", "τ", "η", "χ", "ψ"       # the account in hours: the Greek of p and of h, and tau for time
 KAPPA, SIGMA = "κ", "σ"                                 # and whether those hours have been going anyway
 ZETA = "ζ"                                              # and the part of them people find unpleasant
+BETA = "β"                                              # the hours each sector works, which pi and kappa are both made from
 XI = "ξ"                                                # and what they cost those who work them, in wellbeing
 WORKING = "0501"                                        # the time-use survey's code for working at a job
 POINT_HOUR = 1e6 / (365.25 * 24)                        # one point of wellbeing for one hour, in microWELLBYs: a WELLBY is a point for a year
@@ -423,7 +424,7 @@ POINT_HOUR = 1e6 / (365.25 * 24)                        # one point of wellbeing
 GREEK = {THETA: ("Theta", "&#x1D6AF;"), PHI: ("Phi", "&#x1D6BD;"), OMEGA: ("omega", "&#x1D6DA;"), LAMBDA: ("Lambda", "&#x1D6B2;"),
          GAMMA: ("Gamma", "&#x1D6AA;"), ALPHA: ("alpha", "&#x1D6C2;"), MU: ("mu", "&#x1D6CD;"), RHO: ("rho", "&#x1D6D2;"),
          PI: ("pi", "&#x1D6D1;"), TAU: ("tau", "&#x1D6D5;"), ETA: ("eta", "&#x1D6C8;"), CHI: ("chi", "&#x1D6D8;"), PSI: ("psi", "&#x1D6D9;"),
-         KAPPA: ("kappa", "&#x1D6CB;"), SIGMA: ("sigma", "&#x1D6D4;"), ZETA: ("zeta", "&#x1D6C7;"), XI: ("xi", "&#x1D6CF;")}
+         KAPPA: ("kappa", "&#x1D6CB;"), SIGMA: ("sigma", "&#x1D6D4;"), ZETA: ("zeta", "&#x1D6C7;"), XI: ("xi", "&#x1D6CF;"), BETA: ("beta", "&#x1D6C3;")}
 ABILITY_FAMILY = {"1.A.1": "Cognitive", "1.A.2": "Psychomotor", "1.A.3": "Physical", "1.A.4": "Sensory"}   # O*NET's four families of abilities, by the start of the ability's code
 HOURS_A_YEAR = 2080                   # a year of full-time work, which turns a yearly wage into an hourly one
 # the terms, in the order the account's table lists them
@@ -435,7 +436,7 @@ GROUPS = [
     ("Value added", ["v", "r", "y"]),
     ("Work", ["W", "P", "T", "E", "M"]),
     ("Work activities", [THETA, "G", "m", "e", "s", "b"]),
-    ("Hours", [ETA, TAU, PI, CHI, "Z", "l", "X", ZETA, XI, KAPPA, SIGMA]),
+    ("Hours", [ETA, TAU, PI, BETA, CHI, "Z", "l", "X", ZETA, XI, KAPPA, SIGMA]),
     ("Proposals", [PSI, "C"]),
     ("Abilities", [RHO, ALPHA, MU, LAMBDA, GAMMA]),
     ("Software capabilities", ["k", "o", PHI, "J", "Q", "R", "u", "a", "c", "N", "t", "w"]),
@@ -444,8 +445,8 @@ TERMS = [k for _, keys in GROUPS for k in keys]
 DEFINED = {"yes": 1.0, "partly": 0.5, "no": 0.0}     # how far a task the taxonomy calls benchmarkable counts as well defined
 PER_NEED = "dxv"                      # the vectors there is one of for each need, written with a subscript n
 # what each computed term is made from; a term that is not here is data
-USES = {ETA: [TAU, "m", "e"], TAU: [PI, THETA, "X"], PI: [OMEGA, "v", CHI, "Z"], CHI: ["l", "g", "D", "r"], "Z": ["T", "E"], "X": ["Y"],
-        PSI: ["C", TAU, "e"], KAPPA: [OMEGA, "v", SIGMA, CHI, "Z", THETA, PI], SIGMA: ["l", "g", "V"],
+USES = {ETA: [TAU, "m", "e"], TAU: [PI, THETA, "X"], PI: [BETA, "Z"], BETA: [CHI, OMEGA, "v"], CHI: ["l", "g", "D", "r"], "Z": ["T", "E"], "X": ["Y"],
+        PSI: ["C", TAU, "e"], KAPPA: [SIGMA, BETA, "Z", THETA, PI], SIGMA: ["l", "g", "V"],
         ZETA: [PI, THETA, "X"], XI: [PI, THETA, "X"],
         "x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "h": ["f", "m", "e"], RHO: [ALPHA, MU], ALPHA: ["p", THETA, "G", "m", "e", GAMMA, LAMBDA], "o": ["k", "a", "c"], PHI: ["J", "Q", "R", "u"], "u": ["Q", "R"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
         "f": ["p", THETA, "G"], "G": ["E", "M", "Y"], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
@@ -624,8 +625,10 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     less_open = _paren(f"{_ONES}<mo>&minus;</mo>{S('e')}")
     if key == "p":        # a need dollar by occupation, however the needs are weighed
         return S("p", T=True), f'{_sum("n")}{weight}{_TIMES}{V("v", T=True)}{_TIMES}{S("W")}'
-    if key == PI:         # the same, in hours: a sector's hours for each dollar of its value added, divided among occupations by their jobs
-        return S(PI, T=True), f'{_sum("n")}{weight}{_TIMES}{V("v", T=True)}{_TIMES}{_diag(S(CHI))}{_TIMES}{S("Z")}'
+    if key == BETA:       # the same dollar in hours, by sector: the value added a sector earns from it, times its hours for each dollar of value added
+        return S(BETA), f'{_diag(S(CHI))}{_TIMES}{_sum("n")}{weight}{_TIMES}{V("v")}'
+    if key == PI:         # and by occupation: each sector's hours divided among occupations by their jobs
+        return S(PI, T=True), f'{S(BETA, T=True)}{_TIMES}{S("Z")}'
     if key == TAU:        # by what the work is, with the unpaid hours at home
         return S(TAU, T=True), f'{S(PI, T=True)}{_TIMES}{S(THETA)}<mo>+</mo><msup>{_ONES}{_TR}</msup>{_TIMES}{S("X")}'
     if key == ETA:        # and the part of it that is well defined and has no open implementation
@@ -636,8 +639,8 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
         TE = f'{S("T")}{_TIMES}{S("E")}'
         return S("Z"), f'{_inv(_diag(TE + _TIMES + _ONES))}{_TIMES}{TE}'
     if key == KAPPA:      # the mean of sigma over the sectors an activity is done in for pay, weighted by its paid hours in each
-        placed = _TIMES.join([_diag(S(SIGMA) + _HADAMARD + S(CHI)), S("Z"), S(THETA)])      # pi's equation, each sector's hours times its sigma, carried to activities
-        return S(KAPPA, T=True), f'{_sum("n")}{weight}{_TIMES}{V("v", T=True)}{_TIMES}{placed}{_TIMES}{_inv(_diag(S(THETA, T=True) + _TIMES + S(PI)))}'
+        counted = f'<msup>{_paren(S(SIGMA) + _HADAMARD + S(BETA))}{_TR}</msup>'             # each sector's hours, counted at what they still take
+        return S(KAPPA, T=True), _TIMES.join([counted, S("Z"), S(THETA), _inv(_diag(S(THETA, T=True) + _TIMES + S(PI)))])
     if key == PSI:        # the hours in the parts of activities a proposal claims, less what is already open
         return S(PSI), f'{S("C", T=True)}{_TIMES}{_paren(f"{S(TAU)}{_HADAMARD}{less_open}")}'
     if key == "f":        # the same dollar by what the work is, with the unpaid work done at home
@@ -709,7 +712,7 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     raise KeyError(key)
 
 
-EQUATIONS = [ETA, TAU, PI, CHI, "Z", KAPPA, PSI, "x", "p", "f", "h", RHO, ALPHA, "k", "o", PHI, "u", "a", "c", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
+EQUATIONS = [ETA, TAU, PI, BETA, CHI, "Z", KAPPA, PSI, "x", "p", "f", "h", RHO, ALPHA, "k", "o", PHI, "u", "a", "c", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
 # What one entry of each term is measured in, in a few words. A unit that has a page is written
 # [as it reads here|the name its page is filed under], and is a link wherever this is set as HTML.
@@ -718,7 +721,7 @@ _MILLIONS, _MARK = "[millions of dollars|million-dollars], in 2017", "[one or ze
 _HOURS = "[hours|hour] of work per thousand [need dollars|need-dollar]"
 _STILL = f"hours in {HR.YEAR} for each hour in {HR.SINCE}, a [number|number] with no unit"
 MEASURED_IN = {
-    ETA: _HOURS, TAU: _HOURS, PI: _HOURS, "X": _HOURS, PSI: _HOURS,
+    ETA: _HOURS, TAU: _HOURS, PI: _HOURS, BETA: _HOURS, "X": _HOURS, PSI: _HOURS,
     CHI: "[hours|hour] of work per thousand [value-added dollars|value-added-dollar]",
     "Z": "the occupation's [share|share] of the sector's jobs",
     "l": "millions of [hours|hour] a year, in 2016",
@@ -1072,6 +1075,13 @@ def sheets(d: Data) -> dict[str, Sheet]:
                    f"Sectors the survey does not reach hold {(by_sector_hours.sum(axis=0)[0] - paid_hours.equal.sum()) / by_sector_hours.sum(axis=0)[0] * 100:.0f}% "
                    "of the paid hours, with the needs counted equally, and those are not placed.",
               row_tip="Occupation", code="plenty/site.py", sums="cols"),
+        Sheet(BETA, "the hours each sector works behind a need dollar", "hours", frame(by_sector_hours, com), t.names, **by_weighing,
+              rows="sectors that do the work, each a commodity",
+              entries="Hours worked in the sector for every thousand need dollars: the value added it earns from them, "
+                      "times its hours for each dollar of value added.",
+              note=f"These are all the paid hours behind the needs. {_m(_sym(PI))} places them in occupations, and can "
+                   "place only those of sectors the survey of occupations reaches.",
+              row_tip="Sector", code="plenty/site.py", sums="cols"),
         Sheet(CHI, "the hours of work in a value-added dollar of each commodity", "hours",
               **lone(hours_per.loc[com], CHI, "Hours per thousand dollars of value added", "hours"), row_names=t.names,
               rows="produced commodities",
@@ -1146,9 +1156,11 @@ def sheets(d: Data) -> dict[str, Sheet]:
               rows="O*NET's intermediate work activities",
               entries=f"For the same output, the hours taken in {span}, in the sectors where the activity is done for pay: "
                       f"the mean of {_m(_sym(SIGMA))} over those sectors, each weighted by the activity's paid hours in it.",
-              source=f"It is the equation of {_m(_sym(PI))} with {_m(_sym(SIGMA))} beside {_m(_sym(CHI))}, so that each "
-                     f"sector's hours count by what they still take, carried to activities by {_m(_sym(THETA))}. The last "
-                     f"factor divides each activity's sum by its paid hours, {_m(_sym(THETA, T=True) + _TIMES + _sym(PI))}.",
+              source=f"Read from the left. Each sector's hours, {_m(_sym(BETA))}, are counted at what they still take, "
+                     f"{_m(_sym(SIGMA))}. {_m(_sym('Z'))} passes them to the occupations that work them and "
+                     f"{_m(_sym(THETA))} to the activities those occupations do. The last factor divides each activity's "
+                     f"sum by its paid hours, {_m(_sym(THETA, T=True) + _TIMES + _sym(PI))}, which is the same sum without "
+                     f"{_m(_sym(SIGMA))}.",
               note="Under a half, paid work of this kind has been going anyway. Near one or over, it is stuck. It is a measure "
                    "of the sectors an activity is done in and not of the activity itself, and it says nothing of work done "
                    "unpaid. Zero means the activity has no paid hours.",
@@ -2225,10 +2237,11 @@ def hours_section(d: Data) -> str:
                  caption=f"Paid work, and the kinds of unpaid work at home that take at least {FELT_HOURS} hours a day, as people "
                          "of 15 and over reported them. Points are of a scale from 0 to 10, against the same person's other "
                          "time that was not work.")
-    return f"""{_eqs([equation(key) for key in (PI, TAU, ETA)])}
+    return f"""{_eqs([equation(key) for key in (BETA, PI, TAU, ETA)])}
 <p>A dollar counts work by what it is paid. An hour counts it by the time of someone's life it takes, which is the same
-whatever it earns. {_m(_sym(CHI))} is the hours worked for each dollar of a sector's value added, {_m(_sym("Z"))} divides
-a sector's hours among occupations by their jobs, and {_m(_sym("X"))} is the unpaid work at home, in hours.</p>
+whatever it earns. {_m(_sym(CHI))} is the hours worked for each dollar of a sector's value added, so {_m(_sym(BETA))} is
+the hours each sector works. {_m(_sym("Z"))} divides a sector's hours among occupations by their jobs, and
+{_m(_sym("X"))} is the unpaid work at home, in hours.</p>
 <p>With the needs counted equally, a thousand need dollars have {tau.equal.sum():.0f} hours of work behind them:
 {tau.equal.sum() - unpaid_hours:.0f} paid and {unpaid_hours:.0f} unpaid. Unpaid work is {unpaid_dollars / f.equal.sum() * 100:.0f}%
 of the work counted in dollars and {unpaid_hours / tau.equal.sum() * 100:.0f}% of it counted in hours: a paid work dollar is the
