@@ -101,10 +101,9 @@ def test_every_unit_has_a_page_and_every_term_links_to_its_units(built):
             for term in terms:
                 assert f'<a href="{built.sheets[term].href}"' in page.split(f"<dt>{how}</dt>")[1].split("</dd>")[0], (key, how, term)
     x = site.unit_users(built, units["need-dollar"])
-    in_hours = [site.ETA, site.TAU, site.PI, site.BETA, "X", site.ZETA, site.XI, site.KEPT, site.LOST, site.BACK, site.JOBS, site.PSI, site.BEHIND, site.ILL]
+    in_hours = [site.ETA, site.TAU, site.PI, site.BETA, "X", site.ZETA, site.KEPT, site.LOST, site.BACK, site.JOBS, site.PSI, site.BEHIND, site.ILL]
     assert x["Entries of"] == list("xpfhdGb") + in_hours + [site.RHO, site.ALPHA, "k", "o"] and not x["Rows of"] and not x["Columns of"]
     assert site.unit_users(built, units["hour"])["Entries of"] == [site.ETA, site.TAU, site.PI, site.BETA, site.LABOUR, site.CHI, "l", "X", site.ZETA, site.PSI, site.BEHIND, site.WITH]
-    assert site.unit_users(built, units["microwellby"]) == {"Rows of": [], "Columns of": [], "Entries of": [site.XI]}
     assert site.unit_users(built, units["healthy-hour"]) == {"Rows of": [], "Columns of": [], "Entries of": [site.KEPT, site.LOST, site.BACK]}
     assert site.unit_users(built, units["job-year"]) == {"Rows of": [], "Columns of": [], "Entries of": [site.JOBS]}
     assert site.unit_users(built, units["healthy-year"]) == {"Rows of": [], "Columns of": [], "Entries of": [site.ILL]}
@@ -302,7 +301,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert (at[0] >= 0).all() and (at[1] >= 0).all() and len(csv) == (x != 0).sum(), key
             got[at] = csv.value
             assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA + site.XI + site.BETA + site.DELTA + site.WITH + site.REPLACED + site.LABOUR + site.BOUGHT + site.ILL + site.LIFTS)
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA + site.ZETA + site.BETA + site.WITH + site.REPLACED + site.LABOUR + site.BOUGHT + site.ILL + site.LIFTS)
     assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == [site.LAMBDA, "R"]
     assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
@@ -726,137 +725,32 @@ def test_hours_are_weighed_by_how_people_say_they_feel(built):
         assert (f"{site._count(scores.unpleasant_a_year[key])} hours a year, at the rates" in (site.SITE / x.href).read_text()) == bool(len(x.does)), key
 
 
-def test_work_is_weighed_by_what_it_costs_those_who_do_it(built):
-    v = {k: s.values for k, s in built.sheets.items()}
-    occ, acts = list(v["p"].index), list(v[site.THETA].columns)
+def test_the_survey_says_how_each_kind_of_time_feels_and_nothing_weighs_it_in_points(built):
     felt, detail = built.feelings, built.unpaid[1]
-    # the extract: one scale from 0 to 10 made of the feelings, and each code against the same person's other time
+    # the extract: the feelings on one scale from 0 to 10, and each code against the same person's other time
     assert np.allclose(felt.points, (felt.happy - felt[["pain", "sad", "stress"]].mean(axis=1) + 6) / 12 * 10, atol=1e-3)
     assert felt.points.between(0, 10).all() and felt.severe.between(0, 1).all()
     assert (felt.compared <= felt.ratings).all() and (felt.compared_time <= felt.share_of_time + 1e-6).all()
     assert (felt.below_rest.notna() == (felt.compared > 0)).all() and felt.below_rest.dropna().between(-10, 10).all()
     assert felt.compared.sum() > 0.75 * felt.ratings.sum()
-    # time that is not work is neither a job nor a kind of unpaid work, and is rated level with itself
+    # time that is not work is neither a job nor a kind of unpaid work
     rest = built.not_work.split(";")
     work = (site.WORKING, *(c for codes in detail.time_use_codes for c in codes.split(";")))
     assert sorted(rest) == sorted(c for c in felt.index if not c.startswith(work)) and 0.5 < felt.share_of_time[rest].sum() < 0.7
-    assert abs(built.below_rest(built.not_work)) < 0.05
-    cleaning = felt.loc[["020101", "020102"]]
-    assert np.isclose(built.below_rest("020101;020102"), (cleaning.below_rest * cleaning.compared_time).sum() / cleaning.compared_time.sum())
     for codes, r in zip(detail.time_use_codes, detail.itertuples()):
-        assert r.below_rest == built.below_rest(codes) and r.severe == built.felt(codes, "severe"), codes
-    # people rate a job further below the rest of their day than work at home, and the care of children above it
-    job, below = built.below_rest(site.WORKING), detail.set_index("activity").below_rest
-    at_home = (detail.hours * detail.below_rest).sum() / detail.hours.sum()
-    assert 0 < at_home < job < 1.5 and below["Caring for and helping household children"] < 0 < below["Interior cleaning"]
-    # xi: paid hours at a job's points, unpaid hours at those of each kind of work at home, a point for an hour in microWELLBYs
-    assert np.isclose(site.POINT_HOUR * 365.25 * 24, 1e6)
-    paid = v[site.THETA].loc[occ, acts].values.T @ v[site.PI].loc[occ].values
-    home = (detail.hours * detail.below_rest).groupby(detail.work_activity).sum().reindex(acts).fillna(0.0).values / built.spent * 1000
-    xi = v[site.XI].loc[acts]
-    assert np.allclose(xi.values, (paid * job + home[:, None]) * site.POINT_HOUR) and xi.values.min() < 0 < xi.equal.sum()
-    assert np.isclose(home.sum(), at_home * v["X"].values.sum())
-    # delta: the points of the work at home filed under each activity, weighted by its hours; and xi as its page writes it
-    delta = v[site.DELTA].loc[acts].iloc[:, 0]
-    by_activity = detail.groupby("work_activity")
-    filed = ((detail.hours * detail.below_rest).groupby(detail.work_activity).sum() / by_activity.hours.sum())
-    assert np.allclose(delta[filed.index], filed) and not delta.drop(filed.index).any() and delta.min() < 0 < delta.max() < job + 1
-    unpaid = v["X"].loc[occ, acts].values.sum(axis=0)
-    assert np.allclose(xi.values, site.POINT_HOUR * (job * paid + (delta.values * unpaid)[:, None]))
-    assert site.JOB_POINTS == f"{job:.2f}"                        # the number the equation prints is the data's
-    page = (site.SITE / built.sheets[site.XI].href).read_text()
-    assert f"<mn>{site.POINT_HOUR:.0f}</mn>" in page and f"<mn>{site.JOB_POINTS}</mn>" in page and "<dt>Computed</dt>" in page and "<dt>Where</dt>" in page
-    # its largest rows are taken apart on its page: paid hours at a job's points, unpaid hours at their own, adding up to the row
-    worked = page[page.index("Its largest rows, taken apart"):page.index("<figure")]
-    names = built.sheets[site.XI].row_names
-    shown = [*xi.equal.nlargest(site.WORKED_ROWS).index, xi.equal.idxmin()]
-    assert worked.count('<tr><th scope="row"') == len(shown) == site.WORKED_ROWS + 1
-    for a in shown:
-        i = acts.index(a)
-        from_paid, from_unpaid = paid[i, 0] * job * site.POINT_HOUR, unpaid[i] * delta[a] * site.POINT_HOUR
-        assert np.isclose(from_paid + from_unpaid, xi.equal[a])
-        assert (f'{markup.escape(names[a])}</th><td class="num">{paid[i, 0]:.2f}</td><td class="num">{from_paid:,.0f}</td>'
-                f'<td class="num">{unpaid[i]:.2f}</td><td class="num">{site._signed(delta[a])}</td>'
-                f'<td class="num">{site._signed_whole(from_unpaid)}</td><td class="num">{site._signed_whole(xi.equal[a])}</td></tr>') in worked, a
-    assert (f'<td>All the activities</td><td class="num">{paid[:, 0].sum():.2f}</td><td class="num">{paid[:, 0].sum() * job * site.POINT_HOUR:,.0f}</td>'
-            f'<td class="num">{unpaid.sum():.2f}</td><td class="num"></td><td class="num">{home.sum() * site.POINT_HOUR:,.0f}</td>'
-            f'<td class="num">{xi.equal.sum():,.0f}</td></tr>') in worked
-    assert site._signed_whole(-60.4) == "&minus;60" and site._signed_whole(-0.2) == "0"
-    html = (site.SITE / site.HOME).read_text()
-    section = html[html.index('id="hours"'):html.index('id="proposals"')]
-    assert f"is rated {job:.2f} points below the rest of the day and unpaid work at home {at_home:.2f}" in section
-    assert f"costs those who do it {xi.equal.sum():,.0f}\nexperienced microWELLBYs" in section
-    assert f"{(xi.equal.sum() - home.sum() * site.POINT_HOUR):,.0f} paid and {home.sum() * site.POINT_HOUR:,.0f} unpaid" in section
-    assert f"comes to {site._about(xi.spending.sum() * built.spent / 1e9)} WELLBYs a year" in section
+        assert r.severe == built.felt(codes, "severe"), codes
+    # the home page says how each kind of time feels, and the site weighs none of it in points or WELLBYs
+    home = (site.SITE / site.HOME).read_text()
+    section = home[home.index('id="hours"'):home.index('id="proposals"')]
     assert (f'Working at a job</th><td class="num">{built.time_use["Working"]:.2f}</td><td class="num">{built.unpleasant(site.WORKING) * 100:.0f}%</td>'
-            f'<td class="num">{built.felt(site.WORKING, "severe") * 100:.0f}%</td><td class="num">{job:.2f}</td></tr>') in section
+            f'<td class="num">{built.felt(site.WORKING, "severe") * 100:.0f}%</td></tr>') in section
     for r in detail[detail.hours_per_day >= site.FELT_HOURS].itertuples():
-        assert f'<td class="num">{r.severe * 100:.0f}%</td><td class="num">{site._signed(r.below_rest)}</td></tr>' in section, r.activity
-    assert site._signed(-0.257) == "&minus;0.26" and site._signed(0.004) == "0.00" and site._signed(-0.004) == "0.00"
+        assert f'<td class="num">{r.unpleasant * 100:.0f}%</td><td class="num">{r.severe * 100:.0f}%</td></tr>' in section, r.activity
+    for page in site.SITE.glob("*.html"):
+        assert "WELLBY" not in page.read_text(), page.name
+    assert "microwellby" not in built.units and not {"ξ", "δ"} & set(built.sheets) and not list(site.M.CONFIG.glob("wellby*"))
     assert site._about(-90_012) == "&minus;90,000" and site._few(-0.09) == "&minus;0.09" and site._few(-0.001) == "0.00"
     assert site._about(306_157) == "306,000" and site._about(4.67e6) == "4.7 million" and site._few(101.02) == "101" and site._few(0.306) == "0.31"
-
-
-def test_the_guide_sets_wellbys_of_every_size_beside_things_of_that_size(built):
-    marks, examples = site.wellby_benchmarks(), site.wellby_examples(built)
-    assert marks.what.is_unique and marks[["what", "by", "source"]].notna().all().all() and marks.url.str.startswith("https://").all()
-    assert (marks.wellbys != 0).all() and (marks.wellbys == site.HEALTHY_YEAR).sum() == 1
-    # every benchmark is an example with its source, and the experienced ones have none and are counted from the ratings
-    assert len(examples) == len({what for _, what, _ in examples}) and all(w != 0 and np.isfinite(w) for w, _, _ in examples)
-    by = {what: (w, source) for w, what, source in examples}
-    for r in marks.itertuples():
-        assert by[markup.escape(r.what)] == (r.wellbys, f'<a href="{markup.escape(r.url)}">{markup.escape(r.by)}</a>'), r.what
-    year = 365.25 * 24
-    job = built.below_rest(site.WORKING)
-    assert np.isclose(by["An hour at a job"][0], -job / year) and by["An hour at a job"][1] == ""
-    # moments are so many points for so long: measured by someone named, or a judgment that says its points and its time
-    moments = site.wellby_moments()
-    assert moments.what.is_unique and moments.points.abs().between(0.01, 10).all() and (moments.hours > 0).all() and (moments.time != "").all()
-    assert ((moments.by == "") == (moments.source == "")).all() and ((moments.by == "") == (moments.url == "")).all()
-    assert (moments.by == "").sum() >= 10 and (moments.by != "").sum() >= 10
-    for r in moments.itertuples():
-        w, source = by[markup.escape(r.what)]
-        assert np.isclose(w, r.points * r.hours / year), r.what
-        assert source == (f'<a href="{markup.escape(r.url)}">{markup.escape(r.by)}</a>' if r.by else
-                          f"{abs(r.points):g} point{'' if abs(r.points) == 1 else 's'} {'up' if r.points > 0 else 'down'} for {r.time}, a judgment"), r.what
-    assert by["Stubbing a toe"][1] == "4 points down for two minutes, a judgment" and by["Finding a cool rock"][1] == "1 point up for ten minutes, a judgment"
-    trench = by["Three months in the trenches of the First World War, rated at the bottom of the scale, and nothing of what came after"][0]
-    love, tv = by["An hour of making love, as people rate it on average"][0], by["An hour of television or a film, as people rate it on average"][0]
-    assert love > 5 * tv > 0 and by["An hour of making love at its best, rated at the top of the scale"][0] > 2 * love       # like is set beside like: an hour of each
-    assert np.isclose(trench, -7 / 4) and trench < 2 * by[markup.escape("A year unemployed, set against a year employed")][0]
-    assert np.isclose(by["A year of full-time work"][0], -job * site.HOURS_A_YEAR / year)
-    assert np.isclose(by["A day off, in place of a working day of eight hours"][0], -by["A working day of eight hours"][0])
-    assert np.isclose(by["A minute of play with one's child"][0], -built.below_rest(site.FELT["play"]) / year / 60) and by["A minute of play with one's child"][0] > 0
-    assert all(built.feelings.index.str.startswith(codes).any() and built.feelings[built.feelings.index.str.startswith(codes)].compared.sum() > 300
-               for codes in site.FELT.values())
-    xi = built.sheets[site.XI].values
-    assert np.isclose(by["All the work behind the needs of the United States, for a year"][0], -xi.spending.sum() * built.spent / 1e9)
-    # no proposal is in the guide: it is what proposals are measured against
-    assert not any(x.name in what or x.href in what for x in built.proposals.values() for what in by)
-    # the table: a row for each power of ten, each example once and in the row nearest its size, under the column of its sign
-    page = (site.SITE / built.units["microwellby"].href).read_text()
-    table = page[page.index(f'id="{site.GUIDE}"'):page.index("</table>")]
-    rows = table.split("<tr>")[2:]
-    top = max(int(np.floor(np.log10(abs(w)) + 0.5)) for w, _, _ in examples)
-    assert len(rows) == top + 8 and top >= 9
-    assert rows[0].startswith('<th scope="row">0.1 microWELLBYs</th><td class="wrap">one person for 3.2 seconds</td>')
-    assert rows[4].startswith('<th scope="row">1,000 microWELLBYs</th>') and rows[7].startswith('<th scope="row">1 WELLBY</th><td class="wrap">one person for a year</td>')
-    assert rows[8].startswith('<th scope="row">10 WELLBYs</th><td class="wrap">10 people for a year</td>')
-    for w, what, source in examples:
-        said = f"{what}: {site._size(w)}" + (f" ({source})" if source else "")
-        k = int(np.floor(np.log10(abs(w)) + 0.5))
-        assert table.count(said) == 1 and said in rows[k + 7].split('<td class="wrap">')[2 if w < 0 else 3], what
-        assert 10 ** (k - 0.5) <= abs(w) < 10 ** (k + 0.5), what
-    assert sum(1 for r in rows if '<td class="wrap"></td><td class="wrap"></td>' in r) <= 1       # few sizes have nothing beside them
-    assert site._size(-85.3e-6) == "&minus;85 microWELLBYs" and site._size(1e-6) == "+1 microWELLBY" and site._size(0.0148) == "+0.015 WELLBYs"
-    assert site._size(-1.369e-3) == "&minus;1,370 microWELLBYs" and site._size(3.7e-3) == "+0.0037 WELLBYs"
-    assert site._size(-7) == "&minus;7 WELLBYs" and site._size(45_728) == "+45,700 WELLBYs" and site._size(22.6e6) == "+22.6 million WELLBYs"
-    for source in [*marks.source.unique(), *moments.source[moments.by != ""].unique()]:
-        assert page.count(markup.escape(source)) == 1, source
-    assert "The scale has a floor and a ceiling." in page
-    # and the account points to it
-    home = (site.SITE / site.HOME).read_text()
-    assert f'<a href="{built.units["microwellby"].href}#{site.GUIDE}">guide to sizes</a>' in home
 
 
 def test_a_proposal_that_works_gives_back_what_its_hours_cost_with_the_jobs_kept_or_lost(built):
@@ -955,7 +849,7 @@ def test_a_proposal_that_works_gives_back_what_its_hours_cost_with_the_jobs_kept
         assert f"{site._about(scores.jobs[key])} full-time jobs" in page and "<dt>If it works</dt>" in page and "hance it works" not in page, key
         assert ("All it would give back" in page) == bool(len(x.lifts)) == ("<dt>Healthy life</dt>" in page), key
         assert f"{site._about(scores.kept[key])} years of healthy life a year if the jobs are kept, and {site._about(scores.lost[key])} if" in page, key
-        assert f"<dd>{site._about(scores.time[key])} years of healthy life a year, at {site.HOUR_BACK} of an hour" in page and "WELLBY" not in page, key
+        assert f"<dd>{site._about(scores.time[key])} years of healthy life a year, at {site.HOUR_BACK} of an hour" in page, key
         assert f"{site._few(scores.kept_back[key])} years of healthy life a year, the jobs kept" in page, key
     # every one of the new terms has its equation on its page, and none has prose under it
     for key in (site.LABOUR, site.BOUGHT, site.WITH, site.BEHIND, site.JOBS, site.BACK, site.KEPT, site.LOST):
@@ -965,9 +859,9 @@ def test_a_proposal_that_works_gives_back_what_its_hours_cost_with_the_jobs_kept
         page = (site.SITE / built.sheets[key].href).read_text()
         assert "<dt>Source</dt>" in page and "<dt>Computed</dt>" not in page and "<dt>Note</dt>" not in page, key
     healthy = (site.SITE / built.units["healthy-year"].href).read_text()
-    assert f"{site.YEAR_HOURS / 1000:.3f}" in healthy and "WELLBY" not in healthy and f"{int(built.burden['last'].sum())}" in (site.SITE / built.units["cause"].href).read_text()
+    assert f"{site.YEAR_HOURS / 1000:.3f}" in healthy and f"{int(built.burden['last'].sum())}" in (site.SITE / built.units["cause"].href).read_text()
     unit = (site.SITE / built.units["job-year"].href).read_text()
-    assert f"{site.HOURS_A_YEAR:,} hours" in unit and f"is {site.JOB_LOST} of them" in unit and "WELLBY" not in unit
+    assert f"{site.HOURS_A_YEAR:,} hours" in unit and f"is {site.JOB_LOST} of them" in unit
     hour = (site.SITE / built.units["healthy-hour"].href).read_text()
     assert all(markup.escape(url) in hour for url in pub.url) and "config/prices.csv" in hour and f"worth {site.HOUR_BACK} of an hour" in hour
     for what, dollars, hours in (("An hour of healthy life", f"${price.life:.2f}", "1.00"), ("An hour of a person's own time", f"${price.time:.2f}", site.HOUR_BACK),

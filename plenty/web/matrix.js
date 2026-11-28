@@ -25,7 +25,6 @@
   // hours: to three figures or so, never more than three places
   function hours(x) { return x >= 99.5 ? x.toFixed(0) : x >= 9.95 ? x.toFixed(1) : x >= 0.0995 ? x.toFixed(2) : x.toFixed(3); }
   function signed(x) { return (x < 0 ? "\u2212" : "") + hours(Math.abs(x)); }
-  function micro(x) { var a = Math.abs(x); return (x < 0 ? "\u2212" : "") + (a >= 99.5 ? a.toFixed(0) : a >= 9.95 ? a.toFixed(1) : a.toFixed(2)); }
   var KINDS = {
     per_dollar: {
       say: function (v) { return cents(v) + " per dollar"; }, cell: hundredths,
@@ -62,10 +61,6 @@
     life: {
       say: function (v) { return signed(v) + " hours of healthy life per $1,000"; }, cell: hours,
       sum: function (v) { return signed(v) + " hours of healthy life per $1,000"; }, brief: signed
-    },
-    wellbeing: {
-      say: function (v) { return micro(v) + " microWELLBYs per $1,000"; }, cell: micro,
-      sum: function (v) { return micro(v) + " microWELLBYs per $1,000"; }, brief: micro
     },
     jobs: {
       say: function (v) { return hours(v) + " full-time jobs per $1 million"; }, cell: hours,

@@ -376,15 +376,6 @@ about a quarter of the work behind the needs in dollars and about three fifths o
 The time-use survey's wellbeing module says how people feel during each kind of activity
 (`data/households/wellbeing_by_activity.csv`), and the account counts the hours they find
 unpleasant: about a quarter of the time at a job, and about a seventh of the time on work at home.
-It also weighs each hour by how far people rate such work below the rest of their own day, on a
-scale from 0 to 10, and counts the cost in experienced WELLBYs, a WELLBY being one point for one
-person for one year: a job is rated about three quarters of a point below the rest of the day,
-and work at home about a fifth of one.
-The unit's page has a guide to sizes, from a tenth of a microWELLBY to a billion WELLBYs, each
-beside things that take away or add about that much. Its benchmarks of life as a whole are
-others' findings, in `config/wellby_benchmarks.csv`. Its moments, from a stubbed toe to three
-months in a trench, are in `config/wellby_moments.csv`: some are others' measurements of how
-people feel at the time, and the rest are judgments that say their points and their time.
 
 Last come the proposals: things that could be built, one file each in
 [`proposals/`](proposals/), which says how to write one. A proposal states what it is, how a

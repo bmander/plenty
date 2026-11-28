@@ -133,11 +133,6 @@ class Data:
         """The share of that time that was unpleasant: pain, sadness or stress rated above happiness."""
         return self.felt(codes, "unpleasant")
 
-    def below_rest(self, codes: str) -> float:
-        """How far below the same person's other time that was not work that time was rated, in points of
-        a scale from 0 to 10, over the ratings that could be compared so."""
-        return self.felt(codes, "below_rest", "compared_time")
-
     @functools.cached_property
     def not_work(self) -> str:
         """The codes of the rated time that was not work: neither a job nor a kind of unpaid work at home."""
@@ -301,8 +296,7 @@ class Data:
         hours = self.time_use[work.activity].values
         detail = work.assign(hours_per_day=hours, hours=hours * 365 * adults, usd=hours * 365 * adults * hourly[work.occupation].values,
                              unpleasant=[self.unpleasant(codes) for codes in work.time_use_codes],
-                             severe=[self.felt(codes, "severe") for codes in work.time_use_codes],
-                             below_rest=[self.below_rest(codes) for codes in work.time_use_codes])
+                             severe=[self.felt(codes, "severe") for codes in work.time_use_codes])
         G = detail.groupby(["occupation", "work_activity"]).usd.sum().unstack(fill_value=0.0) / self.spent
         return G.reindex(index=self.wages[0].columns, columns=self.theta.columns, fill_value=0.0), detail
 
@@ -455,25 +449,20 @@ PI, TAU, ETA, CHI, PSI = "π", "τ", "η", "χ", "ψ"       # the account in hou
 KAPPA, SIGMA = "κ", "σ"                                 # and whether those hours have been going anyway
 ZETA = "ζ"                                              # and the part of them people find unpleasant
 BETA = "β"                                              # the hours each sector works, which pi and kappa are both made from
-DELTA = "δ"                                             # how far below the rest of the day work at home is rated, which xi is made from
 LABOUR, BOUGHT = "λ", "υ"                               # the hours behind a dollar of each commodity, and what a need dollar buys of each
 REPLACED, WITH, BEHIND = "Ψ", "Π", "φ"                  # the sectors a proposal replaces, the hours behind a commodity with it in place, and the hours that saves
 JOBS, BACK = "j", "ε"                                   # the jobs in a proposal's paid hours, and what all its hours cost those who work them
 KEPT, LOST = "Ξ", "Ω"                               # what a proposal that works gives back, with the jobs in its hours kept and with them lost
 ILL, LIFTS = "ι", "Δ"                                   # the healthy life each cause of ill health takes, and the part of each a proposal would lift
-HEALTHY_YEAR = 7                                        # the points between a year in good health and one as bad as death, by the Treasury's guidance: a benchmark of the guide
 YEAR_HOURS = 365.25 * 24                                # the hours in a year of life
 HOUR_BACK = "0.43"                                      # the hours of healthy life an hour given back is worth, as epsilon's equation prints it; a test holds it to the prices
 JOB_LOST = "2.36"                                       # the thousands of hours of healthy life a job's pay for a year is priced as, as Omega's equation prints it; held likewise
-XI = "ξ"                                                # and what they cost those who work them, in wellbeing
 WORKING = "0501"                                        # the time-use survey's code for working at a job
-JOB_POINTS = "0.75"                                     # how far below the rest of the day a job is rated, as xi's equation prints it; a test holds it to the data
-POINT_HOUR = 1e6 / (365.25 * 24)                        # one point of wellbeing for one hour, in microWELLBYs: a WELLBY is a point for a year
 # a Greek letter's name in a file, and its bold
 GREEK = {THETA: ("Theta", "&#x1D6AF;"), PHI: ("Phi", "&#x1D6BD;"), OMEGA: ("omega", "&#x1D6DA;"), LAMBDA: ("Lambda", "&#x1D6B2;"),
          GAMMA: ("Gamma", "&#x1D6AA;"), ALPHA: ("alpha", "&#x1D6C2;"), MU: ("mu", "&#x1D6CD;"), RHO: ("rho", "&#x1D6D2;"),
          PI: ("pi", "&#x1D6D1;"), TAU: ("tau", "&#x1D6D5;"), ETA: ("eta", "&#x1D6C8;"), CHI: ("chi", "&#x1D6D8;"), PSI: ("psi", "&#x1D6D9;"),
-         KAPPA: ("kappa", "&#x1D6CB;"), SIGMA: ("sigma", "&#x1D6D4;"), ZETA: ("zeta", "&#x1D6C7;"), XI: ("xi", "&#x1D6CF;"), BETA: ("beta", "&#x1D6C3;"), DELTA: ("delta", "&#x1D6C5;"),
+         KAPPA: ("kappa", "&#x1D6CB;"), SIGMA: ("sigma", "&#x1D6D4;"), ZETA: ("zeta", "&#x1D6C7;"), BETA: ("beta", "&#x1D6C3;"),
          LABOUR: ("lambda", "&#x1D6CC;"), BOUGHT: ("upsilon", "&#x1D6D6;"), REPLACED: ("Psi", "&#x1D6BF;"), WITH: ("Pi", "&#x1D6B7;"),
          BEHIND: ("phi", "&#x1D6D7;"), BACK: ("epsilon", "&#x1D6C6;"), KEPT: ("Xi", "&#x1D6B5;"),
          LOST: ("Omega", "&#x1D6C0;"), ILL: ("iota", "&#x1D6CA;"), LIFTS: ("Delta", "&#x1D6AB;")}
@@ -488,7 +477,7 @@ GROUPS = [
     ("Value added", ["v", "r", "y"]),
     ("Work", ["W", "P", "T", "E", "M"]),
     ("Work activities", [THETA, "G", "m", "e", "s", "b"]),
-    ("Hours", [ETA, TAU, PI, BETA, LABOUR, BOUGHT, CHI, "Z", "l", "X", ZETA, XI, DELTA, KAPPA, SIGMA]),
+    ("Hours", [ETA, TAU, PI, BETA, LABOUR, BOUGHT, CHI, "Z", "l", "X", ZETA, KAPPA, SIGMA]),
     ("Proposals", [KEPT, LOST, BACK, JOBS, PSI, "C", BEHIND, WITH, REPLACED, LIFTS, ILL]),
     ("Abilities", [RHO, ALPHA, MU, LAMBDA, GAMMA]),
     ("Software capabilities", ["k", "o", PHI, "J", "Q", "R", "u", "a", "c", "N", "t", "w"]),
@@ -501,7 +490,7 @@ USES = {ETA: [TAU, "m", "e"], TAU: [PI, THETA, "X"], PI: [BETA, "Z"], BETA: [CHI
         LABOUR: [CHI, "r", "L"], BOUGHT: [OMEGA, "d", "r", "x"], WITH: [CHI, "r", REPLACED, "A"], BEHIND: [LABOUR, WITH, BOUGHT],
         JOBS: ["C", THETA, PI, "e", BEHIND], BACK: [PSI, BEHIND], KEPT: [BACK, LIFTS, ILL], LOST: [KEPT, JOBS],
         PSI: ["C", TAU, "e"], KAPPA: [SIGMA, BETA, "Z", THETA, PI], SIGMA: ["l", "g", "V"],
-        ZETA: [PI, THETA, "X"], XI: [DELTA, THETA, PI, "X"],
+        ZETA: [PI, THETA, "X"],
         "x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "h": ["f", "m", "e"], RHO: [ALPHA, MU], ALPHA: ["p", THETA, "G", "m", "e", GAMMA, LAMBDA], "o": ["k", "a", "c"], PHI: ["J", "Q", "R", "u"], "u": ["Q", "R"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
         "f": ["p", THETA, "G"], "G": ["E", "M", "Y"], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
         "D": ["V", "q"], "g": ["V"], "q": ["V"], "K": ["F", "H", "S"], "S": ["z", "H"], "z": ["g", "H"],
@@ -577,10 +566,6 @@ MATRIX_KINDS = {
     "life": {"unit": 1e-4, "cut": 1e-3, "scale": (1e-3, 100.0), "ticks": ("0.001", "0.01", "0.1", "1", "10", "100"),
              "blank": "under 0.001 hours of healthy life per $1,000", "small": "under a thousandth of an hour",
              "colour": "hours of healthy life per thousand dollars", "in_cell": "in hours"},
-    # wellbeing, in microWELLBYs for every thousand dollars; it can be negative
-    "wellbeing": {"unit": 1e-2, "cut": 0.1, "scale": (0.1, 1e3), "ticks": ("0.1", "1", "10", "100", "1,000"),
-                  "blank": "under 0.1 microWELLBYs per $1,000", "small": "under a tenth of a microWELLBY",
-                  "colour": "microWELLBYs per thousand dollars", "in_cell": "in microWELLBYs"},
     # a number with no unit, such as a logarithm
     "number": {"unit": 1e-3, "cut": 1e-3, "scale": (0.1, 10.0), "ticks": ("0.1", "1", "10"),
                "blank": "under 0.001", "small": "under a thousandth", "colour": "the number", "in_cell": "to two places"},
@@ -727,10 +712,6 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
         return S(KEPT), f'{S(BACK)}<mo>+</mo>{health}'
     if key == LOST:       # less the pay of each of the jobs that were in the hours, at the price of healthy life
         return S(LOST), f'{S(KEPT)}<mo>&minus;</mo><mn>{JOB_LOST}</mn>{_TIMES}{S(JOBS)}'
-    if key == XI:         # what the hours cost: paid hours at the points of a job, unpaid hours at the points of each kind of work at home
-        paid = f'<mn>{JOB_POINTS}</mn>{_TIMES}{S(THETA, T=True)}{_TIMES}{S(PI)}'
-        unpaid = f'{S(DELTA)}{_HADAMARD}{_paren(S("X", T=True) + _TIMES + _ONES)}'
-        return S(XI), f'<mn>{POINT_HOUR:.0f}</mn>{_TIMES}{_paren(paid + "<mo>+</mo>" + unpaid)}'
     if key == KAPPA:      # the mean of sigma over the sectors an activity is done in for pay, weighted by its paid hours in each
         counted = f'<msup>{_paren(S(SIGMA) + _HADAMARD + S(BETA))}{_TR}</msup>'             # each sector's hours, counted at what they still take
         return S(KAPPA, T=True), _TIMES.join([counted, S("Z"), S(THETA), _inv(_diag(S(THETA, T=True) + _TIMES + S(PI)))])
@@ -805,7 +786,7 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     raise KeyError(key)
 
 
-EQUATIONS = [KEPT, LOST, BACK, JOBS, BEHIND, WITH, LABOUR, BOUGHT, ETA, TAU, PI, BETA, XI, CHI, "Z", KAPPA, PSI, "x", "p", "f", "h", RHO, ALPHA, "k", "o", PHI, "u", "a", "c", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
+EQUATIONS = [KEPT, LOST, BACK, JOBS, BEHIND, WITH, LABOUR, BOUGHT, ETA, TAU, PI, BETA, CHI, "Z", KAPPA, PSI, "x", "p", "f", "h", RHO, ALPHA, "k", "o", PHI, "u", "a", "c", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
 # What one entry of each term is measured in, in a few words. A unit that has a page is written
 # [as it reads here|the name its page is filed under], and is a link wherever this is set as HTML.
@@ -822,8 +803,6 @@ MEASURED_IN = {
     "C": "the part of the activity the proposal would do, a [share|share] of one",
     KAPPA: _STILL, SIGMA: _STILL,
     ZETA: "unpleasant [hours|hour] of work per thousand [need dollars|need-dollar]",
-    XI: "[experienced microWELLBYs|microwellby] per thousand [need dollars|need-dollar]",
-    DELTA: "points below the rest of the day, of a scale from 0 to 10, a [number|number] with no unit",
     LABOUR: "[hours|hour] of work per thousand [commodity dollars|commodity-dollar] delivered",
     WITH: "[hours|hour] of work per thousand [commodity dollars|commodity-dollar] delivered",
     BOUGHT: "[commodity dollars|commodity-dollar] bought per [value-added dollar|value-added-dollar] behind the needs",
@@ -920,7 +899,6 @@ class Sheet:
     sums: str = ""                 # which totals mean something and are shown beside the picture: "both", "cols" or ""
     short: dict | None = None      # short labels for those groups
     order: str = "Sectors are in the Bureau's order within fifteen groups."
-    worked: str = ""               # a table that takes some of its rows apart, under what the page says of it
 
     @property
     def href(self) -> str: return f"{stem(self.key)}.html"
@@ -942,38 +920,6 @@ class Sheet:
     def shown(self) -> np.ndarray:
         """Which entries the picture and the data file hold."""
         return np.abs(self.values.values) >= MATRIX_KINDS[self.kind]["cut"]
-
-
-WORKED_ROWS = 8                      # the rows of xi its page takes apart: the largest, and then the one furthest below zero
-
-
-def xi_worked(names: pd.Series, paid: pd.Series, job: float, unpaid: pd.Series, home_points: pd.Series, xi: pd.Series) -> str:
-    """xi's largest rows taken apart, with the needs counted equally: an activity's paid hours at the points of a job
-    and its unpaid hours at the points of that work at home, which come to its microWELLBYs."""
-    def row(label: str, a=None) -> str:
-        cells = ((f"{paid[a]:.2f}", f"{paid[a] * job * POINT_HOUR:,.0f}", f"{unpaid[a]:.2f}", _signed(home_points[a]) if unpaid[a] else "",
-                  _signed_whole(unpaid[a] * home_points[a] * POINT_HOUR), _signed_whole(xi[a])) if a is not None else
-                 (f"{paid.sum():.2f}", f"{paid.sum() * job * POINT_HOUR:,.0f}", f"{unpaid.sum():.2f}", "",
-                  _signed_whole((unpaid * home_points).sum() * POINT_HOUR), _signed_whole(xi.sum())))
-        head = f'<th scope="row" class="wrap">{label}</th>' if a is not None else f"<td>{label}</td>"
-        return f"<tr>{head}" + "".join(f'<td class="num">{c}</td>' for c in cells) + "</tr>"
-    shown = [*xi.nlargest(WORKED_ROWS).index, xi.idxmin()]
-    return ("<h2>Its largest rows, taken apart</h2>"
-            + table([th("Work activity"), th("Paid hours", "num"), th(f"At {JOB_POINTS} points, microWELLBYs", "num"), th("Unpaid hours", "num"),
-                     th("Points at home", "num"), th("At those points, microWELLBYs", "num"), th("Together", "num")],
-                    [row(e(names[a]), a) for a in shown], foot=row("All the activities"), attrs=" data-scores",
-                    caption=f"For every thousand need dollars, with the needs counted equally: the {WORKED_ROWS} largest rows, and "
-                            f"the one furthest below zero. Hours times points times {POINT_HOUR:.0f} gives microWELLBYs."))
-
-
-def _signed(x: float) -> str:
-    """A number to two places with its sign, a true minus for one below zero."""
-    return ("&minus;" if x < -0.005 else "") + f"{abs(x):.2f}"
-
-
-def _signed_whole(x: float) -> str:
-    """A whole number with a true minus for one below zero."""
-    return ("&minus;" if x < -0.5 else "") + f"{abs(x):,.0f}"
 
 
 def _above(code: str, under: pd.Series) -> list[str]:
@@ -1082,12 +1028,6 @@ def sheets(d: Data) -> dict[str, Sheet]:
     unpleasant_at_home = ((unpaid_detail.hours * unpaid_detail.unpleasant).groupby(unpaid_detail.work_activity).sum()
                           .reindex(act.index).fillna(0.0) / d.spent * 1000)
     unpleasant_hours = (frame(d.theta.values.T @ paid_hours.values, act.index) * d.unpleasant(WORKING)).add(unpleasant_at_home, axis=0)   # zeta
-    # and what it costs those who do it: each hour at the points people rate such work below the rest of their own day
-    lost_at_home = ((unpaid_detail.hours * unpaid_detail.below_rest).groupby(unpaid_detail.work_activity).sum()
-                    .reindex(act.index).fillna(0.0) / d.spent * 1000)
-    wellbeing_lost = (frame(d.theta.values.T @ paid_hours.values, act.index) * d.below_rest(WORKING)).add(lost_at_home, axis=0) * POINT_HOUR   # xi
-    at_home = unpaid_detail.groupby("work_activity").hours.sum()
-    home_points = ((unpaid_detail.hours * unpaid_detail.below_rest).groupby(unpaid_detail.work_activity).sum() / at_home).reindex(act.index).fillna(0.0)   # delta
     # whether those hours have been going anyway: each sector's hours for a unit of real value added, now against then,
     # and for each activity the mean of that over the sectors it is done in for pay, weighted by its paid hours in each
     still = HR.sector_still_needed(t)                                                       # sigma
@@ -1316,44 +1256,6 @@ def sheets(d: Data) -> dict[str, Sheet]:
                    "was. So among paid work this says nothing of which activity is worse. People also grow used to what "
                    "they cannot change, and report less distress than an observer would expect.",
               row_tip="Activity", code="plenty/site.py", sums="cols", order=activity_order),
-        Sheet(XI, "what the work behind a need dollar costs those who do it, by activity", "wellbeing", wellbeing_lost, **by_activity, **by_weighing,
-              rows="O*NET's intermediate work activities",
-              entries="Experienced microWELLBYs lost by those who do the activity's work, paid and unpaid, for every thousand "
-                      "need dollars.",
-              source=f"Read from the inside. {_m(_sym(THETA, T=True) + _TIMES + _sym(PI))} is the paid hours of each activity, "
-                     f"and they count at {JOB_POINTS} points an hour: what people rate working at a job below the rest of their "
-                     f"own day, on a scale from 0 to 10. {_m(_sym('X', T=True) + _TIMES + _ONES)} is its unpaid hours at home, "
-                     f"and they count at the points of that kind of work, {_m(_sym(DELTA))}. The sum is in points times "
-                     f"hours. A WELLBY is one point for a year, and a year has {365.25 * 24:,.0f} hours, so one point for one "
-                     f"hour is {POINT_HOUR:.0f} microWELLBYs.",
-              note="A WELLBY is one point, on a scale from 0 to 10, of how satisfied someone is with their life, for one year. "
-                   "What is measured here is how people felt at the time, which is not the same thing, and taking a point of one "
-                   "for a point of the other is a judgment. The scale is also even: six hours one point down count as one hour "
-                   "six points down, and those who study severe pain think the worst hours count for far more than that. An entry "
-                   "below zero is work people rate above the rest of their day, as they do the care of children. All paid work "
-                   "has the one rate. And this is what the hours cost, not what the job is worth: people without a job rate "
-                   "their lives well below those with one.",
-              row_tip="Activity", code="plenty/site.py", sums="cols", order=activity_order,
-              worked=xi_worked(act.name, frame(d.theta.values.T @ paid_hours.values, act.index).equal, d.below_rest(WORKING),
-                               unpaid_hours.sum(), home_points, wellbeing_lost.equal)),
-        Sheet(DELTA, "how far below the rest of the day each activity's work at home is rated", "number",
-              **lone(home_points, DELTA, "Points below the rest of the day", "points"), **by_activity,
-              rows="O*NET's intermediate work activities",
-              entries="The points, of a scale from 0 to 10, that people rate the unpaid work at home filed under the activity "
-                      "below the rest of their own day. Below zero, they rate it above.",
-              source=f"The Well-Being Module of the American Time Use Survey, U.S. Bureau of Labor Statistics, 2010, 2012, 2013 "
-                     f"and 2021: {_file('data/households/wellbeing_by_activity.csv')}. Each respondent rated three of the day's "
-                     "activities from 0 to 6 on six feelings. A rated activity is put on one scale from 0 to 10: happiness less "
-                     "the mean of pain, sadness and stress, moved and stretched so that the worst that can be reported is 0 and "
-                     "the best is 10. Each rating is then set against the same person's other rated time that was not work, "
-                     "which is what an hour of work given back would become. The kinds of unpaid work at home, and the "
-                     f"activity each is filed under, are in {_file('config/unpaid_work.csv')}, which names each by the survey's "
-                     "codes. An activity's entry is the mean over its kinds, weighted by the hours each takes.",
-              note=f"Working at a job is rated {d.below_rest(WORKING):.2f} points below the rest of the day by the same count, "
-                   "and that one figure stands for all paid work, because the survey's files used here do not say what a "
-                   "respondent's job was. Comparing a person with themselves keeps those who rate everything low, or who have "
-                   "no job, from moving the figure. Zero means no unpaid work at home is filed under the activity.",
-              row_tip="Activity", code="plenty/site.py", order=activity_order),
         Sheet(KAPPA, "the hours each activity's paid work still takes", "number", activity_still, **by_activity, **by_weighing,
               rows="O*NET's intermediate work activities",
               entries=f"For the same output, the hours taken in {span}, in the sectors where the activity is done for pay: "
@@ -2231,30 +2133,6 @@ them: {d.sheets[TAU].values.equal.sum() - d.sheets["X"].values.values.sum():.0f}
 {d.sheets["X"].values.values.sum():.0f} unpaid.</p>
 <p>An hour is what work costs the person who does it, and that is the same whatever the hour earns. It is not a measure of
 what the hour brings about, which differs from one hour to the next by many orders of magnitude.</p>"""),
-        Unit("microwellby", "experienced microWELLBY", "experienced microWELLBYs", False,
-             "A millionth of a WELLBY: one point of wellbeing, on a scale from 0 to 10, for about 32 seconds of someone's life.",
-             f"""<p>A WELLBY is one point of wellbeing, on a scale from 0 to 10, for one person for one year. It is the unit in
-which some governments and charity evaluators weigh what a policy does for people. A microWELLBY is a millionth of one:
-one point for about {365.25 * 24 * 3600 / 1e6:.0f} seconds. One point for one hour is {POINT_HOUR:.0f} of them.</p>
-<p>A WELLBY proper is counted from what people say of their life as a whole. These are experienced: counted from what
-people said they felt during an activity, in the Well-Being Module of the American Time Use Survey. Each rated activity
-is put on one scale from 0 to 10, happiness less the mean of pain, sadness and stress, and set against the same person's
-other time that was not work. The two kinds of answer do not always agree, so a figure here is not to be set beside a
-WELLBY counted the usual way without saying so.</p>
-<p>With the needs counted equally, the work behind a thousand need dollars costs those who do it
-{d.sheets[XI].values.equal.sum():,.0f} of them, {T(XI)}.</p>
-<h2>A guide to sizes</h2>
-<p>A WELLBY is an amount and not a rate, as a kilowatt-hour is: a point held for a time. What follows sets amounts of
-every size beside things that come to about that much. The benchmarks of life as a whole are in
-{_file('config/wellby_benchmarks.csv')}, and the moments, measured and judged, in {_file('config/wellby_moments.csv')}.
-The British Treasury, whose guidance several are from, values one WELLBY at £13,000 in the prices of 2019, between a low
-of £10,000 and a high of £16,000.</p>
-{wellby_guide(d)}
-<p>The scale has a floor and a ceiling. People rate an ordinary hour at 7 or 8 of 10, so nothing can add more than 2 or 3
-points and nothing can take away more than 7 or 8. That is why the best day of a life adds little more than a day sick
-in bed takes away, why the best hour of making love is only about twice the average one, and why three months in a
-trench come to under two WELLBYs, about what two and a half years without a job come to. Whoever finds that too little is finding that the scale is too even at
-its ends, and that what such months do to the years after them is not counted in them.</p>"""),
         Unit("healthy-year", "year of healthy life", "years of healthy life", False,
              "A year of one person's life in full health.",
              f"""<p>A year of one person's life in full health. The World Health Organization counts the years lost to each
@@ -2458,7 +2336,6 @@ def term_page(d: Data, key: str) -> str:
 <p class="crumbs"><a href="{HOME}">The account</a></p>
 <h1 class="long">{_m(_term(key, key))}, {e(s.name)}</h1>
 <dl class="spec">{"".join(f"<dt>{k}</dt><dd>{v}</dd>" for k, v in spec)}</dl>
-{s.worked}
 {sheet_picture(s, also=also, extra=why)}
 """
     return page(s.title, body, scripts=(s.data_file, "matrix.js"))
@@ -2529,116 +2406,15 @@ def _few(x: float) -> str:
 
 
 def _about(x: float) -> str:
-    """A count of years, of jobs or of WELLBYs, to three figures under a million, with a true minus for one below zero."""
+    """A count of years or of jobs, to three figures under a million, with a true minus for one below zero."""
     a = abs(x)
     said = _count(a) if a >= 1e6 else f"{float(f'{a:.3g}'):,.0f}"
     return ("&minus;" if x < 0 and said != "0" else "") + said
 
 
-GUIDE = "guide"                      # where the guide to the sizes of WELLBYs is, on the page of the unit
-# the time-use survey's codes for the kinds of time the guide gives as examples
-FELT = {"cleanup": "020203", "cleaning": "020101", "commute": "1805", "homework": "0603", "play": "030103", "friends": "1201",
-        "eating": "1101", "sport": "1301"}
-
-
-def _size(w: float) -> str:
-    """An amount of wellbeing with its sign: in microWELLBYs up to the row of a thousand of them, in WELLBYs from there."""
-    a, sign = abs(w), "&minus;" if w < 0 else "+"
-    def figures(x):                  # to two figures under a hundred and three from there, a million or more in words
-        if x >= 1e6:
-            return _count(x)
-        v = float(f"{x:.2g}" if x < 100 else f"{x:.3g}")
-        return f"{v:,.0f}" if v >= 100 else f"{v:g}"
-    micro = a < 10 ** -2.5
-    said = figures(a * 1e6 if micro else a)
-    return f"{sign}{said} {'microWELLBY' if micro else 'WELLBY'}{'' if said == '1' else 's'}"
-
-
 def published_prices() -> pd.DataFrame:
     """What others have found people to pay, and what the rates of exchange are made from, by key (config/prices.csv)."""
     return pd.read_csv(M.CONFIG / "prices.csv").set_index("key")
-
-
-def wellby_benchmarks() -> pd.DataFrame:
-    """What others have found things to come to in WELLBYs, of life as a whole (config/wellby_benchmarks.csv)."""
-    return pd.read_csv(M.CONFIG / "wellby_benchmarks.csv")
-
-
-def wellby_moments() -> pd.DataFrame:
-    """Moments, each so many points of a scale from 0 to 10 for so many hours: as others have measured them, or, with
-    nobody named, as judged here (config/wellby_moments.csv)."""
-    return pd.read_csv(M.CONFIG / "wellby_moments.csv", keep_default_na=False)
-
-
-def wellby_examples(d: Data) -> list[tuple[float, str, str]]:
-    """Things of every size, each as (WELLBYs, what it is, where the figure is from as HTML). The first are experienced,
-    counted from how people rated their time against the rest of their own day. Then moments, each so many points for
-    so long, as others have measured them or as judged here (config/wellby_moments.csv). The last are of life as a
-    whole, from config/wellby_benchmarks.csv. No proposal is among them: these are what a proposal is measured against."""
-    detail, xi = d.unpaid[1], d.sheets[XI].values
-    hour = {k: -d.below_rest(codes) / (365.25 * 24) for k, codes in {"job": WORKING, **FELT}.items()}      # WELLBYs for an hour of it, in place of other time that is not work
-    home = -(detail.hours * detail.below_rest).sum() / detail.hours.sum() / (365.25 * 24)
-    people = d.spending["all"].astype(float)
-    people = people["Number of consumer units (in thousands)"] * 1e3 * people["People"]
-    felt = [
-        (hour["job"] / 60, "A minute at a job"),
-        (hour["cleanup"] / 6, "Ten minutes of cleaning up the kitchen"), (hour["commute"] / 6, "Ten minutes of travel to or from work"),
-        (hour["job"], "An hour at a job"), (hour["cleaning"], "An hour of cleaning the house"), (hour["homework"], "An hour of homework for a class"),
-        (hour["job"] * 8, "A working day of eight hours"),
-        (home * detail.hours_per_day.sum() * 365, f"A year of the unpaid work at home an adult does, {detail.hours_per_day.sum():.0f} hours a day"),
-        (hour["job"] * HOURS_A_YEAR, "A year of full-time work"), (hour["job"] * HOURS_A_YEAR * 45, "Forty-five years of full-time work"),
-        (-xi.spending.sum() * d.spent / 1e9, "All the work behind the needs of the United States, for a year"),
-        (hour["play"] / 60, "A minute of play with one's child"),
-        (hour["play"] / 6, "Ten minutes of play with one's child"), (hour["friends"], "An hour with friends or family"),
-        (hour["eating"], "An hour of eating and drinking"), (hour["sport"], "An hour of sport or exercise"),
-        (-hour["job"] * 8, "A day off, in place of a working day of eight hours"),
-        (hour["friends"] * 365, "An hour a day with friends or family, for a year"),
-    ]
-    marks = wellby_benchmarks()
-    life = [(r.wellbys, e(r.what), f'<a href="{e(r.url)}">{e(r.by)}</a>') for r in marks.itertuples()]
-    treasury = marks[marks.wellbys == HEALTHY_YEAR].iloc[0]
-    life.append((HEALTHY_YEAR * people, f"A year in good health for everyone in the United States, {_count(people)} people",
-                 f'<a href="{e(treasury.url)}">{e(treasury.by)}</a>'))
-    def judged(r) -> str:            # a moment nobody has measured says the points and the time it is taken to be
-        return f"{abs(r.points):g} point{'' if abs(r.points) == 1 else 's'} {'up' if r.points > 0 else 'down'} for {e(r.time)}, a judgment"
-    moments = [(r.points * r.hours / (365.25 * 24), e(r.what), f'<a href="{e(r.url)}">{e(r.by)}</a>' if r.by else judged(r))
-               for r in wellby_moments().itertuples()]
-    return [(w, what, "") for w, what in felt] + moments + life
-
-
-def wellby_guide(d: Data) -> str:
-    """A table of sizes, a row for each power of ten from a tenth of a microWELLBY up, with things that take away
-    about that much and things that add it. An example is put in the row nearest its size."""
-    examples = wellby_examples(d)
-    rung = lambda w: int(np.floor(np.log10(abs(w)) + 0.5))
-    rungs = range(-7, max(rung(w) for w, _, _ in examples) + 1)
-    def one_point_for(k: int) -> str:
-        if k >= 0:
-            return "one person for a year" if k == 0 else f"{_count(10 ** k)} people for a year"
-        seconds = 10.0 ** k * 365.25 * 24 * 3600
-        for size, name in ((7 * 86400, "weeks"), (86400, "days"), (3600, "hours"), (60, "minutes"), (1, "seconds")):
-            if seconds >= 1.5 * size:
-                return f"one person for {seconds / size:.{0 if seconds / size >= 9.5 else 1}f} {name}".replace(".0 ", " ")
-    def cell(k: int, sign: int) -> str:
-        here = sorted((x for x in examples if rung(x[0]) == k and np.sign(x[0]) == sign), key=lambda x: abs(x[0]))
-        return "<br>".join(f"{what}: {_size(w)}" + (f" ({source})" if source else "") for w, what, source in here)
-    def amount(k: int) -> str:       # a thousandth of a WELLBY is said as a thousand microWELLBYs
-        return "1,000 microWELLBYs" if k == -3 else _size(10.0 ** k)[1:]
-    rows = [f'<tr><th scope="row">{amount(k)}</th><td class="wrap">{one_point_for(k)}</td>'
-            f'<td class="wrap">{cell(k, -1)}</td><td class="wrap">{cell(k, 1)}</td></tr>' for k in rungs]
-    moments = wellby_moments()
-    cited = pd.concat([moments[moments.by != ""], wellby_benchmarks()]).drop_duplicates("source")
-    sources = " ".join(f'<a href="{e(r.url)}">{e(r.source)}</a>.' for r in cited.itertuples())
-    return table([th("Amount"), th("That is one point for"), th("Takes about that much away"), th("Adds about that much")], rows,
-                 attrs=f' data-scores id="{GUIDE}"',
-                 caption="Each row is ten times the one above, and a thing is put in the row nearest its size. A figure with "
-                         "nothing after it is counted here, from how people rated that time against the rest of their own "
-                         "day. A figure called a judgment is nobody's measurement: it is the points and the time it says, "
-                         "multiplied. Points up or down are counted from an ordinary hour, which people rate at 7 or 8 of "
-                         "10, and not from nothing. A measured figure is the average over everyone and every occasion, and "
-                         "any one occasion can be far from it. A figure with a name after it is that source's, of feelings at the time or of life as "
-                         "a whole, each on its own scale from 0 to 10, and the three are not the same measure. "
-                         f"The sources: {sources}")
 
 
 def hours_section(d: Data) -> str:
@@ -2660,23 +2436,18 @@ def hours_section(d: Data) -> str:
     zeta, detail, at_work = d.sheets[ZETA].values, d.unpaid[1], d.unpleasant(WORKING)
     at_home = (detail.hours * detail.unpleasant).sum() / detail.hours.sum()
     unpleasant_unpaid = at_home * unpaid_hours
-    xi, job_below, job_severe = d.sheets[XI].values, d.below_rest(WORKING), d.felt(WORKING, "severe")
-    home_below, home_severe = ((detail.hours * detail[m]).sum() / detail.hours.sum() for m in ("below_rest", "severe"))
-    lost_unpaid = home_below * unpaid_hours * POINT_HOUR
-    below = detail.set_index("activity").below_rest
-    kinds = [("Working at a job", d.time_use["Working"], at_work, job_severe, job_below)] + [
-        (r.activity, r.hours_per_day, r.unpleasant, r.severe, r.below_rest) for r in detail.sort_values("hours_per_day", ascending=False).itertuples()
+    kinds = [("Working at a job", d.time_use["Working"], at_work, d.felt(WORKING, "severe"))] + [
+        (r.activity, r.hours_per_day, r.unpleasant, r.severe) for r in detail.sort_values("hours_per_day", ascending=False).itertuples()
         if r.hours_per_day >= FELT_HOURS]
     felt = table([th("Kind of time"), th("Hours a day for each person", "num"), th("Part of it that is unpleasant", "num"),
-                  th("Part with a bad feeling at 5 or 6", "num"), th("Points below the rest of the day", "num")],
+                  th("Part with a bad feeling at 5 or 6", "num")],
                  [f'<tr><th scope="row" class="wrap">{e(name)}</th><td class="num">{hours:.2f}</td><td class="num">{part * 100:.0f}%</td>'
-                  f'<td class="num">{severe * 100:.0f}%</td><td class="num">{_signed(points)}</td></tr>'
-                  for name, hours, part, severe, points in kinds], attrs=" data-scores",
+                  f'<td class="num">{severe * 100:.0f}%</td></tr>'
+                  for name, hours, part, severe in kinds], attrs=" data-scores",
                  foot=f'<tr><td>Time that is not work</td><td></td><td class="num">{d.unpleasant(d.not_work) * 100:.0f}%</td>'
-                      f'<td class="num">{d.felt(d.not_work, "severe") * 100:.0f}%</td><td class="num">{_signed(0)}</td></tr>',
+                      f'<td class="num">{d.felt(d.not_work, "severe") * 100:.0f}%</td></tr>',
                  caption=f"Paid work, and the kinds of unpaid work at home that take at least {FELT_HOURS} hours a day, as people "
-                         "of 15 and over reported them. Points are of a scale from 0 to 10, against the same person's other "
-                         "time that was not work.")
+                         "of 15 and over reported them. A bad feeling is pain, sadness or stress, rated from 0 to 6.")
     return f"""{_eqs([equation(key) for key in (BETA, PI, TAU, ETA)])}
 <p>A dollar counts work by what it is paid. An hour counts it by the time of someone's life it takes, which is the same
 whatever it earns. {_m(_sym(CHI))} is the hours worked for each dollar of a sector's value added, so {_m(_sym(BETA))} is
@@ -2697,24 +2468,6 @@ thousand need dollars, {zeta.equal.sum():.1f} are unpleasant, {_m(_sym(ZETA))}: 
 and {unpleasant_unpaid:.1f} unpaid. Unpaid work is {unpaid_hours / tau.equal.sum() * 100:.0f}% of the hours and
 {unpleasant_unpaid / zeta.equal.sum() * 100:.0f}% of the unpleasant ones.</p>
 {felt}
-<p>Unpleasant or not is a coarse count: it gives a mildly irritating hour the weight of an hour of agony. So each rated
-activity is also put on one scale from 0 to 10, happiness less the mean of pain, sadness and stress, and set against the
-same person's other rated time that was not work, which is what an hour of work given back would become. Working at a job
-is rated {job_below:.2f} points below the rest of the day and unpaid work at home {home_below:.2f}: cleaning is
-{below["Interior cleaning"]:.2f} below it, preparing food {below["Food and drink preparation"]:.2f}, and caring for the
-household's children {-below["Caring for and helping household children"]:.2f} above it.</p>
-<p>A WELLBY is one point of wellbeing for one person for one year, so one point for one hour is {POINT_HOUR:.0f}
-microWELLBYs. At that rate the work behind a thousand need dollars costs those who do it {xi.equal.sum():,.0f}
-experienced microWELLBYs, {_m(_sym(XI))}: {xi.equal.sum() - lost_unpaid:,.0f} paid and {lost_unpaid:,.0f} unpaid. Unpaid
-work is {unpaid_hours / tau.equal.sum() * 100:.0f}% of the hours and {lost_unpaid / xi.equal.sum() * 100:.0f}% of this cost.
-As the needs were in fact paid for, it comes to {_about(xi.spending.sum() * d.spent / 1e9)} WELLBYs a year. A
-<a href="{d.units["microwellby"].href}#{GUIDE}">guide to sizes</a> sets these amounts beside other things.</p>
-<p>They are called experienced because a WELLBY proper is counted from what people say of their life as a whole, and
-these are counted from what they felt at the time. The scale is also even: six hours one point down count as one hour
-six points down, and those who study severe pain think the worst hours count for far more. Counting only the time with
-a bad feeling at 5 or 6, a job has {job_severe * 100:.0f}%, unpaid work at home {home_severe * 100:.0f}% and time that is
-not work {d.felt(d.not_work, "severe") * 100:.0f}%. All paid work is given the one rate, because the files used here do
-not say what a respondent's job was.</p>
 """
 
 
