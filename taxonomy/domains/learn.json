@@ -1,0 +1,2739 @@
+{
+  "domain": "learn",
+  "summary": "Thirteen capabilities in four groups: teaching and course delivery (learning management, live classroom interaction, courseware authoring, tutoring, simulation training), assessment, administration (student information, special education, career guidance, assistive technology), and keeping knowledge (libraries, archives and museums, scholarly search and dictionaries). The breakdown follows 1EdTech and ADL interoperability standards for delivery and assessment, Ed-Fi and CEDS for administration, MARC, IFLA LRM and NISO standards for libraries, and EAD, Spectrum and OAIS for archives and museums; ISCED levels were used only to check that early childhood, school, postsecondary and workforce training are all covered.",
+  "capabilities": [
+    {
+      "id": "learn.course_delivery",
+      "name": "Learning management and course delivery",
+      "definition": "Given courses, enrolled learners and learning content, deliver the content, track participation and progress, and record results.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Education > Learning management systems",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Education > Distance learning",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "1EdTech",
+          "code": "",
+          "label": "Learning Tools Interoperability (LTI)",
+          "basis": "fetched",
+          "url": "https://www.1edtech.org/standards"
+        },
+        {
+          "scheme": "ADL",
+          "code": "",
+          "label": "Sharable Content Object Reference Model (SCORM)",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Computer based training software"
+      ],
+      "see_also": [
+        "enterprise.hr_admin",
+        "media.video_post",
+        "enterprise.communication"
+      ],
+      "notes": "Was seed 'Learning management and course delivery'. Academic and corporate learning management are one function; corporate compliance tracking is kept as its own task because its inputs (job roles, regulatory requirements) differ.",
+      "tasks": [
+        {
+          "id": "learn.course_delivery.content_playback",
+          "name": "Packaged course content playback",
+          "definition": "Given a content package and an enrolled learner, launch and sequence the package and record completion, time and score.",
+          "inputs": "content package (SCORM, Common Cartridge, cmi5), learner enrollment",
+          "outputs": "rendered lessons, completion status, scores, time on task",
+          "crosswalk": [
+            {
+              "scheme": "ADL",
+              "code": "",
+              "label": "SCORM 2004",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "1EdTech",
+              "code": "",
+              "label": "Common Cartridge",
+              "basis": "fetched",
+              "url": "https://www.1edtech.org/standards"
+            },
+            {
+              "scheme": "ADL",
+              "code": "",
+              "label": "cmi5",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Learning management system LMS",
+            "Moodle",
+            "Blackboard Learn",
+            "Desire2Learn LMS software",
+            "Sakai CLE",
+            "Instructure Canvas",
+            "Schoology",
+            "Google Classroom",
+            "SumTotal Systems TotalLMS",
+            "Cornerstone OnDemand Cornerstone Learning",
+            "SkillSoft SkillPort",
+            "Blatant Media Absorb LMS"
+          ],
+          "state_of_art": [
+            "Instructure Canvas",
+            "D2L Brightspace",
+            "Blackboard Learn",
+            "Cornerstone Learning"
+          ],
+          "open_tools": [
+            "Moodle",
+            "Sakai",
+            "Open edX",
+            "ILIAS",
+            "Chamilo"
+          ],
+          "benchmarkable": "partly: conformance test suites exist for SCORM and Common Cartridge, but nothing scores delivery quality",
+          "notes": ""
+        },
+        {
+          "id": "learn.course_delivery.tool_launch",
+          "name": "External learning tool launch",
+          "definition": "Given a course context and an external learning tool, launch the tool with the user's identity and role and return its grades to the course.",
+          "inputs": "course and user context, tool registration, signed launch request",
+          "outputs": "authenticated tool session, grade and roster passback",
+          "crosswalk": [
+            {
+              "scheme": "1EdTech",
+              "code": "",
+              "label": "Learning Tools Interoperability (LTI) Advantage",
+              "basis": "fetched",
+              "url": "https://www.1edtech.org/standards"
+            }
+          ],
+          "onet_products": [
+            "Instructure Canvas",
+            "Moodle",
+            "Desire2Learn LMS software",
+            "Blackboard Learn"
+          ],
+          "state_of_art": [
+            "Instructure Canvas",
+            "D2L Brightspace",
+            "Blackboard Learn"
+          ],
+          "open_tools": [
+            "Moodle",
+            "Open edX"
+          ],
+          "benchmarkable": "partly: 1EdTech certification tests check protocol conformance only",
+          "notes": ""
+        },
+        {
+          "id": "learn.course_delivery.gradebook",
+          "name": "Course gradebook calculation",
+          "definition": "Given assignment scores, category weights, drop rules and a grading scheme, compute running and final course grades.",
+          "inputs": "scores, weights, late and drop policies, grading scale",
+          "outputs": "per-student course grades and grade reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Course management system software",
+            "Blackboard software",
+            "Schoology",
+            "Google Classroom",
+            "Instructure Canvas"
+          ],
+          "state_of_art": [
+            "Instructure Canvas",
+            "PowerSchool Schoology Learning"
+          ],
+          "open_tools": [
+            "Moodle"
+          ],
+          "benchmarkable": "no: deterministic arithmetic under local rules; only correctness against the rules can be tested",
+          "notes": ""
+        },
+        {
+          "id": "learn.course_delivery.course_discussion",
+          "name": "Course discussion and question answering",
+          "definition": "Given course members and course materials, host threaded discussion and questions, with answers endorsed by instructors.",
+          "inputs": "course roster, posts, course materials",
+          "outputs": "threaded discussions, endorsed answers, participation records",
+          "crosswalk": [],
+          "onet_products": [
+            "Piazza",
+            "Padlet",
+            "VoiceThread",
+            "Blackboard Learning System"
+          ],
+          "state_of_art": [
+            "Piazza",
+            "Ed Discussion"
+          ],
+          "open_tools": [
+            "Moodle"
+          ],
+          "benchmarkable": "partly: automatic answering of course questions could be scored against instructor answers; no public benchmark is standard",
+          "notes": ""
+        },
+        {
+          "id": "learn.course_delivery.lecture_capture",
+          "name": "Lecture capture and video lessons",
+          "definition": "Given recorded lectures, publish them with synchronized slides, captions, in-video search and viewing analytics.",
+          "inputs": "lecture audio, video and slides",
+          "outputs": "searchable captioned video, viewing statistics",
+          "crosswalk": [],
+          "onet_products": [
+            "Panopto",
+            "Brainshark Rapid Learning",
+            "VoiceThread"
+          ],
+          "state_of_art": [
+            "Panopto",
+            "Kaltura",
+            "YuJa"
+          ],
+          "open_tools": [
+            "Opencast"
+          ],
+          "benchmarkable": "partly: caption word error rate and slide-text search are measurable; teaching value is not",
+          "notes": ""
+        },
+        {
+          "id": "learn.course_delivery.training_compliance",
+          "name": "Required training assignment and tracking",
+          "definition": "Given job roles, regulatory training requirements and completion records, assign required courses, track due dates and expiring certifications, and report compliance.",
+          "inputs": "employee roles, training requirements, course catalog, completion records",
+          "outputs": "assignments, overdue and expiry alerts, compliance reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Cobent Learning and Compliance Suite LCS",
+            "PRO-ductivity Systems Compliance Training Manager Web",
+            "Alchemy Systems SISTEM",
+            "Medworxx Learning Management System",
+            "GeoMetrix Data Systems Training Partner",
+            "Right Reason Technologies RightTrack",
+            "Oracle Learning Management",
+            "Plateau Learning Management System LMS",
+            "NetDimensions Enterprise Knowledge Platform EKP",
+            "Health and safety training software",
+            "Hazardous waste operations and emergency response standard HAZWOPER training software",
+            "TrainCaster LMS"
+          ],
+          "state_of_art": [
+            "Cornerstone Learning",
+            "SAP SuccessFactors Learning",
+            "Workday Learning"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: rule-driven record keeping; correctness is conformance to the organization's rules",
+          "notes": "Straddles enterprise HR; see open questions."
+        },
+        {
+          "id": "learn.course_delivery.learning_records",
+          "name": "Learning activity records and analytics",
+          "definition": "Given streams of learner activity statements, store them and compute engagement measures and predictions such as course completion.",
+          "inputs": "activity statements (actor, verb, object, result), course structure",
+          "outputs": "learning record store, engagement dashboards, completion predictions",
+          "crosswalk": [
+            {
+              "scheme": "IEEE",
+              "code": "9274.1.1",
+              "label": "Experience API (xAPI)",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "1EdTech",
+              "code": "",
+              "label": "Caliper Analytics",
+              "basis": "fetched",
+              "url": "https://www.1edtech.org/standards"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Watershed",
+            "Instructure Canvas Data"
+          ],
+          "open_tools": [
+            "Learning Locker",
+            "Ralph"
+          ],
+          "benchmarkable": "yes: completion and outcome prediction on public data such as the Open University Learning Analytics Dataset and KDD Cup 2015 MOOC dropout data",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "learn.classroom_interaction",
+      "name": "Live classroom interaction",
+      "definition": "Given a teacher-led session and learners' devices, present activities, collect responses and student work in real time, and show results.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Education > Interactive learning environments",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Education > Collaborative learning",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Multi-media educational software",
+        "Presentation software",
+        "Computer based training software"
+      ],
+      "see_also": [
+        "science.numerical_computing",
+        "science.symbolic_math"
+      ],
+      "notes": "Was seed 'Classroom instruction and engagement tools'. Renamed to the function (live interaction). Lesson planning moved to courseware authoring.",
+      "tasks": [
+        {
+          "id": "learn.classroom_interaction.audience_response",
+          "name": "Live polling and quiz games",
+          "definition": "Given a set of questions, collect answers from learners' devices during a session and display aggregated results or a leaderboard.",
+          "inputs": "questions, live participants",
+          "outputs": "per-question response distributions, scores, leaderboard",
+          "crosswalk": [],
+          "onet_products": [
+            "Kahoot!",
+            "Mentimeter",
+            "Poll Everywhere",
+            "Turning Technologies TurningPoint",
+            "Slido interaction software"
+          ],
+          "state_of_art": [
+            "Kahoot!",
+            "Mentimeter",
+            "Poll Everywhere",
+            "iClicker",
+            "Slido"
+          ],
+          "open_tools": [
+            "Claper"
+          ],
+          "benchmarkable": "no: response collection; there is no computed answer to score",
+          "notes": ""
+        },
+        {
+          "id": "learn.classroom_interaction.synchronized_lessons",
+          "name": "Teacher-paced interactive lessons",
+          "definition": "Given slides with embedded questions and activities, push each slide to students' devices in step with the teacher and collect responses per slide.",
+          "inputs": "slide deck with embedded activities, student roster",
+          "outputs": "synchronized lesson, per-slide student responses",
+          "crosswalk": [],
+          "onet_products": [
+            "Nearpod",
+            "Pear Deck",
+            "Interactive learning software"
+          ],
+          "state_of_art": [
+            "Nearpod",
+            "Pear Deck"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: delivery and collection only",
+          "notes": ""
+        },
+        {
+          "id": "learn.classroom_interaction.interactive_video",
+          "name": "Interactive video lessons",
+          "definition": "Given a video and questions placed at timestamps, play it to learners, pause for the questions, and record answers and viewing completion.",
+          "inputs": "video, timed questions",
+          "outputs": "learner answers, viewing completion",
+          "crosswalk": [],
+          "onet_products": [
+            "Edpuzzle",
+            "VoiceThread"
+          ],
+          "state_of_art": [
+            "Edpuzzle",
+            "PlayPosit"
+          ],
+          "open_tools": [
+            "H5P"
+          ],
+          "benchmarkable": "no: delivery task; generating the questions belongs to test item authoring",
+          "notes": ""
+        },
+        {
+          "id": "learn.classroom_interaction.student_portfolios",
+          "name": "Student work portfolios",
+          "definition": "Given student work captured as photos, video, audio or text, organize it into per-student portfolios with teacher feedback and share it with families.",
+          "inputs": "student artifacts, rubrics or comments",
+          "outputs": "per-student portfolios, feedback, family-visible journal",
+          "crosswalk": [],
+          "onet_products": [
+            "Seesaw",
+            "Flipgrid",
+            "Padlet"
+          ],
+          "state_of_art": [
+            "Seesaw",
+            "Flip"
+          ],
+          "open_tools": [
+            "Mahara"
+          ],
+          "benchmarkable": "no: record keeping and sharing",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "learn.courseware_authoring",
+      "name": "Instructional design and courseware authoring",
+      "definition": "Given learning goals, standards and source content, design a course and produce reusable, packaged learning content.",
+      "crosswalk": [
+        {
+          "scheme": "IEEE LTSC",
+          "code": "1484.12.1",
+          "label": "Learning Object Metadata (LOM)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "1EdTech",
+          "code": "",
+          "label": "Competencies and Academic Standards Exchange (CASE)",
+          "basis": "fetched",
+          "url": "https://www.1edtech.org/standards"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Education > E-learning",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Computer based training software"
+      ],
+      "see_also": [
+        "media.video_post",
+        "media.web_publishing"
+      ],
+      "notes": "Was seed 'Courseware and e-learning authoring'. Added curriculum mapping and standards alignment (from the classroom seed) because they are design work upstream of authoring.",
+      "tasks": [
+        {
+          "id": "learn.courseware_authoring.curriculum_mapping",
+          "name": "Curriculum mapping and standards alignment",
+          "definition": "Given learning standards and a course's units, lessons and assessments, align each to the standards it addresses and report coverage and gaps.",
+          "inputs": "standards frameworks, course units, lessons, assessments",
+          "outputs": "curriculum map, alignment links, coverage report",
+          "crosswalk": [
+            {
+              "scheme": "1EdTech",
+              "code": "",
+              "label": "Competencies and Academic Standards Exchange (CASE)",
+              "basis": "fetched",
+              "url": "https://www.1edtech.org/standards"
+            }
+          ],
+          "onet_products": [
+            "Common Curriculum",
+            "Worldwide Instructional Design System WIDS"
+          ],
+          "state_of_art": [
+            "Atlas Curriculum Mapping",
+            "Common Curriculum"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: automatic alignment of items or lessons to standards can be scored against expert-labelled alignments; whole-course design cannot",
+          "notes": ""
+        },
+        {
+          "id": "learn.courseware_authoring.elearning_modules",
+          "name": "Interactive e-learning module authoring",
+          "definition": "Given content, interactions and quiz items, produce a self-paced module with navigation, branching and tracking, published as a standard package.",
+          "inputs": "text, media, interaction templates, quiz items",
+          "outputs": "SCORM, xAPI or HTML5 package",
+          "crosswalk": [],
+          "onet_products": [
+            "Articulate Storyline",
+            "Articulate 360",
+            "Articulate Rapid E-Learning Studio",
+            "Adobe Captivate",
+            "Trivantis Lectora",
+            "SumTotal Systems ToolBook",
+            "Adobe Authorware",
+            "SoftChalk LessonBuilder",
+            "Suddenly Smart SmartBuilder",
+            "Elucidat",
+            "Learning Technology Research Institute GLO Maker",
+            "Center for Computer-Assisted Legal Instruction CALI Author"
+          ],
+          "state_of_art": [
+            "Articulate Storyline",
+            "Adobe Captivate",
+            "Lectora",
+            "Elucidat"
+          ],
+          "open_tools": [
+            "Adapt Learning",
+            "H5P",
+            "eXeLearning"
+          ],
+          "benchmarkable": "no: output quality is a pedagogical judgment; only package conformance is testable",
+          "notes": ""
+        },
+        {
+          "id": "learn.courseware_authoring.software_simulations",
+          "name": "Software demonstration and simulation capture",
+          "definition": "Given recorded screen actions in an application, produce step-by-step demonstrations and practice simulations that check the learner's clicks and entries.",
+          "inputs": "screen recording, captured actions",
+          "outputs": "watch, try and test simulations",
+          "crosswalk": [],
+          "onet_products": [
+            "Adobe Captivate",
+            "Qarbon ViewletBuilder Professional",
+            "Adobe Presenter",
+            "Kookaburra Studios Knowledge Presenter"
+          ],
+          "state_of_art": [
+            "Adobe Captivate",
+            "TechSmith Camtasia",
+            "Articulate Storyline"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: authoring task without a reference output",
+          "notes": ""
+        },
+        {
+          "id": "learn.courseware_authoring.content_management",
+          "name": "Learning content management and reuse",
+          "definition": "Given learning objects with metadata, store, version and search them and assemble them into courses and multiple output formats.",
+          "inputs": "learning objects, metadata, templates",
+          "outputs": "content repository, assembled courses, multi-format outputs",
+          "crosswalk": [
+            {
+              "scheme": "IEEE LTSC",
+              "code": "1484.12.1",
+              "label": "Learning Object Metadata (LOM)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Xyleme Learning Content Management System LCMS",
+            "EZ LCMS",
+            "Telania eLeaP Learning Management System LMS/LCMS",
+            "Rapid Intake Unison",
+            "dominKnow Learning Center"
+          ],
+          "state_of_art": [
+            "Xyleme",
+            "dominKnow ONE"
+          ],
+          "open_tools": [
+            "openEQUELLA"
+          ],
+          "benchmarkable": "partly: metadata generation and search over learning objects can be scored on labelled repositories; no standard leaderboard",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "learn.assessment",
+      "name": "Assessment, testing and academic integrity",
+      "definition": "Given test content and learner responses, build and deliver assessments, score them, estimate ability and check the integrity of the work.",
+      "crosswalk": [
+        {
+          "scheme": "1EdTech",
+          "code": "",
+          "label": "Question and Test Interoperability (QTI)",
+          "basis": "fetched",
+          "url": "https://www.1edtech.org/standards"
+        }
+      ],
+      "onet_categories": [
+        "Computer based training software",
+        "Information retrieval or search software",
+        "Optical character reader OCR or scanning software"
+      ],
+      "see_also": [
+        "science.statistics"
+      ],
+      "notes": "Was seed 'Assessment, testing and grading; academic integrity'. Split into authoring, delivery, adaptive testing, calibration, machine scoring and integrity tasks; curriculum-based screening added from the special education seed because it is used for all students.",
+      "tasks": [
+        {
+          "id": "learn.assessment.item_banking",
+          "name": "Test item authoring and banking",
+          "definition": "Given content standards and source material, write, review, tag and store test items with their statistics, exchanged in a standard item format.",
+          "inputs": "standards, source passages, item templates",
+          "outputs": "reviewed, tagged items with statistics; QTI exports",
+          "crosswalk": [
+            {
+              "scheme": "1EdTech",
+              "code": "",
+              "label": "Question and Test Interoperability (QTI)",
+              "basis": "fetched",
+              "url": "https://www.1edtech.org/standards"
+            }
+          ],
+          "onet_products": [
+            "Computerized testing software",
+            "Respondus",
+            "Edulastic",
+            "ExamSoft Exam Intelligence"
+          ],
+          "state_of_art": [
+            "Questionmark",
+            "Learnosity",
+            "ExamSoft"
+          ],
+          "open_tools": [
+            "TAO"
+          ],
+          "benchmarkable": "partly: automatic question and distractor generation is scored on datasets such as SQuAD-derived question generation and RACE, with weak metrics",
+          "notes": ""
+        },
+        {
+          "id": "learn.assessment.secure_delivery",
+          "name": "Secure test delivery and proctoring",
+          "definition": "Given a test form and candidates, deliver a timed test in a locked-down environment, monitor for misconduct and record responses.",
+          "inputs": "test form, candidate list, timing and accommodation rules",
+          "outputs": "response records, misconduct flags, session logs",
+          "crosswalk": [],
+          "onet_products": [
+            "ExamSoft Exam Intelligence",
+            "Respondus",
+            "Computer-assisted testing software",
+            "Computerized testing programs"
+          ],
+          "state_of_art": [
+            "Pearson VUE",
+            "Respondus LockDown Browser",
+            "ProctorU"
+          ],
+          "open_tools": [
+            "Safe Exam Browser",
+            "TAO"
+          ],
+          "benchmarkable": "partly: misconduct detection from video and keystrokes could be scored on labelled sessions; few public datasets exist",
+          "notes": ""
+        },
+        {
+          "id": "learn.assessment.adaptive_testing",
+          "name": "Computerized adaptive testing",
+          "definition": "Given a calibrated item bank and a test blueprint, select items one at a time to estimate the examinee's ability to a target precision.",
+          "inputs": "calibrated item bank, blueprint constraints, responses",
+          "outputs": "ability estimate with standard error, administered item sequence",
+          "crosswalk": [],
+          "onet_products": [
+            "Computerized testing software"
+          ],
+          "state_of_art": [
+            "NWEA MAP Growth",
+            "Renaissance Star Assessments"
+          ],
+          "open_tools": [
+            "catR",
+            "mirtCAT",
+            "Concerto"
+          ],
+          "benchmarkable": "yes: simulation against known true abilities gives exact accuracy, efficiency and item-exposure measures",
+          "notes": ""
+        },
+        {
+          "id": "learn.assessment.psychometric_calibration",
+          "name": "Item analysis and test calibration",
+          "definition": "Given scored response matrices, estimate item parameters, reliability, score equating and differential item functioning.",
+          "inputs": "scored response matrix, examinee groups",
+          "outputs": "item parameters, reliability, equating tables, bias flags",
+          "crosswalk": [],
+          "onet_products": [
+            "Scientific Software International BILOG-MG",
+            "Scientific Software International MULTILOG",
+            "Scientific Software International PARSCALE",
+            "Scientific Software International TESTFACT",
+            "Winsteps",
+            "Assessment Systems Corporation XCALIBRE"
+          ],
+          "state_of_art": [
+            "Winsteps",
+            "flexMIRT",
+            "IRTPRO"
+          ],
+          "open_tools": [
+            "mirt",
+            "TAM",
+            "ltm"
+          ],
+          "benchmarkable": "yes: parameter recovery on simulated data with known parameters",
+          "notes": "Psychometrics is kept here because it is specific to tests; general statistics stays in science."
+        },
+        {
+          "id": "learn.assessment.answer_sheet_scoring",
+          "name": "Answer sheet scanning and scoring",
+          "definition": "Given scanned answer sheets and a key, read the filled marks and score each sheet.",
+          "inputs": "scanned bubble sheets, answer key",
+          "outputs": "read responses, scores, item statistics",
+          "crosswalk": [],
+          "onet_products": [
+            "Scantron imaging software"
+          ],
+          "state_of_art": [
+            "Scantron",
+            "Remark Office OMR",
+            "ZipGrade"
+          ],
+          "open_tools": [
+            "OMRChecker",
+            "FormScanner"
+          ],
+          "benchmarkable": "yes: mark-reading accuracy against sheets with known marks",
+          "notes": ""
+        },
+        {
+          "id": "learn.assessment.written_response_scoring",
+          "name": "Automated essay and short-answer scoring",
+          "definition": "Given written responses and a rubric or reference answers, predict the scores human raters would assign and give feedback.",
+          "inputs": "student responses, rubric, scored training responses",
+          "outputs": "predicted scores, trait feedback",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "ETS e-rater",
+            "Pearson Intelligent Essay Assessor",
+            "Gradescope"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the Hewlett ASAP essay and short-answer datasets (quadratic weighted kappa) and SemEval-2013 Task 7",
+          "notes": ""
+        },
+        {
+          "id": "learn.assessment.similarity_detection",
+          "name": "Text similarity and plagiarism detection",
+          "definition": "Given a submitted document and a corpus of sources and prior submissions, find copied or paraphrased passages and report their sources.",
+          "inputs": "submitted text or code, reference corpus",
+          "outputs": "matched passages with sources, similarity score",
+          "crosswalk": [],
+          "onet_products": [
+            "iParadigms Turnitin",
+            "DOC Cop"
+          ],
+          "state_of_art": [
+            "Turnitin",
+            "iThenticate",
+            "Copyleaks"
+          ],
+          "open_tools": [
+            "JPlag"
+          ],
+          "benchmarkable": "yes: PAN shared tasks on text reuse and plagiarism detection provide corpora and scores",
+          "notes": "JPlag covers program code only."
+        },
+        {
+          "id": "learn.assessment.progress_monitoring",
+          "name": "Screening and progress monitoring",
+          "definition": "Given short timed probes repeated over time, score them and track each student's growth against norms and goals.",
+          "inputs": "probe responses or recordings, norms, goals",
+          "outputs": "scores, growth charts, risk flags",
+          "crosswalk": [],
+          "onet_products": [
+            "EasyCBM",
+            "Centris Group RTIm Direct"
+          ],
+          "state_of_art": [
+            "Amplify mCLASS DIBELS 8",
+            "FastBridge",
+            "aimswebPlus"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: automatic scoring of oral reading fluency from audio can be checked against human words-correct-per-minute counts",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "learn.student_information",
+      "name": "Student information and school administration",
+      "definition": "Given students, staff, courses and institutional rules, keep official student records and run enrollment, scheduling, grading, aid and reporting.",
+      "crosswalk": [
+        {
+          "scheme": "Ed-Fi",
+          "code": "",
+          "label": "Ed-Fi Data Standard",
+          "basis": "fetched",
+          "url": "https://docs.ed-fi.org/reference/data-exchange/data-standard/"
+        },
+        {
+          "scheme": "CEDS",
+          "code": "",
+          "label": "Common Education Data Standards",
+          "basis": "fetched",
+          "url": "https://ceds.ed.gov/"
+        },
+        {
+          "scheme": "1EdTech",
+          "code": "",
+          "label": "OneRoster",
+          "basis": "fetched",
+          "url": "https://www.1edtech.org/standards"
+        },
+        {
+          "scheme": "PESC",
+          "code": "",
+          "label": "Postsecondary Electronic Standards Council transcript standards",
+          "basis": "fetched",
+          "url": "https://www.pesc.org/"
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software",
+        "Enterprise resource planning ERP software"
+      ],
+      "see_also": [
+        "enterprise.accounting",
+        "science.optimization"
+      ],
+      "notes": "Was seed 'Student information and school administration'. Covers early childhood through postsecondary (ISCED 0 to 8). General finance, HR and payroll of a school stay in enterprise.",
+      "tasks": [
+        {
+          "id": "learn.student_information.student_records",
+          "name": "Enrollment, attendance and student records",
+          "definition": "Given applications, registrations and daily attendance, maintain each student's demographic, enrollment, program and attendance record and roster students to classes.",
+          "inputs": "applications, registration data, attendance marks",
+          "outputs": "student records, class rosters, attendance rates and absence flags",
+          "crosswalk": [
+            {
+              "scheme": "Ed-Fi",
+              "code": "",
+              "label": "Enrollment and Student Attendance domains",
+              "basis": "fetched",
+              "url": "https://docs.ed-fi.org/reference/data-exchange/data-standard/model-reference/"
+            },
+            {
+              "scheme": "1EdTech",
+              "code": "",
+              "label": "OneRoster",
+              "basis": "fetched",
+              "url": "https://www.1edtech.org/standards"
+            }
+          ],
+          "onet_products": [
+            "Student information systems SIS software",
+            "PowerSchool SIS",
+            "Skyward School Management System",
+            "Student record software",
+            "Automate the Schools ATS",
+            "Rediker Software School Office Suite",
+            "SunGard Higher Education Banner Unified Digital Campus",
+            "Blackbaud The Education Edge",
+            "Attendance tracking software",
+            "School Attendance Keeper",
+            "ScholarCare",
+            "Student and Exchange Visitor Information System SEVIS"
+          ],
+          "state_of_art": [
+            "PowerSchool SIS",
+            "Infinite Campus",
+            "Ellucian Banner",
+            "Workday Student"
+          ],
+          "open_tools": [
+            "OpenSIS",
+            "RosarioSIS",
+            "Gibbon"
+          ],
+          "benchmarkable": "no: record keeping whose correctness is conformance to data standards",
+          "notes": ""
+        },
+        {
+          "id": "learn.student_information.timetabling",
+          "name": "Course timetabling",
+          "definition": "Given course requests, teachers, rooms and periods, build a master schedule and student timetables that minimize conflicts.",
+          "inputs": "course requests, staff and room availability, constraints",
+          "outputs": "master schedule, student and teacher timetables, conflict report",
+          "crosswalk": [
+            {
+              "scheme": "International Timetabling Competition",
+              "code": "",
+              "label": "ITC 2019 university course timetabling",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "High School Scheduling and Transcript HSST"
+          ],
+          "state_of_art": [
+            "PowerScheduler",
+            "aSc Timetables",
+            "Infosilem"
+          ],
+          "open_tools": [
+            "UniTime",
+            "FET"
+          ],
+          "benchmarkable": "yes: International Timetabling Competition instances (2007, 2019) with scored solutions",
+          "notes": ""
+        },
+        {
+          "id": "learn.student_information.grades_transcripts",
+          "name": "Grade reporting and transcripts",
+          "definition": "Given final course grades and credit rules, compute grade point averages and class rank and produce report cards and official transcripts.",
+          "inputs": "course grades, credit values, grading scales",
+          "outputs": "report cards, transcripts, electronic transcript exchange",
+          "crosswalk": [
+            {
+              "scheme": "PESC",
+              "code": "",
+              "label": "College Transcript",
+              "basis": "fetched",
+              "url": "https://www.pesc.org/"
+            },
+            {
+              "scheme": "1EdTech",
+              "code": "",
+              "label": "Comprehensive Learner Record",
+              "basis": "fetched",
+              "url": "https://www.1edtech.org/standards"
+            },
+            {
+              "scheme": "Ed-Fi",
+              "code": "",
+              "label": "Student Academic Record",
+              "basis": "fetched",
+              "url": "https://docs.ed-fi.org/reference/data-exchange/data-standard/model-reference/"
+            }
+          ],
+          "onet_products": [
+            "High School Scheduling and Transcript HSST",
+            "Student record software",
+            "PowerSchool Group PowerSchool SIS"
+          ],
+          "state_of_art": [
+            "PowerSchool SIS",
+            "Parchment"
+          ],
+          "open_tools": [
+            "OpenSIS"
+          ],
+          "benchmarkable": "no: deterministic computation under local rules",
+          "notes": ""
+        },
+        {
+          "id": "learn.student_information.degree_audit",
+          "name": "Degree audit and transfer credit evaluation",
+          "definition": "Given program requirements, a student's completed courses and incoming transfer work, determine which requirements are met and which course equivalencies apply.",
+          "inputs": "program rules, academic history, transfer transcripts, equivalency tables",
+          "outputs": "audit report, remaining requirements, equivalency decisions",
+          "crosswalk": [],
+          "onet_products": [
+            "Ellucian Degree Works",
+            "Nolij Corporation Nolij Transfer"
+          ],
+          "state_of_art": [
+            "Ellucian Degree Works",
+            "uAchieve"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: rule evaluation can be checked against registrar decisions; matching course descriptions for equivalency can be scored on labelled pairs",
+          "notes": ""
+        },
+        {
+          "id": "learn.student_information.financial_aid",
+          "name": "Student financial aid packaging",
+          "definition": "Given cost of attendance, need analysis results and fund rules, compute each student's aid package and track disbursement.",
+          "inputs": "need analysis records, cost of attendance, fund rules and budgets",
+          "outputs": "award packages, award letters, disbursement schedules",
+          "crosswalk": [],
+          "onet_products": [
+            "Sungard Higher Education PowerFAIDS",
+            "SunGard Higher Education Banner Financial Aid"
+          ],
+          "state_of_art": [
+            "Ellucian Banner Financial Aid",
+            "College Board PowerFAIDS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: rule computation under regulation",
+          "notes": ""
+        },
+        {
+          "id": "learn.student_information.early_warning",
+          "name": "Early warning of dropout",
+          "definition": "Given attendance, behavior and course-performance histories, predict which students are at risk of failing or leaving and flag them for support.",
+          "inputs": "attendance, discipline and grade histories",
+          "outputs": "risk scores and flags",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "EAB Navigate",
+            "PowerSchool Unified Insights"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: dropout and failure prediction on public data such as the UCI Student Performance dataset, scored by AUC",
+          "notes": ""
+        },
+        {
+          "id": "learn.student_information.student_support_visits",
+          "name": "Advising and tutoring visit tracking",
+          "definition": "Given student appointments and walk-in visits to advising, tutoring and counseling services, schedule them, record notes and report usage.",
+          "inputs": "appointment requests, staff availability, visit notes",
+          "outputs": "schedules, visit records, usage reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Redrock Software TutorTrac",
+            "Counseling software"
+          ],
+          "state_of_art": [
+            "EAB Navigate",
+            "TutorTrac"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: scheduling and record keeping",
+          "notes": ""
+        },
+        {
+          "id": "learn.student_information.education_data_reporting",
+          "name": "Education data reporting and exchange",
+          "definition": "Given local student, staff and assessment records, validate them and submit them to state and federal systems in standard formats.",
+          "inputs": "local records, reporting specifications",
+          "outputs": "validated submissions, error reports",
+          "crosswalk": [
+            {
+              "scheme": "Ed-Fi",
+              "code": "",
+              "label": "Ed-Fi Data Standard",
+              "basis": "fetched",
+              "url": "https://docs.ed-fi.org/reference/data-exchange/data-standard/"
+            },
+            {
+              "scheme": "CEDS",
+              "code": "",
+              "label": "Common Education Data Standards",
+              "basis": "fetched",
+              "url": "https://ceds.ed.gov/"
+            }
+          ],
+          "onet_products": [
+            "Student information systems SIS software",
+            "Student and Exchange Visitor Information System SEVIS"
+          ],
+          "state_of_art": [
+            "PowerSchool SIS",
+            "Infinite Campus"
+          ],
+          "open_tools": [
+            "Ed-Fi ODS/API"
+          ],
+          "benchmarkable": "partly: conformance to Ed-Fi or Common Education Data Standards schemas is testable",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "learn.special_education",
+      "name": "Special education planning",
+      "definition": "Given evaluations of a student with a disability, plan, document and monitor individualized instruction and services under special education law.",
+      "crosswalk": [
+        {
+          "scheme": "Ed-Fi",
+          "code": "",
+          "label": "Special Education Data Model Domain",
+          "basis": "fetched",
+          "url": "https://docs.ed-fi.org/reference/data-exchange/data-standard/model-reference/"
+        },
+        {
+          "scheme": "CEDS",
+          "code": "",
+          "label": "Common Education Data Standards: special education elements",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "learn.assistive_access",
+        "health.rehabilitation"
+      ],
+      "notes": "Was the planning half of seed 'Special education, individualized plans and assistive technology'. Assistive technology split out because it serves any reader or writer with a disability, not only students.",
+      "tasks": [
+        {
+          "id": "learn.special_education.iep_management",
+          "name": "Individualized education program management",
+          "definition": "Given evaluation results, eligibility and present levels of performance, draft goals, services and accommodations and track meeting and compliance deadlines.",
+          "inputs": "evaluations, eligibility determination, present levels, service options",
+          "outputs": "individualized education program document, service schedule, compliance alerts",
+          "crosswalk": [],
+          "onet_products": [
+            "Individualized Educational Program IEP software",
+            "Centris Group IEP Direct",
+            "Chalkware Education Solutions IEPPro",
+            "MediaNet Solutions e-IEP PRO",
+            "Smart Solutions IEP Anywhere",
+            "SpED Forms",
+            "SunGard Pentamation IEPplus",
+            "Technical Perspectives CLASS IEP Program",
+            "Vision Management Consulting IEP PlaNET",
+            "Xperts iep.online",
+            "Global Education Technologies EXCENT",
+            "Spectrum K12 School Solutions Encore"
+          ],
+          "state_of_art": [
+            "PowerSchool Special Programs",
+            "Frontline IEP"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: goal measurability and compliance checks could be scored against expert review; no public dataset",
+          "notes": ""
+        },
+        {
+          "id": "learn.special_education.intervention_tracking",
+          "name": "Tiered intervention tracking",
+          "definition": "Given screening results, assign tiered interventions, log intervention sessions and graph progress against goals.",
+          "inputs": "screening scores, intervention catalog, session logs",
+          "outputs": "intervention plans, progress graphs, decision flags",
+          "crosswalk": [],
+          "onet_products": [
+            "Centris Group RTIm Direct",
+            "Rethink Ed",
+            "Special Education Student Information System SESIS"
+          ],
+          "state_of_art": [
+            "Branching Minds",
+            "Panorama Education"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: plan and record keeping",
+          "notes": ""
+        },
+        {
+          "id": "learn.special_education.behavior_observation",
+          "name": "Classroom behavior observation recording",
+          "definition": "Given an observation protocol, record time-sampled or event behaviors and compute behavior rates and inter-observer agreement.",
+          "inputs": "observation codes, sampling scheme",
+          "outputs": "behavior rates, agreement statistics, graphs",
+          "crosswalk": [],
+          "onet_products": [
+            "Psychsoft !Observe"
+          ],
+          "state_of_art": [
+            "Catalyst",
+            "Rethink Ed"
+          ],
+          "open_tools": [
+            "BORIS"
+          ],
+          "benchmarkable": "partly: automated behavior coding from video can be scored against human coders",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "learn.assistive_access",
+      "name": "Assistive reading and writing technology",
+      "definition": "Given text or an interface that a person with a disability cannot use in its usual form, convert it to an accessible form or reduce the effort of producing text.",
+      "crosswalk": [
+        {
+          "scheme": "ISO 9999",
+          "code": "22",
+          "label": "Assistive products for communication and information management",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Device drivers or system software",
+        "Computer based training software",
+        "Optical character reader OCR or scanning software"
+      ],
+      "see_also": [
+        "computing.operating_systems",
+        "health.rehabilitation"
+      ],
+      "notes": "Split from seed 'Special education, individualized plans and assistive technology'. ISO 9999 class 22 drove the breakdown. Speech dictation is left to general speech recognition.",
+      "tasks": [
+        {
+          "id": "learn.assistive_access.read_aloud",
+          "name": "Text-to-speech reading support",
+          "definition": "Given digital or scanned text, read it aloud with synchronized highlighting and study aids.",
+          "inputs": "documents, web pages or scanned pages",
+          "outputs": "synthesized speech with word highlighting, annotations",
+          "crosswalk": [],
+          "onet_products": [
+            "Text to speech software",
+            "Text reader software",
+            "Computer reading software"
+          ],
+          "state_of_art": [
+            "Kurzweil 3000",
+            "Texthelp Read&Write",
+            "NaturalReader"
+          ],
+          "open_tools": [
+            "eSpeak NG"
+          ],
+          "benchmarkable": "partly: speech quality is rated by listeners (mean opinion score) and recognition of scanned pages by character error rate",
+          "notes": ""
+        },
+        {
+          "id": "learn.assistive_access.screen_reading",
+          "name": "Screen reading",
+          "definition": "Given a running user interface, convert on-screen content and focus changes into speech or braille with keyboard navigation.",
+          "inputs": "accessibility tree of the running interface",
+          "outputs": "speech and braille output, navigation commands",
+          "crosswalk": [],
+          "onet_products": [
+            "Screen reader software",
+            "The vOICe Learning Edition",
+            "Screen magnification software",
+            "Ai Squared ZoomText",
+            "Freedom Scientific MAGic",
+            "Dolphin Lunar",
+            "Synapse outSPOKEN",
+            "Axistive BigShot Screen Magnifier",
+            "ZoomWare Screen Magnifier"
+          ],
+          "state_of_art": [
+            "JAWS",
+            "Apple VoiceOver",
+            "ZoomText"
+          ],
+          "open_tools": [
+            "NVDA",
+            "Orca"
+          ],
+          "benchmarkable": "partly: conformance to accessibility interfaces is testable; navigation efficiency needs user studies",
+          "notes": ""
+        },
+        {
+          "id": "learn.assistive_access.screen_magnification",
+          "name": "Screen magnification",
+          "definition": "Given the screen image and focus, magnify and re-color the region of interest and track the pointer and caret.",
+          "inputs": "screen image, focus events",
+          "outputs": "magnified, contrast-adjusted view",
+          "crosswalk": [],
+          "onet_products": [
+            "Screen magnification software",
+            "Ai Squared ZoomText",
+            "Axistive BigShot Screen Magnifier",
+            "ZoomWare Screen Magnifier"
+          ],
+          "state_of_art": [
+            "ZoomText",
+            "Dolphin SuperNova"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: display transformation without a reference output",
+          "notes": ""
+        },
+        {
+          "id": "learn.assistive_access.braille_translation",
+          "name": "Braille translation",
+          "definition": "Given print text and a braille code, produce contracted braille formatted for embossing or a refreshable display.",
+          "inputs": "print text or documents, braille code and formatting rules",
+          "outputs": "formatted braille files",
+          "crosswalk": [],
+          "onet_products": [
+            "Duxbury Braille Translator"
+          ],
+          "state_of_art": [
+            "Duxbury Braille Translator"
+          ],
+          "open_tools": [
+            "liblouis",
+            "BrailleBlaster"
+          ],
+          "benchmarkable": "yes: output can be compared with reference transcriptions; liblouis maintains expected-output test suites",
+          "notes": ""
+        },
+        {
+          "id": "learn.assistive_access.word_prediction",
+          "name": "Word prediction for writing",
+          "definition": "Given partially typed text, propose the next words or corrections to reduce keystrokes and spelling errors.",
+          "inputs": "typed context, user vocabulary",
+          "outputs": "ranked word suggestions",
+          "crosswalk": [],
+          "onet_products": [
+            "goQ WordQ"
+          ],
+          "state_of_art": [
+            "Co:Writer",
+            "WordQ"
+          ],
+          "open_tools": [
+            "Presage"
+          ],
+          "benchmarkable": "yes: keystroke savings on held-out text",
+          "notes": ""
+        },
+        {
+          "id": "learn.assistive_access.symbol_communication",
+          "name": "Symbol-supported communication boards",
+          "definition": "Given vocabulary and a symbol set, produce picture-symbol communication boards and visual schedules.",
+          "inputs": "vocabulary, symbol library, layout",
+          "outputs": "printable or on-screen symbol boards",
+          "crosswalk": [],
+          "onet_products": [
+            "Mayer-Johnson Boardmaker"
+          ],
+          "state_of_art": [
+            "Boardmaker"
+          ],
+          "open_tools": [
+            "Cboard",
+            "AsTeRICS Grid"
+          ],
+          "benchmarkable": "no: design of materials without a reference output",
+          "notes": "Speech-generating devices used in therapy belong to health."
+        }
+      ]
+    },
+    {
+      "id": "learn.adaptive_practice",
+      "name": "Tutoring and adaptive practice",
+      "definition": "Given a learner's responses over time, model what they know and choose, check and explain the next practice so they learn.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Education > Computer-assisted instruction",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Education > Interactive learning environments",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Computer based training software",
+        "Foreign language software"
+      ],
+      "see_also": [
+        "science.machine_learning"
+      ],
+      "notes": "Was seed 'Tutoring, adaptive practice and language learning'. Kept, with language learning as one task; cognitive and perceptual therapy programs handed to health.",
+      "tasks": [
+        {
+          "id": "learn.adaptive_practice.knowledge_tracing",
+          "name": "Learner knowledge tracing",
+          "definition": "Given a learner's sequence of attempts on skill-tagged items, estimate mastery of each skill and predict correctness on the next attempt.",
+          "inputs": "attempt logs with item-skill mapping",
+          "outputs": "per-skill mastery estimates, next-response predictions",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "ALEKS",
+            "Carnegie Learning MATHia"
+          ],
+          "open_tools": [
+            "pyBKT",
+            "pyKT"
+          ],
+          "benchmarkable": "yes: ASSISTments, EdNet and KDD Cup 2010 datasets with AUC leaderboards",
+          "notes": ""
+        },
+        {
+          "id": "learn.adaptive_practice.drill_practice",
+          "name": "Drill-and-practice exercises",
+          "definition": "Given a skill area and the learner's level, present practice items, score answers and adjust difficulty.",
+          "inputs": "item pool, learner level",
+          "outputs": "practice sequence, scores, mastery report",
+          "crosswalk": [],
+          "onet_products": [
+            "Math educational software",
+            "Language arts educational software",
+            "Science educational software",
+            "Social studies educational software",
+            "Children's educational software",
+            "Educational software",
+            "Instructional software",
+            "Special education educational software",
+            "American Printing House for the Blind Talking Typer",
+            "Academic educational software"
+          ],
+          "state_of_art": [
+            "IXL",
+            "Khan Academy",
+            "Prodigy"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: difficulty calibration can be scored by prediction of learner accuracy; learning gains need trials",
+          "notes": ""
+        },
+        {
+          "id": "learn.adaptive_practice.step_tutoring",
+          "name": "Step-based intelligent tutoring",
+          "definition": "Given a multi-step problem and the learner's steps, check each step and give hints and error-specific feedback.",
+          "inputs": "problem, solution model, learner steps",
+          "outputs": "step correctness, hints, feedback",
+          "crosswalk": [],
+          "onet_products": [
+            "Almaris E-Learning Systems Financial Accounting Tutor",
+            "Gateway to Logic",
+            "Math educational software"
+          ],
+          "state_of_art": [
+            "Carnegie Learning MATHia",
+            "ASSISTments"
+          ],
+          "open_tools": [
+            "OATutor"
+          ],
+          "benchmarkable": "partly: step checking and hint quality can be scored on tutoring datasets such as MathDial; learning gains need trials",
+          "notes": ""
+        },
+        {
+          "id": "learn.adaptive_practice.tutoring_dialogue",
+          "name": "Conversational tutoring",
+          "definition": "Given a learner's question and course context, conduct a dialogue that guides the learner to the answer without giving it away.",
+          "inputs": "learner utterances, course materials, problem",
+          "outputs": "tutor turns",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Khanmigo"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: the BEA 2025 shared task and MathDial score tutor responses on pedagogical criteria",
+          "notes": ""
+        },
+        {
+          "id": "learn.adaptive_practice.spaced_repetition",
+          "name": "Spaced-repetition review scheduling",
+          "definition": "Given flashcards and each learner's review history, schedule the next review of each card to maximize long-term retention.",
+          "inputs": "cards, review log with outcomes",
+          "outputs": "review schedule, recall-probability estimates",
+          "crosswalk": [],
+          "onet_products": [
+            "Quizlet"
+          ],
+          "state_of_art": [
+            "Quizlet",
+            "Anki",
+            "SuperMemo"
+          ],
+          "open_tools": [
+            "Anki",
+            "FSRS"
+          ],
+          "benchmarkable": "yes: recall prediction on public review logs, such as the open spaced-repetition benchmark and Duolingo's half-life regression data",
+          "notes": ""
+        },
+        {
+          "id": "learn.adaptive_practice.language_learning",
+          "name": "Computer-assisted language learning",
+          "definition": "Given a learner's spoken or written production in a target language, score it, correct errors and select the next exercise.",
+          "inputs": "learner speech or text, target-language curriculum",
+          "outputs": "corrections, pronunciation scores, exercise sequence",
+          "crosswalk": [],
+          "onet_products": [
+            "Computer assisted language learning CALL software"
+          ],
+          "state_of_art": [
+            "Duolingo",
+            "Rosetta Stone",
+            "Babbel"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: grammatical error correction (BEA-2019 shared task) and pronunciation scoring (speechocean762) have public leaderboards",
+          "notes": ""
+        },
+        {
+          "id": "learn.adaptive_practice.reading_practice",
+          "name": "Reading and foundational skills practice",
+          "definition": "Given a learner reading aloud or completing phonics and comprehension exercises, detect errors and adapt the practice.",
+          "inputs": "learner audio or responses, leveled texts",
+          "outputs": "error reports, fluency measures, next texts",
+          "crosswalk": [],
+          "onet_products": [
+            "Scientific Learning Fast ForWord",
+            "Language arts educational software",
+            "Children's educational software"
+          ],
+          "state_of_art": [
+            "Amira Learning",
+            "Lexia Core5"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: oral reading miscue detection can be scored against annotated recordings",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "learn.simulation_training",
+      "name": "Simulation-based training",
+      "definition": "Given a model of a task environment and a training scenario, let learners practice in the simulation and score their performance.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Education > Interactive learning environments",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Computer based training software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "move.flight_operations",
+        "produce.supervisory_control",
+        "simulate.system_dynamics"
+      ],
+      "notes": "Was seed 'Simulation-based and immersive training'. Modeled by what is simulated; the physics engines behind them belong to simulate.",
+      "tasks": [
+        {
+          "id": "learn.simulation_training.vehicle_simulators",
+          "name": "Vehicle operator simulator training",
+          "definition": "Given a vehicle model, an environment and a training scenario, run the simulator and score the operator's control and decisions.",
+          "inputs": "vehicle dynamics model, scenario, trainee inputs",
+          "outputs": "performance scores, event logs, replay",
+          "crosswalk": [],
+          "onet_products": [
+            "Driving simulators",
+            "Flight simulation software"
+          ],
+          "state_of_art": [
+            "CAE flight simulators",
+            "Doron driving simulators"
+          ],
+          "open_tools": [
+            "FlightGear"
+          ],
+          "benchmarkable": "partly: scenario scoring is defined per curriculum; no cross-simulator benchmark exists",
+          "notes": ""
+        },
+        {
+          "id": "learn.simulation_training.virtual_labs",
+          "name": "Virtual laboratories",
+          "definition": "Given a modeled experiment, let learners set variables, run trials and observe simulated results as they would in a real laboratory.",
+          "inputs": "experiment model, learner choices",
+          "outputs": "simulated observations, lab records",
+          "crosswalk": [],
+          "onet_products": [
+            "Cengage Learning Sniffy the Virtual Rat",
+            "The Virtual Genetics Lab",
+            "The Gene Explorer",
+            "The Protein Investigator",
+            "Aipotu",
+            "PsychSim",
+            "ePsych",
+            "Psychology Software Tools MRI Simulator"
+          ],
+          "state_of_art": [
+            "Labster",
+            "PhET Interactive Simulations",
+            "ExploreLearning Gizmos"
+          ],
+          "open_tools": [
+            "PhET Interactive Simulations"
+          ],
+          "benchmarkable": "no: fidelity is judged per experiment and learning effect needs trials",
+          "notes": ""
+        },
+        {
+          "id": "learn.simulation_training.economic_games",
+          "name": "Classroom market and economics games",
+          "definition": "Given a market or game design, run it with students as traders or players and report outcomes against theory.",
+          "inputs": "game or market rules, participants",
+          "outputs": "trades, payoffs, outcome charts",
+          "crosswalk": [],
+          "onet_products": [
+            "Econport",
+            "JessX stock simulator software",
+            "Zocalo"
+          ],
+          "state_of_art": [
+            "MobLab",
+            "Veconlab"
+          ],
+          "open_tools": [
+            "oTree"
+          ],
+          "benchmarkable": "no: classroom activity; there is no reference answer",
+          "notes": "Research use of the same tools for experiments belongs to science."
+        },
+        {
+          "id": "learn.simulation_training.threat_image_projection",
+          "name": "Threat image projection training",
+          "definition": "Given screening images and a library of threat images, inject fictional threats into live screening and score whether operators detect them.",
+          "inputs": "baggage images, threat image library, operator responses",
+          "outputs": "detection and false-alarm rates per operator",
+          "crosswalk": [],
+          "onet_products": [
+            "Rapiscan Threat Image Projection"
+          ],
+          "state_of_art": [
+            "Smiths Detection TIP",
+            "X-Ray Tutor"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: operator detection rates are scored; automated detection has public X-ray datasets such as SIXray and GDXray",
+          "notes": ""
+        },
+        {
+          "id": "learn.simulation_training.branching_scenarios",
+          "name": "Branching scenario role-play",
+          "definition": "Given a decision tree of situations, present choices and consequences to the learner and score and debrief the path taken.",
+          "inputs": "scenario graph, scoring rules",
+          "outputs": "learner path, score, debrief",
+          "crosswalk": [],
+          "onet_products": [
+            "RISC Virtual Training Assistant"
+          ],
+          "state_of_art": [
+            "BranchTrack",
+            "Articulate Storyline"
+          ],
+          "open_tools": [
+            "Twine"
+          ],
+          "benchmarkable": "no: authored content without a reference output",
+          "notes": ""
+        },
+        {
+          "id": "learn.simulation_training.immersive_procedures",
+          "name": "Immersive procedural skills training",
+          "definition": "Given three-dimensional models of equipment and a procedure, train the procedure's steps in virtual or augmented reality and track errors.",
+          "inputs": "equipment models, procedure steps, trainee actions",
+          "outputs": "step errors, completion time, proficiency record",
+          "crosswalk": [],
+          "onet_products": [
+            "Virtual interaction simulator software"
+          ],
+          "state_of_art": [
+            "Strivr",
+            "Osso VR"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: metrics are specific to each procedure",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "learn.library_management",
+      "name": "Library management and cataloging",
+      "definition": "Given a library's holdings, patrons and suppliers, describe the holdings, make them findable, and run acquisitions, circulation and resource sharing.",
+      "crosswalk": [
+        {
+          "scheme": "IFLA",
+          "code": "",
+          "label": "IFLA Library Reference Model (LRM)",
+          "basis": "fetched",
+          "url": "https://repository.ifla.org/handle/20.500.14598/40"
+        },
+        {
+          "scheme": "Library of Congress",
+          "code": "",
+          "label": "MARC 21 formats",
+          "basis": "fetched",
+          "url": "https://www.loc.gov/standards/"
+        },
+        {
+          "scheme": "Library of Congress",
+          "code": "",
+          "label": "BIBFRAME",
+          "basis": "fetched",
+          "url": "https://www.loc.gov/standards/"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "10002951.10003227.10003392",
+          "label": "Information systems > Information systems applications > Digital libraries and archives",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Library software",
+        "Information retrieval or search software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "computing.databases"
+      ],
+      "notes": "Was seed 'Library systems and cataloging'. Broken down by the modules of an integrated library system and the standards each implements (MARC formats, NCIP, ILL, OpenURL).",
+      "tasks": [
+        {
+          "id": "learn.library_management.cataloging",
+          "name": "Bibliographic cataloging",
+          "definition": "Given an item, create or copy a bibliographic record with description and access points that conforms to the cataloging rules.",
+          "inputs": "item or its metadata, cataloging rules, shared catalog records",
+          "outputs": "bibliographic record in MARC 21 or BIBFRAME",
+          "crosswalk": [
+            {
+              "scheme": "Library of Congress",
+              "code": "",
+              "label": "MARC 21 Format for Bibliographic Data",
+              "basis": "fetched",
+              "url": "https://www.loc.gov/marc/bibliographic/"
+            },
+            {
+              "scheme": "RDA Steering Committee",
+              "code": "",
+              "label": "Resource Description and Access (RDA)",
+              "basis": "fetched",
+              "url": "https://www.rdatoolkit.org/about"
+            },
+            {
+              "scheme": "NISO",
+              "code": "Z39.50",
+              "label": "Information Retrieval: Application Service Definition and Protocol",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Cataloging software",
+            "WebClarity Software BookWhere",
+            "Online Computer Library Center (OCLC) databases",
+            "WorldCat",
+            "Inmagic Genie",
+            "Inmagic TextWorks"
+          ],
+          "state_of_art": [
+            "OCLC Record Manager",
+            "Ex Libris Alma"
+          ],
+          "open_tools": [
+            "Koha",
+            "FOLIO",
+            "Evergreen"
+          ],
+          "benchmarkable": "partly: automatic metadata extraction from title pages or e-books can be scored against existing records",
+          "notes": ""
+        },
+        {
+          "id": "learn.library_management.subject_indexing",
+          "name": "Subject indexing and classification",
+          "definition": "Given a document, assign subject headings and a classification number from a controlled vocabulary.",
+          "inputs": "document text or metadata, vocabulary or classification scheme",
+          "outputs": "subject headings, class numbers",
+          "crosswalk": [
+            {
+              "scheme": "NISO",
+              "code": "Z39.19",
+              "label": "Guidelines for the Construction, Format, and Management of Monolingual Controlled Vocabularies",
+              "basis": "fetched",
+              "url": "https://www.niso.org/publications/ansiniso-z3919-2005-r2010"
+            },
+            {
+              "scheme": "Library of Congress",
+              "code": "",
+              "label": "Library of Congress Subject Headings",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Classification Web"
+          ],
+          "state_of_art": [
+            "Finto AI",
+            "Library of Congress Classification Web"
+          ],
+          "open_tools": [
+            "Annif"
+          ],
+          "benchmarkable": "yes: SemEval-2025 Task 5 (subject tagging with library vocabularies) and BioASQ semantic indexing with MeSH have leaderboards",
+          "notes": ""
+        },
+        {
+          "id": "learn.library_management.authority_control",
+          "name": "Authority control and name reconciliation",
+          "definition": "Given name and subject headings in records, match them to authority records and normalize the headings.",
+          "inputs": "headings in bibliographic records, authority files",
+          "outputs": "linked and corrected headings, new authority records",
+          "crosswalk": [
+            {
+              "scheme": "Library of Congress",
+              "code": "",
+              "label": "MARC 21 Format for Authority Data",
+              "basis": "fetched",
+              "url": "https://www.loc.gov/marc/authority/"
+            }
+          ],
+          "onet_products": [
+            "WorldCat"
+          ],
+          "state_of_art": [
+            "OCLC",
+            "Backstage Library Works"
+          ],
+          "open_tools": [
+            "OpenRefine"
+          ],
+          "benchmarkable": "partly: entity matching can be scored against gold links between authority files; no standing leaderboard",
+          "notes": ""
+        },
+        {
+          "id": "learn.library_management.circulation",
+          "name": "Circulation and patron management",
+          "definition": "Given patrons, items and loan rules, process checkouts, returns, holds, renewals, fines and notices, including self-service machines.",
+          "inputs": "patron records, item records, loan policies",
+          "outputs": "loan transactions, holds queues, notices, fines",
+          "crosswalk": [
+            {
+              "scheme": "NISO",
+              "code": "Z39.83",
+              "label": "NISO Circulation Interchange Protocol (NCIP)",
+              "basis": "fetched",
+              "url": "https://www.niso.org/standards-committees/ncip"
+            }
+          ],
+          "onet_products": [
+            "Automated circulation systems",
+            "SirsiDynix Symphony",
+            "Innovative Interfaces Millennium",
+            "Ex Libris Group Voyager",
+            "Ex Libris Group Aleph",
+            "Dynix Digital Library",
+            "Electronic Online Systems International EOS.Web",
+            "Infovision Amlib",
+            "Kelowna Software L4U",
+            "MC2 Systems Auto Librarian",
+            "PrimaSoft PC Small Library Organizer Pro",
+            "Surpass management system software"
+          ],
+          "state_of_art": [
+            "Ex Libris Alma",
+            "Innovative Sierra",
+            "SirsiDynix Symphony",
+            "Polaris"
+          ],
+          "open_tools": [
+            "Koha",
+            "Evergreen",
+            "FOLIO"
+          ],
+          "benchmarkable": "no: rule-driven transaction processing",
+          "notes": ""
+        },
+        {
+          "id": "learn.library_management.acquisitions_serials",
+          "name": "Acquisitions and serials control",
+          "definition": "Given selection decisions, budgets and vendor data, order and receive materials, predict and check in serial issues, claim missing issues and prepare binding.",
+          "inputs": "orders, fund budgets, vendor catalogs, publication patterns",
+          "outputs": "purchase orders, receipts, serial check-in records, claims, invoices",
+          "crosswalk": [
+            {
+              "scheme": "Library of Congress",
+              "code": "",
+              "label": "MARC 21 Format for Holdings Data",
+              "basis": "fetched",
+              "url": "https://www.loc.gov/marc/holdings/"
+            }
+          ],
+          "onet_products": [
+            "Ulrichsweb",
+            "SirsiDynix Symphony",
+            "Ex Libris Group Aleph",
+            "Houchen Bindery Library Automated Retrieval System LARS",
+            "ResourceMate Plus"
+          ],
+          "state_of_art": [
+            "Ex Libris Alma",
+            "Innovative Sierra"
+          ],
+          "open_tools": [
+            "Koha",
+            "FOLIO"
+          ],
+          "benchmarkable": "partly: serial issue prediction from publication patterns is checkable; the rest is transaction processing",
+          "notes": ""
+        },
+        {
+          "id": "learn.library_management.resource_sharing",
+          "name": "Interlibrary loan and resource sharing",
+          "definition": "Given a patron request for an item the library lacks, find libraries that hold it, route the request and track lending and delivery.",
+          "inputs": "patron request, union catalog holdings, lending policies",
+          "outputs": "routed requests, delivery and return tracking",
+          "crosswalk": [
+            {
+              "scheme": "ISO",
+              "code": "18626",
+              "label": "Interlibrary Loan Transactions",
+              "basis": "fetched",
+              "url": "https://illtransactions.org/"
+            }
+          ],
+          "onet_products": [
+            "OCLC ILLiad",
+            "National Library of Medicine DOCLINE",
+            "WorldCat"
+          ],
+          "state_of_art": [
+            "OCLC Tipasa",
+            "OCLC ILLiad",
+            "Ex Libris Rapido"
+          ],
+          "open_tools": [
+            "Project ReShare"
+          ],
+          "benchmarkable": "no: workflow and messaging between libraries",
+          "notes": ""
+        },
+        {
+          "id": "learn.library_management.electronic_resources",
+          "name": "Electronic resource management and link resolution",
+          "definition": "Given licenses, a knowledge base of electronic holdings and a citation, track entitlements, resolve the citation to full text and report usage.",
+          "inputs": "licenses, holdings knowledge base, citation or OpenURL, usage reports",
+          "outputs": "full-text links, entitlement records, usage statistics",
+          "crosswalk": [
+            {
+              "scheme": "NISO",
+              "code": "Z39.88",
+              "label": "The OpenURL Framework for Context-Sensitive Services",
+              "basis": "fetched",
+              "url": "https://www.niso.org/publications/z3988-2004-r2010"
+            },
+            {
+              "scheme": "NISO",
+              "code": "",
+              "label": "Knowledge Bases and Related Tools (KBART)",
+              "basis": "fetched",
+              "url": "https://www.niso.org/standards-committees/kbart"
+            },
+            {
+              "scheme": "NISO",
+              "code": "Z39.93",
+              "label": "Standardized Usage Statistics Harvesting Initiative (SUSHI)",
+              "basis": "fetched",
+              "url": "https://www.niso.org/standards-committees/sushi"
+            },
+            {
+              "scheme": "Project COUNTER",
+              "code": "",
+              "label": "COUNTER Code of Practice",
+              "basis": "fetched",
+              "url": "https://www.countermetrics.org/code-of-practice/"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Ex Libris SFX",
+            "EBSCO Full Text Finder"
+          ],
+          "open_tools": [
+            "CORAL",
+            "FOLIO"
+          ],
+          "benchmarkable": "partly: link-resolution accuracy can be scored against known holdings",
+          "notes": ""
+        },
+        {
+          "id": "learn.library_management.catalog_discovery",
+          "name": "Library catalog discovery",
+          "definition": "Given a patron's query, search the catalog and article indexes and return ranked holdings with facets and availability.",
+          "inputs": "query, catalog and article index, availability data",
+          "outputs": "ranked results with facets and availability",
+          "crosswalk": [],
+          "onet_products": [
+            "Computer access catalog software",
+            "CATNYP",
+            "Searchable online catalogs",
+            "Library of Congress E-resources Online Catalog",
+            "Video retrieval systems"
+          ],
+          "state_of_art": [
+            "Ex Libris Primo",
+            "EBSCO Discovery Service",
+            "BiblioCommons"
+          ],
+          "open_tools": [
+            "VuFind",
+            "Blacklight"
+          ],
+          "benchmarkable": "partly: relevance can be scored with judged queries, but no public library-catalog test collection is standard",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "learn.archives_collections",
+      "name": "Archives and museum collections",
+      "definition": "Given archival records, museum objects and digital materials, describe, preserve and publish them and help people find them.",
+      "crosswalk": [
+        {
+          "scheme": "Society of American Archivists",
+          "code": "",
+          "label": "Encoded Archival Description (EAD)",
+          "basis": "fetched",
+          "url": "https://www.loc.gov/ead/"
+        },
+        {
+          "scheme": "International Council on Archives",
+          "code": "",
+          "label": "ISAD(G)",
+          "basis": "fetched",
+          "url": "https://www.ica.org/resource/isadg-general-international-standard-archival-description-second-edition/"
+        },
+        {
+          "scheme": "Collections Trust",
+          "code": "",
+          "label": "Spectrum collections management standard",
+          "basis": "fetched",
+          "url": "https://collectionstrust.org.uk/spectrum/"
+        },
+        {
+          "scheme": "ISO",
+          "code": "21127",
+          "label": "CIDOC Conceptual Reference Model",
+          "basis": "fetched",
+          "url": "https://www.cidoc-crm.org/"
+        },
+        {
+          "scheme": "ISO",
+          "code": "14721",
+          "label": "Open Archival Information System (OAIS)",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software",
+        "Information retrieval or search software"
+      ],
+      "see_also": [
+        "enterprise.documents",
+        "science.machine_learning"
+      ],
+      "notes": "New capability, not a seed. The scope 'keep knowledge' covers archives and museums, and O*NET lists many archivist and curator tools; they do not fit library cataloging because their units are collections and objects, not published items.",
+      "tasks": [
+        {
+          "id": "learn.archives_collections.archival_description",
+          "name": "Archival arrangement and description",
+          "definition": "Given an accession of records, arrange it in a hierarchy and write a finding aid that conforms to descriptive standards.",
+          "inputs": "accession records, folder lists, creator information",
+          "outputs": "finding aids in EAD, collection-level records",
+          "crosswalk": [
+            {
+              "scheme": "Society of American Archivists",
+              "code": "",
+              "label": "Describing Archives: A Content Standard (DACS)",
+              "basis": "fetched",
+              "url": "https://www2.archivists.org/standards"
+            },
+            {
+              "scheme": "Society of American Archivists",
+              "code": "",
+              "label": "Encoded Archival Description (EAD)",
+              "basis": "fetched",
+              "url": "https://www.loc.gov/ead/"
+            }
+          ],
+          "onet_products": [
+            "Archivists' Toolkit",
+            "Archon",
+            "Adlib Information Systems Adlib Archive",
+            "Encoded archival system EAD",
+            "Eloquent Systems Eloquent"
+          ],
+          "state_of_art": [
+            "ArchivesSpace",
+            "Axiell Collections"
+          ],
+          "open_tools": [
+            "ArchivesSpace",
+            "AtoM"
+          ],
+          "benchmarkable": "partly: generated descriptions could be scored against archivist-written ones; no public benchmark",
+          "notes": ""
+        },
+        {
+          "id": "learn.archives_collections.museum_collections",
+          "name": "Museum collections management",
+          "definition": "Given the objects in a collection, record their descriptions, locations, condition, rights, loans and exhibitions.",
+          "inputs": "object records, location moves, condition reports, loan agreements",
+          "outputs": "catalog of objects, movement history, loan and exhibition records",
+          "crosswalk": [
+            {
+              "scheme": "Collections Trust",
+              "code": "",
+              "label": "Spectrum procedures",
+              "basis": "fetched",
+              "url": "https://collectionstrust.org.uk/spectrum/"
+            }
+          ],
+          "onet_products": [
+            "Gallery Systems The Museum System",
+            "Gallery Systems EmbARK",
+            "PastPerfect Software PastPerfect",
+            "KE Software EMu",
+            "Re:discovery Software Proficio",
+            "Vernon Systems Limited Vernon CMS",
+            "Willoughby Associates MIMSY XG",
+            "Questor Systems ARGUS",
+            "Cuadra Associates STAR/Museums",
+            "Artsystems Collections",
+            "MINISIS MINT",
+            "Automated National Catalog System ANCS"
+          ],
+          "state_of_art": [
+            "Gallery Systems TMS",
+            "Axiell EMu",
+            "PastPerfect"
+          ],
+          "open_tools": [
+            "CollectiveAccess",
+            "CollectionSpace"
+          ],
+          "benchmarkable": "no: record keeping",
+          "notes": ""
+        },
+        {
+          "id": "learn.archives_collections.digital_preservation",
+          "name": "Digital preservation",
+          "definition": "Given digital objects, ingest them into an archival store, identify and validate formats, check fixity, migrate at-risk formats and record preservation metadata.",
+          "inputs": "digital files, submission agreements",
+          "outputs": "archival information packages, preservation metadata, fixity reports",
+          "crosswalk": [
+            {
+              "scheme": "Library of Congress",
+              "code": "",
+              "label": "PREMIS Data Dictionary",
+              "basis": "fetched",
+              "url": "https://www.loc.gov/standards/premis/"
+            },
+            {
+              "scheme": "ISO",
+              "code": "14721",
+              "label": "Open Archival Information System (OAIS)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "PREMIS"
+          ],
+          "state_of_art": [
+            "Preservica",
+            "Ex Libris Rosetta"
+          ],
+          "open_tools": [
+            "Archivematica",
+            "DROID",
+            "JHOVE"
+          ],
+          "benchmarkable": "partly: format identification and validation can be scored on corpora such as Govdocs1",
+          "notes": ""
+        },
+        {
+          "id": "learn.archives_collections.digital_collections",
+          "name": "Digital collection publishing",
+          "definition": "Given digitized items and their metadata, host searchable online collections with image delivery and metadata harvesting.",
+          "inputs": "digitized images and files, descriptive metadata",
+          "outputs": "online collection site, image service, harvestable metadata",
+          "crosswalk": [
+            {
+              "scheme": "ISO",
+              "code": "15836",
+              "label": "Dublin Core metadata element set",
+              "basis": "fetched",
+              "url": "https://www.dublincore.org/specifications/dublin-core/dces/"
+            },
+            {
+              "scheme": "Open Archives Initiative",
+              "code": "",
+              "label": "Protocol for Metadata Harvesting (OAI-PMH)",
+              "basis": "fetched",
+              "url": "https://www.openarchives.org/pmh/"
+            },
+            {
+              "scheme": "IIIF Consortium",
+              "code": "",
+              "label": "International Image Interoperability Framework (IIIF)",
+              "basis": "fetched",
+              "url": "https://iiif.io/"
+            }
+          ],
+          "onet_products": [
+            "DiMeMa CONTENTdm",
+            "Ex Libris Group DigiTool",
+            "Digital image collections",
+            "Library of Congress digital collections",
+            "Smithsonian Institution digital archives"
+          ],
+          "state_of_art": [
+            "OCLC CONTENTdm",
+            "Quartex"
+          ],
+          "open_tools": [
+            "Omeka",
+            "DSpace",
+            "Islandora",
+            "Hyrax"
+          ],
+          "benchmarkable": "no: hosting and publishing",
+          "notes": ""
+        },
+        {
+          "id": "learn.archives_collections.web_archiving",
+          "name": "Web archiving",
+          "definition": "Given seed addresses and scope rules, crawl and capture websites into archive files and replay them as they were.",
+          "inputs": "seed URLs, scope and frequency rules",
+          "outputs": "WARC files, replayable captures",
+          "crosswalk": [
+            {
+              "scheme": "ISO",
+              "code": "28500",
+              "label": "WARC file format",
+              "basis": "fetched",
+              "url": "https://www.loc.gov/preservation/digital/formats/fdd/fdd000236.shtml"
+            }
+          ],
+          "onet_products": [
+            "HTTrack",
+            "askSam Systems SurfSaver",
+            "CatchTheWeb",
+            "Saora Keepoint",
+            "Macropool Web Research",
+            "Microsoft Onfolio"
+          ],
+          "state_of_art": [
+            "Archive-It",
+            "Webrecorder"
+          ],
+          "open_tools": [
+            "Heritrix",
+            "Browsertrix",
+            "pywb",
+            "HTTrack"
+          ],
+          "benchmarkable": "partly: capture completeness can be measured by comparing replay with the live page",
+          "notes": ""
+        },
+        {
+          "id": "learn.archives_collections.historical_transcription",
+          "name": "Historical document transcription",
+          "definition": "Given scanned manuscripts or historical printed pages, segment the layout and transcribe the text.",
+          "inputs": "page images",
+          "outputs": "transcribed text with layout",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Transkribus"
+          ],
+          "open_tools": [
+            "Kraken",
+            "eScriptorium"
+          ],
+          "benchmarkable": "yes: ICDAR handwritten text recognition competitions give character error rates on public historical collections",
+          "notes": "General optical character recognition belongs to computing or science; this task is the historical-script case."
+        },
+        {
+          "id": "learn.archives_collections.archival_discovery",
+          "name": "Archival and union catalog discovery",
+          "definition": "Given a research topic, search finding aids and collection records across many repositories and return the collections likely to hold relevant material.",
+          "inputs": "query, aggregated finding aids and collection records",
+          "outputs": "ranked collections and repositories",
+          "crosswalk": [],
+          "onet_products": [
+            "ArchiveGrid",
+            "National Union Catalog of Manuscript Collections (NUCMC)",
+            "ProQuest Archive Finder",
+            "Archival databases",
+            "National Archives online databases",
+            "Archives Wiki"
+          ],
+          "state_of_art": [
+            "ArchiveGrid",
+            "Archives Portal Europe"
+          ],
+          "open_tools": [
+            "ArchivesSpace public interface"
+          ],
+          "benchmarkable": "partly: retrieval over finding aids could be scored with judged queries; no standard test collection",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "learn.scholarly_information",
+      "name": "Scholarly search, reference works and dictionaries",
+      "definition": "Given a research question, find, screen, cite and measure the scholarly and reference literature.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Information systems > Information retrieval",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "Citation Style Language project",
+          "code": "",
+          "label": "Citation Style Language (CSL)",
+          "basis": "fetched",
+          "url": "https://citationstyles.org/"
+        }
+      ],
+      "onet_categories": [
+        "Information retrieval or search software",
+        "Library software",
+        "Data base user interface and query software",
+        "Dictionary software",
+        "Foreign language software"
+      ],
+      "see_also": [
+        "govern.legal_research",
+        "health.decision_support",
+        "computing.databases",
+        "media.language.machine_translation",
+        "media.language.computer_assisted_translation"
+      ],
+      "notes": "Was seed 'Reference, bibliographic and research-information tools'. Domain-specific references (legal, clinical, financial) handed to their domains; this node keeps general scholarly and reference work. Dictionary and sign-language lookup were planned as a separate capability with translation; translation, translation memory and terminology management went to media (media.language.*) by agreement, and the two lookup tasks joined reference works here.",
+      "tasks": [
+        {
+          "id": "learn.scholarly_information.bibliographic_search",
+          "name": "Bibliographic database search",
+          "definition": "Given a research question, search abstracting and indexing databases with controlled vocabulary and return relevant citations.",
+          "inputs": "query, database selection, vocabulary terms",
+          "outputs": "ranked citations with abstracts and links",
+          "crosswalk": [],
+          "onet_products": [
+            "Thomson Reuters Web of Science",
+            "ProQuest ERIC",
+            "EBSCO Information Services Academic Search Premier",
+            "ITHAKA JSTOR",
+            "Elsevier ScienceDirect",
+            "Google Scholar",
+            "National Library of Medicine Medline",
+            "Thomson Scientific Dialog",
+            "Ovid SilverPlatter WebSPIRS",
+            "ProQuest ABI/INFORM Global",
+            "Online library databases",
+            "Association for Computing Machinery Digital Library"
+          ],
+          "state_of_art": [
+            "Web of Science",
+            "Scopus",
+            "PubMed",
+            "Google Scholar"
+          ],
+          "open_tools": [
+            "OpenAlex"
+          ],
+          "benchmarkable": "yes: TREC test collections such as TREC-COVID and TREC Genomics score scholarly retrieval",
+          "notes": ""
+        },
+        {
+          "id": "learn.scholarly_information.review_screening",
+          "name": "Literature screening for systematic reviews",
+          "definition": "Given search results and inclusion criteria, rank or classify citations for inclusion so reviewers screen fewer records.",
+          "inputs": "citations with abstracts, inclusion criteria, reviewer decisions",
+          "outputs": "ranked or labelled citations, recall estimates",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Covidence",
+            "DistillerSR",
+            "Rayyan"
+          ],
+          "open_tools": [
+            "ASReview"
+          ],
+          "benchmarkable": "yes: CLEF eHealth technology-assisted review tasks and the SYNERGY dataset",
+          "notes": ""
+        },
+        {
+          "id": "learn.scholarly_information.citation_analysis",
+          "name": "Citation analysis and bibliometrics",
+          "definition": "Given a set of publications and their citation links, compute citation counts, impact indicators and maps of research fields.",
+          "inputs": "publication records, citation links",
+          "outputs": "indicators, rankings, co-citation and co-authorship maps",
+          "crosswalk": [],
+          "onet_products": [
+            "Thomson Reuters Web of Science",
+            "Google Scholar"
+          ],
+          "state_of_art": [
+            "Clarivate InCites",
+            "Elsevier SciVal",
+            "Dimensions"
+          ],
+          "open_tools": [
+            "bibliometrix",
+            "OpenAlex"
+          ],
+          "benchmarkable": "partly: author-name disambiguation and citation classification have public benchmarks; the indicators themselves are definitional",
+          "notes": ""
+        },
+        {
+          "id": "learn.scholarly_information.reference_management",
+          "name": "Reference management and citation formatting",
+          "definition": "Given citations gathered from databases and documents, store and deduplicate them and format citations and bibliographies in a chosen style.",
+          "inputs": "citation records, PDFs, citation style",
+          "outputs": "reference library, formatted in-text citations and bibliographies",
+          "crosswalk": [],
+          "onet_products": [
+            "Thomson EndNote",
+            "Thomson Reuters EndNote",
+            "ProQuest RefWorks",
+            "ProQuest RefWorks RefShare",
+            "Reference management software"
+          ],
+          "state_of_art": [
+            "EndNote",
+            "Zotero",
+            "Mendeley"
+          ],
+          "open_tools": [
+            "Zotero",
+            "JabRef",
+            "citeproc-js",
+            "GROBID"
+          ],
+          "benchmarkable": "yes: metadata extraction from PDFs and citation-string parsing are scored against gold metadata (GROBID evaluations, the CORA citation set)",
+          "notes": ""
+        },
+        {
+          "id": "learn.scholarly_information.reference_works",
+          "name": "Reference work lookup",
+          "definition": "Given a topic or term, retrieve authoritative entries from encyclopedias, handbooks and directories.",
+          "inputs": "query",
+          "outputs": "reference entries",
+          "crosswalk": [],
+          "onet_products": [
+            "Oxford Reference Online",
+            "Sage Reference Online",
+            "Europa World Plus",
+            "CQ Press Political Reference Suite",
+            "Gale Cengage Learning Associations Unlimited",
+            "Online reference databases",
+            "Online Dictionary for Library and Information Science ODLIS"
+          ],
+          "state_of_art": [
+            "Oxford Reference",
+            "Britannica"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: open-domain question answering over reference works (Natural Questions over Wikipedia) is scored",
+          "notes": ""
+        },
+        {
+          "id": "learn.scholarly_information.text_corpora",
+          "name": "Full-text corpora for humanities research",
+          "definition": "Given a curated corpus of texts, support concordance, word-frequency and n-gram queries and passage retrieval.",
+          "inputs": "corpus, query terms or patterns",
+          "outputs": "concordances, frequency series, passages",
+          "crosswalk": [],
+          "onet_products": [
+            "Google Books NGram Viewer",
+            "University of California Thesaurus Linguae Graecae TLG",
+            "InteLext Past Masters",
+            "Gutenberg-e"
+          ],
+          "state_of_art": [
+            "Thesaurus Linguae Graecae",
+            "HathiTrust Research Center"
+          ],
+          "open_tools": [
+            "CQPweb",
+            "Voyant Tools"
+          ],
+          "benchmarkable": "no: corpus services whose value is the curation",
+          "notes": ""
+        },
+        {
+          "id": "learn.scholarly_information.dictionary_lookup",
+          "name": "Electronic dictionary lookup",
+          "definition": "Given a word or phrase, return its senses, definitions, pronunciations and equivalents in other languages.",
+          "inputs": "headword or phrase, dictionary selection",
+          "outputs": "entries with senses, examples and translations",
+          "crosswalk": [],
+          "onet_products": [
+            "Electronic dictionaries",
+            "Lingoes",
+            "Babylon Online Translator"
+          ],
+          "state_of_art": [
+            "Oxford English Dictionary Online",
+            "Merriam-Webster"
+          ],
+          "open_tools": [
+            "GoldenDict"
+          ],
+          "benchmarkable": "partly: word-sense disambiguation and definition modelling benchmarks test sense selection",
+          "notes": ""
+        },
+        {
+          "id": "learn.scholarly_information.sign_language_lookup",
+          "name": "Sign language dictionary lookup",
+          "definition": "Given an English word or a recorded sign, return the matching signs with video and their meanings.",
+          "inputs": "word or sign video",
+          "outputs": "sign videos and glosses",
+          "crosswalk": [],
+          "onet_products": [
+            "American Sign Language ASL browser",
+            "American Sign Language Browser"
+          ],
+          "state_of_art": [
+            "Handspeak",
+            "SignBank"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: isolated sign recognition benchmarks such as WLASL score video-to-gloss lookup",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "learn.career_guidance",
+      "name": "Career guidance and education planning",
+      "definition": "Given a person's interests, abilities, history and goals, assess them, match them to occupations and programs, and track a plan to get there.",
+      "crosswalk": [
+        {
+          "scheme": "O*NET",
+          "code": "",
+          "label": "Interest Profiler (Holland RIASEC interest areas)",
+          "basis": "fetched",
+          "url": "https://www.onetcenter.org/IP.html"
+        },
+        {
+          "scheme": "CEDS",
+          "code": "",
+          "label": "Common Education Data Standards: workforce domain",
+          "basis": "fetched",
+          "url": "https://ceds.ed.gov/domainEntitySchema.aspx"
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "enterprise.hr_admin",
+        "govern.social_services"
+      ],
+      "notes": "New capability, not a seed: school and career counselors are an education occupation with a distinct set of tools in the grab-bag categories.",
+      "tasks": [
+        {
+          "id": "learn.career_guidance.interest_assessment",
+          "name": "Career interest and aptitude assessment",
+          "definition": "Given responses to interest, values and aptitude inventories, score them and suggest matching occupations and fields of study.",
+          "inputs": "inventory responses",
+          "outputs": "profile scores, ranked occupations and programs",
+          "crosswalk": [],
+          "onet_products": [
+            "Kuder Navigator",
+            "Career Dimensions Focus 2",
+            "ACT WorkKeys",
+            "ACT Discover",
+            "Career Cruising",
+            "Computer-assisted career guidance software",
+            "Career decision-making programs",
+            "Coin Educational Products Climb K-5 Online",
+            "Coin Educational Products Coin Jr."
+          ],
+          "state_of_art": [
+            "Kuder Navigator",
+            "YouScience",
+            "Xello"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: occupation recommendations could be scored against later career outcomes; instrument validity needs studies",
+          "notes": ""
+        },
+        {
+          "id": "learn.career_guidance.occupational_information",
+          "name": "Occupational information lookup",
+          "definition": "Given a job title or occupation, return its tasks, requirements, wages and outlook and related occupations.",
+          "inputs": "job title or occupation code",
+          "outputs": "occupation profiles, related occupations",
+          "crosswalk": [],
+          "onet_products": [
+            "O*NET OnLine",
+            "Career Zone",
+            "SkillTRAN Job Browser Pro",
+            "Career management systems CMS"
+          ],
+          "state_of_art": [
+            "O*NET OnLine",
+            "SkillTRAN Job Browser Pro"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: coding free-text job titles to occupation codes is scored against hand-coded samples",
+          "notes": ""
+        },
+        {
+          "id": "learn.career_guidance.transferable_skills",
+          "name": "Transferable skills analysis",
+          "definition": "Given a worker's past jobs and functional limitations, identify occupations they can still perform.",
+          "inputs": "work history, residual functional capacity",
+          "outputs": "ranked feasible occupations with rationale",
+          "crosswalk": [],
+          "onet_products": [
+            "SkillTRAN OASYS",
+            "SkillTRAN Job Browser Pro"
+          ],
+          "state_of_art": [
+            "SkillTRAN OASYS",
+            "MVQS"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: results can be compared with vocational expert decisions; no public dataset",
+          "notes": ""
+        },
+        {
+          "id": "learn.career_guidance.education_planning",
+          "name": "College and career plan management",
+          "definition": "Given a student's goals, coursework and test scores, build multi-year course plans and college lists and track applications.",
+          "inputs": "goals, academic record, test scores, program requirements",
+          "outputs": "course plans, college lists, application status",
+          "crosswalk": [],
+          "onet_products": [
+            "Naviance Succeed",
+            "College Central Network Career Services Central"
+          ],
+          "state_of_art": [
+            "Naviance",
+            "SCOIR",
+            "Xello"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: admission-likelihood estimates can be scored on historical outcomes; the plans themselves cannot",
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "existing_function_map": [],
+  "handoffs": [
+    {
+      "what": "Machine translation, computer-assisted translation and terminology management (Google Translate Client, OmegaT, Adapt It, Stormdance CatsCradle, ExcelTrans Translator and the other translators in Foreign language software)",
+      "to_domain": "media",
+      "why": "agreed with media: media.language.machine_translation and media.language.computer_assisted_translation; learn keeps dictionaries and language learning"
+    },
+    {
+      "what": "Legal research databases (LexisNexis, Thomson Reuters Westlaw, Fastcase legal software, PACER, FindLaw, Shepard's Citations)",
+      "to_domain": "govern",
+      "why": "legal practice research, not general scholarly reference"
+    },
+    {
+      "what": "Clinical and drug references (Epocrates, Medical reference software, PEPID, Skyscape, Mosby's Drug Consult, Medical terminology databases)",
+      "to_domain": "health",
+      "why": "point-of-care reference about patients and drugs"
+    },
+    {
+      "what": "Medical coding products in Categorization or classification software (Diagnostic and procedural coding software, 3M Encoder, DRG grouping software, Drug coding software, Autocoders, Yost Engineering coding tools, Computerized indexing systems)",
+      "to_domain": "health",
+      "why": "medical coding is assigned to health"
+    },
+    {
+      "what": "PCI Geomatics eCognition, Map Maker, Topographic database software, World Vector Shoreline",
+      "to_domain": "earth",
+      "why": "image classification and geographic data"
+    },
+    {
+      "what": "GAEA Technologies WinSieve",
+      "to_domain": "simulate",
+      "why": "soil grain-size analysis for geotechnical work"
+    },
+    {
+      "what": "Financial and economic databases (S&P Capital IQ, Factiva, TradeTools databases, Thomson Financial Investext)",
+      "to_domain": "govern",
+      "why": "markets and investment research"
+    },
+    {
+      "what": "Market research reports and retail data (Mintel Reports, Walmart Retail Link, Medstat/INFORUM)",
+      "to_domain": "commerce",
+      "why": "marketing research"
+    },
+    {
+      "what": "Aviation briefing (AeroPlanner, Notam Development Group Airport Insight)",
+      "to_domain": "move",
+      "why": "flight operations"
+    },
+    {
+      "what": "Technical and service manual databases",
+      "to_domain": "operate",
+      "why": "maintenance reference"
+    },
+    {
+      "what": "General text search (dtSearch, Internet search engine software)",
+      "to_domain": "computing",
+      "why": "general search infrastructure"
+    },
+    {
+      "what": "Psychology and economics experiment software used for research (E-Prime, PsyScope, Inquisit, z-Tree)",
+      "to_domain": "science",
+      "why": "research instrumentation; only classroom use is modeled here"
+    },
+    {
+      "what": "Cognitive, perceptual and speech therapy programs (BrainTrain IVA+Plus, SeeRite Flash and Match, Computer perceptual processing software, Bungalow Software Aphasia Tutor)",
+      "to_domain": "health",
+      "why": "therapy and diagnosis for patients"
+    },
+    {
+      "what": "General video and web conferencing (Zoom, Web conferencing software)",
+      "to_domain": "enterprise",
+      "why": "general collaboration; only the virtual classroom layer is modeled here"
+    },
+    {
+      "what": "School mass notification (Intrado SchoolMessenger)",
+      "to_domain": "enterprise",
+      "why": "general mass messaging"
+    },
+    {
+      "what": "School meal point of sale (PCS Revenue Control Systems FASTRAK School Meal Software)",
+      "to_domain": "commerce",
+      "why": "point of sale"
+    },
+    {
+      "what": "Plant operator training simulators",
+      "to_domain": "produce",
+      "why": "plant operation training on process models"
+    },
+    {
+      "what": "Medical anatomy and clinical simulation for training (InteractElsevier Netter's 3D Interactive Anatomy)",
+      "to_domain": "health",
+      "why": "clinical education content; see_also from learn.simulation_training"
+    },
+    {
+      "what": "Speech dictation (Nuance Dragon NaturallySpeaking)",
+      "to_domain": "computing",
+      "why": "general speech recognition"
+    },
+    {
+      "what": "Talent management suites that bundle learning (Learn.com LearnCenter Talent Management Suite)",
+      "to_domain": "enterprise",
+      "why": "HR; only the learning module is modeled here"
+    }
+  ],
+  "unplaced_products": [
+    "Appletree",
+    "InScribe",
+    "ColorSoft AutoMatch",
+    "Softworks Global PESoftOne"
+  ],
+  "open_questions": [
+    "Assistive technology: screen readers and magnifiers are general accessibility tools filed by O*NET under device drivers. Keep them in learn, or move the capability to computing and keep only braille and reading support here?",
+    "Required training assignment and tracking (corporate compliance learning) straddles enterprise HR. It is kept in learn.course_delivery.",
+    "Psychometric calibration (item response theory) is kept in learn.assessment rather than science statistics because it is specific to tests; confirm.",
+    "Archives and museums (learn.archives_collections) and career guidance (learn.career_guidance) are new capabilities read into 'keep knowledge' and school counseling; confirm they belong here rather than in media (digital asset management) or enterprise (HR).",
+    "see_also ids pointing at other domains are guesses at their capability ids and need reconciling once all domains are in."
+  ]
+}

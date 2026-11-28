@@ -1,0 +1,22 @@
+activity,work_activity,work_activity_name,occupation,occupation_title,time_use_codes
+Interior cleaning,4.A.3.a.1.c,"Clean tools, equipment, facilities, or work areas",37-2012,Maids and Housekeeping Cleaners,020101
+"Storing interior household items, including food",4.A.3.a.2.ak,Stock supplies or products,37-2012,Maids and Housekeeping Cleaners,020104
+Laundry,4.A.3.a.1.h,"Clean workpieces, finished products, or other objects",51-6011,Laundry and Dry-Cleaning Workers,020102
+Food and drink preparation,4.A.3.a.2.c,Prepare foods or beverages,35-2014,"Cooks, Restaurant",020201
+Kitchen and food cleanup,4.A.3.a.1.c,"Clean tools, equipment, facilities, or work areas",35-9021,Dishwashers,020203
+Lawn and garden care,4.A.4.a.5.d,Care for plants or animals,37-3011,Landscaping and Groundskeeping Workers,0205
+Financial management,4.A.3.b.6.j,Maintain sales or financial records,43-3031,"Bookkeeping, Accounting, and Auditing Clerks",020901
+Household and personal organization and planning,4.A.2.b.6.b,Plan work activities,43-6014,"Secretaries and Administrative Assistants, Except Legal, Medical, and Executive",020902
+"Interior maintenance, repair, and decoration",4.A.3.b.4.a,Maintain facilities or equipment,49-9071,"Maintenance and Repair Workers, General",0203
+"Exterior maintenance, repair, and decoration",4.A.3.b.4.a,Maintain facilities or equipment,49-9071,"Maintenance and Repair Workers, General",0204
+"Appliances, tools, and toys",4.A.3.b.4.c,Repair tools or equipment,49-9071,"Maintenance and Repair Workers, General",0208
+Vehicles,4.A.3.b.4.e,Maintain vehicles in working condition,49-3023,Automotive Service Technicians and Mechanics,0207
+Travel related to household activities,4.A.3.a.4.a,Operate transportation equipment or vehicles,53-3053,Shuttle Drivers and Chauffeurs,1802
+Consumer goods purchases,4.A.4.c.3.e,Purchase goods or services,53-7065,Stockers and Order Fillers,0701
+Travel related to purchasing goods and services,4.A.3.a.4.a,Operate transportation equipment or vehicles,53-3053,Shuttle Drivers and Chauffeurs,1807
+Caring for and helping household children,4.A.4.a.5.i,Assist individuals with special needs,39-9011,Childcare Workers,0301;0302;0303
+Caring for and helping household adults,4.A.4.a.5.i,Assist individuals with special needs,31-1120,Home Health and Personal Care Aides,0304;0305
+Travel related to caring for and helping household members,4.A.3.a.4.a,Operate transportation equipment or vehicles,53-3053,Shuttle Drivers and Chauffeurs,1803
+Caring for and helping nonhousehold children,4.A.4.a.5.i,Assist individuals with special needs,39-9011,Childcare Workers,0401;0402;0403
+Caring for and helping nonhousehold adults,4.A.4.a.5.i,Assist individuals with special needs,31-1120,Home Health and Personal Care Aides,0404;0405
+Travel related to caring for and helping nonhousehold members,4.A.3.a.4.a,Operate transportation equipment or vehicles,53-3053,Shuttle Drivers and Chauffeurs,1804

@@ -143,3 +143,16 @@ def test_bea_codes_reach_coarse_and_aggregate_oews_industries(sh):
 def test_thin_capabilities_are_flagged(cov):
     assert (cov.thin == (cov.soc_occupations_counted < O.THIN_MIN_OCCUPATIONS)).all()
     assert not cov.loc[["cad", "fea", "gis", "controls"], "thin"].any()
+
+
+def test_score_weights_calibrated_to_occupations(t, sh, cov):
+    levels = O.score_levels(sh, A.capability_scores(t), cov)
+    assert levels.mean_share.is_monotonic_increasing
+    w = O.calibrated_score_weight(levels)
+    assert w[0] == 0 and w[3] == 1 and 0 < w[1] < w[2] < 1
+    m = M.build()
+    c = A.run(m, score_weight=w).capabilities
+    assert ((c.weight_equal_need > 0) & (c.weight_equal_need <= 1)).all()
+    flat = levels.assign(mean_share=[0.05, 0.04, 0.06, 0.07])     # not rising with score
+    with pytest.raises(ValueError):
+        O.calibrated_score_weight(flat)

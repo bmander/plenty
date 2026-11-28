@@ -1,0 +1,1056 @@
+{
+ "domain": "earth",
+ "sources": [
+  {
+   "scheme": "UCGIS GIS&T Body of Knowledge",
+   "url": "https://www.ucgis.org/site/gis-t-body-of-knowledge",
+   "status": "partly_read",
+   "note": "landing page opened; lists no knowledge areas or codes; Living Textbook not opened; bok-topics 404"
+  },
+  {
+   "scheme": "ISO 19119 service taxonomy",
+   "url": "https://en.wikipedia.org/wiki/ISO_19119",
+   "status": "partly_read",
+   "note": "only title ISO 19119:2011 Geographic information -- Services seen; no category list; iso.org returns 403"
+  },
+  {
+   "scheme": "OGC standards",
+   "url": "https://www.ogc.org/standards/",
+   "status": "partly_read",
+   "note": "WMS, WFS, OGC API Features titles seen; Simple Features not"
+  },
+  {
+   "scheme": "International Cartographic Association commissions",
+   "url": "https://icaci.org/commissions/",
+   "status": "partly_read",
+   "note": "first part of list read; no Map Design, Map Projections or Generalisation entry seen (closest: Multi-scale Cartography)"
+  },
+  {
+   "scheme": "ISO/TC 211 standards",
+   "url": "",
+   "status": "blocked",
+   "note": "site returned 403"
+  },
+  {
+   "scheme": "IHO standards",
+   "url": "https://iho.int/en/standards-and-specifications",
+   "status": "partly_read",
+   "note": "S-44 read; S-57 and S-100 not verified"
+  },
+  {
+   "scheme": "FIG (International Federation of Surveyors) commissions",
+   "url": "https://fig.net/organisation/comm/",
+   "status": "read",
+   "note": "commissions 1-10 read"
+  },
+  {
+   "scheme": "ASPRS divisions",
+   "url": "",
+   "status": "not_found",
+   "note": "page 404"
+  },
+  {
+   "scheme": "ASPRS standards",
+   "url": "",
+   "status": "not_found",
+   "note": "no authoritative page read in this session"
+  },
+  {
+   "scheme": "SPE technical disciplines",
+   "url": "",
+   "status": "not_found",
+   "note": "page 404"
+  },
+  {
+   "scheme": "SEG (Society of Exploration Geophysicists) technical areas",
+   "url": "",
+   "status": "blocked",
+   "note": "site returned 403"
+  },
+  {
+   "scheme": "Energistics standards",
+   "url": "https://www.energistics.org/witsml-data-standards",
+   "status": "partly_read",
+   "note": "WITSML, RESQML, PRODML pages read; LAS not mentioned on WITSML page"
+  },
+  {
+   "scheme": "SPE Petroleum Resources Management System",
+   "url": "",
+   "status": "not_found",
+   "note": "page 404"
+  },
+  {
+   "scheme": "CRIRSCO / JORC Code",
+   "url": "https://www.jorc.org/",
+   "status": "partly_read",
+   "note": "JORC title read; resource category names not read"
+  },
+  {
+   "scheme": "SME Mining Engineering Handbook",
+   "url": "",
+   "status": "not_found",
+   "note": "no authoritative page read in this session"
+  },
+  {
+   "scheme": "WMO programmes",
+   "url": "",
+   "status": "not_found",
+   "note": "no authoritative page read in this session"
+  },
+  {
+   "scheme": "USACE Hydrologic Engineering Center model family",
+   "url": "",
+   "status": "not_found",
+   "note": "no authoritative page read in this session"
+  },
+  {
+   "scheme": "EPA water models",
+   "url": "",
+   "status": "not_found",
+   "note": "no authoritative page read in this session"
+  },
+  {
+   "scheme": "USGS groundwater software",
+   "url": "",
+   "status": "not_found",
+   "note": "no authoritative page read in this session"
+  },
+  {
+   "scheme": "ASTM standards",
+   "url": "",
+   "status": "blocked",
+   "note": "403, 404, timeout or DNS failure; not read"
+  },
+  {
+   "scheme": "EPA Support Center for Regulatory Atmospheric Modeling",
+   "url": "https://www.epa.gov/scram/air-quality-models",
+   "status": "partly_read",
+   "note": "categories Dispersion, Photochemical, Receptor seen; preferred-models page not opened"
+  },
+  {
+   "scheme": "EPA Data Quality Objectives process",
+   "url": "https://www.epa.gov/quality/quality-program-directives",
+   "status": "read",
+   "note": "QA/G-4 title, EPA/240/B-06/001 read"
+  },
+  {
+   "scheme": "EPA Risk Assessment Guidance for Superfund",
+   "url": "",
+   "status": "not_found",
+   "note": "403, 404, timeout or DNS failure; not read"
+  },
+  {
+   "scheme": "AgGateway ADAPT",
+   "url": "https://adaptframework.org/",
+   "status": "partly_read",
+   "note": "ADAPT name and components read"
+  },
+  {
+   "scheme": "ISO 11783 (ISOBUS)",
+   "url": "",
+   "status": "blocked",
+   "note": "403, 404, timeout or DNS failure; not read"
+  },
+  {
+   "scheme": "ICAR guidelines",
+   "url": "https://www.icar.org/",
+   "status": "partly_read",
+   "note": "home page read; guideline pages not"
+  },
+  {
+   "scheme": "USDA NRCS National Cooperative Soil Survey",
+   "url": "",
+   "status": "blocked",
+   "note": "403, 404, timeout or DNS failure; not read"
+  },
+  {
+   "scheme": "USDA Forest Service Forest Inventory and Analysis",
+   "url": "",
+   "status": "blocked",
+   "note": "403, 404, timeout or DNS failure; not read"
+  },
+  {
+   "scheme": "National Wildfire Coordinating Group fire behavior system",
+   "url": "",
+   "status": "blocked",
+   "note": "403, 404, timeout or DNS failure; not read"
+  },
+  {
+   "scheme": "BLM Assessment, Inventory and Monitoring",
+   "url": "",
+   "status": "not_found",
+   "note": "403, 404, timeout or DNS failure; not read"
+  }
+ ],
+ "entries": [
+  {
+   "node": "earth.gis",
+   "scheme": "UCGIS GIS&T Body of Knowledge",
+   "code": "AM",
+   "label": "Analytics and Modeling",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.gis",
+   "scheme": "UCGIS GIS&T Body of Knowledge",
+   "code": "DM",
+   "label": "Data Management",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.gis",
+   "scheme": "ISO 19119 service taxonomy",
+   "code": "",
+   "label": "Geographic processing services (spatial, thematic)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.gis",
+   "scheme": "OGC standards",
+   "code": "",
+   "label": "Simple Features Access",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.gis.geodata_management",
+   "scheme": "UCGIS GIS&T Body of Knowledge",
+   "code": "DM",
+   "label": "Data Management",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.gis.raster_terrain",
+   "scheme": "UCGIS GIS&T Body of Knowledge",
+   "code": "AM",
+   "label": "Analytics and Modeling (surface and terrain analysis)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.gis.geostatistics",
+   "scheme": "UCGIS GIS&T Body of Knowledge",
+   "code": "AM",
+   "label": "Analytics and Modeling (geostatistics, spatial statistics)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.gis.field_capture",
+   "scheme": "UCGIS GIS&T Body of Knowledge",
+   "code": "DC",
+   "label": "Data Capture",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.gis.web_services",
+   "scheme": "OGC standards",
+   "code": "",
+   "label": "Web Map Service, Web Feature Service, OGC API Features",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.ogc.org/standards/",
+   "evidence": "link titles Web Map Service, Web Feature Service, OGC API \u2013 Features"
+  },
+  {
+   "node": "earth.gis.web_services",
+   "scheme": "ISO 19119 service taxonomy",
+   "code": "",
+   "label": "Geographic human interaction and model/information management services",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.cartography",
+   "scheme": "UCGIS GIS&T Body of Knowledge",
+   "code": "CV",
+   "label": "Cartography and Visualization",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.cartography",
+   "scheme": "International Cartographic Association commissions",
+   "code": "",
+   "label": "Map Design; Generalisation and Multiple Representation; Map Projections",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.cartography",
+   "scheme": "ISO/TC 211 standards",
+   "code": "ISO 19117",
+   "label": "Portrayal",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.cartography.map_projection",
+   "scheme": "International Cartographic Association commissions",
+   "code": "",
+   "label": "Map Projections",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.cartography.generalization",
+   "scheme": "International Cartographic Association commissions",
+   "code": "",
+   "label": "Generalisation and Multiple Representation",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.cartography.nautical_charting",
+   "scheme": "IHO standards",
+   "code": "S-57",
+   "label": "Transfer standard for digital hydrographic data (and S-100 successor)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.surveying",
+   "scheme": "FIG (International Federation of Surveyors) commissions",
+   "code": "5",
+   "label": "Positioning and Measurement",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://fig.net/organisation/comm/",
+   "evidence": "Commission 5 Positioning and Measurement"
+  },
+  {
+   "node": "earth.surveying",
+   "scheme": "FIG (International Federation of Surveyors) commissions",
+   "code": "4",
+   "label": "Hydrography",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://fig.net/organisation/comm/",
+   "evidence": "Commission 4 Hydrography"
+  },
+  {
+   "node": "earth.surveying",
+   "scheme": "FIG (International Federation of Surveyors) commissions",
+   "code": "7",
+   "label": "Cadastre and Land Management",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://fig.net/organisation/comm/",
+   "evidence": "Commission 7 Cadastre and Land Management"
+  },
+  {
+   "node": "earth.surveying",
+   "scheme": "ISO/TC 211 standards",
+   "code": "ISO 19111",
+   "label": "Referencing by coordinates",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.surveying.gnss_processing",
+   "scheme": "FIG (International Federation of Surveyors) commissions",
+   "code": "5",
+   "label": "Positioning and Measurement",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://fig.net/organisation/comm/",
+   "evidence": "Commission 5 Positioning and Measurement"
+  },
+  {
+   "node": "earth.surveying.cogo",
+   "scheme": "FIG (International Federation of Surveyors) commissions",
+   "code": "7",
+   "label": "Cadastre and Land Management",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://fig.net/organisation/comm/",
+   "evidence": "Commission 7 Cadastre and Land Management"
+  },
+  {
+   "node": "earth.surveying.datum_transformation",
+   "scheme": "ISO/TC 211 standards",
+   "code": "ISO 19111",
+   "label": "Referencing by coordinates",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.surveying.bathymetry",
+   "scheme": "IHO standards",
+   "code": "S-44",
+   "label": "Standards for Hydrographic Surveys",
+   "verdict": "corrected",
+   "correct_code": "S-44",
+   "correct_label": "IHO Standards for Hydrographic Surveys",
+   "url": "https://iho.int/en/standards-and-specifications",
+   "evidence": "S-44 IHO Standards for Hydrographic Surveys (Edition 6.2.0, October 2024)"
+  },
+  {
+   "node": "earth.remote_sensing",
+   "scheme": "ASPRS divisions",
+   "code": "",
+   "label": "Remote Sensing Applications",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.remote_sensing",
+   "scheme": "UCGIS GIS&T Body of Knowledge",
+   "code": "DC",
+   "label": "Data Capture (remote sensing)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.remote_sensing",
+   "scheme": "ISO 19119 service taxonomy",
+   "code": "",
+   "label": "Geographic processing services - thematic (image processing, classification, change detection)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.photogrammetry",
+   "scheme": "ASPRS divisions",
+   "code": "",
+   "label": "Photogrammetric Applications; Lidar; UAS",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.photogrammetry",
+   "scheme": "ASPRS standards",
+   "code": "",
+   "label": "LAS point cloud format; Positional Accuracy Standards for Digital Geospatial Data",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.photogrammetry.point_cloud_classification",
+   "scheme": "ASPRS standards",
+   "code": "",
+   "label": "LAS classification codes",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.subsurface",
+   "scheme": "SPE technical disciplines",
+   "code": "",
+   "label": "Reservoir Description and Dynamics",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.subsurface",
+   "scheme": "SEG (Society of Exploration Geophysicists) technical areas",
+   "code": "",
+   "label": "Seismic acquisition and processing; interpretation; near-surface; mining geophysics",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.subsurface",
+   "scheme": "Energistics standards",
+   "code": "",
+   "label": "RESQML (earth models); WITSML (well data)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.subsurface.well_log_analysis",
+   "scheme": "Energistics standards",
+   "code": "",
+   "label": "WITSML / LAS log data",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.subsurface.geological_modeling",
+   "scheme": "Energistics standards",
+   "code": "",
+   "label": "RESQML",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.energistics.org/resqml-data-standards",
+   "evidence": "RESQML open data exchange standards for the reservoir life cycle"
+  },
+  {
+   "node": "earth.reservoir",
+   "scheme": "SPE technical disciplines",
+   "code": "",
+   "label": "Reservoir Description and Dynamics; Production and Operations",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.reservoir",
+   "scheme": "SPE Petroleum Resources Management System",
+   "code": "",
+   "label": "PRMS reserves and resources classification",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.reservoir",
+   "scheme": "Energistics standards",
+   "code": "",
+   "label": "PRODML",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.energistics.org/prodml-data-standards",
+   "evidence": "PRODML: set of standards for optimizing producing oil and gas wells"
+  },
+  {
+   "node": "earth.reservoir.decline_reserves",
+   "scheme": "SPE Petroleum Resources Management System",
+   "code": "",
+   "label": "PRMS",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.mining",
+   "scheme": "CRIRSCO / JORC Code",
+   "code": "",
+   "label": "Mineral Resources and Ore Reserves classification",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.jorc.org/",
+   "evidence": "Code for Reporting of Exploration Results, Mineral Resources and Ore Reserves"
+  },
+  {
+   "node": "earth.mining",
+   "scheme": "SME Mining Engineering Handbook",
+   "code": "",
+   "label": "Mine planning and design",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.mining.resource_estimation",
+   "scheme": "CRIRSCO / JORC Code",
+   "code": "",
+   "label": "Measured, Indicated and Inferred Resources",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.surface_water",
+   "scheme": "WMO programmes",
+   "code": "",
+   "label": "Hydrology and Water Resources Programme",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.surface_water",
+   "scheme": "USACE Hydrologic Engineering Center model family",
+   "code": "",
+   "label": "HEC-HMS, HEC-RAS",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.surface_water",
+   "scheme": "EPA water models",
+   "code": "",
+   "label": "HSPF, SWMM, WASP",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.surface_water.rainfall_runoff",
+   "scheme": "USACE Hydrologic Engineering Center model family",
+   "code": "",
+   "label": "HEC-HMS",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.surface_water.river_hydraulics",
+   "scheme": "USACE Hydrologic Engineering Center model family",
+   "code": "",
+   "label": "HEC-RAS",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.surface_water.water_quality",
+   "scheme": "EPA water models",
+   "code": "",
+   "label": "HSPF, WASP, QUAL2K",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.groundwater",
+   "scheme": "USGS groundwater software",
+   "code": "",
+   "label": "MODFLOW, MT3D, SUTRA, PHREEQC",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.groundwater",
+   "scheme": "ASTM standards",
+   "code": "D5447",
+   "label": "Guide for application of a numerical groundwater flow model to a site-specific problem",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.groundwater.flow_modeling",
+   "scheme": "USGS groundwater software",
+   "code": "",
+   "label": "MODFLOW",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.groundwater.solute_transport",
+   "scheme": "USGS groundwater software",
+   "code": "",
+   "label": "MT3D, MODPATH, SUTRA",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.groundwater.geochemistry",
+   "scheme": "USGS groundwater software",
+   "code": "",
+   "label": "PHREEQC",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.atmosphere",
+   "scheme": "WMO programmes",
+   "code": "",
+   "label": "World Weather Watch; World Climate Programme; Global Atmosphere Watch",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.atmosphere",
+   "scheme": "EPA Support Center for Regulatory Atmospheric Modeling",
+   "code": "",
+   "label": "Preferred dispersion, screening and photochemical models",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.atmosphere.weather_prediction",
+   "scheme": "WMO programmes",
+   "code": "",
+   "label": "World Weather Watch (Global Data-processing and Forecasting System)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.atmosphere.severe_storms",
+   "scheme": "WMO programmes",
+   "code": "",
+   "label": "Tropical Cyclone Programme",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.atmosphere.climate_modeling",
+   "scheme": "WMO programmes",
+   "code": "",
+   "label": "World Climate Programme / World Climate Research Programme",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.atmosphere.air_dispersion",
+   "scheme": "EPA Support Center for Regulatory Atmospheric Modeling",
+   "code": "",
+   "label": "AERMOD and screening models",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.environmental_site",
+   "scheme": "EPA Data Quality Objectives process",
+   "code": "QA/G-4",
+   "label": "Guidance on Systematic Planning Using the Data Quality Objectives Process",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.epa.gov/quality/quality-program-directives",
+   "evidence": "Guidance on Systematic Planning using the Data Quality Objectives Process (QA/G-4)"
+  },
+  {
+   "node": "earth.environmental_site",
+   "scheme": "EPA Risk Assessment Guidance for Superfund",
+   "code": "",
+   "label": "RAGS",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.environmental_site",
+   "scheme": "ASTM standards",
+   "code": "E1527",
+   "label": "Phase I Environmental Site Assessment",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.environmental_site.sampling_design",
+   "scheme": "EPA Data Quality Objectives process",
+   "code": "QA/G-4",
+   "label": "Data Quality Objectives",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.epa.gov/quality/quality-program-directives",
+   "evidence": "Guidance on Systematic Planning using the Data Quality Objectives Process (QA/G-4)"
+  },
+  {
+   "node": "earth.environmental_site.risk_assessment",
+   "scheme": "EPA Risk Assessment Guidance for Superfund",
+   "code": "",
+   "label": "RAGS",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.agriculture",
+   "scheme": "AgGateway ADAPT",
+   "code": "",
+   "label": "Agricultural Data Application Programming Toolkit (field operations data model)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://adaptframework.org/",
+   "evidence": "ADAPT stands for Agricultural Data Application Programming Toolkit"
+  },
+  {
+   "node": "earth.agriculture",
+   "scheme": "ISO 11783 (ISOBUS)",
+   "code": "ISO 11783-10",
+   "label": "Task controller and management information system data interchange",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.agriculture",
+   "scheme": "ICAR guidelines",
+   "code": "",
+   "label": "International Committee for Animal Recording: animal identification, recording and genetic evaluation",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.icar.org/",
+   "evidence": "International Committee for Animal Recording; sub-committees Animal Identification and Interbull"
+  },
+  {
+   "node": "earth.agriculture",
+   "scheme": "USDA NRCS National Cooperative Soil Survey",
+   "code": "",
+   "label": "SSURGO / NASIS soil data",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.agriculture.field_records",
+   "scheme": "AgGateway ADAPT",
+   "code": "",
+   "label": "Field operations data",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.agriculture.precision_zones",
+   "scheme": "ISO 11783 (ISOBUS)",
+   "code": "ISO 11783-10",
+   "label": "Task data (prescriptions and as-applied)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.agriculture.soil_survey",
+   "scheme": "USDA NRCS National Cooperative Soil Survey",
+   "code": "",
+   "label": "SSURGO, STATSGO, NASIS",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.agriculture.herd_records",
+   "scheme": "ICAR guidelines",
+   "code": "",
+   "label": "Animal identification and recording",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.agriculture.genetic_evaluation",
+   "scheme": "ICAR guidelines",
+   "code": "",
+   "label": "Genetic evaluation (Interbull)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.icar.org/",
+   "evidence": "Interbull sub-committee; guidelines on cattle genetic evaluations"
+  },
+  {
+   "node": "earth.forestry",
+   "scheme": "USDA Forest Service Forest Inventory and Analysis",
+   "code": "",
+   "label": "FIA plot design and estimation",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.forestry",
+   "scheme": "National Wildfire Coordinating Group fire behavior system",
+   "code": "",
+   "label": "Rothermel surface fire spread; fire behavior prediction",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.forestry",
+   "scheme": "BLM Assessment, Inventory and Monitoring",
+   "code": "",
+   "label": "Rangeland core indicators",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.forestry.forest_inventory",
+   "scheme": "USDA Forest Service Forest Inventory and Analysis",
+   "code": "",
+   "label": "FIA estimation",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.forestry.fire_behavior",
+   "scheme": "National Wildfire Coordinating Group fire behavior system",
+   "code": "",
+   "label": "Rothermel surface fire spread",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "earth.forestry.rangeland_monitoring",
+   "scheme": "BLM Assessment, Inventory and Monitoring",
+   "code": "",
+   "label": "Core indicators",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  }
+ ]
+}

@@ -1,0 +1,1293 @@
+{
+ "domain": "govern",
+ "sources": [
+  {
+   "scheme": "BIAN Service Landscape",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "status": "read",
+   "note": "Official bian-official/public GitHub file tree, releases 10-14; service domain names taken from API file names"
+  },
+  {
+   "scheme": "ISO 20022 business areas",
+   "url": "https://www.iso20022.org/",
+   "status": "blocked",
+   "note": "403 on all iso20022.org pages; helper agent returned nothing"
+  },
+  {
+   "scheme": "NIEM domains",
+   "url": "https://niem.github.io/reference/content/",
+   "status": "read",
+   "note": "Current domain list read"
+  },
+  {
+   "scheme": "EDM Council FIBO",
+   "url": "https://github.com/edmcouncil/fibo",
+   "status": "partly_read",
+   "note": "Domain codes and titles read from repo metadata files; spec.edmcouncil.org blocked"
+  },
+  {
+   "scheme": "UN COFOG",
+   "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt",
+   "status": "read",
+   "note": "Full structure read"
+  },
+  {
+   "scheme": "Basel Committee framework",
+   "url": "https://www.bis.org/basel_framework/",
+   "status": "partly_read",
+   "note": "Topic list on framework page read"
+  },
+  {
+   "scheme": "ACORD Capability Model",
+   "url": "https://www.acord.org/",
+   "status": "not_found",
+   "note": "Home page read; no capability model listing public"
+  },
+  {
+   "scheme": "FBI CJIS services",
+   "url": "https://www.fbi.gov/services/cjis",
+   "status": "blocked",
+   "note": "403"
+  },
+  {
+   "scheme": "LEDES UTBMS code sets",
+   "url": "https://utbms.com/aba-litigation-codes/",
+   "status": "read",
+   "note": "ABA litigation and activity code spreadsheets read"
+  },
+  {
+   "scheme": "EDRM reference model",
+   "url": "https://edrm.net/resources/frameworks-and-standards/edrm-model/",
+   "status": "read",
+   "note": "EDRM 2.0 stage definitions read"
+  },
+  {
+   "scheme": "SALI Legal Matter Standard Specification",
+   "url": "https://sali.org/",
+   "status": "partly_read",
+   "note": "Home page confirms the standard (LMSS) exists; taxonomy viewer not readable"
+  },
+  {
+   "scheme": "NENA / APCO standards",
+   "url": "https://www.nena.org/",
+   "status": "blocked",
+   "note": "403"
+  },
+  {
+   "scheme": "OCEG GRC Capability Model",
+   "url": "https://www.oceg.org/about/what-is-grc/",
+   "status": "partly_read",
+   "note": "Model name read; contents are gated"
+  },
+  {
+   "scheme": "FEMA NIMS / ICS",
+   "url": "https://www.fema.gov/emergency-managers/nims/components",
+   "status": "blocked",
+   "note": "403"
+  },
+  {
+   "scheme": "US Fire Administration NFIRS",
+   "url": "https://www.usfa.fema.gov/nfirs/",
+   "status": "read",
+   "note": ""
+  },
+  {
+   "scheme": "IAAO Standard on Mass Appraisal of Real Property",
+   "url": "https://www.iaao.org/",
+   "status": "not_found",
+   "note": "Standard text not public; home page only shows a Mass Appraisal Specialist credential"
+  },
+  {
+   "scheme": "WCO Harmonized System",
+   "url": "https://www.wcoomd.org/en/topics/nomenclature/overview/what-is-the-harmonized-system.aspx",
+   "status": "read",
+   "note": ""
+  },
+  {
+   "scheme": "ISO 19152 Land Administration Domain Model",
+   "url": "https://www.iso.org/standard/51206.html",
+   "status": "blocked",
+   "note": "iso.org 403"
+  },
+  {
+   "scheme": "US EAC Voluntary Voting System Guidelines",
+   "url": "https://www.eac.gov/voting-equipment/voluntary-voting-system-guidelines",
+   "status": "read",
+   "note": ""
+  },
+  {
+   "scheme": "Akoma Ntoso (OASIS LegalDocML)",
+   "url": "https://www.oasis-open.org/committees/legaldocml/",
+   "status": "read",
+   "note": ""
+  }
+ ],
+ "entries": [
+  {
+   "node": "govern.banking_payments",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Current Account",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "CurrentAccount.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.banking_payments",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Payment Execution",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "PaymentExecution.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.banking_payments",
+   "scheme": "ISO 20022 business areas",
+   "code": "pacs",
+   "label": "Payments Clearing and Settlement",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.banking_payments",
+   "scheme": "ISO 20022 business areas",
+   "code": "pain",
+   "label": "Payments Initiation",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.banking_payments",
+   "scheme": "ISO 20022 business areas",
+   "code": "camt",
+   "label": "Cash Management",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.banking_payments",
+   "scheme": "EDM Council FIBO",
+   "code": "FBC",
+   "label": "Financial Business and Commerce",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/edmcouncil/fibo/tree/master",
+   "evidence": "FIBO FBC domain: Financial Business and Commerce"
+  },
+  {
+   "node": "govern.banking_payments.core_deposit_accounts",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Current Account",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "CurrentAccount.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.banking_payments.core_deposit_accounts",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Savings Account",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "SavingsAccount.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.banking_payments.core_deposit_accounts",
+   "scheme": "ISO 20022 business areas",
+   "code": "acmt",
+   "label": "Account Management",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.banking_payments.teller_transactions",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Branch Currency Management",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "BranchCurrencyManagement.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.banking_payments.payment_clearing",
+   "scheme": "ISO 20022 business areas",
+   "code": "pacs",
+   "label": "Payments Clearing and Settlement",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.banking_payments.payment_clearing",
+   "scheme": "ISO 20022 business areas",
+   "code": "pain",
+   "label": "Payments Initiation",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.banking_payments.payment_clearing",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Payment Execution",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "PaymentExecution.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.lending",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Consumer Loan",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "ConsumerLoan.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.lending",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Mortgage Loan",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "MortgageLoan.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.lending",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Customer Credit Rating",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "CustomerCreditRating.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.lending",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Collections",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "Collections.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.lending",
+   "scheme": "EDM Council FIBO",
+   "code": "LOAN",
+   "label": "Loans",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/edmcouncil/fibo/tree/master",
+   "evidence": "FIBO LOAN domain: Loans"
+  },
+  {
+   "node": "govern.lending.scorecard_development",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Credit Risk Models",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "CreditRiskModels.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.lending.loan_origination",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Consumer Loan",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "ConsumerLoan.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.lending.loan_origination",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Mortgage Loan",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "MortgageLoan.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.lending.collections",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Collections",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "Collections.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.securities_analysis",
+   "scheme": "EDM Council FIBO",
+   "code": "SEC",
+   "label": "Securities",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/edmcouncil/fibo/tree/master",
+   "evidence": "FIBO SEC domain: Securities"
+  },
+  {
+   "node": "govern.securities_analysis",
+   "scheme": "EDM Council FIBO",
+   "code": "DER",
+   "label": "Derivatives",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/edmcouncil/fibo/tree/master",
+   "evidence": "FIBO DER domain: Derivatives"
+  },
+  {
+   "node": "govern.securities_analysis",
+   "scheme": "EDM Council FIBO",
+   "code": "MD",
+   "label": "Market Data",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/edmcouncil/fibo/tree/master",
+   "evidence": "FIBO MD domain: Market Data"
+  },
+  {
+   "node": "govern.securities_analysis",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Financial Instrument Valuation",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "FinancialInstrumentValuation.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.securities_analysis",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Financial Market Analysis",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "FinancialMarketAnalysis.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.securities_analysis.market_data_retrieval",
+   "scheme": "EDM Council FIBO",
+   "code": "MD",
+   "label": "Market Data",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/edmcouncil/fibo/tree/master",
+   "evidence": "FIBO MD domain: Market Data"
+  },
+  {
+   "node": "govern.securities_analysis.market_data_retrieval",
+   "scheme": "ISO 20022 business areas",
+   "code": "reda",
+   "label": "Reference Data",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.securities_analysis.derivative_pricing",
+   "scheme": "EDM Council FIBO",
+   "code": "DER",
+   "label": "Derivatives",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/edmcouncil/fibo/tree/master",
+   "evidence": "FIBO DER domain: Derivatives"
+  },
+  {
+   "node": "govern.securities_analysis.fixed_income_analytics",
+   "scheme": "EDM Council FIBO",
+   "code": "SEC",
+   "label": "Securities",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/edmcouncil/fibo/tree/master",
+   "evidence": "FIBO SEC domain: Securities"
+  },
+  {
+   "node": "govern.investment_management",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Investment Portfolio Management",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "InvestmentPortfolioManagement.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.investment_management",
+   "scheme": "ISO 20022 business areas",
+   "code": "setr",
+   "label": "Securities Trade",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.investment_management",
+   "scheme": "ISO 20022 business areas",
+   "code": "sese",
+   "label": "Securities Settlement",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.investment_management.portfolio_accounting",
+   "scheme": "ISO 20022 business areas",
+   "code": "seev",
+   "label": "Securities Events",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.investment_management.order_execution",
+   "scheme": "ISO 20022 business areas",
+   "code": "setr",
+   "label": "Securities Trade",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.risk_actuarial",
+   "scheme": "Basel Committee framework",
+   "code": "",
+   "label": "Market risk",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.bis.org/basel_framework/",
+   "evidence": "Basel Framework topic: Market risk"
+  },
+  {
+   "node": "govern.risk_actuarial",
+   "scheme": "Basel Committee framework",
+   "code": "",
+   "label": "Credit risk",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.bis.org/basel_framework/",
+   "evidence": "Basel Framework topic: Credit risk"
+  },
+  {
+   "node": "govern.risk_actuarial",
+   "scheme": "Basel Committee framework",
+   "code": "",
+   "label": "Interest rate risk in the banking book",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.bis.org/basel_framework/",
+   "evidence": "Basel Framework topic: Interest rate risk in the banking book"
+  },
+  {
+   "node": "govern.risk_actuarial",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Market Risk Models",
+   "verdict": "contradicted",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "No MarketRisk* service domain in BIAN releases 10-14 listing"
+  },
+  {
+   "node": "govern.risk_actuarial",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Credit Risk Models",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "CreditRiskModels.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.risk_actuarial.market_risk",
+   "scheme": "Basel Committee framework",
+   "code": "",
+   "label": "Market risk",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.bis.org/basel_framework/",
+   "evidence": "Basel Framework topic: Market risk"
+  },
+  {
+   "node": "govern.risk_actuarial.credit_portfolio_risk",
+   "scheme": "Basel Committee framework",
+   "code": "",
+   "label": "Credit risk",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.bis.org/basel_framework/",
+   "evidence": "Basel Framework topic: Credit risk"
+  },
+  {
+   "node": "govern.risk_actuarial.asset_liability",
+   "scheme": "Basel Committee framework",
+   "code": "",
+   "label": "Interest rate risk in the banking book",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.bis.org/basel_framework/",
+   "evidence": "Basel Framework topic: Interest rate risk in the banking book"
+  },
+  {
+   "node": "govern.insurance",
+   "scheme": "ACORD Capability Model",
+   "code": "",
+   "label": "Underwriting",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.insurance",
+   "scheme": "ACORD Capability Model",
+   "code": "",
+   "label": "Policy Administration",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.insurance",
+   "scheme": "ACORD Capability Model",
+   "code": "",
+   "label": "Claims Management",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.insurance",
+   "scheme": "EDM Council FIBO",
+   "code": "FBC",
+   "label": "Financial Business and Commerce: insurance",
+   "verdict": "corrected",
+   "correct_code": "FBC",
+   "correct_label": "Financial Business and Commerce",
+   "url": "https://github.com/edmcouncil/fibo/tree/master",
+   "evidence": "FBC exists; no insurance qualifier or insurance module in FBC listing"
+  },
+  {
+   "node": "govern.insurance.underwriting_decision",
+   "scheme": "ACORD Capability Model",
+   "code": "",
+   "label": "Underwriting",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.insurance.policy_administration",
+   "scheme": "ACORD Capability Model",
+   "code": "",
+   "label": "Policy Administration",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.insurance.claims_adjudication",
+   "scheme": "ACORD Capability Model",
+   "code": "",
+   "label": "Claims Management",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.compliance_financial_crime",
+   "scheme": "OCEG GRC Capability Model",
+   "code": "",
+   "label": "Governance, risk and compliance",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "GRC Capability Model",
+   "url": "https://www.oceg.org/about/what-is-grc/",
+   "evidence": "GRC Capability Model 3.5 (Red Book)"
+  },
+  {
+   "node": "govern.compliance_financial_crime",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Regulatory Compliance",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "RegulatoryCompliance.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.compliance_financial_crime",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Regulatory Reporting",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "RegulatoryReporting.yaml in BIAN release14 semantic-apis"
+  },
+  {
+   "node": "govern.compliance_financial_crime",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Fraud Detection",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "Fraud Diagnosis",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "BIAN lists FraudDiagnosis, FraudEvaluation, FraudModel, FraudResolution; no FraudDetection"
+  },
+  {
+   "node": "govern.compliance_financial_crime",
+   "scheme": "ISO 20022 business areas",
+   "code": "auth",
+   "label": "Authorities",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.compliance_financial_crime.controls_management",
+   "scheme": "OCEG GRC Capability Model",
+   "code": "",
+   "label": "Governance, risk and compliance",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "GRC Capability Model",
+   "url": "https://www.oceg.org/about/what-is-grc/",
+   "evidence": "GRC Capability Model 3.5 (Red Book)"
+  },
+  {
+   "node": "govern.compliance_financial_crime.regulatory_reporting",
+   "scheme": "ISO 20022 business areas",
+   "code": "auth",
+   "label": "Authorities",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.compliance_financial_crime.payment_fraud",
+   "scheme": "BIAN Service Landscape",
+   "code": "",
+   "label": "Fraud Detection",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "Fraud Diagnosis",
+   "url": "https://github.com/bian-official/public/tree/main/release14.0.0/semantic-apis/oas3",
+   "evidence": "BIAN lists FraudDiagnosis, FraudEvaluation, FraudModel, FraudResolution; no FraudDetection"
+  },
+  {
+   "node": "govern.legal_research",
+   "scheme": "SALI Legal Matter Standard Specification",
+   "code": "",
+   "label": "Legal services: research",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.legal_research",
+   "scheme": "LEDES UTBMS code sets",
+   "code": "",
+   "label": "Activity code: research",
+   "verdict": "corrected",
+   "correct_code": "A102",
+   "correct_label": "Research",
+   "url": "https://utbms.com/aba-activity-codes/",
+   "evidence": "A102 Research (ABA UTBMS Activity Codes)"
+  },
+  {
+   "node": "govern.legal_practice",
+   "scheme": "SALI Legal Matter Standard Specification",
+   "code": "",
+   "label": "Matter",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.legal_practice",
+   "scheme": "LEDES UTBMS code sets",
+   "code": "",
+   "label": "Litigation code set",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://utbms.com/aba-litigation-codes/",
+   "evidence": "ABA UTBMS Litigation Task Codes, 1997"
+  },
+  {
+   "node": "govern.legal_practice",
+   "scheme": "EDRM reference model",
+   "code": "",
+   "label": "Electronic Discovery Reference Model",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://edrm.net/resources/frameworks-and-standards/edrm-model/",
+   "evidence": "EDRM 2.0 stages: Analysis, Collection, Processing, Review, Production, Presentation"
+  },
+  {
+   "node": "govern.legal_practice.matter_management",
+   "scheme": "SALI Legal Matter Standard Specification",
+   "code": "",
+   "label": "Matter",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.legal_practice.ediscovery_processing",
+   "scheme": "EDRM reference model",
+   "code": "",
+   "label": "Collection; Processing",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://edrm.net/resources/frameworks-and-standards/edrm-model/",
+   "evidence": "EDRM 2.0 stages: Analysis, Collection, Processing, Review, Production, Presentation"
+  },
+  {
+   "node": "govern.legal_practice.document_review",
+   "scheme": "EDRM reference model",
+   "code": "",
+   "label": "Review; Analysis; Production",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://edrm.net/resources/frameworks-and-standards/edrm-model/",
+   "evidence": "EDRM 2.0 stages: Analysis, Collection, Processing, Review, Production, Presentation"
+  },
+  {
+   "node": "govern.legal_practice.document_review",
+   "scheme": "LEDES UTBMS code sets",
+   "code": "L300",
+   "label": "L300 Discovery",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://utbms.com/aba-litigation-codes/",
+   "evidence": "L300 Discovery"
+  },
+  {
+   "node": "govern.legal_practice.trial_preparation",
+   "scheme": "EDRM reference model",
+   "code": "",
+   "label": "Presentation",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://edrm.net/resources/frameworks-and-standards/edrm-model/",
+   "evidence": "EDRM 2.0 stages: Analysis, Collection, Processing, Review, Production, Presentation"
+  },
+  {
+   "node": "govern.legal_practice.trial_preparation",
+   "scheme": "LEDES UTBMS code sets",
+   "code": "L400",
+   "label": "L400 Trial Preparation and Trial",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://utbms.com/aba-litigation-codes/",
+   "evidence": "L400 Trial Preparation and Trial"
+  },
+  {
+   "node": "govern.emergency_response",
+   "scheme": "NENA / APCO standards",
+   "code": "",
+   "label": "NENA i3 Next Generation 9-1-1",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.emergency_response",
+   "scheme": "FEMA NIMS / ICS",
+   "code": "",
+   "label": "Incident Command System",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.emergency_response",
+   "scheme": "NIEM domains",
+   "code": "",
+   "label": "Emergency Management",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://niem.github.io/reference/content/",
+   "evidence": "Domains list includes Emergency Management"
+  },
+  {
+   "node": "govern.emergency_response",
+   "scheme": "UN COFOG",
+   "code": "03.2",
+   "label": "Fire-protection services",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt",
+   "evidence": "03.2 Fire-protection services"
+  },
+  {
+   "node": "govern.emergency_response.call_handling",
+   "scheme": "NENA / APCO standards",
+   "code": "",
+   "label": "NENA i3 Next Generation 9-1-1",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.emergency_response.computer_aided_dispatch",
+   "scheme": "NENA / APCO standards",
+   "code": "",
+   "label": "APCO/NENA CAD standards",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.emergency_response.incident_command",
+   "scheme": "FEMA NIMS / ICS",
+   "code": "",
+   "label": "Incident Command System: Command, Operations, Planning, Logistics, Finance/Administration",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.emergency_response.fire_incident_records",
+   "scheme": "US Fire Administration NFIRS",
+   "code": "",
+   "label": "National Fire Incident Reporting System",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.usfa.fema.gov/nfirs/",
+   "evidence": "National Fire Incident Reporting System (NFIRS)"
+  },
+  {
+   "node": "govern.law_enforcement",
+   "scheme": "NIEM domains",
+   "code": "",
+   "label": "Justice",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://niem.github.io/reference/content/",
+   "evidence": "Domains list includes Justice"
+  },
+  {
+   "node": "govern.law_enforcement",
+   "scheme": "FBI CJIS services",
+   "code": "",
+   "label": "National Crime Information Center",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.law_enforcement",
+   "scheme": "FBI CJIS services",
+   "code": "",
+   "label": "Next Generation Identification",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.law_enforcement",
+   "scheme": "UN COFOG",
+   "code": "03.1",
+   "label": "Police services",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt",
+   "evidence": "03.1 Police services"
+  },
+  {
+   "node": "govern.law_enforcement.records_management",
+   "scheme": "FBI CJIS services",
+   "code": "",
+   "label": "National Incident-Based Reporting System",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.law_enforcement.criminal_justice_query",
+   "scheme": "FBI CJIS services",
+   "code": "",
+   "label": "National Crime Information Center",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.law_enforcement.criminal_justice_query",
+   "scheme": "NIEM domains",
+   "code": "",
+   "label": "Immigration",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://niem.github.io/reference/content/",
+   "evidence": "Domains list includes Immigration"
+  },
+  {
+   "node": "govern.law_enforcement.biometric_identification",
+   "scheme": "FBI CJIS services",
+   "code": "",
+   "label": "Next Generation Identification",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.law_enforcement.biometric_identification",
+   "scheme": "NIEM domains",
+   "code": "",
+   "label": "Biometrics",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://niem.github.io/reference/content/",
+   "evidence": "Domains list includes Biometrics"
+  },
+  {
+   "node": "govern.law_enforcement.forensic_database_matching",
+   "scheme": "FBI CJIS services",
+   "code": "",
+   "label": "Combined DNA Index System",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.courts_corrections",
+   "scheme": "NIEM domains",
+   "code": "",
+   "label": "Justice",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://niem.github.io/reference/content/",
+   "evidence": "Domains list includes Justice"
+  },
+  {
+   "node": "govern.courts_corrections",
+   "scheme": "UN COFOG",
+   "code": "03.3",
+   "label": "Law courts",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt",
+   "evidence": "03.3 Law courts"
+  },
+  {
+   "node": "govern.courts_corrections",
+   "scheme": "UN COFOG",
+   "code": "03.4",
+   "label": "Prisons",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt",
+   "evidence": "03.4 Prisons"
+  },
+  {
+   "node": "govern.courts_corrections.court_case_management",
+   "scheme": "NIEM domains",
+   "code": "",
+   "label": "Justice: court case filing",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "Justice",
+   "url": "https://niem.github.io/reference/content/",
+   "evidence": "Domains list has Justice; \"court case filing\" is not a domain"
+  },
+  {
+   "node": "govern.social_services",
+   "scheme": "NIEM domains",
+   "code": "",
+   "label": "Human Services",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://niem.github.io/reference/content/",
+   "evidence": "Domains list includes Human Services"
+  },
+  {
+   "node": "govern.social_services",
+   "scheme": "NIEM domains",
+   "code": "",
+   "label": "Children, Youth, and Family Services",
+   "verdict": "contradicted",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://niem.github.io/reference/content/",
+   "evidence": "Domain list: Agriculture, Biometrics, CBRN, Emergency Management, Human Services, ... no CYFS"
+  },
+  {
+   "node": "govern.social_services",
+   "scheme": "UN COFOG",
+   "code": "10",
+   "label": "Social protection",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt",
+   "evidence": "10 Social protection"
+  },
+  {
+   "node": "govern.social_services.eligibility_determination",
+   "scheme": "UN COFOG",
+   "code": "10",
+   "label": "Social protection",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt",
+   "evidence": "10 Social protection"
+  },
+  {
+   "node": "govern.social_services.case_management",
+   "scheme": "NIEM domains",
+   "code": "",
+   "label": "Human Services",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://niem.github.io/reference/content/",
+   "evidence": "Domains list includes Human Services"
+  },
+  {
+   "node": "govern.public_administration",
+   "scheme": "UN COFOG",
+   "code": "01.1",
+   "label": "General public services: financial and fiscal affairs",
+   "verdict": "corrected",
+   "correct_code": "01.1",
+   "correct_label": "Executive and legislative organs, financial and fiscal affairs, external affairs",
+   "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt",
+   "evidence": "01.1 Executive and legislative organs, financial and fiscal affairs, external affairs"
+  },
+  {
+   "node": "govern.public_administration",
+   "scheme": "UN COFOG",
+   "code": "01.1",
+   "label": "Executive and legislative organs",
+   "verdict": "corrected",
+   "correct_code": "01.1.1",
+   "correct_label": "Executive and legislative organs",
+   "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt",
+   "evidence": "01.1.1 Executive and legislative organs; 01.1 is the wider group"
+  },
+  {
+   "node": "govern.public_administration",
+   "scheme": "NIEM domains",
+   "code": "",
+   "label": "Immigration",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://niem.github.io/reference/content/",
+   "evidence": "Domains list includes Immigration"
+  },
+  {
+   "node": "govern.public_administration.tax_return_processing",
+   "scheme": "UN COFOG",
+   "code": "01.1.2",
+   "label": "Financial and fiscal affairs",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://unstats.un.org/unsd/classifications/Econ/Download/In%20Text/COFOG_English_structure.txt",
+   "evidence": "01.1.2 Financial and fiscal affairs"
+  },
+  {
+   "node": "govern.public_administration.mass_appraisal",
+   "scheme": "IAAO Standard on Mass Appraisal of Real Property",
+   "code": "",
+   "label": "Mass appraisal",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.public_administration.customs_declaration",
+   "scheme": "WCO Harmonized System",
+   "code": "",
+   "label": "Harmonized Commodity Description and Coding System",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.wcoomd.org/en/topics/nomenclature/overview/what-is-the-harmonized-system.aspx",
+   "evidence": "Harmonized Commodity Description and Coding System, \"Harmonized System\" or \"HS\""
+  },
+  {
+   "node": "govern.public_administration.land_records",
+   "scheme": "ISO 19152 Land Administration Domain Model",
+   "code": "",
+   "label": "Land administration",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "govern.public_administration.elections",
+   "scheme": "US EAC Voluntary Voting System Guidelines",
+   "code": "",
+   "label": "Voting system requirements",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "Voluntary Voting System Guidelines",
+   "url": "https://www.eac.gov/voting-equipment/voluntary-voting-system-guidelines",
+   "evidence": "VVSG Version 2.0 approved guidelines"
+  },
+  {
+   "node": "govern.public_administration.legislative_drafting",
+   "scheme": "Akoma Ntoso (OASIS LegalDocML)",
+   "code": "",
+   "label": "Legislative document model",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "LegalDocumentML (Akoma Ntoso)",
+   "url": "https://www.oasis-open.org/committees/legaldocml/",
+   "evidence": "Akoma Ntoso, now an approved OASIS Standard; TC named LegalDocumentML"
+  }
+ ]
+}

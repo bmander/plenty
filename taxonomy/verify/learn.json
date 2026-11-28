@@ -1,0 +1,877 @@
+{
+ "domain": "learn",
+ "sources": [
+  {
+   "scheme": "ACM CCS 2012",
+   "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml",
+   "status": "read",
+   "note": "full SKOS/XML download of CCS 2012 read; dl.acm.org/ccs pages return 403"
+  },
+  {
+   "scheme": "1EdTech",
+   "url": "https://www.1edtech.org/standards",
+   "status": "read",
+   "note": "standards list page read"
+  },
+  {
+   "scheme": "Library of Congress",
+   "url": "https://www.loc.gov/standards/",
+   "status": "partly_read",
+   "note": "standards, MARC format, BIBFRAME, EAD, PREMIS pages read; id.loc.gov (LCSH) 403"
+  },
+  {
+   "scheme": "NISO",
+   "url": "https://www.niso.org/standards",
+   "status": "partly_read",
+   "note": "Z39.19, Z39.88, KBART, SUSHI, NCIP pages read; Z39.50 title only via LOC maintenance page, full title not seen"
+  },
+  {
+   "scheme": "ISO",
+   "url": "https://www.iso.org/",
+   "status": "blocked",
+   "note": "iso.org returns 403; 18626, 21127, 15836, 28500 confirmed via maintainer sites; 14721 number not seen"
+  },
+  {
+   "scheme": "Ed-Fi",
+   "url": "https://docs.ed-fi.org/reference/data-exchange/data-standard/model-reference/",
+   "status": "read",
+   "note": "domain list read"
+  },
+  {
+   "scheme": "CEDS",
+   "url": "https://ceds.ed.gov/domainEntitySchema.aspx",
+   "status": "partly_read",
+   "note": "top-level domain tree read; element-level special education not seen"
+  },
+  {
+   "scheme": "ADL",
+   "url": "https://adlnet.gov/",
+   "status": "blocked",
+   "note": "adlnet.gov connection failed; SCORM and cmi5 not read"
+  },
+  {
+   "scheme": "IEEE",
+   "url": "https://standards.ieee.org/",
+   "status": "blocked",
+   "note": "standards.ieee.org 403; xAPI GitHub page read but no IEEE 9274.1.1 number shown"
+  },
+  {
+   "scheme": "PESC",
+   "url": "https://www.pesc.org/",
+   "status": "read",
+   "note": "home page read"
+  },
+  {
+   "scheme": "ISO 9999",
+   "url": "https://www.iso.org/",
+   "status": "blocked",
+   "note": "not read"
+  },
+  {
+   "scheme": "International Timetabling Competition",
+   "url": "https://www.itc2019.org/home",
+   "status": "partly_read",
+   "note": "page is JS-rendered; only title read"
+  },
+  {
+   "scheme": "Other",
+   "url": "",
+   "status": "read",
+   "note": "IFLA LRM, RDA, COUNTER, ISAD(G), SAA, Collections Trust, OAI-PMH, IIIF, CSL, O*NET read"
+  }
+ ],
+ "entries": [
+  {
+   "node": "learn.course_delivery",
+   "scheme": "ACM CCS 2012",
+   "code": "",
+   "label": "Applied computing > Education > Learning management systems",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml",
+   "evidence": "Applied computing > Education > Learning management systems (10010405.10010489.10010493)"
+  },
+  {
+   "node": "learn.course_delivery",
+   "scheme": "ACM CCS 2012",
+   "code": "",
+   "label": "Applied computing > Education > Distance learning",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml",
+   "evidence": "Applied computing > Education > Distance learning (10010405.10010489.10010494)"
+  },
+  {
+   "node": "learn.course_delivery",
+   "scheme": "1EdTech",
+   "code": "",
+   "label": "Learning Tools Interoperability (LTI)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.1edtech.org/standards",
+   "evidence": "LTI Advantage (Learning Tools Interoperability); LTI\u00ae"
+  },
+  {
+   "node": "learn.course_delivery",
+   "scheme": "ADL",
+   "code": "",
+   "label": "Sharable Content Object Reference Model (SCORM)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.course_delivery.content_playback",
+   "scheme": "ADL",
+   "code": "",
+   "label": "SCORM 2004",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.course_delivery.content_playback",
+   "scheme": "1EdTech",
+   "code": "",
+   "label": "Common Cartridge",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.1edtech.org/standards",
+   "evidence": "Common Cartridge\u00ae"
+  },
+  {
+   "node": "learn.course_delivery.content_playback",
+   "scheme": "ADL",
+   "code": "",
+   "label": "cmi5",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.course_delivery.tool_launch",
+   "scheme": "1EdTech",
+   "code": "",
+   "label": "Learning Tools Interoperability (LTI) Advantage",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.1edtech.org/standards",
+   "evidence": "LTI Advantage (Learning Tools Interoperability)"
+  },
+  {
+   "node": "learn.course_delivery.learning_records",
+   "scheme": "IEEE",
+   "code": "9274.1.1",
+   "label": "Experience API (xAPI)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.course_delivery.learning_records",
+   "scheme": "1EdTech",
+   "code": "",
+   "label": "Caliper Analytics",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.1edtech.org/standards",
+   "evidence": "Caliper Analytics\u00ae"
+  },
+  {
+   "node": "learn.classroom_interaction",
+   "scheme": "ACM CCS 2012",
+   "code": "",
+   "label": "Applied computing > Education > Interactive learning environments",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml",
+   "evidence": "Applied computing > Education > Interactive learning environments"
+  },
+  {
+   "node": "learn.classroom_interaction",
+   "scheme": "ACM CCS 2012",
+   "code": "",
+   "label": "Applied computing > Education > Collaborative learning",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml",
+   "evidence": "Applied computing > Education > Collaborative learning"
+  },
+  {
+   "node": "learn.courseware_authoring",
+   "scheme": "IEEE LTSC",
+   "code": "1484.12.1",
+   "label": "Learning Object Metadata (LOM)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.courseware_authoring",
+   "scheme": "1EdTech",
+   "code": "",
+   "label": "Competencies and Academic Standards Exchange (CASE)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.1edtech.org/standards",
+   "evidence": "Competencies & Academic Standards Exchange (CASE)"
+  },
+  {
+   "node": "learn.courseware_authoring",
+   "scheme": "ACM CCS 2012",
+   "code": "",
+   "label": "Applied computing > Education > E-learning",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml",
+   "evidence": "Applied computing > Education > E-learning"
+  },
+  {
+   "node": "learn.courseware_authoring.curriculum_mapping",
+   "scheme": "1EdTech",
+   "code": "",
+   "label": "Competencies and Academic Standards Exchange (CASE)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.1edtech.org/standards",
+   "evidence": "Competencies & Academic Standards Exchange (CASE)"
+  },
+  {
+   "node": "learn.courseware_authoring.content_management",
+   "scheme": "IEEE LTSC",
+   "code": "1484.12.1",
+   "label": "Learning Object Metadata (LOM)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.assessment",
+   "scheme": "1EdTech",
+   "code": "",
+   "label": "Question and Test Interoperability (QTI)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.1edtech.org/standards",
+   "evidence": "Question & Test Interoperability (QTI) and Assessment"
+  },
+  {
+   "node": "learn.assessment.item_banking",
+   "scheme": "1EdTech",
+   "code": "",
+   "label": "Question and Test Interoperability (QTI)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.1edtech.org/standards",
+   "evidence": "Question & Test Interoperability (QTI) and Assessment"
+  },
+  {
+   "node": "learn.student_information",
+   "scheme": "Ed-Fi",
+   "code": "",
+   "label": "Ed-Fi Data Standard",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://docs.ed-fi.org/reference/data-exchange/data-standard/",
+   "evidence": "Ed-Fi Data Standard v6"
+  },
+  {
+   "node": "learn.student_information",
+   "scheme": "CEDS",
+   "code": "",
+   "label": "Common Education Data Standards",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://ceds.ed.gov/",
+   "evidence": "Common Education Data Standards (CEDS)"
+  },
+  {
+   "node": "learn.student_information",
+   "scheme": "1EdTech",
+   "code": "",
+   "label": "OneRoster",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.1edtech.org/standards",
+   "evidence": "OneRoster\u00ae"
+  },
+  {
+   "node": "learn.student_information",
+   "scheme": "PESC",
+   "code": "",
+   "label": "Postsecondary Electronic Standards Council transcript standards",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.pesc.org/",
+   "evidence": "Postsecondary Electronic Standards Council (PESC); College Transcript"
+  },
+  {
+   "node": "learn.student_information.student_records",
+   "scheme": "Ed-Fi",
+   "code": "",
+   "label": "Enrollment and Student Attendance domains",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://docs.ed-fi.org/reference/data-exchange/data-standard/model-reference/",
+   "evidence": "Enrollment Domain; Student Attendance Domain"
+  },
+  {
+   "node": "learn.student_information.student_records",
+   "scheme": "1EdTech",
+   "code": "",
+   "label": "OneRoster",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.1edtech.org/standards",
+   "evidence": "OneRoster\u00ae"
+  },
+  {
+   "node": "learn.student_information.timetabling",
+   "scheme": "International Timetabling Competition",
+   "code": "",
+   "label": "ITC 2019 university course timetabling",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.student_information.grades_transcripts",
+   "scheme": "PESC",
+   "code": "",
+   "label": "College Transcript",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.pesc.org/",
+   "evidence": "College Transcript"
+  },
+  {
+   "node": "learn.student_information.grades_transcripts",
+   "scheme": "1EdTech",
+   "code": "",
+   "label": "Comprehensive Learner Record",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.1edtech.org/standards",
+   "evidence": "Comprehensive Learner Record (CLR)"
+  },
+  {
+   "node": "learn.student_information.grades_transcripts",
+   "scheme": "Ed-Fi",
+   "code": "",
+   "label": "Student Academic Record",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://docs.ed-fi.org/reference/data-exchange/data-standard/model-reference/",
+   "evidence": "Student Academic Record Domain"
+  },
+  {
+   "node": "learn.student_information.education_data_reporting",
+   "scheme": "Ed-Fi",
+   "code": "",
+   "label": "Ed-Fi Data Standard",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://docs.ed-fi.org/reference/data-exchange/data-standard/",
+   "evidence": "Ed-Fi Data Standard v6"
+  },
+  {
+   "node": "learn.student_information.education_data_reporting",
+   "scheme": "CEDS",
+   "code": "",
+   "label": "Common Education Data Standards",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://ceds.ed.gov/",
+   "evidence": "Common Education Data Standards (CEDS)"
+  },
+  {
+   "node": "learn.special_education",
+   "scheme": "Ed-Fi",
+   "code": "",
+   "label": "Special education program association",
+   "verdict": "corrected",
+   "correct_code": "",
+   "correct_label": "Special Education Data Model Domain",
+   "url": "https://docs.ed-fi.org/reference/data-exchange/data-standard/model-reference/",
+   "evidence": "Special Education Data Model Domain (no association entity read)"
+  },
+  {
+   "node": "learn.special_education",
+   "scheme": "CEDS",
+   "code": "",
+   "label": "Common Education Data Standards: special education elements",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.assistive_access",
+   "scheme": "ISO 9999",
+   "code": "22",
+   "label": "Assistive products for communication and information management",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.adaptive_practice",
+   "scheme": "ACM CCS 2012",
+   "code": "",
+   "label": "Applied computing > Education > Computer-assisted instruction",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml",
+   "evidence": "Applied computing > Education > Computer-assisted instruction"
+  },
+  {
+   "node": "learn.adaptive_practice",
+   "scheme": "ACM CCS 2012",
+   "code": "",
+   "label": "Applied computing > Education > Interactive learning environments",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml",
+   "evidence": "Applied computing > Education > Interactive learning environments"
+  },
+  {
+   "node": "learn.simulation_training",
+   "scheme": "ACM CCS 2012",
+   "code": "",
+   "label": "Applied computing > Education > Interactive learning environments",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml",
+   "evidence": "Applied computing > Education > Interactive learning environments"
+  },
+  {
+   "node": "learn.library_management",
+   "scheme": "IFLA",
+   "code": "",
+   "label": "IFLA Library Reference Model (LRM)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://repository.ifla.org/handle/20.500.14598/40",
+   "evidence": "IFLA Library Reference Model: A Conceptual Model for Bibliographic Information"
+  },
+  {
+   "node": "learn.library_management",
+   "scheme": "Library of Congress",
+   "code": "",
+   "label": "MARC 21 formats",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.loc.gov/standards/",
+   "evidence": "MARC 21 formats"
+  },
+  {
+   "node": "learn.library_management",
+   "scheme": "Library of Congress",
+   "code": "",
+   "label": "BIBFRAME",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.loc.gov/standards/",
+   "evidence": "BIBFRAME (Bibliographic Framework Initiative)"
+  },
+  {
+   "node": "learn.library_management",
+   "scheme": "ACM CCS 2012",
+   "code": "",
+   "label": "Applied computing > Document management and text processing > Digital libraries and archives",
+   "verdict": "corrected",
+   "correct_code": "10002951.10003227.10003392",
+   "correct_label": "Information systems > Information systems applications > Digital libraries and archives",
+   "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml",
+   "evidence": "Not under Document management; exists under Information systems applications, Education, Computers in other domains"
+  },
+  {
+   "node": "learn.library_management.cataloging",
+   "scheme": "Library of Congress",
+   "code": "",
+   "label": "MARC 21 Format for Bibliographic Data",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.loc.gov/marc/bibliographic/",
+   "evidence": "MARC 21 Format for Bibliographic Data: Table of Contents"
+  },
+  {
+   "node": "learn.library_management.cataloging",
+   "scheme": "RDA Steering Committee",
+   "code": "",
+   "label": "Resource Description and Access (RDA)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.rdatoolkit.org/about",
+   "evidence": "RDA: Resource Description and Access; RDA Steering Committee"
+  },
+  {
+   "node": "learn.library_management.cataloging",
+   "scheme": "NISO",
+   "code": "Z39.50",
+   "label": "Information Retrieval: Application Service Definition and Protocol",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.library_management.subject_indexing",
+   "scheme": "NISO",
+   "code": "Z39.19",
+   "label": "Guidelines for monolingual controlled vocabularies",
+   "verdict": "corrected",
+   "correct_code": "Z39.19",
+   "correct_label": "Guidelines for the Construction, Format, and Management of Monolingual Controlled Vocabularies",
+   "url": "https://www.niso.org/publications/ansiniso-z3919-2005-r2010",
+   "evidence": "ANSI/NISO Z39.19-2005 (R2010) Guidelines for the Construction, Format, and Management of Monolingual Controlled Vocabularies"
+  },
+  {
+   "node": "learn.library_management.subject_indexing",
+   "scheme": "Library of Congress",
+   "code": "",
+   "label": "Library of Congress Subject Headings",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.library_management.authority_control",
+   "scheme": "Library of Congress",
+   "code": "",
+   "label": "MARC 21 Format for Authority Data",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.loc.gov/marc/authority/",
+   "evidence": "MARC 21 Format for Authority Data: Table of Contents"
+  },
+  {
+   "node": "learn.library_management.circulation",
+   "scheme": "NISO",
+   "code": "Z39.83",
+   "label": "NISO Circulation Interchange Protocol (NCIP)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.niso.org/standards-committees/ncip",
+   "evidence": "ANSI/NISO Z39.83-1-2012 NISO Circulation Interchange Part 1: Protocol (NCIP)"
+  },
+  {
+   "node": "learn.library_management.acquisitions_serials",
+   "scheme": "Library of Congress",
+   "code": "",
+   "label": "MARC 21 Format for Holdings Data",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.loc.gov/marc/holdings/",
+   "evidence": "MARC 21 Format for Holdings Data: Table of Contents"
+  },
+  {
+   "node": "learn.library_management.resource_sharing",
+   "scheme": "ISO",
+   "code": "18626",
+   "label": "Interlibrary Loan Transactions",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://illtransactions.org/",
+   "evidence": "ISO 18626 Information and documentation - Interlibrary Loan Transactions"
+  },
+  {
+   "node": "learn.library_management.electronic_resources",
+   "scheme": "NISO",
+   "code": "Z39.88",
+   "label": "OpenURL Framework",
+   "verdict": "corrected",
+   "correct_code": "Z39.88",
+   "correct_label": "The OpenURL Framework for Context-Sensitive Services",
+   "url": "https://www.niso.org/publications/z3988-2004-r2010",
+   "evidence": "ANSI/NISO Z39.88-2004 (R2010) The OpenURL Framework for Context-Sensitive Services"
+  },
+  {
+   "node": "learn.library_management.electronic_resources",
+   "scheme": "NISO",
+   "code": "",
+   "label": "Knowledge Bases and Related Tools (KBART)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.niso.org/standards-committees/kbart",
+   "evidence": "KBART: Knowledge Bases and Related Tools Recommended Practice (RP-9)"
+  },
+  {
+   "node": "learn.library_management.electronic_resources",
+   "scheme": "NISO",
+   "code": "Z39.93",
+   "label": "Standardized Usage Statistics Harvesting Initiative (SUSHI)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.niso.org/standards-committees/sushi",
+   "evidence": "ANSI/NISO Z39.93-2014 The Standardized Usage Statistics Harvesting Initiative (SUSHI) Protocol"
+  },
+  {
+   "node": "learn.library_management.electronic_resources",
+   "scheme": "Project COUNTER",
+   "code": "",
+   "label": "COUNTER Code of Practice",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.countermetrics.org/code-of-practice/",
+   "evidence": "COUNTER Code of Practice Release 5.1"
+  },
+  {
+   "node": "learn.archives_collections",
+   "scheme": "Society of American Archivists",
+   "code": "",
+   "label": "Encoded Archival Description (EAD)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.loc.gov/ead/",
+   "evidence": "Encoded Archival Description (EAD) is an XML standard for encoding archival finding aids; SAA tools linked"
+  },
+  {
+   "node": "learn.archives_collections",
+   "scheme": "International Council on Archives",
+   "code": "",
+   "label": "ISAD(G)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.ica.org/resource/isadg-general-international-standard-archival-description-second-edition/",
+   "evidence": "ISAD(G): General International Standard Archival Description, Second edition"
+  },
+  {
+   "node": "learn.archives_collections",
+   "scheme": "Collections Trust",
+   "code": "",
+   "label": "Spectrum collections management standard",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://collectionstrust.org.uk/spectrum/",
+   "evidence": "Spectrum - Collections Trust"
+  },
+  {
+   "node": "learn.archives_collections",
+   "scheme": "ISO",
+   "code": "21127",
+   "label": "CIDOC Conceptual Reference Model",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.cidoc-crm.org/",
+   "evidence": "recognized as an official ISO standard... ISO 21127:2023"
+  },
+  {
+   "node": "learn.archives_collections",
+   "scheme": "ISO",
+   "code": "14721",
+   "label": "Open Archival Information System (OAIS)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.archives_collections.archival_description",
+   "scheme": "Society of American Archivists",
+   "code": "",
+   "label": "Describing Archives: A Content Standard (DACS)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www2.archivists.org/standards",
+   "evidence": "Describing Archives: A Content Standard (DACS)"
+  },
+  {
+   "node": "learn.archives_collections.archival_description",
+   "scheme": "Society of American Archivists",
+   "code": "",
+   "label": "Encoded Archival Description (EAD)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.loc.gov/ead/",
+   "evidence": "Encoded Archival Description (EAD) is an XML standard for encoding archival finding aids; SAA tools linked"
+  },
+  {
+   "node": "learn.archives_collections.museum_collections",
+   "scheme": "Collections Trust",
+   "code": "",
+   "label": "Spectrum procedures",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://collectionstrust.org.uk/spectrum/",
+   "evidence": "Primary procedures; All procedures"
+  },
+  {
+   "node": "learn.archives_collections.digital_preservation",
+   "scheme": "Library of Congress",
+   "code": "",
+   "label": "PREMIS Data Dictionary",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.loc.gov/standards/premis/",
+   "evidence": "The PREMIS Data Dictionary for Preservation Metadata"
+  },
+  {
+   "node": "learn.archives_collections.digital_preservation",
+   "scheme": "ISO",
+   "code": "14721",
+   "label": "Open Archival Information System (OAIS)",
+   "verdict": "unverifiable",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "",
+   "evidence": ""
+  },
+  {
+   "node": "learn.archives_collections.digital_collections",
+   "scheme": "ISO",
+   "code": "15836",
+   "label": "Dublin Core metadata element set",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.dublincore.org/specifications/dublin-core/dces/",
+   "evidence": "standardized as ANSI/NISO Z39.85 and ISO 15836"
+  },
+  {
+   "node": "learn.archives_collections.digital_collections",
+   "scheme": "Open Archives Initiative",
+   "code": "",
+   "label": "Protocol for Metadata Harvesting (OAI-PMH)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.openarchives.org/pmh/",
+   "evidence": "Open Archives Initiative Protocol for Metadata Harvesting"
+  },
+  {
+   "node": "learn.archives_collections.digital_collections",
+   "scheme": "IIIF Consortium",
+   "code": "",
+   "label": "International Image Interoperability Framework (IIIF)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://iiif.io/",
+   "evidence": "International Image Interoperability Framework"
+  },
+  {
+   "node": "learn.archives_collections.web_archiving",
+   "scheme": "ISO",
+   "code": "28500",
+   "label": "WARC file format",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.loc.gov/preservation/digital/formats/fdd/fdd000236.shtml",
+   "evidence": "ISO 28500:2009, Information and documentation -- WARC file format"
+  },
+  {
+   "node": "learn.scholarly_information",
+   "scheme": "ACM CCS 2012",
+   "code": "",
+   "label": "Information systems > Information retrieval",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml",
+   "evidence": "Information systems > Information retrieval (10002951.10003317)"
+  },
+  {
+   "node": "learn.scholarly_information",
+   "scheme": "Citation Style Language project",
+   "code": "",
+   "label": "Citation Style Language (CSL)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://citationstyles.org/",
+   "evidence": "Citation Style Language"
+  },
+  {
+   "node": "learn.career_guidance",
+   "scheme": "O*NET",
+   "code": "",
+   "label": "Interest Profiler (Holland RIASEC interest areas)",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://www.onetcenter.org/IP.html",
+   "evidence": "Compatible with Holland's R-I-A-S-E-C Interest Structure; broad interest areas"
+  },
+  {
+   "node": "learn.career_guidance",
+   "scheme": "CEDS",
+   "code": "",
+   "label": "Common Education Data Standards: workforce domain",
+   "verdict": "confirmed",
+   "correct_code": "",
+   "correct_label": "",
+   "url": "https://ceds.ed.gov/domainEntitySchema.aspx",
+   "evidence": "Domain Entity Schema tree node: Workforce"
+  }
+ ]
+}

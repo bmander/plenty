@@ -14,6 +14,11 @@
     tip.style.left = Math.max(8, x) + "px";
     tip.style.top = Math.max(8, y) + "px";
   }
+  // for a page's own script: a tip that follows the pointer over something drawn, such as a canvas
+  window.plentyTip = {
+    show: function (text, e) { tip.textContent = text; tip.style.display = "block"; place(e); },
+    hide: function () { tip.style.display = "none"; }
+  };
   document.addEventListener("mouseover", function (e) {
     var t = e.target.closest && e.target.closest("[data-tip]");
     if (!t) { tip.style.display = "none"; return; }
@@ -24,6 +29,16 @@
   document.addEventListener("mousemove", function (e) {
     if (tip.style.display === "block") place(e);
   });
+  // keyboard: show the tip under whatever focused element carries one
+  document.addEventListener("focusin", function (e) {
+    var t = e.target.closest && e.target.closest("[data-tip]");
+    if (!t) { tip.style.display = "none"; return; }
+    tip.textContent = t.getAttribute("data-tip");
+    tip.style.display = "block";
+    var r = t.getBoundingClientRect();
+    place({ clientX: r.left, clientY: r.bottom });
+  });
+  document.addEventListener("focusout", function () { tip.style.display = "none"; });
 
   // --- sortable tables: th[data-sort="num"|"text"]
   document.querySelectorAll("table.ledger").forEach(function (table) {
@@ -54,6 +69,50 @@
       });
     });
   });
+
+  // --- expandable groups: a kind of sector opens its sectors beneath it
+  document.querySelectorAll("button.expander").forEach(function (b) {
+    var rows = document.querySelectorAll('tr[data-group="' + b.getAttribute("data-group") + '"]');
+    b.addEventListener("click", function () {
+      var open = b.getAttribute("aria-expanded") !== "true";
+      b.setAttribute("aria-expanded", open ? "true" : "false");
+      rows.forEach(function (r) { r.hidden = !open; });
+    });
+  });
+
+  // --- capability filter: show the capabilities and tasks that match, and open them
+  var tq = document.getElementById("tq");
+  if (tq) {
+    var tcount = document.getElementById("tcount");
+    var sections = document.querySelectorAll("section[data-domain]");
+    var caps = Array.prototype.map.call(document.querySelectorAll("tr[data-cap]"), function (row) {
+      return { row: row, b: row.querySelector("button.expander"), text: null, ktext: null,
+               kids: Array.prototype.slice.call(document.querySelectorAll('tr[data-group="' + row.id + '"]')) };
+    });
+    tq.addEventListener("input", function () {
+      var needle = tq.value.trim().toLowerCase(), nc = 0, nt = 0;
+      caps.forEach(function (c) {
+        if (c.text === null) {   // read the rows' text once, on first use
+          c.text = c.row.textContent.toLowerCase();
+          c.ktext = c.kids.map(function (k) { return k.textContent.toLowerCase(); });
+        }
+        var own = !needle || c.text.indexOf(needle) !== -1, any = false;
+        c.kids.forEach(function (k, i) {
+          var m = !!needle && c.ktext[i].indexOf(needle) !== -1;
+          k.hidden = !m;
+          if (m) { any = true; nt++; }
+        });
+        c.row.hidden = !(own || any);
+        if (needle && (own || any)) nc++;
+        c.b.setAttribute("aria-expanded", any ? "true" : "false");
+      });
+      Array.prototype.forEach.call(sections, function (s) {
+        s.hidden = !!needle && !s.querySelector("tr[data-cap]:not([hidden])");
+      });
+      tcount.textContent = !needle ? "" :
+        nc + (nc === 1 ? " capability" : " capabilities") + " and " + nt + (nt === 1 ? " task" : " tasks") + " match";
+    });
+  }
 
   // --- sector filter
   var q = document.getElementById("q"), phys = document.getElementById("phys"), count = document.getElementById("count");

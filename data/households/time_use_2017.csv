@@ -1,0 +1,113 @@
+line,activity,hours_per_day
+1,"Total, all activities",24.0
+2,Personal care activities,9.59
+3,Sleeping,8.8
+4,Grooming,0.68
+5,Health-related self care,0.08
+6,Personal activities,0.01
+7,Travel related to personal care,0.02
+8,Eating and drinking,1.18
+9,Eating and drinking,1.06
+10,Travel related to eating and drinking,0.11
+11,Household activities,1.81
+12,Housework,0.55
+13,Interior cleaning,0.35
+14,Laundry,0.16
+15,"Storing interior household items, including food",0.02
+16,Food preparation and cleanup,0.6
+17,Food and drink preparation,0.47
+18,Kitchen and food cleanup,0.13
+19,Lawn and garden care,0.18
+20,Household management,0.13
+21,Financial management,0.03
+22,Household and personal organization and planning,0.1
+23,"Interior maintenance, repair, and decoration",0.06
+24,"Exterior maintenance, repair, and decoration",0.06
+25,Animals and pets,0.13
+26,"Care for animals and pets, not veterinary care",0.07
+27,"Walking, exercising, and playing with animals",0.06
+28,Vehicles,0.04
+29,"Appliances, tools, and toys",0.02
+30,Travel related to household activities,0.05
+31,Purchasing goods and services,0.72
+32,Consumer goods purchases,0.35
+33,Grocery shopping,0.11
+34,Professional and personal care services,0.08
+35,Financial services and banking,0.01
+36,Medical and care services,0.05
+37,Personal care services,0.02
+38,Household services,0.01
+39,"Home maintenance, repair, decoration, and construction (not done by self)",0.0
+40,Vehicle maintenance and repair services (not done by self),0.01
+41,Government services,0.0
+42,Travel related to purchasing goods and services,0.27
+43,Caring for and helping household members,0.52
+44,Caring for and helping household children,0.4
+45,Caring for and helping household children (except activities related to education and health),0.36
+46,Physical care for household children,0.14
+47,Reading to and with household children,0.01
+48,Talking with and listening to household children,0.02
+49,"Playing with household children, not sports",0.09
+50,Attending household children’s events,0.02
+51,Activities related to household children’s education,0.03
+52,Helping household children with homework,0.02
+53,Activities related to household children’s health,0.01
+54,Caring for and helping household adults,0.04
+55,Caring for household adults,0.03
+56,Physical care for household adults,0.02
+57,Helping household adults,0.01
+58,Travel related to caring for and helping household members,0.08
+59,Caring for and helping nonhousehold members,0.18
+60,Caring for and helping nonhousehold children,0.06
+61,Caring for and helping nonhousehold adults,0.07
+62,Caring for nonhousehold adults,0.01
+63,Helping nonhousehold adults,0.06
+64,Travel related to caring for and helping nonhousehold members,0.06
+65,Working and work-related activities,3.59
+66,Working,3.23
+67,Work-related activities,0.0
+68,Other income-generating activities,0.03
+69,Job search and interviewing,0.03
+70,Travel related to work,0.29
+71,Educational activities,0.48
+72,Attending class,0.26
+73,"Taking class for degree, certificate, or licensure",0.24
+74,Homework and research,0.18
+75,Travel related to education,0.03
+76,"Organizational, civic, and religious activities",0.33
+77,Religious and spiritual activities,0.13
+78,Attending religious services,0.08
+79,Participating in religious practices,0.04
+80,Volunteering (organizational and civic activities),0.15
+81,Volunteer activities,0.15
+82,Administrative and support activities,0.04
+83,Social service and care activities (except medical),0.04
+84,"Indoor and outdoor maintenance, building, and cleanup activities",0.01
+85,Participating in performance and cultural activities,0.01
+86,"Attending meetings, conferences, and training",0.01
+87,Civic obligations and participation,0.0
+88,"Travel related to organizational, civic, and religious activities",0.04
+89,Leisure and sports,5.24
+90,"Socializing, relaxing, and leisure",4.71
+91,Socializing and communicating,0.65
+92,Socializing and communicating (except social events),0.57
+93,Attending or hosting social events,0.09
+94,Relaxing and leisure,3.97
+95,Watching TV,2.77
+96,Relaxing and thinking,0.36
+97,Playing games,0.27
+98,"Computer use for leisure, excluding games",0.19
+99,Reading for personal interest,0.28
+100,Arts and entertainment (other than sports),0.09
+101,"Sports, exercise, and recreation",0.32
+102,"Participating in sports, exercise, and recreation",0.28
+103,Walking,0.06
+104,Attending sporting or recreational events,0.03
+105,Travel related to leisure and sports,0.21
+106,"Telephone calls, mail, and e-mail",0.15
+107,Telephone calls (to or from),0.1
+108,Household and personal messages,0.04
+109,Household and personal mail and messages,0.02
+110,Household and personal e-mail and messages,0.03
+111,Travel related to telephone calls,0.0
+112,"Other activities, not elsewhere classified",0.2

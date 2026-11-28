@@ -1,0 +1,6 @@
+source,what,where,when,share_placed,activities,spearman_with_flow,spearman_with_pooled
+claude,"Claude chat, work use (Anthropic Economic Index)",United States,April and May 2026,0.972,157,0.317,0.8061
+claude_api,Anthropic API (Anthropic Economic Index),world,April and May 2026,0.8968,166,0.3832,0.8148
+chatgpt,"ChatGPT consumer plans, work-related messages (OpenAI Signals)",United States,October 2025 to September 2026,0.9805,164,0.219,0.8806
+copilot,"Bing Copilot, by the user's goal (Microsoft, Working with AI)",United States,January to September 2024,1.0,330,0.2746,0.9009
+copilot_action,"Bing Copilot, by what the AI did (Microsoft, Working with AI)",United States,January to September 2024,1.0,326,0.2655,0.8463

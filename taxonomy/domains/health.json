@@ -1,0 +1,4050 @@
+{
+  "domain": "health",
+  "summary": "Health is broken down by clinical and administrative function, not by setting, specialty or vendor suite. The WHO Classification of Digital Health Interventions (health-worker, person, system-manager and data-service groups) and the ISO/HL7 EHR System Functional Model (care provision, care support, population health, administration, infrastructure) set the top-level cut. ONC certification criteria, IHE domains, DICOM, CDISC and the WHO ICF set the tasks inside it. An EHR or practice-management suite appears as an example under many nodes; specialty and veterinary systems are examples of the same functions.",
+  "capabilities": [
+    {
+      "id": "health.clinical_record",
+      "name": "Clinical record and documentation",
+      "definition": "Given a patient's encounters, observations and history, maintain a longitudinal record of coded summary lists and clinical notes that clinicians read and other functions compute on.",
+      "crosswalk": [
+        {
+          "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+          "code": "CP.1",
+          "label": "Manage Clinical History",
+          "basis": "fetched",
+          "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+        },
+        {
+          "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+          "code": "CP.3",
+          "label": "Manage Clinical Documentation",
+          "basis": "fetched",
+          "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+        },
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "2.2",
+          "label": "Person-centred health records",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "10010405.10010444.10010447",
+          "label": "Applied computing > Life and medical sciences > Health care information systems",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Medical software",
+        "Voice recognition software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "health.interoperability",
+        "enterprise.documents"
+      ],
+      "notes": "Was seed 'Electronic health records and clinical documentation'. Absorbs the seed 'Behavioral health, long-term care and home care records': those settings use the same documentation functions, and their one distinct function (regulated assessment instruments) is a task here. Specialty and veterinary record systems are examples of these tasks, not separate nodes. An EHR suite is an example of many nodes across this domain.",
+      "tasks": [
+        {
+          "id": "health.clinical_record.summary_lists",
+          "name": "Problem, allergy and medication lists",
+          "definition": "Given encounter data and outside records, maintain reconciled, coded lists of a patient's active problems, allergies and medications.",
+          "inputs": "encounter diagnoses, prior lists, records received from other providers",
+          "outputs": "reconciled coded problem, allergy and medication lists with provenance",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(b)(2)",
+              "label": "Clinical information reconciliation and incorporation",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            },
+            {
+              "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+              "code": "",
+              "label": "Manage Problem List",
+              "basis": "fetched",
+              "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+            },
+            {
+              "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+              "code": "",
+              "label": "Manage Allergy, Intolerance and Adverse Reaction List",
+              "basis": "fetched",
+              "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+            }
+          ],
+          "onet_products": [
+            "Electronic health record EHR software",
+            "Epic Systems",
+            "Cerner Millennium",
+            "MEDITECH software",
+            "eClinicalWorks EHR software",
+            "Allscripts Professional EHR",
+            "GE Healthcare Centricity EMR",
+            "NextGen Healthcare Information Systems EMR",
+            "Amazing Charts",
+            "SOAPware EMR",
+            "PCC EHR"
+          ],
+          "state_of_art": [
+            "Epic",
+            "Oracle Health Millennium",
+            "MEDITECH Expanse"
+          ],
+          "open_tools": [
+            "OpenEMR",
+            "OpenMRS",
+            "GNU Health",
+            "VistA"
+          ],
+          "benchmarkable": "partly: reconciliation against outside records can be scored on synthetic patients (Synthea) with known truth; list upkeep itself is workflow.",
+          "notes": ""
+        },
+        {
+          "id": "health.clinical_record.encounter_notes",
+          "name": "Structured encounter note documentation",
+          "definition": "Given a clinician's findings during a visit, produce a templated encounter note (history, examination, assessment, plan) including specialty charts such as dental, periodontal and eye examinations.",
+          "inputs": "patient context, specialty template, clinician entries",
+          "outputs": "signed structured and narrative encounter note",
+          "crosswalk": [
+            {
+              "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+              "code": "CP.3",
+              "label": "Manage Clinical Documentation",
+              "basis": "fetched",
+              "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+            }
+          ],
+          "onet_products": [
+            "Electronic medical record EMR software",
+            "Henry Schein Dentrix",
+            "Open Dental",
+            "Dental charting software",
+            "Voice-activated perio charting software",
+            "EyeMD EMR Healthcare Systems EyeMD EMR",
+            "ChiroTouch EHR",
+            "ICANotes",
+            "Rehab Documentation Company ReDoc Suite",
+            "WinCity Custom Software WinCity Massage SOAP Notes",
+            "IDEXX Laboratories IDEXX Cornerstone",
+            "EndoSoft"
+          ],
+          "state_of_art": [
+            "Epic",
+            "Oracle Health Millennium",
+            "athenaOne",
+            "Dentrix"
+          ],
+          "open_tools": [
+            "OpenEMR",
+            "OpenMRS",
+            "Open Dental",
+            "OpenVPMS"
+          ],
+          "benchmarkable": "partly: completeness against a template is checkable; note quality is judged by clinicians.",
+          "notes": "Veterinary records (IDEXX Cornerstone, AVImark) are the same function for animal patients."
+        },
+        {
+          "id": "health.clinical_record.nursing_flowsheets",
+          "name": "Nursing assessment and flowsheet charting",
+          "definition": "Given bedside observations and assessments, record vital signs, intake and output, nursing assessments and nursing care plans as time-series flowsheets.",
+          "inputs": "vital signs, device readings, assessment entries, nursing diagnoses",
+          "outputs": "flowsheet time series, nursing care plan, shift documentation",
+          "crosswalk": [
+            {
+              "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+              "code": "CP.3",
+              "label": "Manage Clinical Documentation",
+              "basis": "fetched",
+              "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+            },
+            {
+              "scheme": "IHE",
+              "code": "",
+              "label": "Devices (DEV): Device Enterprise Communication (DEC)",
+              "basis": "fetched",
+              "url": "https://profiles.ihe.net/DEV/index.html"
+            }
+          ],
+          "onet_products": [
+            "Nursing documentation software",
+            "Medical record charting software",
+            "PointClickCare healthcare software",
+            "Amkai AmkaiCharts",
+            "Medscribbler Enterprise",
+            "QuadraMed Affinity Healthcare Information System"
+          ],
+          "state_of_art": [
+            "Epic ClinDoc",
+            "Oracle Health PowerChart",
+            "PointClickCare"
+          ],
+          "open_tools": [
+            "OpenMRS"
+          ],
+          "benchmarkable": "no: data capture; value is in completeness and ergonomics rather than a computed answer.",
+          "notes": ""
+        },
+        {
+          "id": "health.clinical_record.perioperative_record",
+          "name": "Perioperative and anesthesia record",
+          "definition": "Given a surgical case, capture the anesthesia record (drugs, airway, device-streamed vital signs) and intraoperative events, counts and supplies.",
+          "inputs": "case schedule, anesthesia machine and monitor data, drug administrations, implant and supply scans",
+          "outputs": "time-stamped anesthesia record, intraoperative record, implant log",
+          "crosswalk": [
+            {
+              "scheme": "IHE",
+              "code": "",
+              "label": "Devices (DEV): Device Enterprise Communication (DEC)",
+              "basis": "fetched",
+              "url": "https://profiles.ihe.net/DEV/index.html"
+            }
+          ],
+          "onet_products": [
+            "EDImis Anesthesia Manager",
+            "Picis CareSuite",
+            "Anesthesia machine software",
+            "Supply documentation software",
+            "Surgery workflow communication software"
+          ],
+          "state_of_art": [
+            "Epic OpTime and Anesthesia",
+            "Philips IntelliSpace Critical Care and Anesthesia"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: capture and timing workflow; no reference answer to score.",
+          "notes": ""
+        },
+        {
+          "id": "health.clinical_record.assessment_instruments",
+          "name": "Regulated assessment instrument completion",
+          "definition": "Given clinician observations of a resident or home-care patient, complete a mandated assessment instrument (MDS 3.0, OASIS) and derive its scores and payment groups.",
+          "inputs": "assessment item responses, diagnoses",
+          "outputs": "completed instrument, derived scales, case-mix group, submission file",
+          "crosswalk": [],
+          "onet_products": [
+            "AIGHD OASIS",
+            "PointClickCare healthcare software"
+          ],
+          "state_of_art": [
+            "PointClickCare",
+            "MatrixCare",
+            "WellSky Home Health"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: CMS publishes item specifications and grouper logic, so derived scores and groups have exact answers.",
+          "notes": "No source taxonomy names this; it is the distinct function of the long-term and home care settings."
+        },
+        {
+          "id": "health.clinical_record.speech_to_note",
+          "name": "Clinical dictation and note generation from speech",
+          "definition": "Given clinician dictation or a recorded clinician-patient conversation, produce a transcribed or drafted clinical note in medical vocabulary.",
+          "inputs": "audio of dictation or encounter conversation, note template",
+          "outputs": "transcript, drafted note sections",
+          "crosswalk": [],
+          "onet_products": [
+            "Crescendo Systems DigiScribe-XL",
+            "g-net solutions MTP",
+            "MedQuist DocQment Enterprise Platform",
+            "Voice dictation software",
+            "Cyber Records MediChart Express",
+            "SpectraMedi EasyFlow",
+            "Crescendo Systems Corporation MedRite-XL"
+          ],
+          "state_of_art": [
+            "Microsoft Dragon Copilot",
+            "Abridge",
+            "Nuance Dragon Medical One"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: ACI-Bench and MTS-Dialog pair encounter conversations with reference notes; dictation accuracy is scored by word error rate.",
+          "notes": "General-purpose dictation (Dragon NaturallySpeaking) is handed off; only clinical-vocabulary transcription and note drafting are here."
+        },
+        {
+          "id": "health.clinical_record.concept_extraction",
+          "name": "Clinical text concept extraction",
+          "definition": "Given free-text clinical notes, extract and normalize problems, medications, procedures and their attributes (negation, temporality) to standard codes.",
+          "inputs": "clinical notes",
+          "outputs": "coded concept mentions with attributes and spans",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Amazon Comprehend Medical",
+            "Google Cloud Healthcare Natural Language API"
+          ],
+          "open_tools": [
+            "Apache cTAKES",
+            "MedCAT",
+            "medspaCy"
+          ],
+          "benchmarkable": "yes: n2c2/i2b2 shared tasks (2010 concepts and relations, 2018 medication extraction) give annotated test sets.",
+          "notes": "No product in O*NET does this alone; it underlies coding, registries and cohort selection. General NLP methods belong to science."
+        },
+        {
+          "id": "health.clinical_record.family_history_pedigree",
+          "name": "Family history and pedigree drawing",
+          "definition": "Given relatives and their conditions, record a structured family history and draw a standard pedigree.",
+          "inputs": "relatives, relationships, conditions, ages, genetic test results",
+          "outputs": "structured family history, pedigree diagram in standard nomenclature",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(a)(12)",
+              "label": "Family health history",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            }
+          ],
+          "onet_products": [
+            "Progeny Software Progeny Clinical",
+            "CyrillicSoftware Cyrillic",
+            "Jurek Software Pedigree-Draw",
+            "PedHunter",
+            "PediDraw",
+            "Medgen PED",
+            "Pedigree drawing and management software",
+            "Ftree"
+          ],
+          "state_of_art": [
+            "Progeny Clinical",
+            "CanRisk pedigree editor"
+          ],
+          "open_tools": [
+            "pedigreejs",
+            "kinship2"
+          ],
+          "benchmarkable": "partly: conformance to NSGC pedigree nomenclature is checkable; layout quality is a judgment.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.orders_coordination",
+      "name": "Orders, results and care coordination",
+      "definition": "Given clinician intent, place and track orders for tests and services, route results back to the responsible clinician, and coordinate referrals and multidisciplinary care plans.",
+      "crosswalk": [
+        {
+          "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+          "code": "CP.4",
+          "label": "Manage Orders",
+          "basis": "fetched",
+          "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+        },
+        {
+          "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+          "code": "CP.5",
+          "label": "Manage Results",
+          "basis": "fetched",
+          "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+        },
+        {
+          "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+          "code": "",
+          "label": "Manage Care Coordination and Reporting",
+          "basis": "fetched",
+          "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+        },
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "2.6",
+          "label": "Referral coordination",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "IHE",
+          "code": "",
+          "label": "Patient Care Coordination",
+          "basis": "fetched",
+          "url": "https://profiles.ihe.net/PCC/index.html"
+        }
+      ],
+      "onet_categories": [
+        "Medical software"
+      ],
+      "see_also": [
+        "health.medication",
+        "health.laboratory",
+        "health.imaging"
+      ],
+      "notes": "Split from seed 'Order entry, medication management and clinical decision support': medication orders moved to health.medication (they belong to the medication-use process), decision support became its own capability. Behavioral health and social-care case management sits here as care planning.",
+      "tasks": [
+        {
+          "id": "health.orders_coordination.diagnostic_order_entry",
+          "name": "Diagnostic order entry with order sets",
+          "definition": "Given a clinical indication, place laboratory, imaging and procedure orders from order sets, with required clinical information and appropriateness checks.",
+          "inputs": "patient context, indication, order catalog and order sets",
+          "outputs": "structured orders with priority, indication and appropriateness score",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(a)(2)",
+              "label": "Computerized provider order entry—laboratory",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            },
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(a)(3)",
+              "label": "Computerized provider order entry—diagnostic imaging",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            },
+            {
+              "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+              "code": "CP.4",
+              "label": "Manage Orders",
+              "basis": "fetched",
+              "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+            }
+          ],
+          "onet_products": [
+            "Computerized physician order entry CPOE software",
+            "Mediware Information Systems MediCOE",
+            "Cerner Millennium",
+            "Epic Systems",
+            "Allscripts Sunrise"
+          ],
+          "state_of_art": [
+            "Epic",
+            "Oracle Health Millennium",
+            "MEDITECH Expanse"
+          ],
+          "open_tools": [
+            "OpenMRS",
+            "OpenEMR"
+          ],
+          "benchmarkable": "partly: imaging appropriateness criteria (ACR) give reference ratings for indication-order pairs; order-set content is local.",
+          "notes": ""
+        },
+        {
+          "id": "health.orders_coordination.results_management",
+          "name": "Result routing and acknowledgment",
+          "definition": "Given incoming test results, route each to the responsible clinician, flag abnormal and critical values, and track acknowledgment and follow-up to closure.",
+          "inputs": "results with reference ranges, ordering and care-team assignments",
+          "outputs": "result inbox items, critical-value notifications, follow-up tracking",
+          "crosswalk": [
+            {
+              "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+              "code": "CP.5",
+              "label": "Manage Results",
+              "basis": "fetched",
+              "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+            },
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.10.1",
+              "label": "Transmit person's diagnostic result to healthcare provider",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Test result delivery software"
+          ],
+          "state_of_art": [
+            "Epic In Basket",
+            "Oracle Health Message Center"
+          ],
+          "open_tools": [
+            "OpenEMR"
+          ],
+          "benchmarkable": "partly: missed-follow-up rates can be measured on audited records; no public test set.",
+          "notes": ""
+        },
+        {
+          "id": "health.orders_coordination.referral_management",
+          "name": "Referral and consultation management",
+          "definition": "Given a referral request, select a receiving provider, transmit the referral with supporting information, and track scheduling, consult note return and closure.",
+          "inputs": "referral reason, patient summary, provider directory, payer rules",
+          "outputs": "referral order, transmitted packet, referral status and consult note",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.6",
+              "label": "Referral coordination",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            },
+            {
+              "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+              "code": "CP.4.6",
+              "label": "Manage Orders for Referral",
+              "basis": "fetched",
+              "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Epic Referrals",
+            "ReferralMD"
+          ],
+          "open_tools": [
+            "OpenMRS"
+          ],
+          "benchmarkable": "no: closed-loop tracking is workflow; outcome is completion rate.",
+          "notes": ""
+        },
+        {
+          "id": "health.orders_coordination.care_plans",
+          "name": "Care plan and case management",
+          "definition": "Given assessments and goals from several disciplines, maintain a shared care or treatment plan with interventions, responsible staff and progress, and manage caseloads.",
+          "inputs": "assessments, diagnoses, goals, team roster, service authorizations",
+          "outputs": "care or treatment plan, progress notes against goals, caseload views",
+          "crosswalk": [
+            {
+              "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+              "code": "",
+              "label": "Manage Future Care",
+              "basis": "fetched",
+              "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+            },
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.6",
+              "label": "Referral coordination",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Athena Software Penelope Case Management",
+            "Case management software",
+            "Anasazi Software Assessment and Treatment Plan Systems",
+            "Netsmart Technologies Avatar Clinical Workstation CWS",
+            "Social Solutions ETO",
+            "Social Work Software ClientTouch",
+            "Client caseload management software",
+            "IMA Technologies CaseTrakker",
+            "PM/2 Clinical Planner",
+            "Sigmund Software Sigmund Enterprise Management",
+            "Casamba Smart",
+            "MEDITECH Behavioral Health Clinicals"
+          ],
+          "state_of_art": [
+            "Netsmart myAvatar",
+            "Epic Compass Rose",
+            "Qualifacts CareLogic"
+          ],
+          "open_tools": [
+            "OpenMRS"
+          ],
+          "benchmarkable": "no: planning and tracking workflow; quality of plans is a clinical judgment.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.medication",
+      "name": "Medication management and pharmacy",
+      "definition": "Given a patient and a therapeutic intent, carry the medication-use process from prescribing and checking through pharmacy preparation and dispensing to administration records.",
+      "crosswalk": [
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "2.9",
+          "label": "Prescription and medication management",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+          "code": "",
+          "label": "Manage Medication Orders",
+          "basis": "fetched",
+          "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+        },
+        {
+          "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+          "code": "",
+          "label": "Manage Medication Administration",
+          "basis": "fetched",
+          "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+        },
+        {
+          "scheme": "IHE",
+          "code": "",
+          "label": "Pharmacy (Hospital Medication Workflow; Community Medication Prescription and Dispense)",
+          "basis": "fetched",
+          "url": "https://profiles.ihe.net/PHARM/index.html"
+        }
+      ],
+      "onet_categories": [
+        "Medical software",
+        "Information retrieval or search software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "health.decision_support",
+        "health.orders_coordination"
+      ],
+      "notes": "Merges the medication half of seed 'Order entry, medication management and clinical decision support' with seed 'Pharmacy systems'. Organized by the stages of the medication-use process rather than by who uses the system (prescriber, pharmacist, nurse).",
+      "tasks": [
+        {
+          "id": "health.medication.order_interaction_checking",
+          "name": "Medication order entry with interaction checking",
+          "definition": "Given a proposed medication order and the patient's medications, allergies, conditions and labs, check for interactions, allergies, dose range and duplication and return graded alerts.",
+          "inputs": "proposed order, active medications, allergies, problems, weight, renal function",
+          "outputs": "graded alerts with rationale, dose range verdict",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(a)(1)",
+              "label": "Computerized provider order entry—medications",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            },
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(a)(4)",
+              "label": "Drug-drug, drug-allergy interaction checks for CPOE",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            }
+          ],
+          "onet_products": [
+            "Computerized physician order entry CPOE software",
+            "Drug database software",
+            "Epocrates"
+          ],
+          "state_of_art": [
+            "First Databank MedKnowledge",
+            "Medi-Span",
+            "Lexicomp"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: interaction pairs can be scored against DDInter or the DDI corpus; which alerts are clinically worth firing is contested.",
+          "notes": ""
+        },
+        {
+          "id": "health.medication.e_prescribing",
+          "name": "Electronic prescription transmission",
+          "definition": "Given a signed outpatient prescription, check formulary and benefit, transmit it to a pharmacy and track fill and renewal messages.",
+          "inputs": "prescription, patient pharmacy, payer formulary",
+          "outputs": "transmitted prescription message, formulary alternatives, fill status",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(b)(3)",
+              "label": "Electronic prescribing",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            },
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.9.1",
+              "label": "Transmit or track prescription orders",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Prescription processing software"
+          ],
+          "state_of_art": [
+            "Surescripts network",
+            "DrFirst Rcopia"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: NCPDP SCRIPT conformance is pass/fail through certification test tools; there is no quality ranking.",
+          "notes": ""
+        },
+        {
+          "id": "health.medication.pharmacy_dispensing",
+          "name": "Pharmacy verification and dispensing",
+          "definition": "Given a prescription or inpatient order, verify it clinically, fill and label it, check product identity and record dispensing.",
+          "inputs": "verified order, inventory, product barcodes or images",
+          "outputs": "labeled dispensed product, dispensing record, claim trigger",
+          "crosswalk": [
+            {
+              "scheme": "IHE",
+              "code": "",
+              "label": "Pharmacy: Community Dispense (DIS)",
+              "basis": "fetched",
+              "url": "https://profiles.ihe.net/PHARM/index.html"
+            }
+          ],
+          "onet_products": [
+            "Pharmacy management software",
+            "Pharmaceutical software",
+            "Prescription processing software",
+            "Patient record maintenance software",
+            "Computer records systems"
+          ],
+          "state_of_art": [
+            "Epic Willow",
+            "McKesson EnterpriseRx",
+            "PioneerRx"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: product identification can be scored (NLM Pill Image Recognition Challenge); verification judgment is not.",
+          "notes": ""
+        },
+        {
+          "id": "health.medication.compounding_preparation",
+          "name": "Compounded and radiopharmaceutical dose preparation",
+          "definition": "Given an order for a compounded product (parenteral nutrition, sterile admixture, radiopharmaceutical), compute ingredient amounts, compatibility and decay-corrected activity, and record the preparation.",
+          "inputs": "order, patient weight and labs, ingredient concentrations, compatibility tables, isotope half-life",
+          "outputs": "formulation with volumes, compatibility verdict, decay-corrected dose, preparation record",
+          "crosswalk": [],
+          "onet_products": [
+            "Compounder software",
+            "TPNassist",
+            "Drug compatibility software",
+            "Radiopharmacy inventory databases",
+            "Medovation RadRunner"
+          ],
+          "state_of_art": [
+            "Baxter DoseEdge",
+            "Omnicell IV compounding"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: parenteral nutrition, osmolarity and radioactive-decay calculations have closed-form reference answers.",
+          "notes": ""
+        },
+        {
+          "id": "health.medication.administration_record",
+          "name": "Medication administration recording",
+          "definition": "Given scheduled and as-needed medication orders, present due doses, verify patient and product by barcode at the bedside and record administration.",
+          "inputs": "active orders, patient wristband and product barcodes, pump data",
+          "outputs": "electronic medication administration record, verification exceptions",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.9.2",
+              "label": "Track individual's medication consumption",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Electronic medical administration record eMAR software",
+            "Mediware ClosedLoop Clinical Systems",
+            "Infusion management software"
+          ],
+          "state_of_art": [
+            "Epic MAR with barcode administration",
+            "BD Alaris EMR interoperability"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: verification is a match of scanned identifiers; the work is workflow and integration.",
+          "notes": ""
+        },
+        {
+          "id": "health.medication.dose_calculation",
+          "name": "Dose and infusion rate calculation",
+          "definition": "Given a drug, patient weight or body surface area and a dosing rule, compute dose, concentration and infusion rate.",
+          "inputs": "drug, dosing rule, weight or body surface area, available concentration",
+          "outputs": "dose, volume, infusion rate",
+          "crosswalk": [],
+          "onet_products": [
+            "AetherPalm InfusiCalc",
+            "Med Math",
+            "Medical calculator software",
+            "Skyscape AnesthesiaDrugs"
+          ],
+          "state_of_art": [
+            "BD Alaris Guardrails drug library",
+            "Lexicomp calculators"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: deterministic formulas; MedCalc-Bench includes dosing conversions with reference answers.",
+          "notes": ""
+        },
+        {
+          "id": "health.medication.pharmacogenomic_guidance",
+          "name": "Pharmacogenomic prescribing guidance",
+          "definition": "Given a patient's genotype for pharmacogenes, infer metabolizer phenotype and return drug-specific dosing recommendations.",
+          "inputs": "genotype calls (VCF or star alleles), proposed drug",
+          "outputs": "diplotype, phenotype, guideline recommendation",
+          "crosswalk": [
+            {
+              "scheme": "CPIC guidelines",
+              "code": "",
+              "label": "Clinical Pharmacogenetics Implementation Consortium guidelines",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Epic genomics module with CPIC rules"
+          ],
+          "open_tools": [
+            "PharmCAT"
+          ],
+          "benchmarkable": "yes: CPIC tables are deterministic and GeT-RM reference samples have consensus genotypes.",
+          "notes": ""
+        },
+        {
+          "id": "health.medication.drug_information",
+          "name": "Drug information lookup",
+          "definition": "Given a drug question, retrieve labeled indications, dosing, adverse effects, interactions and toxicology from a curated drug compendium.",
+          "inputs": "drug name or class, question",
+          "outputs": "monograph sections answering the question",
+          "crosswalk": [],
+          "onet_products": [
+            "Epocrates",
+            "Mosby's Drug Consult",
+            "Drug guide software",
+            "Drug reference software",
+            "Healthprolink MedAtlas",
+            "American Association of Critical Care Nurses AACN Medicopeia",
+            "HyperTox"
+          ],
+          "state_of_art": [
+            "Lexicomp",
+            "Micromedex",
+            "Epocrates"
+          ],
+          "open_tools": [
+            "openFDA",
+            "DailyMed"
+          ],
+          "benchmarkable": "partly: question sets over drug labels can be scored, but labels change and answers need curation.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.decision_support",
+      "name": "Clinical decision support",
+      "definition": "Given patient data and clinical knowledge, compute recommendations, risk estimates, alerts or answers that inform a clinician's decision at the point of care.",
+      "crosswalk": [
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "2.3",
+          "label": "Healthcare provider decision support",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+          "code": "(a)(9)",
+          "label": "Clinical decision support",
+          "basis": "fetched",
+          "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+        },
+        {
+          "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+          "code": "(b)(11)",
+          "label": "Decision support interventions",
+          "basis": "fetched",
+          "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+        },
+        {
+          "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+          "code": "CP",
+          "label": "Care Provision",
+          "basis": "fetched",
+          "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+        }
+      ],
+      "onet_categories": [
+        "Medical software",
+        "Information retrieval or search software"
+      ],
+      "see_also": [
+        "health.medication",
+        "science.machine_learning"
+      ],
+      "notes": "Split out of seed 'Order entry, medication management and clinical decision support' because decision support spans every clinical function and has its own benchmarks. Medication-specific checking stays in health.medication.",
+      "tasks": [
+        {
+          "id": "health.decision_support.guideline_reminders",
+          "name": "Guideline-based alerts and reminders",
+          "definition": "Given a patient record and computable guideline logic, determine which recommendations apply and emit reminders or alerts (care gaps, protocol steps).",
+          "inputs": "patient data, computable guideline (for example CQL), trigger event",
+          "outputs": "applicable recommendations, alert cards, care-gap list",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.3.1",
+              "label": "Provide prompts and alerts based according to protocol",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            },
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(b)(11)",
+              "label": "Decision support interventions",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            }
+          ],
+          "onet_products": [
+            "Medical decision support software"
+          ],
+          "state_of_art": [
+            "Epic Best Practice Advisories",
+            "Oracle Health Discern"
+          ],
+          "open_tools": [
+            "CQL engine (cqframework)",
+            "OpenCDS",
+            "CDS Hooks"
+          ],
+          "benchmarkable": "partly: published computable guidelines ship with test patients and expected outputs; clinical value needs trials.",
+          "notes": ""
+        },
+        {
+          "id": "health.decision_support.risk_scores",
+          "name": "Clinical risk score calculation",
+          "definition": "Given patient findings, compute a validated clinical score (for example CHA2DS2-VASc, Wells, MELD, fall risk) and its interpretation.",
+          "inputs": "patient findings and labs required by the score",
+          "outputs": "score value, risk category",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.3.3",
+              "label": "Screen persons by risk or other health status",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Medical calculator software",
+            "Med Math",
+            "Hendrich Falls Risk Model"
+          ],
+          "state_of_art": [
+            "MDCalc",
+            "QxMD Calculate"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: MedCalc-Bench gives patient notes with ground-truth calculator outputs.",
+          "notes": ""
+        },
+        {
+          "id": "health.decision_support.hereditary_risk",
+          "name": "Hereditary cancer risk estimation",
+          "definition": "Given a pedigree with cancer diagnoses and test results, compute mutation carrier probabilities and age-specific cancer risks.",
+          "inputs": "pedigree, cancer diagnoses and ages, genetic test results, hormonal and lifestyle factors",
+          "outputs": "carrier probabilities, lifetime and 10-year risks",
+          "crosswalk": [],
+          "onet_products": [
+            "BRCAPRO",
+            "CancerGene",
+            "Breast Cancer Risk Assessment Tool",
+            "Benetech PRA"
+          ],
+          "state_of_art": [
+            "CanRisk (BOADICEA)",
+            "IBIS (Tyrer-Cuzick)"
+          ],
+          "open_tools": [
+            "BayesMendel",
+            "BCRA (R package)"
+          ],
+          "benchmarkable": "yes: published models give deterministic outputs per pedigree, and calibration can be scored on cohorts.",
+          "notes": ""
+        },
+        {
+          "id": "health.decision_support.deterioration_prediction",
+          "name": "Patient deterioration early warning",
+          "definition": "Given streaming vital signs, labs and notes for an inpatient, predict sepsis, deterioration or mortality risk ahead of the event.",
+          "inputs": "time series of vital signs, labs, medications, demographics",
+          "outputs": "risk score over time, alerts",
+          "crosswalk": [],
+          "onet_products": [
+            "VISICU eICU Program"
+          ],
+          "state_of_art": [
+            "Epic Deterioration Index",
+            "Bayesian Health TREWS",
+            "Rothman Index"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: PhysioNet/CinC 2019 sepsis challenge and MIMIC benchmark tasks provide labeled data and metrics.",
+          "notes": ""
+        },
+        {
+          "id": "health.decision_support.differential_diagnosis",
+          "name": "Differential diagnosis generation",
+          "definition": "Given a patient's findings, return a ranked list of candidate diagnoses with supporting and refuting evidence.",
+          "inputs": "symptoms, signs, test results, demographics",
+          "outputs": "ranked differential diagnosis with evidence",
+          "crosswalk": [],
+          "onet_products": [
+            "Skyscape 5-Minute Clinical Consult"
+          ],
+          "state_of_art": [
+            "Isabel DDx",
+            "VisualDx",
+            "DXplain"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: case collections (NEJM clinicopathological cases, MedQA) score accuracy, but sets are small or exam-style.",
+          "notes": ""
+        },
+        {
+          "id": "health.decision_support.symptom_triage",
+          "name": "Symptom triage and acuity assignment",
+          "definition": "Given a patient's reported symptoms by phone, message or at arrival, assign urgency and the right care setting following a protocol.",
+          "inputs": "reported symptoms, age, history, vital signs if available",
+          "outputs": "acuity level, disposition, care advice",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.3.3",
+              "label": "Screen persons by risk or other health status",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Telephone triage software"
+          ],
+          "state_of_art": [
+            "Schmitt-Thompson protocols",
+            "Emergency Severity Index tools"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: clinical vignette sets (Semigran et al. 2015) score triage accuracy; real-world outcome data are private.",
+          "notes": ""
+        },
+        {
+          "id": "health.decision_support.point_of_care_reference",
+          "name": "Point-of-care clinical reference",
+          "definition": "Given a clinical question during care, retrieve a synthesized, cited answer from curated clinical knowledge.",
+          "inputs": "clinical question, optional patient context",
+          "outputs": "answer with recommendations and citations",
+          "crosswalk": [],
+          "onet_products": [
+            "Skyscape Rosen and Barkin's 5-Minute Emergency Medicine Consult",
+            "PEPID EMS",
+            "PEPID RN Critical Care RNCC",
+            "Informed EMS Field Guide",
+            "Palmtree EMS Field Reference Guide",
+            "Medical Wizards ER Suite",
+            "Medical reference software",
+            "Iterum eMedic",
+            "Online medical databases",
+            "TechOnSoftware HazMatCE Pro",
+            "QPuncture II",
+            "Palmtree Pocket EKG"
+          ],
+          "state_of_art": [
+            "UpToDate",
+            "DynaMed",
+            "OpenEvidence"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: medical question-answer benchmarks (MedQA, PubMedQA) score answer accuracy, not retrieval completeness or currency.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.patient_administration",
+      "name": "Patient administration and scheduling",
+      "definition": "Given people seeking care and the resources that provide it, register and identify patients, schedule their appointments and manage their movement through a facility.",
+      "crosswalk": [
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "2.1",
+          "label": "Identification and registration of persons",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "2.7",
+          "label": "Scheduling and activity planning for healthcare providers",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+          "code": "",
+          "label": "Administration Support",
+          "basis": "fetched",
+          "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+        },
+        {
+          "scheme": "IHE",
+          "code": "",
+          "label": "IT Infrastructure: Patient Administration Management",
+          "basis": "fetched",
+          "url": "https://profiles.ihe.net/ITI/TF/Volume1/index.html"
+        }
+      ],
+      "onet_categories": [
+        "Medical software",
+        "Calendar and scheduling software"
+      ],
+      "see_also": [
+        "health.revenue_cycle"
+      ],
+      "notes": "Was seed 'Practice management, scheduling and patient engagement'. Patient engagement moved to health.remote_care. Billing parts of practice-management suites are in health.revenue_cycle. Practice-management suites are examples, not nodes.",
+      "tasks": [
+        {
+          "id": "health.patient_administration.registration",
+          "name": "Patient registration and demographics",
+          "definition": "Given a person arriving for care, capture demographics, contacts, coverage and consents and create or update the encounter.",
+          "inputs": "identity documents, demographics, insurance cards, consents",
+          "outputs": "patient record, encounter, admission/discharge/transfer messages",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(a)(5)",
+              "label": "Patient demographics and observations",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            },
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.1.2",
+              "label": "Enrol person(s) for health services/clinical care plan",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Admissions, discharge, and transfer ADT software",
+            "Resource and patient management system RPMS patient registration software",
+            "Patient management software",
+            "Kareo Practice Management",
+            "Epic Practice Management"
+          ],
+          "state_of_art": [
+            "Epic Prelude",
+            "Oracle Health Registration"
+          ],
+          "open_tools": [
+            "OpenEMR",
+            "OpenMRS"
+          ],
+          "benchmarkable": "no: data capture workflow.",
+          "notes": ""
+        },
+        {
+          "id": "health.patient_administration.identity_matching",
+          "name": "Patient identity matching",
+          "definition": "Given demographic records from many sources, decide which refer to the same person and maintain an enterprise master patient index.",
+          "inputs": "demographic records, identifiers, biometrics",
+          "outputs": "linked identity clusters, match scores, duplicate worklist",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.1.1",
+              "label": "Verify a person's unique identity",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            },
+            {
+              "scheme": "IHE",
+              "code": "",
+              "label": "IT Infrastructure: Patient Identifier Cross-referencing",
+              "basis": "fetched",
+              "url": "https://profiles.ihe.net/ITI/TF/Volume1/index.html"
+            }
+          ],
+          "onet_products": [
+            "HT Systems PatientSecure",
+            "Siemens Patient Identification Check"
+          ],
+          "state_of_art": [
+            "Verato",
+            "NextGate",
+            "Epic Identity"
+          ],
+          "open_tools": [
+            "OpenCR",
+            "OpenEMPI"
+          ],
+          "benchmarkable": "yes: the ONC Patient Matching Algorithm Challenge dataset has ground-truth links.",
+          "notes": ""
+        },
+        {
+          "id": "health.patient_administration.appointment_scheduling",
+          "name": "Multi-resource appointment scheduling",
+          "definition": "Given requested visits and procedures with clinician, room and equipment constraints, find and book slots, manage waitlists and overbooking.",
+          "inputs": "visit types and durations, provider templates, rooms and equipment, patient preferences",
+          "outputs": "booked appointments, waitlist offers, utilization",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.7",
+              "label": "Scheduling and activity planning for healthcare providers",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Patient scheduling software",
+            "Procedure scheduling software",
+            "MD Synergy Medical Appointment Scheduling",
+            "Resource and patient management system RPMS scheduling software",
+            "Power Diary",
+            "Practice management software PMS",
+            "Veterinary practice management software PMS"
+          ],
+          "state_of_art": [
+            "Epic Cadence",
+            "athenaOne scheduling"
+          ],
+          "open_tools": [
+            "OpenEMR"
+          ],
+          "benchmarkable": "partly: operating-room and clinic scheduling instances can be scored on utilization and wait time; real constraints are local.",
+          "notes": ""
+        },
+        {
+          "id": "health.patient_administration.patient_flow",
+          "name": "Bed management and patient flow",
+          "definition": "Given admissions, transfers, discharges and bed status, assign beds, track patient location and forecast census.",
+          "inputs": "ADT events, bed inventory and status, isolation needs, predicted discharges",
+          "outputs": "bed assignments, tracking board, census forecast",
+          "crosswalk": [],
+          "onet_products": [
+            "StatCom Patient Flow Logistics Enterprise Suite",
+            "Patient tracking software",
+            "Admissions, discharge, and transfer ADT software"
+          ],
+          "state_of_art": [
+            "TeleTracking",
+            "Epic Grand Central"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: length-of-stay and census forecasts can be scored on historical data; assignment quality is local.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.revenue_cycle",
+      "name": "Medical coding, billing and claims",
+      "definition": "Given documented care, assign standard codes, price and edit the claim, exchange eligibility, authorization, claim and remittance transactions with payers.",
+      "crosswalk": [
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "3.5",
+          "label": "Health system financial management",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+          "code": "",
+          "label": "Manage Administrative Transaction Processing",
+          "basis": "fetched",
+          "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+        },
+        {
+          "scheme": "ASC X12 HIPAA transactions",
+          "code": "",
+          "label": "837 claim, 835 remittance, 270/271 eligibility, 278 authorization",
+          "basis": "fetched",
+          "url": "https://x12.org/examples"
+        }
+      ],
+      "onet_categories": [
+        "Medical software",
+        "Categorization or classification software",
+        "Billing and invoicing software",
+        "Expert system software"
+      ],
+      "see_also": [
+        "enterprise.receivables_payables",
+        "govern.insurance"
+      ],
+      "notes": "Was seed 'Medical coding, billing and claims'. General invoicing stays in enterprise; payer-side program administration (Medicaid MMIS, workers' compensation bill review) is handed to govern.",
+      "tasks": [
+        {
+          "id": "health.revenue_cycle.code_assignment",
+          "name": "Diagnosis and procedure code assignment",
+          "definition": "Given clinical documentation for an encounter, assign ICD-10-CM/PCS diagnosis and procedure codes and CPT/HCPCS codes.",
+          "inputs": "encounter documentation, code sets and guidelines",
+          "outputs": "ordered code list with supporting text",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "4.2",
+              "label": "Data coding",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "3M Encoder",
+            "Medical condition coding software",
+            "Medical procedure coding software",
+            "Diagnostic and procedural coding software",
+            "Healthcare common procedure coding system HCPCS",
+            "Information Resource Products Clinical Coding Expert",
+            "Yost Engineering CodeSearch Pro",
+            "Yost Engineering EpiCoder",
+            "American Medical Association CodeManager",
+            "Coding database software",
+            "American Orthotic and Prosthetic Association CodingPro"
+          ],
+          "state_of_art": [
+            "Solventum 360 Encompass",
+            "Optum computer-assisted coding",
+            "Fathom"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: MIMIC-III and MIMIC-IV ICD coding benchmarks score code assignment against gold codes.",
+          "notes": ""
+        },
+        {
+          "id": "health.revenue_cycle.em_level",
+          "name": "Evaluation and management level selection",
+          "definition": "Given an outpatient visit note, select the evaluation and management service level from medical decision making or time.",
+          "inputs": "visit note, time spent, problems, data reviewed, risk",
+          "outputs": "E/M code with rationale",
+          "crosswalk": [],
+          "onet_products": [
+            "StatCoder.com STAT E&M Coder",
+            "e-MDs topsE&M Coder"
+          ],
+          "state_of_art": [
+            "Solventum 360 Encompass",
+            "Epic professional billing coding"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: AMA 2021 guidelines define levels, but coder agreement on audit sets is modest.",
+          "notes": ""
+        },
+        {
+          "id": "health.revenue_cycle.case_mix_grouping",
+          "name": "Inpatient case-mix grouping",
+          "definition": "Given an inpatient stay's codes, demographics and discharge status, assign the diagnosis-related group and its weight.",
+          "inputs": "principal and secondary diagnoses, procedures, age, sex, discharge status",
+          "outputs": "DRG, relative weight, severity subclass",
+          "crosswalk": [],
+          "onet_products": [
+            "DRG grouping software"
+          ],
+          "state_of_art": [
+            "CMS MS-DRG grouper",
+            "3M APR-DRG grouper"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: CMS publishes MS-DRG definitions and grouper software, so the expected group is exact.",
+          "notes": ""
+        },
+        {
+          "id": "health.revenue_cycle.risk_adjustment",
+          "name": "Risk adjustment scoring",
+          "definition": "Given a population's diagnoses and demographics, map to condition categories and compute risk scores for payment or comparison.",
+          "inputs": "member diagnoses, demographics, enrollment",
+          "outputs": "hierarchical condition categories, risk scores",
+          "crosswalk": [],
+          "onet_products": [
+            "DxCG RiskSmart"
+          ],
+          "state_of_art": [
+            "CMS-HCC model software",
+            "Cotiviti DxCG"
+          ],
+          "open_tools": [
+            "hccpy"
+          ],
+          "benchmarkable": "yes: CMS publishes model coefficients and reference software.",
+          "notes": ""
+        },
+        {
+          "id": "health.revenue_cycle.claim_editing",
+          "name": "Claim edit checking",
+          "definition": "Given a draft claim, apply coding edits, medical-necessity and coverage rules and payer requirements, and return errors before or during adjudication.",
+          "inputs": "claim lines with codes and modifiers, coverage policies, edit tables",
+          "outputs": "edit failures with reasons, advance beneficiary notice flags, corrected claim",
+          "crosswalk": [],
+          "onet_products": [
+            "Yost Engineering ClaimScrub",
+            "Yost Engineering ABN Assistant",
+            "Reimbursement screening software",
+            "Allscripts Payerpath"
+          ],
+          "state_of_art": [
+            "Waystar",
+            "Experian Health ClaimSource"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: CMS National Correct Coding Initiative edit tables and coverage determinations give deterministic expected edits.",
+          "notes": ""
+        },
+        {
+          "id": "health.revenue_cycle.claim_submission_remittance",
+          "name": "Claim submission and remittance posting",
+          "definition": "Given coded and priced encounters, produce and submit claims, then reconcile payer remittances and denials to patient accounts.",
+          "inputs": "coded encounters, charges, payer enrollment, remittance files",
+          "outputs": "X12 837 claims, posted payments and adjustments, denial worklist, patient statements",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "3.5",
+              "label": "Health system financial management",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Medical billing software",
+            "Patient billing software",
+            "EZClaim medical billing software",
+            "athenahealth athenaCollector",
+            "Healthpac Medical Billing",
+            "Cortex Medical Management Systems Cortex Medical Billing",
+            "TELCOR Billing Information System",
+            "e-MDs Bill",
+            "Emdeon HealthPro",
+            "Dental billing software",
+            "Kareo Practice Management",
+            "Wisconsin Physicians Service Insurance CMS Secure Net Access Portal C-SNAP"
+          ],
+          "state_of_art": [
+            "Epic Resolute",
+            "athenaOne",
+            "Waystar"
+          ],
+          "open_tools": [
+            "OpenEMR",
+            "pyx12"
+          ],
+          "benchmarkable": "partly: X12 syntax and implementation-guide validation is pass/fail; denial outcomes depend on payers.",
+          "notes": ""
+        },
+        {
+          "id": "health.revenue_cycle.eligibility_authorization",
+          "name": "Eligibility and prior authorization",
+          "definition": "Given a patient's coverage and planned service, check eligibility and benefits and request and track prior authorization.",
+          "inputs": "coverage identifiers, planned service codes, clinical justification",
+          "outputs": "eligibility and benefit response, authorization request and decision",
+          "crosswalk": [],
+          "onet_products": [
+            "NaviMedix NaviNet",
+            "NaviNet Open"
+          ],
+          "state_of_art": [
+            "Availity",
+            "Change Healthcare eligibility"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: transaction conformance is checkable; authorization decisions are payer-specific.",
+          "notes": ""
+        },
+        {
+          "id": "health.revenue_cycle.fee_schedule_pricing",
+          "name": "Fee schedule pricing",
+          "definition": "Given service codes and a locality, compute allowed amounts from relative value units, conversion factors and payer fee schedules.",
+          "inputs": "service codes, modifiers, locality, fee schedule",
+          "outputs": "expected allowed amount per line",
+          "crosswalk": [],
+          "onet_products": [
+            "Relative Values for Physicians"
+          ],
+          "state_of_art": [
+            "Optum EncoderPro fee data"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the Medicare physician fee schedule (RVUs, geographic indices, conversion factor) gives exact answers.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.imaging",
+      "name": "Medical imaging management and analysis",
+      "definition": "Given imaging orders and the images acquired for them, schedule and track exams, reconstruct, store, display, analyse and report on medical images across modalities.",
+      "crosswalk": [
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "2.10",
+          "label": "Laboratory and diagnostics imaging management",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "IHE",
+          "code": "",
+          "label": "Radiology: Scheduled Workflow",
+          "basis": "fetched",
+          "url": "https://profiles.ihe.net/RAD/index.html"
+        },
+        {
+          "scheme": "DICOM",
+          "code": "",
+          "label": "Storage, Query/Retrieve, Modality Worklist service classes",
+          "basis": "fetched",
+          "url": "https://dicom.nema.org/medical/dicom/current/output/chtml/part04/ps3.4.html"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "10010405.10010444.10010449",
+          "label": "Applied computing > Life and medical sciences > Health informatics",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Medical software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "health.therapy_planning",
+        "science.visualization_imaging",
+        "media.raster_imaging"
+      ],
+      "notes": "Was seed 'Medical imaging acquisition, archiving and analysis'. Kept as one capability with workflow, archive, viewing, reporting, reconstruction and three analysis tasks. Dental, ophthalmic and nuclear medicine imaging are examples of the same tasks. Whole-slide pathology images are in health.laboratory.",
+      "tasks": [
+        {
+          "id": "health.imaging.imaging_workflow",
+          "name": "Imaging exam scheduling and worklists",
+          "definition": "Given imaging orders, protocol and schedule exams, publish modality worklists and track exam status from arrival to report.",
+          "inputs": "imaging orders, protocols, modality schedules",
+          "outputs": "scheduled exams, protocol assignments, modality worklist entries, performed procedure steps",
+          "crosswalk": [
+            {
+              "scheme": "IHE",
+              "code": "",
+              "label": "Radiology: Scheduled Workflow",
+              "basis": "fetched",
+              "url": "https://profiles.ihe.net/RAD/index.html"
+            },
+            {
+              "scheme": "DICOM",
+              "code": "",
+              "label": "Modality Worklist and Modality Performed Procedure Step",
+              "basis": "fetched",
+              "url": "https://dicom.nema.org/medical/dicom/current/output/chtml/part04/ps3.4.html"
+            }
+          ],
+          "onet_products": [
+            "Radiology information systems (RIS)",
+            "Merge Healthcare Merge RIS",
+            "McKesson Radiology Manager",
+            "Advanced Data Systems MedicsRis",
+            "medQ Q/ris",
+            "Avreo Radiology Workflow Solutions",
+            "Digital Imaging Communications in Medicine DICOM software/modality management software",
+            "Information management subsystem software"
+          ],
+          "state_of_art": [
+            "Epic Radiant",
+            "Sectra RIS"
+          ],
+          "open_tools": [
+            "Orthanc",
+            "dcm4chee"
+          ],
+          "benchmarkable": "partly: DICOM worklist conformance is testable and protocol selection from order text can be scored on labeled sets.",
+          "notes": ""
+        },
+        {
+          "id": "health.imaging.archive_exchange",
+          "name": "Image archiving and exchange",
+          "definition": "Given images from modalities, store, index, retrieve and share them across sites and readers, including teleradiology.",
+          "inputs": "DICOM objects, study metadata, routing rules",
+          "outputs": "archived studies, query/retrieve results, shared studies",
+          "crosswalk": [
+            {
+              "scheme": "DICOM",
+              "code": "",
+              "label": "Storage and Query/Retrieve service classes",
+              "basis": "fetched",
+              "url": "https://dicom.nema.org/medical/dicom/current/output/chtml/part04/ps3.4.html"
+            },
+            {
+              "scheme": "IHE",
+              "code": "",
+              "label": "Radiology: Cross-enterprise Document Sharing for Imaging",
+              "basis": "fetched",
+              "url": "https://profiles.ihe.net/RAD/index.html"
+            }
+          ],
+          "onet_products": [
+            "Hosted PACS Solutions",
+            "Fujifilm Synapse",
+            "RamSoft PowerServer RIS/PACS",
+            "Teleradiology systems",
+            "Internet or intranet image distribution software",
+            "Digital Imaging Communications in Medicine DICOM medical imaging software",
+            "Digital Imaging Communications in Medicine DICOM-compatible image acquisition and integration software products",
+            "mPlexus DICOM RadiX",
+            "Siemens SIENET Sky",
+            "Infinite Radiology Opal-RAD",
+            "Dental digital radiology software"
+          ],
+          "state_of_art": [
+            "Sectra PACS",
+            "Fujifilm Synapse",
+            "GE Centricity PACS"
+          ],
+          "open_tools": [
+            "Orthanc",
+            "dcm4chee",
+            "DCMTK"
+          ],
+          "benchmarkable": "partly: DICOM and IHE conformance is testable; throughput and availability have no shared benchmark.",
+          "notes": ""
+        },
+        {
+          "id": "health.imaging.diagnostic_viewing",
+          "name": "Diagnostic image viewing and 3D visualization",
+          "definition": "Given a study, display it with hanging protocols, measurement tools, multiplanar reformats, volume rendering and fused overlays for reading.",
+          "inputs": "image series, prior studies, hanging protocols",
+          "outputs": "rendered views, measurements, key images",
+          "crosswalk": [],
+          "onet_products": [
+            "Diagnostic image review software",
+            "Virtual reality computed tomography CT imaging software",
+            "Dental imaging software",
+            "Dental intra-oral imaging software",
+            "Ophthalmic imaging software",
+            "Henry Schein DentalVision Professional",
+            "ToothPics software",
+            "Biomedical Imaging Resource Analyze",
+            "Gendex Dental Systems VixWin PRO",
+            "DentalEye"
+          ],
+          "state_of_art": [
+            "Sectra IDS7",
+            "Visage 7",
+            "Philips IntelliSpace Portal"
+          ],
+          "open_tools": [
+            "OHIF Viewer",
+            "Weasis",
+            "3D Slicer",
+            "Horos"
+          ],
+          "benchmarkable": "no: display quality and reading ergonomics are judged by readers.",
+          "notes": ""
+        },
+        {
+          "id": "health.imaging.radiology_reporting",
+          "name": "Imaging report creation",
+          "definition": "Given an imaging study and reader findings, produce a structured or narrative report with measurements and recommendations.",
+          "inputs": "study, reader findings or dictation, report templates, prior reports",
+          "outputs": "signed report, structured findings, follow-up recommendations",
+          "crosswalk": [
+            {
+              "scheme": "DICOM",
+              "code": "",
+              "label": "Structured Reporting",
+              "basis": "fetched",
+              "url": "https://dicom.nema.org/medical/dicom/current/output/chtml/part03/ps3.3.html"
+            }
+          ],
+          "onet_products": [
+            "Structured data entry software",
+            "GE Healthcare ViewPoint for Radiology",
+            "GE Healthcare ViewPoint Solutions"
+          ],
+          "state_of_art": [
+            "Nuance PowerScribe One",
+            "Rad AI Reporting"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: report generation benchmarks (MIMIC-CXR, CheXpert labels) score clinical findings, though the metrics are contested.",
+          "notes": ""
+        },
+        {
+          "id": "health.imaging.image_reconstruction",
+          "name": "Tomographic image reconstruction",
+          "definition": "Given raw scanner data (MR k-space, CT sinograms, PET/SPECT counts), reconstruct images and correct motion and artifacts.",
+          "inputs": "raw acquisition data, scanner geometry, coil sensitivities",
+          "outputs": "reconstructed image volumes",
+          "crosswalk": [],
+          "onet_products": [
+            "Medical image processing software",
+            "Motion correction software",
+            "Gamma camera software"
+          ],
+          "state_of_art": [
+            "GE AIR Recon DL",
+            "Siemens Deep Resolve",
+            "Philips SmartSpeed"
+          ],
+          "open_tools": [
+            "BART",
+            "Gadgetron",
+            "TIGRE",
+            "STIR",
+            "CASToR"
+          ],
+          "benchmarkable": "yes: fastMRI and the AAPM low-dose CT challenge provide raw data with reference images.",
+          "notes": ""
+        },
+        {
+          "id": "health.imaging.segmentation",
+          "name": "Anatomy and lesion segmentation",
+          "definition": "Given an image volume, delineate organs, structures and lesions and compute volumes and quantitative measures.",
+          "inputs": "image volume, target structures",
+          "outputs": "label masks, volumes, quantitative measures",
+          "crosswalk": [],
+          "onet_products": [
+            "Computer aided image analysis software",
+            "MIM Software MIMneuro",
+            "MIM Software MIMcardiac"
+          ],
+          "state_of_art": [
+            "Siemens AI-Rad Companion",
+            "Brainlab Elements",
+            "Circle cvi42"
+          ],
+          "open_tools": [
+            "nnU-Net",
+            "TotalSegmentator",
+            "MONAI",
+            "3D Slicer",
+            "ITK-SNAP",
+            "FreeSurfer"
+          ],
+          "benchmarkable": "yes: Medical Segmentation Decathlon, BraTS and KiTS score masks against expert labels.",
+          "notes": ""
+        },
+        {
+          "id": "health.imaging.finding_detection",
+          "name": "Imaging finding detection and classification",
+          "definition": "Given an image or study, detect and classify findings such as nodules, masses, fractures, hemorrhage or retinopathy.",
+          "inputs": "images, optional priors and clinical context",
+          "outputs": "finding locations, classes and probabilities, triage flags",
+          "crosswalk": [],
+          "onet_products": [
+            "Computer aided image analysis software"
+          ],
+          "state_of_art": [
+            "Lunit INSIGHT",
+            "Aidoc",
+            "iCAD ProFound AI",
+            "IDx-DR"
+          ],
+          "open_tools": [
+            "MONAI"
+          ],
+          "benchmarkable": "yes: LUNA16, CBIS-DDSM, the RSNA challenges and CheXpert give labeled test sets.",
+          "notes": ""
+        },
+        {
+          "id": "health.imaging.registration_fusion",
+          "name": "Multimodal image registration",
+          "definition": "Given two or more image volumes (different modalities or times), compute the spatial transform that aligns them for fusion or comparison.",
+          "inputs": "fixed and moving volumes, optional landmarks or masks",
+          "outputs": "transform, resampled fused volume",
+          "crosswalk": [
+            {
+              "scheme": "DICOM",
+              "code": "",
+              "label": "Spatial Registration",
+              "basis": "fetched",
+              "url": "https://dicom.nema.org/medical/dicom/current/output/chtml/part03/ps3.3.html"
+            }
+          ],
+          "onet_products": [
+            "MIM Software MIMfusion"
+          ],
+          "state_of_art": [
+            "MIM Maestro",
+            "Varian Velocity"
+          ],
+          "open_tools": [
+            "elastix",
+            "ANTs",
+            "3D Slicer"
+          ],
+          "benchmarkable": "yes: Learn2Reg challenge datasets score registration with landmarks and overlap.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.physiological_signals",
+      "name": "Physiological signal monitoring and diagnostics",
+      "definition": "Given recordings of a patient's electrical and physiological signals, monitor them in real time or analyse them to detect events and support a diagnostic interpretation.",
+      "crosswalk": [
+        {
+          "scheme": "IHE",
+          "code": "",
+          "label": "Devices (DEV)",
+          "basis": "fetched",
+          "url": "https://profiles.ihe.net/DEV/index.html"
+        },
+        {
+          "scheme": "IHE",
+          "code": "",
+          "label": "Cardiology",
+          "basis": "fetched",
+          "url": "https://profiles.ihe.net/CARD/index.html"
+        },
+        {
+          "scheme": "DICOM",
+          "code": "",
+          "label": "Waveform objects (ECG)",
+          "basis": "fetched",
+          "url": "https://dicom.nema.org/medical/dicom/current/output/chtml/part03/ps3.3.html"
+        },
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "2.10.3",
+          "label": "Capture diagnostic results from digital devices",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        }
+      ],
+      "onet_categories": [
+        "Medical software"
+      ],
+      "see_also": [
+        "science.signal_time_series",
+        "health.remote_care"
+      ],
+      "notes": "New capability; no seed covered neurodiagnostic, cardiac and sleep signal analysis, which O*NET lists for neurodiagnostic and cardiovascular technologists. Research data acquisition (LabChart) is handed to science.",
+      "tasks": [
+        {
+          "id": "health.physiological_signals.ecg_interpretation",
+          "name": "Resting electrocardiogram interpretation",
+          "definition": "Given a 12-lead ECG, measure intervals and axes and produce a diagnostic statement.",
+          "inputs": "12-lead ECG waveforms, age, sex",
+          "outputs": "measurements, rhythm and morphology statements",
+          "crosswalk": [
+            {
+              "scheme": "IHE",
+              "code": "",
+              "label": "Cardiology: Resting ECG Workflow",
+              "basis": "fetched",
+              "url": "https://profiles.ihe.net/CARD/index.html"
+            }
+          ],
+          "onet_products": [
+            "Visual electro diagnostic software"
+          ],
+          "state_of_art": [
+            "GE MUSE with 12SL",
+            "Philips DXL algorithm"
+          ],
+          "open_tools": [
+            "NeuroKit2",
+            "WFDB"
+          ],
+          "benchmarkable": "yes: PTB-XL and the PhysioNet/CinC 2020-2021 challenges give labeled 12-lead ECGs.",
+          "notes": ""
+        },
+        {
+          "id": "health.physiological_signals.ambulatory_ecg",
+          "name": "Ambulatory ECG arrhythmia analysis",
+          "definition": "Given a multi-day ambulatory or telemetry ECG, detect and classify beats and arrhythmia episodes and summarize burden.",
+          "inputs": "long-term ECG recording",
+          "outputs": "beat labels, arrhythmia episodes, burden summary",
+          "crosswalk": [],
+          "onet_products": [
+            "Smart Digital Holter Monitor",
+            "Telemetry software"
+          ],
+          "state_of_art": [
+            "iRhythm Zio",
+            "Philips Holter Analysis"
+          ],
+          "open_tools": [
+            "WFDB",
+            "NeuroKit2"
+          ],
+          "benchmarkable": "yes: MIT-BIH Arrhythmia Database with ANSI/AAMI EC57 evaluation.",
+          "notes": ""
+        },
+        {
+          "id": "health.physiological_signals.eeg_review",
+          "name": "Electroencephalogram review and seizure detection",
+          "definition": "Given an EEG recording, detect spikes, seizures and other patterns and support the neurophysiologist's report.",
+          "inputs": "multichannel EEG, video, montage",
+          "outputs": "event annotations, trends, report",
+          "crosswalk": [],
+          "onet_products": [
+            "BESA EEGFocus",
+            "EEG Portaview",
+            "Natus NeuroWorks",
+            "Neurofax SpikeDetector",
+            "Cadwell Laboratories Easy"
+          ],
+          "state_of_art": [
+            "Persyst",
+            "Natus NeuroWorks"
+          ],
+          "open_tools": [
+            "MNE-Python",
+            "EDFbrowser",
+            "EEGLAB"
+          ],
+          "benchmarkable": "yes: the TUH EEG Seizure Corpus and CHB-MIT have expert annotations.",
+          "notes": ""
+        },
+        {
+          "id": "health.physiological_signals.sleep_scoring",
+          "name": "Polysomnography sleep staging and event scoring",
+          "definition": "Given an overnight polysomnogram, stage sleep in epochs and score apneas, hypopneas, arousals and limb movements.",
+          "inputs": "EEG, EOG, EMG, airflow, effort, oximetry signals",
+          "outputs": "hypnogram, event list, indices such as apnea-hypopnea index",
+          "crosswalk": [],
+          "onet_products": [
+            "Sleep analysis software",
+            "Neurotronics Polysmith"
+          ],
+          "state_of_art": [
+            "Compumedics Profusion",
+            "Natus SleepWorks",
+            "EnsoData EnsoSleep"
+          ],
+          "open_tools": [
+            "YASA"
+          ],
+          "benchmarkable": "yes: Sleep-EDF and SHHS provide AASM-scored recordings.",
+          "notes": ""
+        },
+        {
+          "id": "health.physiological_signals.emg_nerve_conduction",
+          "name": "Electromyography and nerve conduction analysis",
+          "definition": "Given needle EMG and nerve conduction recordings, measure latencies, amplitudes and velocities and characterize motor unit potentials.",
+          "inputs": "evoked responses, EMG signals, stimulation sites and distances",
+          "outputs": "conduction measurements, motor unit analysis, interpretation",
+          "crosswalk": [],
+          "onet_products": [
+            "Electromyograph analysis software",
+            "Cadwell Laboratories Easy"
+          ],
+          "state_of_art": [
+            "Natus Synergy",
+            "Cadwell Sierra Summit"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: measurements can be checked against normative tables; few public annotated recordings.",
+          "notes": ""
+        },
+        {
+          "id": "health.physiological_signals.evoked_potentials",
+          "name": "Evoked potential averaging and peak marking",
+          "definition": "Given repeated stimulus-locked recordings (auditory brainstem, visual, somatosensory), average them and mark component latencies.",
+          "inputs": "stimulus-locked EEG epochs, stimulus parameters",
+          "outputs": "averaged waveform, peak latencies and amplitudes",
+          "crosswalk": [],
+          "onet_products": [
+            "GN Otometrics CHARTR EP"
+          ],
+          "state_of_art": [
+            "Natus Bio-logic Navigator Pro",
+            "Interacoustics Eclipse"
+          ],
+          "open_tools": [
+            "MNE-Python"
+          ],
+          "benchmarkable": "partly: peak marking can be compared with expert marks; few public sets.",
+          "notes": ""
+        },
+        {
+          "id": "health.physiological_signals.bedside_monitoring",
+          "name": "Bedside monitoring and alarm management",
+          "definition": "Given continuous multiparameter vital signs from bedside monitors, display them centrally, raise and route alarms and suppress false ones.",
+          "inputs": "ECG, SpO2, blood pressure, respiration streams, alarm limits",
+          "outputs": "central station views, prioritized alarms, alarm notifications",
+          "crosswalk": [
+            {
+              "scheme": "IHE",
+              "code": "",
+              "label": "Devices (DEV): Alert Communication Management (ACM)",
+              "basis": "fetched",
+              "url": "https://profiles.ihe.net/DEV/index.html"
+            }
+          ],
+          "onet_products": [
+            "Telemetry software",
+            "Patient monitoring systems",
+            "VISICU eICU Program"
+          ],
+          "state_of_art": [
+            "Philips IntelliVue",
+            "GE CARESCAPE"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the PhysioNet/CinC 2015 challenge scores false-alarm reduction on labeled ICU alarms.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.laboratory",
+      "name": "Clinical laboratory and pathology",
+      "definition": "Given orders for tests on patient specimens, track specimens, capture and verify analyzer results, run quality control and blood-bank logic, and report anatomic, microbiology and genetic findings.",
+      "crosswalk": [
+        {
+          "scheme": "IHE",
+          "code": "",
+          "label": "Pathology and Laboratory Medicine: Laboratory Testing Workflow",
+          "basis": "fetched",
+          "url": "https://profiles.ihe.net/PaLM/index.html"
+        },
+        {
+          "scheme": "IHE",
+          "code": "",
+          "label": "Pathology and Laboratory Medicine: Laboratory Analytical Workflow",
+          "basis": "fetched",
+          "url": "https://profiles.ihe.net/PaLM/index.html"
+        },
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "2.10.4",
+          "label": "Track biological specimens",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+          "code": "(f)(3)",
+          "label": "Transmission to public health agencies - reportable laboratory tests and values/results",
+          "basis": "fetched",
+          "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+        }
+      ],
+      "onet_categories": [
+        "Medical software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "science.lab_informatics",
+        "health.imaging"
+      ],
+      "notes": "Was seed 'Clinical laboratory and pathology information systems'. Research and manufacturing LIMS stay in science and produce. Whole-slide and karyotype image analysis sit here because pathology workflows and benchmarks are distinct from radiology. Clinical variant interpretation is here; sequence analysis is science.",
+      "tasks": [
+        {
+          "id": "health.laboratory.specimen_tracking",
+          "name": "Specimen collection and tracking",
+          "definition": "Given lab orders, generate collection lists and labels, then track each specimen through transport, accessioning and storage.",
+          "inputs": "orders, patient location, container rules",
+          "outputs": "collection lists, labels, specimen chain-of-custody events",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.10.4",
+              "label": "Track biological specimens",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Specimen tracking software",
+            "Iatric Systems MobiLab",
+            "McKesson Horizon MobileCare Phlebotomy",
+            "Sunquest Information Systems Sunquest Collection Manager",
+            "Niceware International LabelClinic CT",
+            "Test routing software"
+          ],
+          "state_of_art": [
+            "Epic Beaker",
+            "Sunquest Collection Manager"
+          ],
+          "open_tools": [
+            "OpenELIS Global"
+          ],
+          "benchmarkable": "no: logistics workflow.",
+          "notes": ""
+        },
+        {
+          "id": "health.laboratory.result_verification",
+          "name": "Result capture and autoverification",
+          "definition": "Given analyzer results, capture them through instrument interfaces and apply delta, range and consistency rules to release or hold each result.",
+          "inputs": "analyzer outputs, reference ranges, prior results, rules",
+          "outputs": "verified results, held results with reasons",
+          "crosswalk": [
+            {
+              "scheme": "IHE",
+              "code": "",
+              "label": "Pathology and Laboratory Medicine: Laboratory Analytical Workflow",
+              "basis": "fetched",
+              "url": "https://profiles.ihe.net/PaLM/index.html"
+            }
+          ],
+          "onet_products": [
+            "Laboratory information system LIS",
+            "Sunquest Information Systems Sunquest Laboratory",
+            "Orchard Software Orchard Harvest LIS",
+            "SCC Soft Computer SoftLab",
+            "Cerner Millennium PathNet",
+            "EpicLab Laboratory Information System",
+            "Antek HealthWare LabDAQ",
+            "Medical system integration software",
+            "Hematology laboratory workflow management software",
+            "Commercial plate reader software",
+            "Psyche Systems LabWeb",
+            "Triple G ULTRA Laboratory Information System"
+          ],
+          "state_of_art": [
+            "Epic Beaker",
+            "Sunquest Laboratory",
+            "Data Innovations Instrument Manager"
+          ],
+          "open_tools": [
+            "OpenELIS Global"
+          ],
+          "benchmarkable": "partly: rules can be scored on historical results with technologist decisions; no public set.",
+          "notes": ""
+        },
+        {
+          "id": "health.laboratory.quality_control",
+          "name": "Analytical quality control",
+          "definition": "Given control-material results over time, apply multirule quality control and flag runs to reject.",
+          "inputs": "control results, target means and standard deviations, rule set",
+          "outputs": "accept/reject decisions, Levey-Jennings charts, sigma metrics",
+          "crosswalk": [],
+          "onet_products": [
+            "Quality control software"
+          ],
+          "state_of_art": [
+            "Bio-Rad Unity Real Time"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: Westgard multirule decisions are deterministic for a given control series.",
+          "notes": ""
+        },
+        {
+          "id": "health.laboratory.transfusion",
+          "name": "Blood bank, transfusion and donor management",
+          "definition": "Given donors, blood products and recipients, determine donor eligibility, label and track units, and select compatible products for transfusion.",
+          "inputs": "donor history and tests, unit labels, recipient type and antibody screen",
+          "outputs": "eligibility decisions, ISBT 128 labels, crossmatch-compatible unit selection, traceability",
+          "crosswalk": [
+            {
+              "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+              "code": "CP.4.5",
+              "label": "Manage Orders for Blood Products and Other Biologics",
+              "basis": "fetched",
+              "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+            }
+          ],
+          "onet_products": [
+            "Blood bank information systems",
+            "Blood Bank Computer Systems Blood Bank Control System",
+            "Cerner Millennium PathNet Blood Bank Transfusion",
+            "Wyndgate Technologies SafeTrace",
+            "SCC Soft Computer SoftBank",
+            "Mediware Information Systems HCLL Transfusion",
+            "Sunquest Information Systems Sunquest Transfusion Manager",
+            "Donor management system software",
+            "Wyndgate Technologies ElDorado Donor",
+            "SCC Soft Computer SoftDonor",
+            "Haemonetics Symphony Suite",
+            "MEDITECH Blood Bank"
+          ],
+          "state_of_art": [
+            "Haemonetics SafeTrace Tx",
+            "Haemonetics ElDorado Donor"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: ABO/Rh and antigen compatibility logic and ISBT 128 labeling are deterministic; inventory policy is local.",
+          "notes": ""
+        },
+        {
+          "id": "health.laboratory.anatomic_pathology",
+          "name": "Anatomic pathology case reporting",
+          "definition": "Given surgical, cytology or autopsy specimens, accession the case, record gross and microscopic findings and issue a synoptic report.",
+          "inputs": "specimens, clinical history, gross description, microscopic findings",
+          "outputs": "signed pathology report with synoptic cancer elements",
+          "crosswalk": [],
+          "onet_products": [
+            "Anatomic pathology software",
+            "Cerner CoPathPlus",
+            "Sunquest Information Systems Sunquest CoPathPlus",
+            "Aspyra CyberPATH",
+            "Elekta Impac Software PowerPath",
+            "NetSoft IntelliPath",
+            "Novovision NovoPath",
+            "Psyche Systems WindoPath",
+            "SCC Soft Computer SoftPath",
+            "MEDITECH Anatomical Pathology",
+            "PathLogix",
+            "GE Healthcare Centricity Laboratory Anatomic Pathology/Cytology"
+          ],
+          "state_of_art": [
+            "Epic Beaker AP",
+            "Sunquest CoPathPlus"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: completeness against CAP cancer protocols is checkable and synoptic extraction from free text can be scored.",
+          "notes": ""
+        },
+        {
+          "id": "health.laboratory.slide_image_analysis",
+          "name": "Microscopy and whole-slide image analysis",
+          "definition": "Given digitized slides or microscope images, detect, count and classify cells and tissue regions, or arrange chromosomes into a karyotype.",
+          "inputs": "whole-slide or microscope images, stain, task",
+          "outputs": "region and cell annotations, scores, karyotype",
+          "crosswalk": [
+            {
+              "scheme": "DICOM",
+              "code": "",
+              "label": "VL Whole Slide Microscopy Image IOD",
+              "basis": "fetched",
+              "url": "https://dicom.nema.org/medical/dicom/current/output/chtml/part03/ps3.3.html"
+            }
+          ],
+          "onet_products": [
+            "Microscopic image capturing software",
+            "Genetix CytoVision",
+            "Cell Bioscience Automated Image Capture",
+            "Medical digital imaging software",
+            "Image capture software"
+          ],
+          "state_of_art": [
+            "Paige",
+            "PathAI",
+            "Leica Aperio",
+            "Leica CytoVision"
+          ],
+          "open_tools": [
+            "QuPath",
+            "OpenSlide",
+            "ASAP",
+            "Cytomine"
+          ],
+          "benchmarkable": "yes: CAMELYON16/17 and PANDA give labeled slides and leaderboards.",
+          "notes": ""
+        },
+        {
+          "id": "health.laboratory.microbiology",
+          "name": "Microbiology and susceptibility reporting",
+          "definition": "Given culture workups and antimicrobial susceptibility measurements, identify organisms, interpret susceptibilities against breakpoints and produce reports and antibiograms.",
+          "inputs": "organism identifications, MIC or zone diameters, breakpoint tables",
+          "outputs": "susceptible/intermediate/resistant interpretations, cumulative antibiogram",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(f)(6)",
+              "label": "Transmission to public health agencies - antimicrobial use and resistance reporting",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            }
+          ],
+          "onet_products": [
+            "MEDITECH Laboratory and Microbiology",
+            "BtB Software Mycobacteriology Lab",
+            "Computer Service & Support CLS-2000 Laboratory System"
+          ],
+          "state_of_art": [
+            "Epic Beaker microbiology",
+            "bioMérieux VITEK 2 Advanced Expert System"
+          ],
+          "open_tools": [
+            "AMR (R package)"
+          ],
+          "benchmarkable": "yes: CLSI and EUCAST breakpoint interpretation is deterministic given MIC values.",
+          "notes": ""
+        },
+        {
+          "id": "health.laboratory.variant_interpretation",
+          "name": "Clinical variant interpretation",
+          "definition": "Given variants found in a patient's genetic test, classify each for pathogenicity under ACMG/AMP criteria and draft the clinical report.",
+          "inputs": "annotated variant calls, phenotype, family data",
+          "outputs": "variant classifications with evidence codes, clinical report",
+          "crosswalk": [
+            {
+              "scheme": "ACMG/AMP variant classification guidelines",
+              "code": "",
+              "label": "Standards and guidelines for the interpretation of sequence variants",
+              "basis": "fetched",
+              "url": "https://pubmed.ncbi.nlm.nih.gov/25741868/"
+            }
+          ],
+          "onet_products": [
+            "Genial Genetics Shire"
+          ],
+          "state_of_art": [
+            "Franklin",
+            "Varsome",
+            "Illumina Emedgene"
+          ],
+          "open_tools": [
+            "InterVar"
+          ],
+          "benchmarkable": "partly: ClinVar expert-panel classifications serve as reference, with known circularity.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.therapy_planning",
+      "name": "Radiation and procedure planning",
+      "definition": "Given a patient's images and a treatment goal, plan and verify a radiation, surgical, dental or orthotic intervention specific to that patient.",
+      "crosswalk": [
+        {
+          "scheme": "DICOM",
+          "code": "",
+          "label": "Radiotherapy objects (RT Structure Set, RT Plan, RT Dose)",
+          "basis": "fetched",
+          "url": "https://dicom.nema.org/medical/dicom/current/output/chtml/part03/ps3.3.html"
+        },
+        {
+          "scheme": "IHE",
+          "code": "",
+          "label": "Radiation Oncology",
+          "basis": "fetched",
+          "url": "https://profiles.ihe.net/RO/index.html"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "10010405.10010444.10010449",
+          "label": "Applied computing > Life and medical sciences > Health informatics",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Medical software"
+      ],
+      "see_also": [
+        "simulate.nuclear_radiation",
+        "design.solid_modeling",
+        "health.imaging"
+      ],
+      "notes": "Was seed 'Therapy and treatment planning (radiation, surgical, dental, orthotics and prosthetics)'. Radiation therapy gets four tasks because its planning, dose calculation, quality assurance and delivery are separately benchmarked. Patient-specific device geometry (guides, sockets) is authored in design; the clinical plan is here.",
+      "tasks": [
+        {
+          "id": "health.therapy_planning.rt_plan_optimization",
+          "name": "Radiotherapy plan optimization",
+          "definition": "Given CT images, contoured targets and organs at risk, a prescription and dose constraints, compute beam arrangements and fluences or machine parameters.",
+          "inputs": "planning CT, structure set, prescription, constraints, machine model",
+          "outputs": "treatment plan (beams, fluence or MLC sequence), predicted dose",
+          "crosswalk": [
+            {
+              "scheme": "DICOM",
+              "code": "",
+              "label": "RT Plan",
+              "basis": "fetched",
+              "url": "https://dicom.nema.org/medical/dicom/current/output/chtml/part03/ps3.3.html"
+            }
+          ],
+          "onet_products": [
+            "Treatment planning software",
+            "Nucletron planning systems",
+            "Virtual simulation software",
+            "Beam analysis software",
+            "Varian Medical Systems"
+          ],
+          "state_of_art": [
+            "Varian Eclipse",
+            "RaySearch RayStation",
+            "Elekta Monaco"
+          ],
+          "open_tools": [
+            "matRad",
+            "OpenTPS",
+            "PortPy"
+          ],
+          "benchmarkable": "yes: the OpenKBP challenge and AAPM TG-119 test cases score plans and dose predictions.",
+          "notes": ""
+        },
+        {
+          "id": "health.therapy_planning.rt_dose_calculation",
+          "name": "Radiotherapy dose calculation",
+          "definition": "Given a treatment plan and patient density map, compute the absorbed dose distribution for external beams or brachytherapy sources.",
+          "inputs": "plan, CT densities, beam or source model",
+          "outputs": "3D dose grid, monitor units, dose-volume histograms",
+          "crosswalk": [
+            {
+              "scheme": "DICOM",
+              "code": "",
+              "label": "RT Dose",
+              "basis": "fetched",
+              "url": "https://dicom.nema.org/medical/dicom/current/output/chtml/part03/ps3.3.html"
+            }
+          ],
+          "onet_products": [
+            "Radiation dose calculation software",
+            "Dose unit calculation software",
+            "Lifeline Software RadCalc",
+            "Nucletron planning systems"
+          ],
+          "state_of_art": [
+            "Varian Acuros XB",
+            "RayStation Monte Carlo"
+          ],
+          "open_tools": [
+            "matRad",
+            "EGSnrc"
+          ],
+          "benchmarkable": "yes: Monte Carlo references and AAPM TG-43 consensus brachytherapy data give ground truth.",
+          "notes": ""
+        },
+        {
+          "id": "health.therapy_planning.rt_plan_qa",
+          "name": "Patient-specific plan quality assurance",
+          "definition": "Given a plan and measured or independently calculated dose, compare them and pass or fail the plan before treatment.",
+          "inputs": "planned dose, measured dose or secondary calculation, tolerance criteria",
+          "outputs": "gamma pass rates, monitor-unit agreement, pass/fail",
+          "crosswalk": [],
+          "onet_products": [
+            "Sun Nuclear MapCHECK",
+            "Lifeline Software RadCalc"
+          ],
+          "state_of_art": [
+            "Sun Nuclear SNC Patient",
+            "PTW VeriSoft"
+          ],
+          "open_tools": [
+            "PyMedPhys"
+          ],
+          "benchmarkable": "yes: gamma analysis under AAPM TG-218 is deterministic for given dose grids.",
+          "notes": ""
+        },
+        {
+          "id": "health.therapy_planning.rt_delivery_record",
+          "name": "Radiotherapy treatment delivery management",
+          "definition": "Given approved plans, schedule fractions, verify machine parameters at delivery and record delivered dose and imaging.",
+          "inputs": "approved plans, treatment schedule, machine parameters, setup images",
+          "outputs": "delivery records, verified parameters, cumulative dose",
+          "crosswalk": [
+            {
+              "scheme": "IHE",
+              "code": "",
+              "label": "Radiation Oncology: Treatment Delivery Workflow-II (TDW-II)",
+              "basis": "fetched",
+              "url": "https://profiles.ihe.net/RO/index.html"
+            }
+          ],
+          "onet_products": [
+            "Radiation therapy equipment software",
+            "Varian Medical Systems"
+          ],
+          "state_of_art": [
+            "Varian ARIA",
+            "Elekta MOSAIQ"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: record-and-verify is interlock and workflow.",
+          "notes": ""
+        },
+        {
+          "id": "health.therapy_planning.surgical_planning",
+          "name": "Virtual surgical planning",
+          "definition": "Given patient images, build a 3D anatomical model and plan resections, osteotomies, implant positions or stereotactic trajectories.",
+          "inputs": "CT or MR images, segmented anatomy, implant library",
+          "outputs": "surgical plan, trajectories, guide specifications",
+          "crosswalk": [],
+          "onet_products": [
+            "Three-dimensional 3D virtual surgery software",
+            "Integra Radionics NeuroSight Arc",
+            "Materialise Dental SimPLANT",
+            "Materialise Dental SurgiGuide"
+          ],
+          "state_of_art": [
+            "Materialise Mimics",
+            "Brainlab Elements"
+          ],
+          "open_tools": [
+            "3D Slicer"
+          ],
+          "benchmarkable": "partly: planned versus achieved positions can be measured post-operatively; few public sets.",
+          "notes": ""
+        },
+        {
+          "id": "health.therapy_planning.surgical_navigation",
+          "name": "Image-guided surgical navigation",
+          "definition": "Given preoperative images and intraoperative tracking, register the patient to the images and show or control instrument position in real time.",
+          "inputs": "preoperative images, tracker data, fiducials or surface scans",
+          "outputs": "patient-image registration, live instrument position, robot commands",
+          "crosswalk": [],
+          "onet_products": [
+            "Image-guided surgery software",
+            "Robotic surgery software"
+          ],
+          "state_of_art": [
+            "Medtronic StealthStation",
+            "Brainlab Curve",
+            "Stryker Mako"
+          ],
+          "open_tools": [
+            "3D Slicer (SlicerIGT)",
+            "PLUS toolkit"
+          ],
+          "benchmarkable": "partly: target registration error is measurable on phantoms; no shared leaderboard.",
+          "notes": ""
+        },
+        {
+          "id": "health.therapy_planning.orthodontic_planning",
+          "name": "Orthodontic and cephalometric planning",
+          "definition": "Given cephalometric radiographs and dental scans, locate landmarks, compute cephalometric analyses and simulate tooth movement.",
+          "inputs": "cephalograms, intraoral scans, photographs",
+          "outputs": "landmarks, cephalometric measures, staged treatment simulation",
+          "crosswalk": [],
+          "onet_products": [
+            "Algorithm Compu-Ceph",
+            "Dolphin Imaging & Management Solutions Dolphin Management"
+          ],
+          "state_of_art": [
+            "Dolphin Imaging",
+            "3Shape Ortho System",
+            "Align ClinCheck"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the ISBI 2015 cephalometric landmark challenge scores landmark error.",
+          "notes": ""
+        },
+        {
+          "id": "health.therapy_planning.orthotic_prosthetic_fitting",
+          "name": "Orthotic and prosthetic fitting",
+          "definition": "Given limb or foot shape and pressure measurements, specify and modify an orthosis or prosthetic socket for the patient.",
+          "inputs": "3D limb or foot scans, plantar pressure, clinical measurements",
+          "outputs": "modified shape and device specification",
+          "crosswalk": [],
+          "onet_products": [
+            "Footmaxx Metascan software"
+          ],
+          "state_of_art": [
+            "Ohio Willow Wood OMEGA",
+            "Rodin4D"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: fit can be measured with pressure mapping; no public benchmark.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.psych_assessment",
+      "name": "Psychological and cognitive assessment",
+      "definition": "Given a person's responses to standardized questionnaires, interviews or computerized tasks, score them against norms and produce a clinical interpretation.",
+      "crosswalk": [
+        {
+          "scheme": "WHO ICD-11",
+          "code": "",
+          "label": "Chapter 06 Mental, behavioural or neurodevelopmental disorders",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Medical software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "science.social_research",
+        "learn.assessment"
+      ],
+      "notes": "New capability. The seed 'Rehabilitation, speech, hearing and vision assessment' did not cover the many psychological and neuropsychological instruments O*NET lists. None of the listed digital-health taxonomies breaks this out; it is a distinct scoring-against-norms function.",
+      "tasks": [
+        {
+          "id": "health.psych_assessment.symptom_scales",
+          "name": "Symptom rating scale scoring",
+          "definition": "Given responses to a brief symptom or screening scale, compute the total and subscale scores and severity band.",
+          "inputs": "item responses",
+          "outputs": "scores, severity band, flagged items",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.3.3",
+              "label": "Screen persons by risk or other health status",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Patient Health Questionaire",
+            "Beck Depression Inventory",
+            "Beck Anxiety Inventory",
+            "Zung Depression Rating Scale",
+            "Geriatric Depression Scale",
+            "Young Mania Rating Scale",
+            "Brief Psychiatric Rating Scale BPRS Nursing Modification",
+            "AUDIT-C",
+            "Children's Depression Inventory"
+          ],
+          "state_of_art": [
+            "Pearson Q-global",
+            "NovoPsych"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: scoring rules are published and deterministic.",
+          "notes": ""
+        },
+        {
+          "id": "health.psych_assessment.personality_inventories",
+          "name": "Personality and psychopathology inventory interpretation",
+          "definition": "Given responses to a long normed inventory, compute validity and clinical scale scores against norms and generate an interpretive report.",
+          "inputs": "item responses, demographics for norm selection",
+          "outputs": "validity indices, T-scores, profile, interpretive report",
+          "crosswalk": [],
+          "onet_products": [
+            "Minnesota Multiphasic Personality Inventory-2 MMPI-2",
+            "NEO PI-R",
+            "Millon Behavioral Medicine Diagnostic",
+            "Myers Briggs Type Indicator",
+            "Psychological testing software",
+            "Test interpretation software",
+            "Interactive psychological evaluation software",
+            "Mdansby The PsychReport"
+          ],
+          "state_of_art": [
+            "Pearson Q-global",
+            "PAR iConnect"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: scale scoring is deterministic but norms are proprietary; interpretive text is judged by clinicians.",
+          "notes": ""
+        },
+        {
+          "id": "health.psych_assessment.neurocognitive_testing",
+          "name": "Computerized neurocognitive testing",
+          "definition": "Given a person's performance on timed computerized tasks (attention, memory, executive function, effort), compute normed scores and impairment indices.",
+          "inputs": "task responses and reaction times, demographics",
+          "outputs": "normed scores, impairment and validity indices",
+          "crosswalk": [],
+          "onet_products": [
+            "Conners' Continuous Performance Test II",
+            "The Tova Company Test of Variables of Attention",
+            "Automated Neuropsychological Metric Assessments Battery",
+            "MicroCog Assessment of Cognitive Functioning",
+            "BrainMetric The Category Test",
+            "CogniSyst Computerized Assessment of Response Bias CARB",
+            "Behavioral Assessment and Research System BARS",
+            "ImPACT Applications ImPACT",
+            "Biodex Medical Systems Biodex Concussion Manager",
+            "California Verbal Learning Test",
+            "Comprehensive Affect Testing System CATS"
+          ],
+          "state_of_art": [
+            "Cambridge Cognition CANTAB",
+            "ImPACT",
+            "Cogstate"
+          ],
+          "open_tools": [
+            "PEBL"
+          ],
+          "benchmarkable": "partly: scoring against normative tables is deterministic; validity of new batteries requires clinical cohorts.",
+          "notes": ""
+        },
+        {
+          "id": "health.psych_assessment.diagnostic_interview",
+          "name": "Structured psychiatric diagnostic interview",
+          "definition": "Given a person's answers in a structured or computer-administered interview, apply diagnostic criteria and return provisional diagnoses.",
+          "inputs": "interview responses",
+          "outputs": "criteria met, provisional diagnoses, severity",
+          "crosswalk": [],
+          "onet_products": [
+            "Computer Assisted Diagnostic Interview CADI software",
+            "Medical Outcome Systems eMINI Software Suite",
+            "SoftPsych Psychiatric Diagnosis",
+            "Psychiatric assessment software"
+          ],
+          "state_of_art": [
+            "MINI (Mini International Neuropsychiatric Interview)",
+            "SCID-5 clinician version"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: agreement with clinician-rated structured interviews can be scored on cohorts; no public leaderboard.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.rehabilitation",
+      "name": "Rehabilitation, hearing, speech and vision",
+      "definition": "Given measurements of a person's hearing, speech, vision or movement, assess function, fit assistive devices and prescribe and deliver therapy.",
+      "crosswalk": [
+        {
+          "scheme": "WHO International Classification of Functioning, Disability and Health (ICF)",
+          "code": "",
+          "label": "Body functions: sensory functions; voice and speech functions; neuromusculoskeletal and movement-related functions",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Medical software",
+        "Analytical or scientific software",
+        "Eye tracking software",
+        "Text to speech conversion software"
+      ],
+      "see_also": [
+        "simulate.multibody",
+        "learn.special_education"
+      ],
+      "notes": "Was seed 'Rehabilitation, speech, hearing and vision assessment'. Psychological and neuropsychological testing moved to health.psych_assessment. Therapy delivery (exercises, communication aids) is included because the same products assess and treat.",
+      "tasks": [
+        {
+          "id": "health.rehabilitation.hearing_assessment",
+          "name": "Hearing and balance assessment",
+          "definition": "Given responses to calibrated acoustic stimuli and vestibular tests, determine hearing thresholds, speech-in-noise performance and balance function.",
+          "inputs": "audiometer and test responses, otoacoustic emissions, eye movements during vestibular tests",
+          "outputs": "audiogram, speech scores, vestibular findings",
+          "crosswalk": [],
+          "onet_products": [
+            "Bio-logic Systems HINT Pro",
+            "Etymotic Research QuickSIN",
+            "Otometrics OTOsuite",
+            "Vestibular diagnostic software",
+            "Vestibular Technologies ScreenTRAK"
+          ],
+          "state_of_art": [
+            "Natus Otometrics OTOsuite",
+            "Interacoustics Affinity"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: automated audiometry can be scored against manual thresholds; no shared public set.",
+          "notes": ""
+        },
+        {
+          "id": "health.rehabilitation.hearing_aid_fitting",
+          "name": "Hearing aid fitting and verification",
+          "definition": "Given an audiogram and real-ear measurements, compute prescriptive gain targets and adjust a hearing aid to meet them.",
+          "inputs": "audiogram, ear acoustics, device model",
+          "outputs": "gain targets, device settings, verification curves",
+          "crosswalk": [],
+          "onet_products": [
+            "Hearing aid fitting software",
+            "HIMSA Noah",
+            "Real ear measurement REM software",
+            "Ear measurement software",
+            "Siemens Hearing Instruments Practice Navigator",
+            "Starkey Laboratories ProHear",
+            "HearForm Software HearForm"
+          ],
+          "state_of_art": [
+            "HIMSA Noah with manufacturer modules",
+            "Audioscan Verifit"
+          ],
+          "open_tools": [
+            "openMHA",
+            "Tympan"
+          ],
+          "benchmarkable": "yes: NAL-NL2 and DSL v5 give reference targets; the Clarity challenge scores hearing-aid speech processing.",
+          "notes": ""
+        },
+        {
+          "id": "health.rehabilitation.speech_language_analysis",
+          "name": "Speech, voice and language analysis",
+          "definition": "Given recordings or transcripts of a person's speech, measure acoustic voice, resonance and articulation features and language-sample metrics.",
+          "inputs": "audio recordings, transcripts",
+          "outputs": "acoustic measures (pitch, perturbation, nasalance), language metrics, severity estimates",
+          "crosswalk": [],
+          "onet_products": [
+            "KayPENTAX Multi-Speech",
+            "KayPENTAX Nasometer",
+            "Avaaz Innovations Interactive Voice Analysis System IVANS",
+            "Avaaz Innovations Computerized Speech Research Environment CSRE",
+            "Speech analysis software",
+            "Signal analysis software",
+            "Language analysis software",
+            "Learning Fundamentals Speech Visualization"
+          ],
+          "state_of_art": [
+            "PENTAX Medical Multi-Speech",
+            "SALT (Systematic Analysis of Language Transcripts)"
+          ],
+          "open_tools": [
+            "Praat"
+          ],
+          "benchmarkable": "yes: dysarthria and voice-disorder corpora (TORGO, Saarbruecken Voice Database) carry labels.",
+          "notes": ""
+        },
+        {
+          "id": "health.rehabilitation.communication_therapy",
+          "name": "Speech, language and cognitive therapy and augmentative communication",
+          "definition": "Given a person's communication or cognitive impairment, deliver graded therapy exercises with feedback, or generate speech from symbols and text for augmentative communication.",
+          "inputs": "impairment profile, therapy goals, user selections",
+          "outputs": "exercise sessions with performance logs, synthesized speech output",
+          "crosswalk": [],
+          "onet_products": [
+            "Bungalow Software Aphasia Tutor",
+            "Avaaz Innovations AphasiaMate",
+            "ELR Software eLr Extra Language Resources",
+            "Propeller Multimedia React2",
+            "Words+ E Z Keys for Windows",
+            "Text to speech software",
+            "Biofeedback software",
+            "Micro Video Voice Speech Training System",
+            "BrainTrain Captain's Log"
+          ],
+          "state_of_art": [
+            "Tactus Therapy",
+            "Tobii Dynavox TD Snap",
+            "Proloquo2Go"
+          ],
+          "open_tools": [
+            "Cboard",
+            "AsTeRICS Grid"
+          ],
+          "benchmarkable": "partly: word-prediction keystroke savings are measurable; therapy efficacy requires trials.",
+          "notes": ""
+        },
+        {
+          "id": "health.rehabilitation.vision_therapy",
+          "name": "Vision testing and binocular vision therapy",
+          "definition": "Given a patient's visual responses, measure acuity and binocular function and deliver orthoptic and eye-tracking exercises.",
+          "inputs": "displayed optotypes and targets, patient responses",
+          "outputs": "acuity and binocular measures, exercise logs and progress",
+          "crosswalk": [],
+          "onet_products": [
+            "AcuityPro",
+            "VisionScience Software Acuity Pro",
+            "Computer Aided Vision Therapy CAVT",
+            "HTS Vision HTS2 Computerized Binocular Home Eye Exercise System",
+            "HTS Vision CVS2",
+            "Eye Tracking Exercises Enterprises Track with Letters",
+            "Therapeutic orthoptic software"
+          ],
+          "state_of_art": [
+            "HTS Vision",
+            "Vivid Vision"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: computerized acuity can be validated against chart acuity; therapy efficacy requires trials.",
+          "notes": ""
+        },
+        {
+          "id": "health.rehabilitation.gait_motion_analysis",
+          "name": "Gait and movement analysis",
+          "definition": "Given motion capture, force plate or video recordings of a patient walking or moving, compute kinematics, kinetics and gait parameters.",
+          "inputs": "marker trajectories or video, force plate data, anthropometrics",
+          "outputs": "joint angles and moments, spatiotemporal gait parameters, report",
+          "crosswalk": [],
+          "onet_products": [
+            "Gait analysis software",
+            "3D motion analysis software"
+          ],
+          "state_of_art": [
+            "Vicon Nexus",
+            "Qualisys Track Manager"
+          ],
+          "open_tools": [
+            "OpenSim",
+            "OpenCap"
+          ],
+          "benchmarkable": "partly: video-based kinematics can be compared with marker-based references on public datasets.",
+          "notes": ""
+        },
+        {
+          "id": "health.rehabilitation.exercise_prescription",
+          "name": "Therapeutic exercise program prescription",
+          "definition": "Given a patient's diagnosis and goals, assemble an illustrated home exercise program with dosage and track adherence.",
+          "inputs": "diagnosis, functional goals, exercise library",
+          "outputs": "exercise program handout or app plan, adherence log",
+          "crosswalk": [],
+          "onet_products": [
+            "BioEx Systems Exercise Pro",
+            "PhysioTools Tools RG",
+            "Visual Health Information VHI PC-Kits",
+            "Visual Health Information The Trainer's Exercise Toolbox"
+          ],
+          "state_of_art": [
+            "Medbridge",
+            "Physitrack"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: program quality is a clinical judgment without reference answers.",
+          "notes": ""
+        },
+        {
+          "id": "health.rehabilitation.impairment_rating",
+          "name": "Functional impairment rating",
+          "definition": "Given range-of-motion, strength and functional measurements, compute impairment ratings and functional capacity under a rating guide.",
+          "inputs": "goniometry, dynamometry, functional test results",
+          "outputs": "impairment percentages, functional capacity report",
+          "crosswalk": [],
+          "onet_products": [
+            "Cedaron Dexter Evaluation & Impairment Rating"
+          ],
+          "state_of_art": [
+            "Cedaron Dexter"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: the AMA Guides tables make ratings deterministic from measurements.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.nutrition",
+      "name": "Nutrition and dietetics",
+      "definition": "Given what a person eats and their clinical state, analyse nutrient intake, plan therapeutic diets and menus, and document nutrition care.",
+      "crosswalk": [
+        {
+          "scheme": "Academy of Nutrition and Dietetics Nutrition Care Process",
+          "code": "",
+          "label": "Nutrition assessment, diagnosis, intervention, monitoring and evaluation",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Data base user interface and query software",
+        "Medical software"
+      ],
+      "see_also": [
+        "commerce.food_service"
+      ],
+      "notes": "Was seed 'Nutrition and dietetics analysis'. Parenteral nutrition calculation is in health.medication because pharmacists compound it. Recipe nutrition labeling for food businesses is a commerce function that shares the nutrient-analysis method.",
+      "tasks": [
+        {
+          "id": "health.nutrition.nutrient_analysis",
+          "name": "Dietary intake nutrient analysis",
+          "definition": "Given foods and amounts eaten or in a recipe, compute energy and nutrient totals against reference intakes.",
+          "inputs": "food records or recipes, food composition database",
+          "outputs": "nutrient totals, percent of reference intakes",
+          "crosswalk": [],
+          "onet_products": [
+            "ESHA Research The Food Processor",
+            "Axxya Systems Nutritionist Pro",
+            "Nutrient analysis software",
+            "Lifestyles Technologies DietMaster Pro",
+            "CyberSoft NutriBase",
+            "The Nutrition Company FoodWorks",
+            "Compu-Cal Nutrition Assistant",
+            "NutriGenie Optimal Nutrition",
+            "Cronometer",
+            "Gnutrition",
+            "Mosby's Nutritrac",
+            "MyFitnessPal"
+          ],
+          "state_of_art": [
+            "ESHA Food Processor",
+            "Nutrition Data System for Research (NDSR)",
+            "Nutritics"
+          ],
+          "open_tools": [
+            "Gnutrition"
+          ],
+          "benchmarkable": "yes: USDA FoodData Central values give reference totals for defined recipes; Nutrition5k scores image-based estimates.",
+          "notes": ""
+        },
+        {
+          "id": "health.nutrition.diet_order_menus",
+          "name": "Diet order and menu management",
+          "definition": "Given patients' diet orders, allergies and preferences, select compliant menu items and produce tray tickets and production counts.",
+          "inputs": "diet orders, allergies, menu cycle, recipes",
+          "outputs": "compliant patient menus, tray tickets, production counts",
+          "crosswalk": [],
+          "onet_products": [
+            "CBORD Nutrition Service Suite",
+            "Computrition Nutrition Care Management NCM Select",
+            "SureQuest Systems Square 1",
+            "DietMaster Systems Clinical Nutrition"
+          ],
+          "state_of_art": [
+            "CBORD",
+            "Computrition"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: compliance of menus with diet-order constraints is checkable; acceptability is not.",
+          "notes": ""
+        },
+        {
+          "id": "health.nutrition.therapeutic_diet_planning",
+          "name": "Therapeutic diet planning",
+          "definition": "Given a medical indication (ketogenic therapy, food allergy, low-FODMAP, renal), plan meals that meet the diet's quantitative and exclusion constraints.",
+          "inputs": "indication, nutrient targets and ratios, excluded foods",
+          "outputs": "meal plans meeting constraints, nutrient breakdown",
+          "crosswalk": [],
+          "onet_products": [
+            "Ketogenic planning software",
+            "Monash University Low FODMAP Diet App",
+            "Allergenic diet software",
+            "BioEx Systems Nutrition Maker Plus",
+            "PICS DietMate Professional"
+          ],
+          "state_of_art": [
+            "KetoDietCalculator",
+            "Monash FODMAP app"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: ratio and exclusion constraints are checkable; palatability is not.",
+          "notes": ""
+        },
+        {
+          "id": "health.nutrition.nutrition_assessment",
+          "name": "Nutrition assessment and care documentation",
+          "definition": "Given anthropometrics, labs and intake, compute requirements and growth or malnutrition indicators and document the nutrition care process.",
+          "inputs": "weight, height, age, labs, intake, clinical condition",
+          "outputs": "energy and protein requirements, z-scores, malnutrition diagnosis, care note",
+          "crosswalk": [],
+          "onet_products": [
+            "MNT Northwest MNT Assistant",
+            "Computrition Nutrition Care Management NCM Select",
+            "DietMaster Systems DietMaster"
+          ],
+          "state_of_art": [
+            "Epic nutrition documentation",
+            "Computrition"
+          ],
+          "open_tools": [
+            "anthro (WHO R package)"
+          ],
+          "benchmarkable": "yes: energy-requirement equations and WHO/CDC growth z-scores are deterministic.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.remote_care",
+      "name": "Telehealth and patient engagement",
+      "definition": "Given patients outside the clinic, deliver care at a distance and let them reach their records, report their own data and receive targeted communication.",
+      "crosswalk": [
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "2.4",
+          "label": "Telemedicine",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "1.1",
+          "label": "Targeted communication to Persons",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "1.4",
+          "label": "Personal health tracking",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+          "code": "(e)(1)",
+          "label": "View, download, and transmit to 3rd party",
+          "basis": "fetched",
+          "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "10010405.10010444.10010446",
+          "label": "Applied computing > Life and medical sciences > Consumer health",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Medical software"
+      ],
+      "see_also": [
+        "health.physiological_signals",
+        "enterprise.communication"
+      ],
+      "notes": "Was seed 'Telehealth and remote patient monitoring'; patient engagement moved here from seed 'Practice management, scheduling and patient engagement' because WHO groups both under interventions for persons and telemedicine. General video conferencing belongs to other domains.",
+      "tasks": [
+        {
+          "id": "health.remote_care.virtual_visit",
+          "name": "Synchronous virtual visit",
+          "definition": "Given a scheduled remote encounter, connect patient and clinician by video or phone with the record, consent and documentation in context.",
+          "inputs": "appointment, patient device, clinician record context",
+          "outputs": "completed virtual encounter, documentation, billing trigger",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.4.1",
+              "label": "Consultations between remote person and healthcare provider",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Teladoc",
+            "Amwell",
+            "Epic telehealth"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: a communication service; quality is experiential.",
+          "notes": ""
+        },
+        {
+          "id": "health.remote_care.remote_monitoring",
+          "name": "Remote patient monitoring",
+          "definition": "Given readings from home devices (glucose, blood pressure, weight, oximetry), track trends against thresholds and alert the care team.",
+          "inputs": "device readings, thresholds, care plan",
+          "outputs": "trend dashboards, alerts, monitoring time logs",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.4.2",
+              "label": "Remote monitoring of person's health or diagnostic data by provider",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Dexcom Clarity",
+            "Medtronic CareLink",
+            "Biofourmis"
+          ],
+          "open_tools": [
+            "Nightscout",
+            "Tidepool"
+          ],
+          "benchmarkable": "partly: glucose forecasting on the OhioT1DM dataset is benchmarked; alert thresholds are configuration.",
+          "notes": ""
+        },
+        {
+          "id": "health.remote_care.teleconsultation",
+          "name": "Store-and-forward specialist consultation",
+          "definition": "Given images, recordings and a question from a referring clinician, deliver an asynchronous specialist opinion.",
+          "inputs": "clinical question, images or recordings, patient summary",
+          "outputs": "specialist recommendation, consult note",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.4.4",
+              "label": "Consultations for case management between healthcare providers",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Teleradiology systems",
+            "doc2MD"
+          ],
+          "state_of_art": [
+            "RubiconMD",
+            "AristaMD"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: consultation service; quality is clinical judgment.",
+          "notes": ""
+        },
+        {
+          "id": "health.remote_care.patient_portal",
+          "name": "Patient record access and messaging",
+          "definition": "Given a patient's record, let the patient view, download and share it, and exchange secure messages with the care team.",
+          "inputs": "patient record, access credentials, messages",
+          "outputs": "patient views, downloads, third-party API access, message threads",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(e)(1)",
+              "label": "View, download, and transmit to 3rd party",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            },
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(g)(10)",
+              "label": "Standardized API for patient and population services",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            },
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "1.4.1",
+              "label": "Access by the individual to own medical or summary health records",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Epic MyChart",
+            "athenaPatient"
+          ],
+          "open_tools": [
+            "OpenEMR"
+          ],
+          "benchmarkable": "no: access services; only API conformance is testable.",
+          "notes": ""
+        },
+        {
+          "id": "health.remote_care.patient_outreach",
+          "name": "Targeted patient reminders and education",
+          "definition": "Given patients' due care and appointments, send personalized reminders and health education by SMS, voice or app and record responses.",
+          "inputs": "patient lists, due events, message templates, channel preferences",
+          "outputs": "sent messages, confirmations, response logs",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "1.1",
+              "label": "Targeted communication to Persons",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Luma Health",
+            "Relatient"
+          ],
+          "open_tools": [
+            "RapidPro"
+          ],
+          "benchmarkable": "partly: effects on no-shows and adherence are measured in trials; message quality is not.",
+          "notes": ""
+        },
+        {
+          "id": "health.remote_care.patient_reported_outcomes",
+          "name": "Patient-reported outcome collection",
+          "definition": "Given an outcome instrument, administer it to patients (adaptively where calibrated) and score it for clinical use.",
+          "inputs": "instrument and item bank, patient responses",
+          "outputs": "scored outcomes, trends over time",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "1.4.3",
+              "label": "Active data capture/documentation by an individual",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Invivo Data EPX ePRO Management System"
+          ],
+          "state_of_art": [
+            "PROMIS computer adaptive tests",
+            "Epic MyChart questionnaires"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: PROMIS item banks with published item parameters give reference adaptive-test scores.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.population_health",
+      "name": "Public health and population health",
+      "definition": "Given data about many people, detect and report disease, analyse and forecast its spread, keep registries, and measure the quality of care populations receive.",
+      "crosswalk": [
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "3.3",
+          "label": "Public health event notification",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "3.4",
+          "label": "Civil registration and vital statistics",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+          "code": "",
+          "label": "Population Health Support",
+          "basis": "fetched",
+          "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+        },
+        {
+          "scheme": "IHE",
+          "code": "",
+          "label": "Quality, Research and Public Health",
+          "basis": "fetched",
+          "url": "https://profiles.ihe.net/QRPH/index.html"
+        },
+        {
+          "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+          "code": "(f)",
+          "label": "Public health",
+          "basis": "fetched",
+          "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Data base user interface and query software",
+        "Medical software"
+      ],
+      "see_also": [
+        "science.statistics",
+        "earth.gis"
+      ],
+      "notes": "Was seed 'Public health surveillance and registries'. Added clinical quality measurement and patient-safety monitoring, which the EHR functional model puts with population health. General statistics and GIS stay in science and earth.",
+      "tasks": [
+        {
+          "id": "health.population_health.case_reporting",
+          "name": "Notifiable disease case reporting",
+          "definition": "Given clinical and laboratory data, decide which events are reportable to which jurisdiction and transmit and manage case reports and investigations.",
+          "inputs": "diagnoses, lab results, jurisdiction rules",
+          "outputs": "electronic case reports, investigation records, contact lists",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(f)(5)",
+              "label": "Transmission to public health agencies - electronic case reporting",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            },
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "3.3",
+              "label": "Public health event notification",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Medical surveillance software"
+          ],
+          "state_of_art": [
+            "APHL AIMS with eCR Now",
+            "CDC NBS"
+          ],
+          "open_tools": [
+            "SORMAS",
+            "Go.Data",
+            "DHIS2"
+          ],
+          "benchmarkable": "partly: reportability rules give deterministic triggers; completeness on real feeds is local.",
+          "notes": ""
+        },
+        {
+          "id": "health.population_health.outbreak_detection",
+          "name": "Outbreak and cluster detection",
+          "definition": "Given time series or space-time counts of cases or syndromes, detect unusual increases and clusters.",
+          "inputs": "case or syndrome counts by time and place, population at risk",
+          "outputs": "alerts, cluster locations, significance",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(f)(2)",
+              "label": "Transmission to public health agencies - syndromic surveillance",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            }
+          ],
+          "onet_products": [
+            "SaTScan",
+            "TerraSeer ClusterSeer",
+            "Signal detection software",
+            "Disease Mapping and Analysis Program DMAP",
+            "World Health Organization HealthMapper",
+            "Pan American Health Organization SIGEpi"
+          ],
+          "state_of_art": [
+            "CDC ESSENCE",
+            "SaTScan"
+          ],
+          "open_tools": [
+            "surveillance (R package)"
+          ],
+          "benchmarkable": "yes: simulated outbreaks injected into baseline data give known ground truth.",
+          "notes": ""
+        },
+        {
+          "id": "health.population_health.epidemiological_analysis",
+          "name": "Descriptive and analytic epidemiology",
+          "definition": "Given surveillance or study data, compute rates, standardized ratios, measures of association and life tables for a population.",
+          "inputs": "case and population counts, exposures, follow-up",
+          "outputs": "rates, standardized ratios, odds and risk ratios, life tables",
+          "crosswalk": [],
+          "onet_products": [
+            "Centers for Disease Control and Prevention Epi Info",
+            "OpenEpi",
+            "EpiData Analysis",
+            "HiroSoft EPICURE",
+            "Epicenter Software Epilog",
+            "National Institute for Occupational Safety and Health NIOSH Life Table Analysis System",
+            "Epidemiological software",
+            "NetEpi",
+            "Expert Health Data Programming Vitalnet",
+            "Centers for Disease Control and Prevention CDC WONDER",
+            "Meta-analysis with interactive explanations MIX"
+          ],
+          "state_of_art": [
+            "CDC Epi Info",
+            "CDC WONDER"
+          ],
+          "open_tools": [
+            "Epi Info",
+            "OpenEpi",
+            "epiR"
+          ],
+          "benchmarkable": "partly: rate and ratio calculations have exact answers; study design choices do not.",
+          "notes": ""
+        },
+        {
+          "id": "health.population_health.epidemic_forecasting",
+          "name": "Epidemic transmission modeling and forecasting",
+          "definition": "Given case, hospitalization and mobility data, estimate transmission parameters and forecast cases or burden.",
+          "inputs": "incidence time series, serial interval, covariates",
+          "outputs": "reproduction number estimates, probabilistic forecasts, scenarios",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "CDC FluSight ensemble",
+            "IHME models"
+          ],
+          "open_tools": [
+            "EpiEstim",
+            "EpiNow2",
+            "Covasim"
+          ],
+          "benchmarkable": "yes: CDC FluSight and the COVID-19 Forecast Hub score probabilistic forecasts against observed data.",
+          "notes": ""
+        },
+        {
+          "id": "health.population_health.immunization_registry",
+          "name": "Immunization registry and forecasting",
+          "definition": "Given a person's immunization history, consolidate it across providers and compute which vaccines are due or overdue.",
+          "inputs": "immunization records, birth date, risk conditions, schedule rules",
+          "outputs": "consolidated history, vaccine forecast, registry submissions",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(f)(1)",
+              "label": "Transmission to immunization registries",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            },
+            {
+              "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+              "code": "CP.6.2",
+              "label": "Manage Immunization Administration",
+              "basis": "fetched",
+              "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "STC IIS",
+            "Envision WebIZ"
+          ],
+          "open_tools": [
+            "Immunization Calculation Engine (ICE)",
+            "DHIS2"
+          ],
+          "benchmarkable": "yes: CDC Clinical Decision Support for Immunization test cases give expected forecasts.",
+          "notes": ""
+        },
+        {
+          "id": "health.population_health.disease_registries",
+          "name": "Disease and cancer registry abstraction",
+          "definition": "Given patient records, identify reportable cases and abstract standardized registry items for a disease, trauma or cancer registry.",
+          "inputs": "pathology reports, clinical records, registry data standards",
+          "outputs": "abstracted registry records, edit results, submissions",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(f)(4)",
+              "label": "Transmission to cancer registries",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            }
+          ],
+          "onet_products": [
+            "Elekta METRIQ",
+            "DocSite Registry",
+            "MedDataSolutions Regist*r"
+          ],
+          "state_of_art": [
+            "Elekta METRIQ",
+            "ERS C/NET"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: NAACCR edits give deterministic validity checks; abstraction accuracy needs re-abstraction audits.",
+          "notes": ""
+        },
+        {
+          "id": "health.population_health.quality_measurement",
+          "name": "Clinical quality and safety measurement",
+          "definition": "Given patient-level data, compute quality measures and track patient-safety events and experience for a population of patients.",
+          "inputs": "patient data, measure specifications, incident and survey reports",
+          "outputs": "measure numerators, denominators and rates, safety event analyses",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(c)(1)",
+              "label": "Clinical quality measures - record and export",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            },
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(c)(2)",
+              "label": "Clinical quality measures - import and calculate",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            }
+          ],
+          "onet_products": [
+            "Peminic Patient Safety & Quality Suite",
+            "Patient satisfaction assessment software",
+            "CliniTrend"
+          ],
+          "state_of_art": [
+            "Epic Healthy Planet",
+            "Medisolv",
+            "Press Ganey"
+          ],
+          "open_tools": [
+            "Cypress",
+            "Bonnie"
+          ],
+          "benchmarkable": "yes: Cypress test decks give expected results for each electronic clinical quality measure.",
+          "notes": ""
+        },
+        {
+          "id": "health.population_health.cause_of_death_coding",
+          "name": "Cause-of-death coding",
+          "definition": "Given the causes written on a death certificate, code them to ICD-10 and select the underlying cause of death.",
+          "inputs": "death certificate cause-of-death text",
+          "outputs": "multiple-cause codes, underlying cause",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "3.4",
+              "label": "Civil registration and vital statistics",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Iris",
+            "NCHS MedCoder and ACME"
+          ],
+          "open_tools": [],
+          "benchmarkable": "yes: ICD-10 selection rules applied by NCHS give reference underlying causes.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.clinical_research",
+      "name": "Clinical trials and research data",
+      "definition": "Given a study protocol and participants, capture and standardize study data, run trial operations, code and monitor safety, and analyse real-world clinical data.",
+      "crosswalk": [
+        {
+          "scheme": "CDISC",
+          "code": "",
+          "label": "CDASH, SDTM, ADaM, ODM, Define-XML",
+          "basis": "fetched",
+          "url": "https://www.cdisc.org/standards"
+        },
+        {
+          "scheme": "ICH E6 Good Clinical Practice",
+          "code": "",
+          "label": "Computerized systems in clinical trials",
+          "basis": "fetched",
+          "url": "https://database.ich.org/sites/default/files/ICH_E6%28R3%29_Step4_FinalGuideline_2025_0106.pdf"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "10010405.10010444.10010449",
+          "label": "Applied computing > Life and medical sciences > Health informatics",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Data base user interface and query software",
+        "Analytical or scientific software",
+        "Categorization or classification software"
+      ],
+      "see_also": [
+        "science.statistics"
+      ],
+      "notes": "Was seed 'Clinical trials and research data capture'. Added pharmacovigilance and observational research. Trial statistics (sample size, analysis) are general statistics and stay in science.",
+      "tasks": [
+        {
+          "id": "health.clinical_research.data_capture",
+          "name": "Electronic case report form data capture",
+          "definition": "Given a protocol's data collection plan, build electronic case report forms, capture site data with edit checks and manage queries.",
+          "inputs": "protocol, form definitions, site entries",
+          "outputs": "validated study database, query log, audit trail",
+          "crosswalk": [
+            {
+              "scheme": "CDISC",
+              "code": "",
+              "label": "CDASH",
+              "basis": "fetched",
+              "url": "https://www.cdisc.org/standards"
+            },
+            {
+              "scheme": "CDISC",
+              "code": "",
+              "label": "ODM",
+              "basis": "fetched",
+              "url": "https://www.cdisc.org/standards"
+            }
+          ],
+          "onet_products": [
+            "Electronic data capture EDC software",
+            "Medidata Rave Data Management",
+            "Oracle Clinical",
+            "Oracle Remote Data Capture",
+            "OpenClinica",
+            "InferMed MACRO Electronic Data Capture",
+            "Phase Forward InForm GTM",
+            "Phase Forward Clintrial",
+            "Clinical data management system CDMS",
+            "DZS Software Solutions ClinPlus",
+            "REDCap Research Electronic Data Capture",
+            "Merge Healthcare eTrials"
+          ],
+          "state_of_art": [
+            "Medidata Rave",
+            "Veeva Vault EDC",
+            "Oracle Clinical One"
+          ],
+          "open_tools": [
+            "OpenClinica",
+            "LibreClinica"
+          ],
+          "benchmarkable": "no: data capture service; only CDISC ODM conformance is testable.",
+          "notes": ""
+        },
+        {
+          "id": "health.clinical_research.trial_operations",
+          "name": "Clinical trial operations management",
+          "definition": "Given a portfolio of studies, track sites, enrollment, monitoring visits, budgets and payments.",
+          "inputs": "studies, sites, enrollment events, budgets",
+          "outputs": "enrollment and milestone tracking, monitoring reports, site payments",
+          "crosswalk": [],
+          "onet_products": [
+            "Clinical trial management software",
+            "PercipEnz Technologies OnCore-Clinical Research Management OnCore-CRM",
+            "ClearTrial",
+            "StudyManager Sponsor Edition",
+            "Sierra Scientific Software CRIS",
+            "ePharmaSolutions eMVR",
+            "Clinical trials database software"
+          ],
+          "state_of_art": [
+            "Veeva Vault CTMS",
+            "Advarra OnCore"
+          ],
+          "open_tools": [],
+          "benchmarkable": "no: operational workflow.",
+          "notes": ""
+        },
+        {
+          "id": "health.clinical_research.randomization",
+          "name": "Randomization and trial supply",
+          "definition": "Given a randomization design, allocate participants to arms with stratification and blinding and manage study drug supply to sites.",
+          "inputs": "design (blocks, strata), participant strata, site inventories",
+          "outputs": "allocations, blinded kit assignments, resupply orders",
+          "crosswalk": [],
+          "onet_products": [
+            "SyMetric Sciences SyMetric"
+          ],
+          "state_of_art": [
+            "Medidata Rave RTSM",
+            "Suvoda"
+          ],
+          "open_tools": [
+            "randomizeR",
+            "blockrand"
+          ],
+          "benchmarkable": "yes: balance and predictability of an allocation scheme are computable.",
+          "notes": ""
+        },
+        {
+          "id": "health.clinical_research.data_standardization",
+          "name": "Study data standardization",
+          "definition": "Given collected study data, map it to submission standards and produce analysis datasets and metadata.",
+          "inputs": "raw study data, protocol, controlled terminology",
+          "outputs": "SDTM and ADaM datasets, Define-XML, conformance report",
+          "crosswalk": [
+            {
+              "scheme": "CDISC",
+              "code": "",
+              "label": "SDTM",
+              "basis": "fetched",
+              "url": "https://www.cdisc.org/standards"
+            },
+            {
+              "scheme": "CDISC",
+              "code": "",
+              "label": "ADaM",
+              "basis": "fetched",
+              "url": "https://www.cdisc.org/standards"
+            },
+            {
+              "scheme": "CDISC",
+              "code": "",
+              "label": "Define-XML",
+              "basis": "fetched",
+              "url": "https://www.cdisc.org/standards"
+            }
+          ],
+          "onet_products": [
+            "PPD eLoader",
+            "TOPAZ Enterprise Software Suite"
+          ],
+          "state_of_art": [
+            "SAS Clinical Data Integration",
+            "Pinnacle 21 Enterprise"
+          ],
+          "open_tools": [
+            "admiral",
+            "sdtm.oak"
+          ],
+          "benchmarkable": "partly: CDISC conformance rules are deterministic; mapping correctness needs reviewed examples.",
+          "notes": ""
+        },
+        {
+          "id": "health.clinical_research.safety_term_coding",
+          "name": "Adverse event and drug term coding",
+          "definition": "Given verbatim adverse event and medication terms, code them to MedDRA and WHODrug.",
+          "inputs": "verbatim terms, dictionary versions",
+          "outputs": "coded terms at each hierarchy level",
+          "crosswalk": [],
+          "onet_products": [
+            "Drug coding software",
+            "Autocoders"
+          ],
+          "state_of_art": [
+            "Medidata Rave Coder",
+            "Oracle Central Coding"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: shared tasks (SMM4H, CADEC) give gold normalizations, but MedDRA licensing limits open sets.",
+          "notes": ""
+        },
+        {
+          "id": "health.clinical_research.signal_detection",
+          "name": "Pharmacovigilance signal detection",
+          "definition": "Given spontaneous adverse event reports or observational data, detect disproportionate drug-event associations.",
+          "inputs": "adverse event report database, drug and event codes",
+          "outputs": "disproportionality statistics, ranked signals",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "2.9.3",
+              "label": "Report adverse drug effects",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Oracle Empirica Signal",
+            "Oracle Argus Safety"
+          ],
+          "open_tools": [
+            "openEBGM",
+            "PhViD"
+          ],
+          "benchmarkable": "partly: OMOP and EU-ADR reference sets of known positive and negative drug-event pairs.",
+          "notes": ""
+        },
+        {
+          "id": "health.clinical_research.observational_evidence",
+          "name": "Observational real-world evidence analysis",
+          "definition": "Given EHR or claims data in a common data model, define cohorts and estimate incidence, characterization and comparative effects.",
+          "inputs": "patient-level data in a common data model, cohort definitions",
+          "outputs": "cohort characteristics, incidence rates, effect estimates with diagnostics",
+          "crosswalk": [],
+          "onet_products": [
+            "5AM Glassbox Translational Research",
+            "InforSense InforSense"
+          ],
+          "state_of_art": [
+            "Aetion",
+            "TriNetX"
+          ],
+          "open_tools": [
+            "OHDSI ATLAS",
+            "OHDSI HADES"
+          ],
+          "benchmarkable": "partly: OHDSI method-evaluation benchmarks with negative and synthetic positive controls.",
+          "notes": ""
+        },
+        {
+          "id": "health.clinical_research.trial_matching",
+          "name": "Patient-trial eligibility matching",
+          "definition": "Given patient records and trial eligibility criteria, find eligible patients for a trial or trials for a patient.",
+          "inputs": "patient records, eligibility criteria text",
+          "outputs": "ranked matches with criterion-level evidence",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "TriNetX",
+            "Tempus TIME"
+          ],
+          "open_tools": [
+            "Criteria2Query"
+          ],
+          "benchmarkable": "yes: TREC Clinical Trials tracks and n2c2 2018 cohort selection give judged test sets.",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "health.interoperability",
+      "name": "Health data exchange and terminology",
+      "definition": "Given clinical data in one system's form, translate, code, de-identify and exchange it so that another system or organization can use it.",
+      "crosswalk": [
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "4.4",
+          "label": "Data exchange and interoperability",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+          "code": "4.2",
+          "label": "Data coding",
+          "basis": "fetched",
+          "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+        },
+        {
+          "scheme": "IHE",
+          "code": "",
+          "label": "IT Infrastructure",
+          "basis": "fetched",
+          "url": "https://profiles.ihe.net/ITI/index.html"
+        },
+        {
+          "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+          "code": "(b)(1)",
+          "label": "Transitions of care",
+          "basis": "fetched",
+          "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+        },
+        {
+          "scheme": "ISO/HL7 10781 EHR System Functional Model R2",
+          "code": "",
+          "label": "Record Infrastructure",
+          "basis": "fetched",
+          "url": "https://hl7.org/ehrs/uv/ehrsfmr2/2025May/artifacts.html"
+        }
+      ],
+      "onet_categories": [
+        "Medical software",
+        "Information retrieval or search software"
+      ],
+      "see_also": [
+        "computing.data_integration",
+        "computing.security_protection"
+      ],
+      "notes": "New capability, from WHO's data-services group and the EHR model's infrastructure sections. General integration middleware stays in computing; the health-specific message standards, terminologies and de-identification rules are here.",
+      "tasks": [
+        {
+          "id": "health.interoperability.message_interfacing",
+          "name": "Clinical message translation and routing",
+          "definition": "Given clinical messages and resources (HL7 v2, FHIR, proprietary), validate, transform and route them between systems.",
+          "inputs": "inbound messages, mapping specifications, routing rules",
+          "outputs": "transformed and routed messages, error queues",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "4.4",
+              "label": "Data exchange and interoperability",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Medical system integration software",
+            "Information systems integration software"
+          ],
+          "state_of_art": [
+            "InterSystems Health Connect",
+            "Rhapsody",
+            "Infor Cloverleaf"
+          ],
+          "open_tools": [
+            "HAPI FHIR",
+            "OpenHIM"
+          ],
+          "benchmarkable": "partly: HL7 and FHIR validators give pass/fail conformance; mapping semantics need reviewed examples.",
+          "notes": ""
+        },
+        {
+          "id": "health.interoperability.summary_exchange",
+          "name": "Care summary document exchange",
+          "definition": "Given a patient record, generate a standard care summary (C-CDA, International Patient Summary) and exchange or query it across organizations.",
+          "inputs": "patient record, recipient, exchange network",
+          "outputs": "conformant summary document, exchange transactions",
+          "crosswalk": [
+            {
+              "scheme": "ONC Health IT Certification (45 CFR 170.315)",
+              "code": "(b)(1)",
+              "label": "Transitions of care",
+              "basis": "fetched",
+              "url": "https://www.ecfr.gov/current/title-45/subtitle-A/subchapter-D/part-170/subpart-C/section-170.315"
+            },
+            {
+              "scheme": "IHE",
+              "code": "",
+              "label": "IT Infrastructure: Cross-Enterprise Document Sharing",
+              "basis": "fetched",
+              "url": "https://profiles.ihe.net/ITI/TF/Volume1/index.html"
+            }
+          ],
+          "onet_products": [
+            "IDX Systems Patient Chart Tracking"
+          ],
+          "state_of_art": [
+            "Epic Care Everywhere",
+            "CommonWell",
+            "Carequality"
+          ],
+          "open_tools": [
+            "HAPI FHIR"
+          ],
+          "benchmarkable": "yes: ONC C-CDA and FHIR validators give conformance pass/fail.",
+          "notes": ""
+        },
+        {
+          "id": "health.interoperability.terminology_mapping",
+          "name": "Clinical terminology mapping",
+          "definition": "Given local codes or terms, map them to standard terminologies (SNOMED CT, LOINC, RxNorm, ICD) and across them.",
+          "inputs": "local code lists with descriptions, target terminology",
+          "outputs": "mappings with equivalence and confidence",
+          "crosswalk": [
+            {
+              "scheme": "WHO Classification of Digital Health Interventions v1.0 (2018)",
+              "code": "4.2",
+              "label": "Data coding",
+              "basis": "fetched",
+              "url": "https://iris.who.int/server/api/core/bitstreams/bb20354e-ebee-44aa-8a58-7b1da85c6f95/content"
+            }
+          ],
+          "onet_products": [
+            "Medical terminology databases",
+            "Computerized indexing systems"
+          ],
+          "state_of_art": [
+            "Intelligent Medical Objects",
+            "Wolters Kluwer Health Language"
+          ],
+          "open_tools": [
+            "Snowstorm",
+            "OHDSI Usagi"
+          ],
+          "benchmarkable": "yes: published crossmaps (SNOMED CT to ICD-10-CM) and the UMLS serve as gold standards.",
+          "notes": ""
+        },
+        {
+          "id": "health.interoperability.deidentification",
+          "name": "Clinical record de-identification",
+          "definition": "Given clinical notes, structured data or images, detect and remove or replace protected health information.",
+          "inputs": "notes, structured records, DICOM headers and pixel data",
+          "outputs": "de-identified data, PHI annotations",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "John Snow Labs de-identification",
+            "Amazon Comprehend Medical"
+          ],
+          "open_tools": [
+            "Philter",
+            "PhysioNet deid"
+          ],
+          "benchmarkable": "yes: the i2b2 2006 and 2014 de-identification shared tasks provide annotated PHI.",
+          "notes": ""
+        }
+      ]
+    }
+  ],
+  "existing_function_map": [],
+  "handoffs": [
+    {
+      "what": "General dictation and speech recognition (Nuance Dragon NaturallySpeaking, Dictation software, Speech recognition software, Voice activated software, goQ WordQ)",
+      "to_domain": "enterprise",
+      "why": "general office dictation; only clinical-vocabulary transcription and note drafting are modeled here"
+    },
+    {
+      "what": "Medicaid management information system MMIS; Bill review software; StrataCare StrataWare eReview",
+      "to_domain": "govern",
+      "why": "payer and government-program claims administration and insurance review"
+    },
+    {
+      "what": "3DGrid HIPAA Checkup",
+      "to_domain": "computing",
+      "why": "security risk assessment, a security function"
+    },
+    {
+      "what": "Yost Engineering EPStaffCheck; API Healthcare ActiveStaffer",
+      "to_domain": "enterprise",
+      "why": "workforce exclusion screening and staff scheduling are HR functions"
+    },
+    {
+      "what": "MEDITECH Supply Chain Management; InfoLogix HealthTrax Engine",
+      "to_domain": "move",
+      "why": "supply chain and asset tracking"
+    },
+    {
+      "what": "Coroner and medical examiner case systems (Ingenuware CoronerBase, Rapid Medical Examiners System, Autopsy information databases, Douglas Associates Forensic Filer)",
+      "to_domain": "govern",
+      "why": "medicolegal death investigation is public safety"
+    },
+    {
+      "what": "Funeral and cemetery management (Belmar & Associates Mortware, HMIS Advantage, FPA Software MACCS)",
+      "to_domain": "commerce",
+      "why": "consumer service business operations"
+    },
+    {
+      "what": "Dental laboratory case management (Inventrix Labtrac, Mainstreet Systems & Software DentaLab/PC II, Easy Solutions Easy Lab, LabMagic)",
+      "to_domain": "produce",
+      "why": "job-shop order tracking for appliance manufacture; dental product CAD/CAM is already in design and produce"
+    },
+    {
+      "what": "Psychology experiment presentation (Psychology Software Tools E-Prime, PsyScope, Millisecond Software Inquisit, Cedrus SuperLab Pro, Noldus Information Technology The Observer XT)",
+      "to_domain": "science",
+      "why": "research experiment control and behavior coding"
+    },
+    {
+      "what": "Statistics packages used by epidemiologists and biostatisticians (SAS, StataCorp Stata, NCSS Power Analysis and Sample Size PASS, RTI International SUDAAN, Cytel Egret)",
+      "to_domain": "science",
+      "why": "general statistics"
+    },
+    {
+      "what": "Research and quality-control LIMS (LabWare LIMS, STARLIMS, Thermo Fisher Scientific Laboratory Information Management Systems LIMS), FlowJo, GraphPad Prism, ADInstruments LabChart, Instrument control software, Virtual instrument software",
+      "to_domain": "science",
+      "why": "research laboratory informatics and data acquisition"
+    },
+    {
+      "what": "Medical equipment diagnostic software; Instrument validation software",
+      "to_domain": "operate",
+      "why": "equipment maintenance and validation"
+    },
+    {
+      "what": "Occupational health and EHS systems (Medgate Enterprise EHS, Safety Software OSHALOG 300, biomechanical injury risk analysis)",
+      "to_domain": "operate",
+      "why": "EHS and ergonomics"
+    },
+    {
+      "what": "IEP and school psychology systems; career guidance; InteractElsevier Netter's 3D Interactive Anatomy",
+      "to_domain": "learn",
+      "why": "school administration and teaching"
+    },
+    {
+      "what": "National Library of Medicine Medline; National Library of Medicine DOCLINE",
+      "to_domain": "learn",
+      "why": "library literature search and interlibrary loan"
+    },
+    {
+      "what": "Pharmaceutical regulatory and quality systems (MediRegs Pharmaceutical Regulation Suite, Take Solutions PharmaReady Document Management System, MasterControl TotalPharma, Sparta Systems TrackWise)",
+      "to_domain": "govern",
+      "why": "regulatory compliance and quality management"
+    },
+    {
+      "what": "Pharmaceutical sales CRM and market data (Cegedim Target Software Target SFA Pharmaceutical Suite, Verispan Patient Parameters, Neoforma Healthcare Products Information Services HPIS Market Intelligence)",
+      "to_domain": "commerce",
+      "why": "sales and market research"
+    },
+    {
+      "what": "Healthcare accounting modules (Cerner Millennium ProFit, Sunquest Information Systems Sunquest Clinical Financials, American HealthTech Financial)",
+      "to_domain": "enterprise",
+      "why": "general ledger and accounts receivable accounting; claim-level billing is modeled in health.revenue_cycle"
+    }
+  ],
+  "unplaced_products": [
+    "Electroconvulsive therapy equipment",
+    "Medical laser control software",
+    "Miridia Technology AcuGraph",
+    "ZYTO LSA Pro",
+    "Electro Meridian Imaging EMI",
+    "Oasys structural design and analysis software",
+    "Seimens Healthineers",
+    "HMS",
+    "Healthcare management system",
+    "Medical Scientists HybridAI",
+    "Medical Scientists MediSave"
+  ],
+  "open_questions": [
+    "The domain has 17 capabilities against the brief's aim of 6 to 14. Health is the largest need and the remaining merges (for example psychological assessment with rehabilitation, or orders with data exchange) would join unrelated functions. The editor should decide whether to accept 17.",
+    "Patient appointment and operating-room scheduling is placed in health (it is about patients), but the solver is the same as move's applied scheduling. Should the task point to move for the method?",
+    "Clinical NLP tasks (concept extraction, de-identification, coding from notes) are placed in health because the inputs, standards and benchmarks are clinical; science owns the general NLP methods. Confirm this split.",
+    "Patient-specific device design (surgical guides, orthoses, prosthetic sockets): health holds the clinical plan, design holds the geometry. Confirm the boundary.",
+    "Payer-side claim adjudication (Medicaid MMIS, workers' compensation bill review) was handed to govern under 'insurance'. Medical coding rules drive it; the editor may prefer it in health.revenue_cycle.",
+    "Clinical genetics is spread across nodes (pedigree in the record, hereditary risk in decision support, variant interpretation in the laboratory, pharmacogenomics in medication) rather than given its own capability. A separate capability would group the genetic counselor products.",
+    "Products based on unvalidated electrodermal or meridian measurement (AcuGraph, ZYTO LSA Pro, Electro Meridian Imaging) are left unplaced rather than modeled as diagnostics."
+  ]
+}

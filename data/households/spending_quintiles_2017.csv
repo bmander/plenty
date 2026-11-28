@@ -1,0 +1,108 @@
+item,all,lowest,second,third,fourth,highest
+Number of consumer units (in thousands),130001.0,25981.0,25988.0,26012.0,26100.0,25921.0
+Income before taxes,73573.0,11394.0,29821.0,52431.0,86363.0,188103.0
+Income after taxes,63606.0,11933.0,30315.0,49339.0,77103.0,149504.0
+People,2.5,1.6,2.2,2.5,2.9,3.1
+Children under 18,0.6,0.3,0.5,0.6,0.7,0.8
+Average annual expenditures,60060.0,26019.0,39300.0,50470.0,67604.0,116988.0
+Food,7729.0,4070.0,5671.0,7061.0,8757.0,13079.0
+Food at home,4363.0,2582.0,3622.0,4038.0,4893.0,6677.0
+Cereals and bakery products,564.0,346.0,471.0,536.0,616.0,852.0
+Cereals and cereal products,176.0,105.0,151.0,160.0,203.0,263.0
+Bakery products,388.0,241.0,320.0,376.0,413.0,589.0
+"Meats, poultry, fish, and eggs",944.0,571.0,826.0,902.0,1040.0,1379.0
+Beef,253.0,158.0,217.0,253.0,288.0,351.0
+Pork,181.0,109.0,175.0,164.0,194.0,264.0
+Other meats,128.0,77.0,109.0,129.0,152.0,174.0
+Poultry,186.0,120.0,164.0,176.0,196.0,273.0
+Fish and seafood,140.0,70.0,115.0,129.0,151.0,235.0
+Eggs,55.0,37.0,46.0,52.0,57.0,83.0
+Dairy products,450.0,268.0,350.0,407.0,513.0,712.0
+Fresh milk and cream,147.0,95.0,128.0,137.0,162.0,213.0
+Other dairy products,303.0,174.0,222.0,270.0,352.0,499.0
+Fruits and vegetables,837.0,488.0,669.0,746.0,954.0,1326.0
+Fresh fruits,314.0,178.0,237.0,267.0,365.0,522.0
+Fresh vegetables,274.0,151.0,224.0,239.0,312.0,446.0
+Processed fruits,112.0,71.0,89.0,102.0,132.0,166.0
+Processed vegetables,136.0,88.0,118.0,137.0,145.0,193.0
+Other food at home,1568.0,909.0,1306.0,1447.0,1771.0,2408.0
+Sugar and other sweets,150.0,83.0,125.0,145.0,166.0,229.0
+Fats and oils,117.0,73.0,108.0,108.0,127.0,168.0
+Miscellaneous foods,824.0,468.0,648.0,759.0,933.0,1309.0
+Nonalcoholic beverages,423.0,270.0,389.0,397.0,478.0,578.0
+Food prepared by consumer unit on out-of-town trips,56.0,15.0,37.0,37.0,67.0,123.0
+Food away from home,3365.0,1488.0,2049.0,3023.0,3863.0,6402.0
+Alcoholic beverages,558.0,163.0,302.0,415.0,681.0,1228.0
+Housing,19884.0,10413.0,14095.0,17462.0,22244.0,35234.0
+Shelter,11895.0,6325.0,8286.0,10238.0,13126.0,21521.0
+Owned dwellings,6947.0,1980.0,3479.0,5219.0,8104.0,15970.0
+Mortgage interest and charges,3265.0,595.0,1133.0,2273.0,4073.0,8262.0
+Property taxes,2065.0,750.0,1204.0,1590.0,2280.0,4508.0
+"Maintenance, repairs, insurance, other expenses",1616.0,635.0,1143.0,1356.0,1751.0,3200.0
+Rented dwellings,4167.0,4136.0,4487.0,4557.0,4198.0,3454.0
+Other lodging,782.0,209.0,320.0,462.0,825.0,2097.0
+"Utilities, fuels, and public services",3836.0,2336.0,3229.0,3719.0,4399.0,5498.0
+Natural gas,381.0,236.0,303.0,354.0,423.0,588.0
+Electricity,1420.0,1004.0,1312.0,1410.0,1538.0,1835.0
+Fuel oil and other fuels,97.0,61.0,81.0,86.0,99.0,158.0
+Telephone services,1356.0,706.0,1060.0,1314.0,1663.0,2036.0
+"Residential phone service, VOIP, and phone cards",238.0,202.0,244.0,222.0,239.0,282.0
+Cellular phone service,1118.0,503.0,816.0,1092.0,1424.0,1754.0
+Water and other public services,583.0,329.0,473.0,555.0,677.0,880.0
+Household operations,1412.0,537.0,836.0,1088.0,1486.0,3115.0
+Personal services,439.0,97.0,122.0,286.0,477.0,1216.0
+Other household expenses,973.0,440.0,714.0,802.0,1009.0,1899.0
+Housekeeping supplies,755.0,424.0,607.0,701.0,803.0,1238.0
+Laundry and cleaning supplies,177.0,112.0,160.0,158.0,207.0,249.0
+Other household products,428.0,225.0,326.0,403.0,445.0,738.0
+Postage and stationery,150.0,86.0,121.0,140.0,151.0,251.0
+Household furnishings and equipment,1987.0,792.0,1138.0,1715.0,2430.0,3863.0
+Household textiles,114.0,70.0,83.0,107.0,131.0,179.0
+Furniture,515.0,196.0,312.0,395.0,577.0,1098.0
+Floor coverings,30.0,8.0,10.0,14.0,22.0,98.0
+Major appliances,280.0,129.0,170.0,277.0,318.0,507.0
+"Small appliances, miscellaneous housewares",131.0,64.0,80.0,103.0,150.0,257.0
+Miscellaneous household equipment,916.0,323.0,483.0,820.0,1231.0,1724.0
+Apparel and services,1833.0,878.0,1252.0,1348.0,2052.0,3633.0
+Men and boys,442.0,201.0,291.0,337.0,483.0,899.0
+"Men, 16 and over",342.0,145.0,213.0,265.0,367.0,722.0
+"Boys, 2 to 15",100.0,56.0,78.0,72.0,116.0,177.0
+Women and girls,694.0,336.0,445.0,497.0,764.0,1426.0
+"Women, 16 and over",580.0,283.0,376.0,402.0,623.0,1213.0
+"Girls, 2 to 15",114.0,53.0,69.0,95.0,141.0,213.0
+Children under 2,77.0,29.0,60.0,65.0,109.0,120.0
+Footwear,379.0,202.0,304.0,253.0,448.0,688.0
+Other apparel products and services,241.0,109.0,152.0,197.0,248.0,500.0
+Transportation,9576.0,3497.0,6572.0,8532.0,11099.0,18190.0
+Vehicle purchases (net outlay),4054.0,1230.0,2736.0,3515.0,4510.0,8287.0
+"Cars and trucks, new",1900.0,492.0,1300.0,1246.0,1937.0,4531.0
+"Cars and trucks, used",2101.0,716.0,1404.0,2245.0,2491.0,3651.0
+Other vehicles,53.0,21.0,32.0,24.0,83.0,106.0
+"Gasoline, other fuels, and motor oil",1968.0,920.0,1499.0,1930.0,2497.0,2994.0
+Other vehicle expenses,2842.0,1103.0,1994.0,2609.0,3356.0,5148.0
+Vehicle finance charges,220.0,67.0,120.0,192.0,293.0,430.0
+Maintenance and repairs,954.0,368.0,568.0,809.0,1041.0,1986.0
+Vehicle insurance,967.0,439.0,855.0,1034.0,1220.0,1285.0
+"Vehicle rental, leases, licenses, and other charges",700.0,230.0,451.0,574.0,801.0,1448.0
+Public and other transportation,712.0,244.0,343.0,478.0,736.0,1761.0
+Healthcare,4928.0,2492.0,3889.0,4642.0,5764.0,7857.0
+Health insurance,3414.0,1761.0,2775.0,3236.0,3967.0,5335.0
+Medical services,872.0,335.0,525.0,771.0,1119.0,1610.0
+Drugs,486.0,298.0,472.0,498.0,504.0,655.0
+Medical supplies,156.0,98.0,116.0,136.0,174.0,257.0
+Entertainment,3203.0,1270.0,1873.0,2517.0,3470.0,6889.0
+Fees and admissions,750.0,214.0,278.0,509.0,796.0,1955.0
+Audio and visual equipment and services,985.0,555.0,763.0,934.0,1113.0,1562.0
+"Pets, toys, hobbies, and playground equipment",869.0,324.0,547.0,693.0,964.0,1814.0
+Pets,710.0,263.0,450.0,554.0,758.0,1523.0
+"Toys, hobbies, and playground equipment",159.0,62.0,97.0,139.0,206.0,291.0
+"Other entertainment supplies, equipment, and services",599.0,177.0,283.0,381.0,596.0,1558.0
+Personal care products and services,762.0,373.0,512.0,650.0,869.0,1407.0
+Reading,110.0,48.0,62.0,102.0,130.0,208.0
+Education,1491.0,784.0,426.0,584.0,1179.0,4492.0
+Tobacco products and smoking supplies,332.0,277.0,355.0,372.0,367.0,291.0
+Miscellaneous,1010.0,449.0,678.0,964.0,904.0,2057.0
+Cash contributions,1873.0,650.0,1192.0,1485.0,1873.0,4170.0
+Personal insurance and pensions,6771.0,655.0,2421.0,4336.0,8215.0,18253.0
+Life and other personal insurance,418.0,160.0,257.0,311.0,459.0,903.0
+Pensions and Social Security,6353.0,495.0,2165.0,4025.0,7756.0,17350.0

@@ -1,0 +1,58 @@
+name  = "Household handwork"
+by    = "Claude, as a first example"
+what  = "A machine that does the handwork of a home or a small kitchen: cleans rooms and surfaces, washes up, does the laundry, puts things away, and does the routine steps of preparing food."
+check = "Rooms, dishes and clothes are judged clean or not by people who do not know whether a machine did the work, and the hours the household spends on these chores are counted before and after."
+
+[cost]
+hours = 1e9
+basis = "A guess at the order of magnitude. Driving has taken on the order of half a million person-years so far and is not finished, and handling whatever is in a home is at least as hard."
+
+[[does]]
+activity = "4.A.3.a.1.c"   # Clean tools, equipment, facilities, or work areas
+share    = 1.0
+basis    = "It is the activity itself: most of it is cleaning rooms and kitchens."
+
+[[does]]
+activity = "4.A.3.a.1.h"   # Clean workpieces, finished products, or other objects
+share    = 0.5
+basis    = "Laundry and washing up are in it. Cleaning parts in a factory is not."
+
+[[does]]
+activity = "4.A.3.a.1.i"   # Clean medical equipment or facilities
+share    = 0.5
+basis    = "Rooms and surfaces, not sterilizing instruments."
+
+[[does]]
+activity = "4.A.3.a.1.e"   # Dispose of waste or debris
+share    = 0.5
+basis    = "Taking out household and kitchen waste, not hauling or site debris."
+
+[[does]]
+activity = "4.A.3.a.2.c"   # Prepare foods or beverages
+share    = 0.5
+basis    = "Washing, cutting, measuring and tending, not deciding what to cook or how it should taste."
+
+[[does]]
+activity = "4.A.3.a.1.j"   # Move materials, equipment, or supplies
+share    = 0.5
+basis    = "Carrying and putting away by hand indoors, not freight."
+
+[[does]]
+activity = "4.A.3.a.2.ak"  # Stock supplies or products
+share    = 0.5
+basis    = "Putting things on shelves and in cupboards."
+
+[[does]]
+activity = "4.A.3.a.2.ap"  # Package objects
+share    = 0.5
+basis    = "Packing by hand, which is the same handling."
+
+[[does]]
+activity = "4.A.2.a.2.b"   # Sort materials or products
+share    = 0.5
+basis    = "Sorting by hand what can be told apart by looking."
+
+[[does]]
+activity = "4.A.3.a.1.o"   # Provide food or beverage services
+share    = 0.5
+basis    = "Clearing, washing and setting, not waiting on people."

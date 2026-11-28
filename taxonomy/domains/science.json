@@ -1,0 +1,4599 @@
+{
+  "domain": "science",
+  "summary": "Breaks quantitative method into numerical computing (NIST GAMS classes D, E, F, H, I), symbolic mathematics, statistics, experimental design, signal and time-series analysis (GAMS J, L and the CRAN Task Views), machine learning (ACM CCS), optimization (GAMS G, MSC 90C) and stochastic simulation; then laboratory science into instrument control, analytical data processing and laboratory informatics (ASTM E1578), survey and behavioral methods, and the molecular sciences split by data type (sequences, genomics, systems biology, molecular modeling, cheminformatics) following EDAM. General tools such as MATLAB, R, SAS, SPSS, Stata and Mathematica are placed here as examples on the tasks they serve.",
+  "capabilities": [
+    {
+      "id": "science.numerical_computing",
+      "name": "Numerical computing",
+      "definition": "Given a mathematical problem stated as matrices, functions or differential equations, compute a floating-point approximate solution with error control.",
+      "crosswalk": [
+        {
+          "scheme": "NIST GAMS",
+          "code": "D",
+          "label": "Linear Algebra",
+          "basis": "fetched",
+          "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/D"
+        },
+        {
+          "scheme": "NIST GAMS",
+          "code": "I",
+          "label": "Differential and integral equations",
+          "basis": "fetched",
+          "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/I"
+        },
+        {
+          "scheme": "MSC 2020",
+          "code": "65",
+          "label": "Numerical analysis",
+          "basis": "fetched",
+          "url": "https://msc2020.org/MSC_2020.csv"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Mathematics of computing > Mathematical analysis > Numerical analysis",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "Berkeley motifs",
+          "code": "",
+          "label": "Dense linear algebra; Sparse linear algebra; Structured grids; Unstructured grids",
+          "basis": "fetched",
+          "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-183.pdf"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Object or component oriented development software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "simulate.structural_fea",
+        "computing.languages"
+      ],
+      "notes": "Merges seed 'Numerical computing environments and linear algebra' with the rest of the GAMS numerical classes (D, E, F, H, I, A/C). Interactive environments (MATLAB, Octave, Scilab, Mathcad, IDL) are not a task of their own: they appear as examples on the tasks they serve. Signal transforms (GAMS J) moved to science.signal_time_series.",
+      "tasks": [
+        {
+          "id": "science.numerical_computing.dense_matrix",
+          "name": "Dense matrix computations",
+          "definition": "Given a dense matrix (and right-hand sides), compute a factorization, solution, eigen-decomposition or singular value decomposition.",
+          "inputs": "dense real or complex matrix; right-hand side vectors",
+          "outputs": "solution vectors, LU/QR/Cholesky factors, eigenvalues and vectors, singular values, condition estimates",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "D2",
+              "label": "Solution of systems of linear equations (including inversion, LU and related decompositions)",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/D2"
+            },
+            {
+              "scheme": "NIST GAMS",
+              "code": "D4",
+              "label": "Eigenvalues, eigenvectors",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/D4"
+            },
+            {
+              "scheme": "NIST GAMS",
+              "code": "D6",
+              "label": "Singular value decomposition",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/D6"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "65F",
+              "label": "Numerical linear algebra",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "The MathWorks MATLAB",
+            "GNU Octave",
+            "SciLab",
+            "Intel Math Kernel Library",
+            "Rogue Wave Software IMSL Numerical Libraries",
+            "Matrix calculation software",
+            "NumPy",
+            "PTC Mathcad",
+            "Algae",
+            "pMatlab"
+          ],
+          "state_of_art": [
+            "Intel oneMKL",
+            "NAG Library",
+            "MATLAB"
+          ],
+          "open_tools": [
+            "LAPACK",
+            "OpenBLAS",
+            "Eigen",
+            "NumPy"
+          ],
+          "benchmarkable": "yes: HPL/LINPACK for speed; residual and backward-error checks against known matrices for accuracy",
+          "notes": ""
+        },
+        {
+          "id": "science.numerical_computing.sparse_systems",
+          "name": "Sparse linear systems",
+          "definition": "Given a large sparse matrix and right-hand side, compute the solution by direct factorization or preconditioned iteration.",
+          "inputs": "sparse matrix in compressed format; right-hand side; tolerance",
+          "outputs": "solution vector; residual history; factor or preconditioner",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "D2",
+              "label": "Solution of systems of linear equations (including inversion, LU and related decompositions)",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/D2"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "65F",
+              "label": "Numerical linear algebra",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            },
+            {
+              "scheme": "Berkeley motifs",
+              "code": "",
+              "label": "Sparse linear algebra",
+              "basis": "fetched",
+              "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-183.pdf"
+            }
+          ],
+          "onet_products": [
+            "Aztec",
+            "Multipath Corporation Fast Matrix Solver FMS",
+            "Intel Math Kernel Library",
+            "The MathWorks MATLAB"
+          ],
+          "state_of_art": [
+            "Intel oneMKL PARDISO",
+            "MUMPS",
+            "NVIDIA cuSPARSE"
+          ],
+          "open_tools": [
+            "PETSc",
+            "SuiteSparse",
+            "hypre",
+            "Trilinos",
+            "MUMPS"
+          ],
+          "benchmarkable": "yes: SuiteSparse Matrix Collection and HPCG give standard problems with checkable residuals",
+          "notes": ""
+        },
+        {
+          "id": "science.numerical_computing.ode_integration",
+          "name": "Ordinary differential equation integration",
+          "definition": "Given a system of ordinary or differential-algebraic equations with initial or boundary conditions, compute the trajectory to a stated tolerance.",
+          "inputs": "right-hand-side function, initial or boundary values, time span, tolerances",
+          "outputs": "solution trajectory; error estimates; event times",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "I1",
+              "label": "Ordinary differential equations (ODE's)",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/I1"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "65L",
+              "label": "Numerical methods for ordinary differential equations",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "The MathWorks MATLAB",
+            "Polymath Software POLYMATH",
+            "DifEqu",
+            "ModelKinetix ModelMaker",
+            "Maplesoft Maple",
+            "Wolfram Research Mathematica",
+            "Numerical analysis software"
+          ],
+          "state_of_art": [
+            "MATLAB ode suite",
+            "Mathematica NDSolve",
+            "NAG Library"
+          ],
+          "open_tools": [
+            "SUNDIALS",
+            "SciPy",
+            "DifferentialEquations.jl"
+          ],
+          "benchmarkable": "yes: published stiff and non-stiff test sets (e.g. the Bari IVP test set) have reference solutions",
+          "notes": ""
+        },
+        {
+          "id": "science.numerical_computing.pde_solution",
+          "name": "General partial differential equation solution",
+          "definition": "Given a user-stated partial differential equation, domain and boundary conditions, discretize and solve it without a physics-specific front end.",
+          "inputs": "equation in weak or strong form, domain or mesh, boundary and initial conditions",
+          "outputs": "field solution on a grid or mesh; error estimates",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "I2",
+              "label": "Partial differential equations",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/I2"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "65M",
+              "label": "Numerical methods for partial differential equations, initial value and time-dependent initial-boundary value problems",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "65N",
+              "label": "Numerical methods for partial differential equations, boundary value problems",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            },
+            {
+              "scheme": "Berkeley motifs",
+              "code": "",
+              "label": "Structured grids; Unstructured grids",
+              "basis": "fetched",
+              "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-183.pdf"
+            }
+          ],
+          "onet_products": [
+            "The MathWorks MATLAB",
+            "Wolfram Research Mathematica",
+            "Maplesoft Maple",
+            "Argus ONE Open Numerical Environments"
+          ],
+          "state_of_art": [
+            "MATLAB PDE Toolbox",
+            "Mathematica finite element methods",
+            "COMSOL equation-based modeling"
+          ],
+          "open_tools": [
+            "FEniCS",
+            "Firedrake",
+            "deal.II",
+            "Dedalus"
+          ],
+          "benchmarkable": "yes: method-of-manufactured-solutions problems give exact errors",
+          "notes": "Physics-specific solvers (structures, fluids, fields) belong to simulate; this node is the equation-agnostic solver library."
+        },
+        {
+          "id": "science.numerical_computing.quadrature",
+          "name": "Numerical integration and differentiation",
+          "definition": "Given a function or tabulated data and a region, compute definite integrals or derivatives to a requested accuracy.",
+          "inputs": "integrand function or samples, limits or region, tolerance",
+          "outputs": "integral or derivative value with error estimate",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "H",
+              "label": "Differentiation, integration",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/H"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "65D30",
+              "label": "Numerical integration",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Wolfram Research Mathematica",
+            "The MathWorks MATLAB",
+            "Rogue Wave Software IMSL Numerical Libraries",
+            "Numerical analysis software"
+          ],
+          "state_of_art": [
+            "Mathematica NIntegrate",
+            "NAG Library"
+          ],
+          "open_tools": [
+            "QUADPACK",
+            "Cubature",
+            "SciPy"
+          ],
+          "benchmarkable": "yes: integrals with closed forms (Genz test families) give exact errors",
+          "notes": ""
+        },
+        {
+          "id": "science.numerical_computing.nonlinear_equations",
+          "name": "Nonlinear equation solving",
+          "definition": "Given a system of nonlinear algebraic equations and a starting point or bounds, find roots or certify that none exist.",
+          "inputs": "residual function, Jacobian (optional), initial guess or interval box",
+          "outputs": "roots; convergence status; enclosure intervals for verified methods",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "F",
+              "label": "Solution of nonlinear equations",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/F"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "65H",
+              "label": "Nonlinear algebraic or transcendental equations",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Universal Technical Systems TK Solver",
+            "Numeritek NUMERICA",
+            "PTC Mathcad",
+            "Mathsoft Mathcad",
+            "Polymath Software POLYMATH",
+            "The MathWorks MATLAB"
+          ],
+          "state_of_art": [
+            "MATLAB fsolve",
+            "Mathcad solve blocks",
+            "TK Solver"
+          ],
+          "open_tools": [
+            "MINPACK",
+            "KINSOL",
+            "SciPy"
+          ],
+          "benchmarkable": "yes: standard nonlinear test problems (Moré-Garbow-Hillstrom) have known roots",
+          "notes": ""
+        },
+        {
+          "id": "science.numerical_computing.interpolation_approximation",
+          "name": "Interpolation and function approximation",
+          "definition": "Given sampled data or an expensive function, construct an interpolant, spline or approximant and evaluate it.",
+          "inputs": "data points or function handle, approximation family, tolerance",
+          "outputs": "interpolant coefficients; evaluated values; error bounds",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "E",
+              "label": "Interpolation",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/E"
+            },
+            {
+              "scheme": "NIST GAMS",
+              "code": "K",
+              "label": "Approximation",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/K"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "65D",
+              "label": "Numerical approximation and computational geometry (primarily algorithms)",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "The MathWorks MATLAB",
+            "Systat Software TableCurve",
+            "Rogue Wave Software IMSL Numerical Libraries",
+            "SciPy"
+          ],
+          "state_of_art": [
+            "MATLAB Curve Fitting Toolbox",
+            "NAG Library"
+          ],
+          "open_tools": [
+            "SciPy",
+            "Chebfun",
+            "FITPACK"
+          ],
+          "benchmarkable": "yes: approximation error on known functions is exactly measurable",
+          "notes": ""
+        },
+        {
+          "id": "science.numerical_computing.special_functions_precision",
+          "name": "Special functions and extended precision",
+          "definition": "Given arguments and a requested precision, evaluate special functions or carry out arithmetic beyond hardware floating point.",
+          "inputs": "arguments, function or operation, precision",
+          "outputs": "values with guaranteed or estimated error",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "C",
+              "label": "Elementary and special functions",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/C"
+            },
+            {
+              "scheme": "NIST GAMS",
+              "code": "A",
+              "label": "Arithmetic, error analysis",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/A"
+            }
+          ],
+          "onet_products": [
+            "Apfloat",
+            "Wolfram Research Mathematica",
+            "Rogue Wave Software IMSL Numerical Libraries",
+            "Maplesoft Maple"
+          ],
+          "state_of_art": [
+            "Mathematica",
+            "Maple"
+          ],
+          "open_tools": [
+            "MPFR",
+            "FLINT/Arb",
+            "Boost.Math",
+            "mpmath"
+          ],
+          "benchmarkable": "yes: correctly rounded reference values exist for most functions",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "science.symbolic_math",
+      "name": "Symbolic and exact mathematics",
+      "definition": "Given mathematical expressions, structures or conjectures, compute exact symbolic results or machine-checked proofs.",
+      "crosswalk": [
+        {
+          "scheme": "NIST GAMS",
+          "code": "O",
+          "label": "Symbolic computation",
+          "basis": "fetched",
+          "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/O"
+        },
+        {
+          "scheme": "MSC 2020",
+          "code": "68W30",
+          "label": "Symbolic computation and algebraic computation",
+          "basis": "fetched",
+          "url": "https://msc2020.org/MSC_2020.csv"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Computing methodologies > Symbolic and algebraic manipulation",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "science.numerical_computing",
+        "learn.adaptive_practice"
+      ],
+      "notes": "Was seed 'Symbolic mathematics'; widened to exact algebra, number theory and theorem proving, which GAMS O and MSC 68W30 / 03B35 group with it.",
+      "tasks": [
+        {
+          "id": "science.symbolic_math.computer_algebra",
+          "name": "Symbolic algebra and calculus",
+          "definition": "Given symbolic expressions, simplify, factor, differentiate, integrate, solve or expand them in closed form.",
+          "inputs": "symbolic expressions, equations, assumptions",
+          "outputs": "closed-form results, simplified expressions, symbolic solutions",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "O",
+              "label": "Symbolic computation",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/O"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "68W30",
+              "label": "Symbolic computation and algebraic computation",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Wolfram Research Mathematica",
+            "Maplesoft Maple",
+            "Maxima Software",
+            "REDUCE",
+            "JACAL",
+            "The MathWorks Symbolic Math Toolbox",
+            "MacKichan Software Scientific WorkPlace",
+            "MacKichan Software Scientific Notebook",
+            "Mathematical software"
+          ],
+          "state_of_art": [
+            "Mathematica",
+            "Maple",
+            "Magma"
+          ],
+          "open_tools": [
+            "SymPy",
+            "Maxima",
+            "REDUCE",
+            "SageMath"
+          ],
+          "benchmarkable": "yes: integration and simplification test suites (e.g. the Rubi integration tests) have known answers",
+          "notes": ""
+        },
+        {
+          "id": "science.symbolic_math.algebra_number_theory",
+          "name": "Computational algebra and number theory",
+          "definition": "Given algebraic structures (groups, rings, polynomial ideals, number fields), compute invariants, decompositions or arithmetic facts exactly.",
+          "inputs": "group presentations, polynomial systems, number fields, integers",
+          "outputs": "Gröbner bases, class groups, factorizations, character tables",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "B",
+              "label": "Number theory",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/B"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "11Y",
+              "label": "Computational number theory",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "68W30",
+              "label": "Symbolic computation and algebraic computation",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "PARI/GP",
+            "KANT",
+            "Symmetrica",
+            "Computer Algebra System for Algebraic Geometry CASA"
+          ],
+          "state_of_art": [
+            "Magma",
+            "Mathematica"
+          ],
+          "open_tools": [
+            "GAP",
+            "PARI/GP",
+            "Singular",
+            "Macaulay2",
+            "FLINT"
+          ],
+          "benchmarkable": "yes: exact answers are checkable; databases such as LMFDB give reference values",
+          "notes": ""
+        },
+        {
+          "id": "science.symbolic_math.theorem_proving",
+          "name": "Automated and interactive theorem proving",
+          "definition": "Given a formal statement and axioms, search for or check a machine-verifiable proof.",
+          "inputs": "formal statements, theories, proof scripts",
+          "outputs": "proofs or counterexamples; verification status",
+          "crosswalk": [
+            {
+              "scheme": "MSC 2020",
+              "code": "03B35",
+              "label": "Mechanization of proofs and logical operations",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            },
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Theory of computation > Logic > Automated reasoning",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Interactive Mathematical Proof System IMPS",
+            "Gateway to Logic"
+          ],
+          "state_of_art": [
+            "Lean",
+            "Isabelle",
+            "Vampire"
+          ],
+          "open_tools": [
+            "Lean",
+            "Isabelle",
+            "Rocq (Coq)",
+            "E prover",
+            "Vampire",
+            "Z3"
+          ],
+          "benchmarkable": "yes: TPTP and miniF2F are standard problem sets with pass/fail scoring",
+          "notes": ""
+        },
+        {
+          "id": "science.symbolic_math.interactive_geometry",
+          "name": "Interactive geometry and graphing",
+          "definition": "Given geometric constructions or functions, render them and update dependent objects as inputs are dragged or changed.",
+          "inputs": "constructions, function definitions, parameters",
+          "outputs": "interactive figures, graphs, loci, measurements",
+          "crosswalk": [
+            {
+              "scheme": "MSC 2020",
+              "code": "68U05",
+              "label": "Computer graphics; computational geometry (digital and algorithmic aspects)",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Geogebra",
+            "Desmos",
+            "KSEG",
+            "Geomview",
+            "Graphing software"
+          ],
+          "state_of_art": [
+            "GeoGebra",
+            "Desmos",
+            "Cabri"
+          ],
+          "open_tools": [
+            "GeoGebra (open-source core)",
+            "KSEG",
+            "Geomview",
+            "Kig",
+            "Dr. Geo"
+          ],
+          "benchmarkable": "no: an exploratory tool; quality is usability, not a computed answer",
+          "notes": "Much of its use is teaching; the teaching function belongs to learn."
+        }
+      ]
+    },
+    {
+      "id": "science.statistics",
+      "name": "Statistical modeling and inference",
+      "definition": "Given data and a statistical question, fit models, estimate quantities and test hypotheses with stated uncertainty.",
+      "crosswalk": [
+        {
+          "scheme": "NIST GAMS",
+          "code": "L",
+          "label": "Statistics, probability",
+          "basis": "fetched",
+          "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L"
+        },
+        {
+          "scheme": "MSC 2020",
+          "code": "62",
+          "label": "Statistics",
+          "basis": "fetched",
+          "url": "https://msc2020.org/MSC_2020.csv"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Mathematics of computing > Probability and statistics",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Object or component oriented development software"
+      ],
+      "see_also": [
+        "science.experimental_design",
+        "science.signal_time_series",
+        "science.social_research"
+      ],
+      "notes": "Was seed 'Statistical analysis and experimental design'; design of experiments split out (science.experimental_design) because it is done before data exist, time series and econometrics split out (science.signal_time_series). Tasks follow GAMS L subclasses and CRAN Task Views. General packages (SAS, SPSS, Stata, R, Minitab) live here.",
+      "tasks": [
+        {
+          "id": "science.statistics.hypothesis_testing",
+          "name": "Hypothesis tests and descriptive statistics",
+          "definition": "Given samples, compute summaries and run parametric, nonparametric or exact tests and analysis of variance.",
+          "inputs": "data table, grouping variables, test choice",
+          "outputs": "summary statistics, test statistics, p-values, confidence intervals, ANOVA tables",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "L1",
+              "label": "Data summarization",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L1"
+            },
+            {
+              "scheme": "NIST GAMS",
+              "code": "L4",
+              "label": "Elementary data analysis",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L4"
+            },
+            {
+              "scheme": "NIST GAMS",
+              "code": "L7",
+              "label": "Analysis of variance (including analysis of covariance)",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L7"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "62F",
+              "label": "Parametric inference",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "62G",
+              "label": "Nonparametric inference",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "SAS",
+            "IBM SPSS Statistics",
+            "Minitab",
+            "StataCorp Stata",
+            "R",
+            "STATISTICA",
+            "SYSTAT",
+            "NCSS",
+            "Cytel StatXact",
+            "Analyse-it",
+            "Statgraphics",
+            "Palisade StatTools"
+          ],
+          "state_of_art": [
+            "SAS/STAT",
+            "Stata",
+            "JMP",
+            "SPSS"
+          ],
+          "open_tools": [
+            "R",
+            "statsmodels",
+            "SciPy",
+            "PSPP",
+            "JASP"
+          ],
+          "benchmarkable": "yes: NIST Statistical Reference Datasets give certified results",
+          "notes": ""
+        },
+        {
+          "id": "science.statistics.regression",
+          "name": "Regression and generalized linear models",
+          "definition": "Given a response and predictors, fit linear, nonlinear or generalized linear models and report estimates and diagnostics.",
+          "inputs": "data table, model formula, link and error family",
+          "outputs": "coefficients, standard errors, fitted values, diagnostics",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "L8",
+              "label": "Regression",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L8"
+            },
+            {
+              "scheme": "NIST GAMS",
+              "code": "L9",
+              "label": "Categorical data analysis",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L9"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "62J",
+              "label": "Linear inference, regression",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "SAS/STAT",
+            "StataCorp Stata",
+            "R",
+            "IBM SPSS Statistics",
+            "Insightful S-PLUS",
+            "Cytel LogXact",
+            "GraphPad Software GraphPad Prism",
+            "Systat Software SigmaStat",
+            "Statistical Solutions BMDP"
+          ],
+          "state_of_art": [
+            "SAS/STAT",
+            "Stata",
+            "R"
+          ],
+          "open_tools": [
+            "R",
+            "statsmodels",
+            "glmnet"
+          ],
+          "benchmarkable": "yes: NIST StRD linear and nonlinear regression datasets have certified values",
+          "notes": ""
+        },
+        {
+          "id": "science.statistics.mixed_models",
+          "name": "Mixed and multilevel models",
+          "definition": "Given clustered, repeated or pedigree-structured data, fit models with random effects and estimate variance components.",
+          "inputs": "data with grouping structure, fixed and random effect terms, covariance structures",
+          "outputs": "fixed effects, variance components, predicted random effects (BLUPs)",
+          "crosswalk": [
+            {
+              "scheme": "MSC 2020",
+              "code": "62J",
+              "label": "Linear inference, regression",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            },
+            {
+              "scheme": "CRAN Task Views",
+              "code": "MixedModels",
+              "label": "Mixed, Multilevel, and Hierarchical Models in R",
+              "basis": "fetched",
+              "url": "https://cran.r-project.org/web/views/MixedModels.html"
+            }
+          ],
+          "onet_products": [
+            "Scientific Software International HLM",
+            "Centre for Multilevel Modeling MLwiN",
+            "VSNi ASReml",
+            "VSN International GenStat",
+            "Best Linear Unbiased Prediction BLUP",
+            "Meta-analysis with interactive explanations MIX",
+            "SAS/STAT"
+          ],
+          "state_of_art": [
+            "SAS PROC MIXED",
+            "ASReml",
+            "HLM"
+          ],
+          "open_tools": [
+            "lme4",
+            "glmmTMB",
+            "nlme",
+            "metafor"
+          ],
+          "benchmarkable": "partly: simulation studies with known variance components; no single standard suite",
+          "notes": "Breeding-value estimation (BLUP) and random-effects meta-analysis are mixed models and sit here."
+        },
+        {
+          "id": "science.statistics.latent_variable",
+          "name": "Structural equation and latent variable models",
+          "definition": "Given observed indicators and a hypothesized structure, estimate latent factors, paths and fit indices.",
+          "inputs": "covariance matrix or raw data, path or measurement model",
+          "outputs": "loadings, path coefficients, fit indices, factor scores",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "L13",
+              "label": "Covariance structure models",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L13"
+            },
+            {
+              "scheme": "CRAN Task Views",
+              "code": "Psychometrics",
+              "label": "Psychometric Models and Methods",
+              "basis": "fetched",
+              "url": "https://cran.r-project.org/web/views/Psychometrics.html"
+            }
+          ],
+          "onet_products": [
+            "Scientific Software International LISREL",
+            "IBM SPSS Amos",
+            "Muthen & Muthen Mplus",
+            "Multivariate Software EQS",
+            "poLCA",
+            "Scientific Software International SSI LISREL"
+          ],
+          "state_of_art": [
+            "Mplus",
+            "LISREL",
+            "Amos"
+          ],
+          "open_tools": [
+            "lavaan",
+            "OpenMx",
+            "semopy"
+          ],
+          "benchmarkable": "partly: parameter recovery on simulated data; published reference models",
+          "notes": ""
+        },
+        {
+          "id": "science.statistics.bayesian",
+          "name": "Bayesian inference",
+          "definition": "Given a probabilistic model and data, compute or sample the posterior distribution of the parameters.",
+          "inputs": "model specification, priors, data",
+          "outputs": "posterior samples or approximations, credible intervals, convergence diagnostics",
+          "crosswalk": [
+            {
+              "scheme": "CRAN Task Views",
+              "code": "Bayesian",
+              "label": "Bayesian Inference",
+              "basis": "fetched",
+              "url": "https://cran.r-project.org/web/views/Bayesian.html"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "62F15",
+              "label": "Bayesian inference",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "WinBUGS",
+            "SAS/STAT",
+            "StataCorp Stata"
+          ],
+          "state_of_art": [
+            "Stan",
+            "PyMC",
+            "SAS PROC MCMC"
+          ],
+          "open_tools": [
+            "Stan",
+            "PyMC",
+            "JAGS",
+            "NumPyro"
+          ],
+          "benchmarkable": "yes: posteriordb gives reference posteriors for accuracy and speed comparison",
+          "notes": ""
+        },
+        {
+          "id": "science.statistics.multivariate",
+          "name": "Multivariate and exploratory analysis",
+          "definition": "Given a multivariate data matrix, reduce, ordinate, cluster or classify it with classical methods (PCA, factor, cluster, discriminant, scaling).",
+          "inputs": "data matrix or distance matrix",
+          "outputs": "components, factor loadings, clusters, discriminant functions, ordination plots",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "L14",
+              "label": "Cluster analysis",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L14"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "62H",
+              "label": "Multivariate analysis",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Multivariate statistical program MVSP software",
+            "Paleontological Statistics PAST",
+            "W-NOMINATE",
+            "SAS",
+            "IBM SPSS Statistics",
+            "XLISP-STAT",
+            "UNISTAT Statistical Package"
+          ],
+          "state_of_art": [
+            "SAS",
+            "SPSS",
+            "PRIMER"
+          ],
+          "open_tools": [
+            "R vegan",
+            "FactoMineR",
+            "scikit-learn"
+          ],
+          "benchmarkable": "partly: results are deterministic for classical methods but quality of exploratory output is judged",
+          "notes": ""
+        },
+        {
+          "id": "science.statistics.survival",
+          "name": "Survival and time-to-event analysis",
+          "definition": "Given event times with censoring and covariates, estimate survival curves and hazard models.",
+          "inputs": "event or censoring times, covariates",
+          "outputs": "Kaplan-Meier curves, hazard ratios, life tables",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "L15",
+              "label": "Life testing, survival analysis",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L15"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "62N",
+              "label": "Survival analysis and censored data",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            },
+            {
+              "scheme": "CRAN Task Views",
+              "code": "Survival",
+              "label": "Survival Analysis",
+              "basis": "fetched",
+              "url": "https://cran.r-project.org/web/views/Survival.html"
+            }
+          ],
+          "onet_products": [
+            "SAS/STAT",
+            "StataCorp Stata",
+            "National Institute for Occupational Safety and Health NIOSH Life Table Analysis System"
+          ],
+          "state_of_art": [
+            "SAS PROC PHREG",
+            "Stata st"
+          ],
+          "open_tools": [
+            "R survival",
+            "lifelines",
+            "scikit-survival"
+          ],
+          "benchmarkable": "yes: reference datasets with published estimates; simulation with known hazards",
+          "notes": "Equipment failure-time analysis (Weibull) is applied in operate."
+        },
+        {
+          "id": "science.statistics.missing_data",
+          "name": "Missing data imputation",
+          "definition": "Given a dataset with missing values and an assumed missingness mechanism, produce imputations and pooled estimates.",
+          "inputs": "incomplete data table, imputation model",
+          "outputs": "imputed datasets; pooled estimates with combined variance",
+          "crosswalk": [
+            {
+              "scheme": "CRAN Task Views",
+              "code": "MissingData",
+              "label": "Missing Data",
+              "basis": "fetched",
+              "url": "https://cran.r-project.org/web/views/MissingData.html"
+            }
+          ],
+          "onet_products": [
+            "Statistical Solutions SOLAS",
+            "SAS/STAT",
+            "IBM SPSS Statistics"
+          ],
+          "state_of_art": [
+            "SAS PROC MI",
+            "SPSS Missing Values"
+          ],
+          "open_tools": [
+            "mice",
+            "Amelia",
+            "missForest"
+          ],
+          "benchmarkable": "yes: masking known values gives exact imputation error",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "science.experimental_design",
+      "name": "Experimental and sampling design",
+      "definition": "Given study goals and constraints, choose the runs, sample sizes or sampling locations that will answer the question efficiently.",
+      "crosswalk": [
+        {
+          "scheme": "MSC 2020",
+          "code": "62K",
+          "label": "Design of statistical experiments",
+          "basis": "fetched",
+          "url": "https://msc2020.org/MSC_2020.csv"
+        },
+        {
+          "scheme": "MSC 2020",
+          "code": "62D",
+          "label": "Statistical sampling theory and related topics",
+          "basis": "fetched",
+          "url": "https://msc2020.org/MSC_2020.csv"
+        },
+        {
+          "scheme": "CRAN Task Views",
+          "code": "ExperimentalDesign",
+          "label": "Design of Experiments (DoE) & Analysis of Experimental Data",
+          "basis": "fetched",
+          "url": "https://cran.r-project.org/web/views/ExperimentalDesign.html"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "science.statistics",
+        "produce.quality_control"
+      ],
+      "notes": "Split out of seed 'Statistical analysis and experimental design': its input is a plan, not data, and its output is a design to be run.",
+      "tasks": [
+        {
+          "id": "science.experimental_design.factorial_response_surface",
+          "name": "Factorial and response surface designs",
+          "definition": "Given factors, levels and run budget, generate a factorial, fractional, mixture or response surface design and analyze its results.",
+          "inputs": "factors, ranges, constraints, run budget",
+          "outputs": "design matrix; fitted response surface; optimal settings",
+          "crosswalk": [
+            {
+              "scheme": "MSC 2020",
+              "code": "62K15",
+              "label": "Factorial statistical designs",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "62K20",
+              "label": "Response surface designs",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Design of experiments DOE software",
+            "Stat-Ease Design-Expert",
+            "Stat-Ease Design-Ease",
+            "ECHIP",
+            "SAS JMP",
+            "Minitab",
+            "StatPoint STATGRAPHICS Centurion"
+          ],
+          "state_of_art": [
+            "JMP",
+            "Design-Expert",
+            "Minitab"
+          ],
+          "open_tools": [
+            "R DoE.base",
+            "R rsm",
+            "pyDOE2"
+          ],
+          "benchmarkable": "partly: design efficiency (D, I criteria) is computable; usefulness depends on the experiment",
+          "notes": ""
+        },
+        {
+          "id": "science.experimental_design.optimal_designs",
+          "name": "Optimal and computer-experiment designs",
+          "definition": "Given a model and candidate region, construct designs that optimize an information criterion or fill the space for simulation experiments.",
+          "inputs": "model terms, candidate set or region, criterion",
+          "outputs": "design points; efficiency values",
+          "crosswalk": [
+            {
+              "scheme": "MSC 2020",
+              "code": "62K05",
+              "label": "Optimal statistical designs",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "SAS JMP",
+            "Stat-Ease Design-Expert",
+            "ECHIP"
+          ],
+          "state_of_art": [
+            "JMP custom design",
+            "Design-Expert"
+          ],
+          "open_tools": [
+            "R AlgDesign",
+            "SMT",
+            "scipy.stats.qmc"
+          ],
+          "benchmarkable": "yes: criteria values (D-efficiency, discrepancy) compare designs exactly",
+          "notes": ""
+        },
+        {
+          "id": "science.experimental_design.power_sample_size",
+          "name": "Power and sample size",
+          "definition": "Given a planned test, effect size and error rates, compute the required sample size or achieved power.",
+          "inputs": "test type, effect size, alpha, variance assumptions",
+          "outputs": "sample size or power; power curves",
+          "crosswalk": [
+            {
+              "scheme": "CRAN Task Views",
+              "code": "ClinicalTrials",
+              "label": "Clinical Trial Design, Monitoring, Analysis and Reporting",
+              "basis": "fetched",
+              "url": "https://cran.r-project.org/web/views/ClinicalTrials.html"
+            }
+          ],
+          "onet_products": [
+            "NCSS Power Analysis and Sample Size PASS",
+            "Power and Precision"
+          ],
+          "state_of_art": [
+            "PASS",
+            "nQuery"
+          ],
+          "open_tools": [
+            "G*Power (free)",
+            "R pwr",
+            "statsmodels power"
+          ],
+          "benchmarkable": "yes: closed-form and simulated reference values",
+          "notes": ""
+        },
+        {
+          "id": "science.experimental_design.sampling_plans",
+          "name": "Statistical sampling plans",
+          "definition": "Given a population or site and a decision rule, determine how many units or locations to sample and where.",
+          "inputs": "population or area, decision error limits, variance estimates",
+          "outputs": "sample size, sample locations or unit selections",
+          "crosswalk": [
+            {
+              "scheme": "MSC 2020",
+              "code": "62D05",
+              "label": "Sampling theory, sample surveys",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "RAT-STATS",
+            "DQO-PRO",
+            "DQO ELIPGRID-PC"
+          ],
+          "state_of_art": [
+            "Visual Sample Plan",
+            "RAT-STATS"
+          ],
+          "open_tools": [
+            "Visual Sample Plan (free)",
+            "R sampling"
+          ],
+          "benchmarkable": "partly: decision error rates can be simulated",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "science.signal_time_series",
+      "name": "Signal and time-series analysis",
+      "definition": "Given sampled signals or time-indexed series, transform, filter, decompose, model and forecast them.",
+      "crosswalk": [
+        {
+          "scheme": "NIST GAMS",
+          "code": "J",
+          "label": "Integral transforms",
+          "basis": "fetched",
+          "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/J"
+        },
+        {
+          "scheme": "NIST GAMS",
+          "code": "L10",
+          "label": "Time series analysis",
+          "basis": "fetched",
+          "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L10"
+        },
+        {
+          "scheme": "MSC 2020",
+          "code": "62M10",
+          "label": "Time series, auto-correlation, regression, etc. in statistics (GARCH)",
+          "basis": "fetched",
+          "url": "https://msc2020.org/MSC_2020.csv"
+        },
+        {
+          "scheme": "Berkeley motifs",
+          "code": "",
+          "label": "Spectral methods",
+          "basis": "fetched",
+          "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-183.pdf"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "design.ic_implementation",
+        "science.statistics"
+      ],
+      "notes": "New capability, not a seed: GAMS J and L10 and the CRAN TimeSeries and Econometrics views share inputs (ordered samples) and outputs (spectra, filters, forecasts). Communications-system signal design inside EDA stays with design.",
+      "tasks": [
+        {
+          "id": "science.signal_time_series.spectral_analysis",
+          "name": "Spectral and Fourier analysis",
+          "definition": "Given a sampled signal, compute its Fourier transform, power spectrum or time-frequency representation.",
+          "inputs": "sampled signal, sample rate, window",
+          "outputs": "spectra, spectrograms, peak frequencies",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "J1",
+              "label": "Trigonometric transforms including fast Fourier transforms",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/J1"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "65T",
+              "label": "Numerical methods in Fourier analysis",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Fast Fourier transform FFT analysis software",
+            "Discrete Fourier transform DFT analysis software",
+            "DSP Development DADiSP",
+            "The MathWorks Signal Processing Toolbox",
+            "Signal analysis software",
+            "WaveMetrics IGOR Pro"
+          ],
+          "state_of_art": [
+            "MATLAB Signal Processing Toolbox",
+            "DADiSP"
+          ],
+          "open_tools": [
+            "FFTW",
+            "SciPy",
+            "NumPy"
+          ],
+          "benchmarkable": "yes: transforms of known signals have exact answers; FFT speed is benchmarked (benchFFT)",
+          "notes": ""
+        },
+        {
+          "id": "science.signal_time_series.digital_filtering",
+          "name": "Digital filter design and filtering",
+          "definition": "Given a frequency specification or a noisy signal, design filters and apply them.",
+          "inputs": "passband and stopband specs or signal plus filter",
+          "outputs": "filter coefficients; filtered signal; frequency response",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "J2",
+              "label": "Convolutions",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/J2"
+            }
+          ],
+          "onet_products": [
+            "The MathWorks Signal Processing Toolbox",
+            "MathWorks Simulink DSP Blockset",
+            "DSP Development DADiSP"
+          ],
+          "state_of_art": [
+            "MATLAB Filter Designer"
+          ],
+          "open_tools": [
+            "SciPy",
+            "GNU Radio"
+          ],
+          "benchmarkable": "yes: filter responses are checkable against specifications",
+          "notes": ""
+        },
+        {
+          "id": "science.signal_time_series.wavelet",
+          "name": "Wavelet and multiresolution analysis",
+          "definition": "Given a signal or image, compute wavelet decompositions for denoising, compression or feature extraction.",
+          "inputs": "signal or image, wavelet family, levels",
+          "outputs": "coefficients; denoised or compressed signal",
+          "crosswalk": [
+            {
+              "scheme": "MSC 2020",
+              "code": "42C40",
+              "label": "Nontrigonometric harmonic analysis involving wavelets and other special systems",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "The MathWorks Wavelet Toolbox"
+          ],
+          "state_of_art": [
+            "MATLAB Wavelet Toolbox"
+          ],
+          "open_tools": [
+            "PyWavelets"
+          ],
+          "benchmarkable": "partly: denoising error on synthetic signals is measurable",
+          "notes": ""
+        },
+        {
+          "id": "science.signal_time_series.forecasting",
+          "name": "Time-series forecasting",
+          "definition": "Given a univariate or hierarchical series, fit time-series models (ARIMA, exponential smoothing, state space) and forecast with intervals.",
+          "inputs": "time-indexed series, horizon, exogenous regressors",
+          "outputs": "forecasts with prediction intervals; fitted model",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "L10",
+              "label": "Time series analysis",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L10"
+            },
+            {
+              "scheme": "CRAN Task Views",
+              "code": "TimeSeries",
+              "label": "Time Series Analysis",
+              "basis": "fetched",
+              "url": "https://cran.r-project.org/web/views/TimeSeries.html"
+            }
+          ],
+          "onet_products": [
+            "Automatic Forecasting Systems Autobox",
+            "Time series modeling TSM software",
+            "Visual Numerics TS-WAVE",
+            "Analysis and Visualization of Time Sequences AVTS",
+            "SAS",
+            "Quantitative Micro Software EViews"
+          ],
+          "state_of_art": [
+            "SAS Forecast Server",
+            "Autobox",
+            "EViews"
+          ],
+          "open_tools": [
+            "statsmodels",
+            "R forecast/fable",
+            "Prophet",
+            "sktime"
+          ],
+          "benchmarkable": "yes: M3, M4 and M5 forecasting competitions give scored datasets",
+          "notes": ""
+        },
+        {
+          "id": "science.signal_time_series.econometrics",
+          "name": "Econometric estimation",
+          "definition": "Given economic panel or time-series data, estimate structural, panel, instrumental-variable or vector-autoregressive models.",
+          "inputs": "panel or time-series data, model specification, instruments",
+          "outputs": "estimates, tests (unit root, cointegration), impulse responses",
+          "crosswalk": [
+            {
+              "scheme": "CRAN Task Views",
+              "code": "Econometrics",
+              "label": "Econometrics",
+              "basis": "fetched",
+              "url": "https://cran.r-project.org/web/views/Econometrics.html"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "62P20",
+              "label": "Applications of statistics to economics",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Quantitative Micro Software EViews",
+            "Estima Regression Analysis of Time Series RATS",
+            "Econometric Software LIMDEP",
+            "Camfit Data Limited Microfit",
+            "Timberlake Consultants OxMetrics",
+            "Aptech Systems GAUSS",
+            "Global Insight AREMOS",
+            "ARfit",
+            "FEAR"
+          ],
+          "state_of_art": [
+            "EViews",
+            "Stata",
+            "OxMetrics"
+          ],
+          "open_tools": [
+            "gretl",
+            "statsmodels",
+            "linearmodels",
+            "R plm"
+          ],
+          "benchmarkable": "partly: published replication datasets with reference estimates",
+          "notes": ""
+        },
+        {
+          "id": "science.signal_time_series.acoustic_speech",
+          "name": "Acoustic and speech signal analysis",
+          "definition": "Given recorded speech or sound, measure pitch, formants, intensity and spectral features.",
+          "inputs": "audio recordings, analysis settings",
+          "outputs": "pitch and formant tracks, spectrograms, acoustic measures",
+          "crosswalk": [],
+          "onet_products": [
+            "Speech analysis software",
+            "Avaaz Innovations Computerized Speech Research Environment CSRE",
+            "Mangold Soundalyzer"
+          ],
+          "state_of_art": [
+            "Praat",
+            "KayPENTAX CSL"
+          ],
+          "open_tools": [
+            "Praat",
+            "openSMILE",
+            "librosa"
+          ],
+          "benchmarkable": "partly: pitch and formant trackers can be scored against annotated corpora",
+          "notes": "Clinical speech therapy use belongs to health; acoustic measurement is the method."
+        }
+      ]
+    },
+    {
+      "id": "science.machine_learning",
+      "name": "Machine learning and data mining",
+      "definition": "Given example data, learn models that predict, group, generate or find patterns, and apply them to new data.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Computing methodologies > Machine learning",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "MSC 2020",
+          "code": "68T05",
+          "label": "Learning and adaptive systems in artificial intelligence",
+          "basis": "fetched",
+          "url": "https://msc2020.org/MSC_2020.csv"
+        },
+        {
+          "scheme": "CRAN Task Views",
+          "code": "MachineLearning",
+          "label": "Machine Learning & Statistical Learning",
+          "basis": "fetched",
+          "url": "https://cran.r-project.org/web/views/MachineLearning.html"
+        }
+      ],
+      "onet_categories": [
+        "Data mining software",
+        "Expert system software",
+        "Development environment software",
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "computing.ml_platforms",
+        "science.statistics"
+      ],
+      "notes": "Was seed 'Machine learning and data mining'. Methods only: training platforms, experiment tracking and model serving (MLflow, Kubeflow, SageMaker) are computing. Tasks follow ACM CCS learning paradigms plus NLP and vision.",
+      "tasks": [
+        {
+          "id": "science.machine_learning.supervised_tabular",
+          "name": "Supervised learning on tabular data",
+          "definition": "Given labeled feature tables, train classifiers or regressors (trees, ensembles, kernels) and predict labels for new rows.",
+          "inputs": "feature table with labels; validation scheme",
+          "outputs": "trained model, predictions, accuracy metrics, feature importance",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010257.10010258.10010259",
+              "label": "Computing methodologies > Machine learning > Learning paradigms > Supervised learning",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Scikit-learn",
+            "XGBoost",
+            "Salford Systems CART",
+            "Salford Systems TreeNet",
+            "Random forest software",
+            "Rapid-I RapidMiner",
+            "Waikato Environment for Knowledge Analysis Weka",
+            "SAS Enterprise Miner",
+            "IBM SPSS AnswerTree",
+            "Angoss KnowledgeSEEKER",
+            "Cytel Software XLMiner",
+            "Apache Mahout"
+          ],
+          "state_of_art": [
+            "XGBoost",
+            "LightGBM",
+            "DataRobot",
+            "H2O Driverless AI"
+          ],
+          "open_tools": [
+            "scikit-learn",
+            "XGBoost",
+            "LightGBM",
+            "CatBoost"
+          ],
+          "benchmarkable": "yes: OpenML benchmark suites (e.g. OpenML-CC18) and the AutoML Benchmark",
+          "notes": ""
+        },
+        {
+          "id": "science.machine_learning.unsupervised",
+          "name": "Clustering and representation learning",
+          "definition": "Given unlabeled data, find clusters, low-dimensional embeddings or anomalies.",
+          "inputs": "feature table or similarity matrix",
+          "outputs": "cluster labels, embeddings, anomaly scores",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010257.10010258.10010260",
+              "label": "Computing methodologies > Machine learning > Learning paradigms > Unsupervised learning",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "IBM Intelligent Miner",
+            "NCR Teradata Warehouse Miner",
+            "Pattern recognition software",
+            "Waikato Environment for Knowledge Analysis Weka",
+            "Oracle Darwin"
+          ],
+          "state_of_art": [
+            "scikit-learn",
+            "SAS Enterprise Miner"
+          ],
+          "open_tools": [
+            "scikit-learn",
+            "UMAP",
+            "HDBSCAN",
+            "PyOD"
+          ],
+          "benchmarkable": "partly: labeled clustering benchmarks and ADBench for anomaly detection; unsupervised quality is otherwise judged",
+          "notes": ""
+        },
+        {
+          "id": "science.machine_learning.pattern_mining",
+          "name": "Association rule and pattern mining",
+          "definition": "Given transactions or event sequences, find frequent itemsets, association rules or sequential patterns.",
+          "inputs": "transaction or sequence database, support and confidence thresholds",
+          "outputs": "frequent patterns, rules with support and confidence",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10002951.10003227.10003351.10003443",
+              "label": "Information systems > Information systems applications > Data mining > Association rules",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "WizSoft WizRule",
+            "WizSoft WizWhy",
+            "Data mining software"
+          ],
+          "state_of_art": [
+            "SAS Enterprise Miner"
+          ],
+          "open_tools": [
+            "SPMF",
+            "mlxtend",
+            "R arules"
+          ],
+          "benchmarkable": "yes: FIMI repository datasets; outputs are exact for given thresholds",
+          "notes": ""
+        },
+        {
+          "id": "science.machine_learning.neural_networks",
+          "name": "Neural network training",
+          "definition": "Given a network architecture, data and loss, train weights by gradient methods and evaluate the trained network.",
+          "inputs": "architecture, training data, loss, optimizer settings",
+          "outputs": "trained weights, learning curves, evaluation metrics",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010257.10010293.10010294",
+              "label": "Computing methodologies > Machine learning > Machine learning approaches > Neural networks",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "TensorFlow",
+            "PyTorch",
+            "Keras",
+            "NeuroSolutions for MatLab",
+            "NeuralWare",
+            "Neural network modeling software",
+            "Ward Systems Group NeuralShell Predictor"
+          ],
+          "state_of_art": [
+            "PyTorch",
+            "JAX",
+            "TensorFlow"
+          ],
+          "open_tools": [
+            "PyTorch",
+            "JAX",
+            "TensorFlow",
+            "Keras"
+          ],
+          "benchmarkable": "yes: MLPerf Training measures time to a target quality on fixed tasks",
+          "notes": ""
+        },
+        {
+          "id": "science.machine_learning.language_models",
+          "name": "Natural language processing",
+          "definition": "Given text, tag, parse, classify, extract, embed or generate language with statistical or neural models.",
+          "inputs": "text corpora, task labels or prompts",
+          "outputs": "annotations, entities, classes, embeddings, generated text",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Computing methodologies > Artificial intelligence > Natural language processing",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "CRAN Task Views",
+              "code": "NaturalLanguageProcessing",
+              "label": "Natural Language Processing",
+              "basis": "fetched",
+              "url": "https://cran.r-project.org/web/views/NaturalLanguageProcessing.html"
+            }
+          ],
+          "onet_products": [
+            "spaCy",
+            "Bidirectional encoder representations from transformers (BERT)",
+            "Hugging Face",
+            "Text mining software",
+            "OpenAI ChatGPT",
+            "TokenX"
+          ],
+          "state_of_art": [
+            "GPT and Claude model families",
+            "spaCy"
+          ],
+          "open_tools": [
+            "Hugging Face Transformers",
+            "spaCy",
+            "NLTK",
+            "Stanza"
+          ],
+          "benchmarkable": "yes: GLUE, SuperGLUE, HELM and task-specific shared tasks",
+          "notes": ""
+        },
+        {
+          "id": "science.machine_learning.computer_vision",
+          "name": "Image recognition and detection",
+          "definition": "Given images or video frames, classify them, detect and segment objects, or estimate pose with learned models.",
+          "inputs": "labeled or unlabeled images",
+          "outputs": "class labels, bounding boxes, masks, keypoints",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Computing methodologies > Artificial intelligence > Computer vision",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Image processors",
+            "Pattern recognition software"
+          ],
+          "state_of_art": [
+            "Segment Anything",
+            "YOLO family",
+            "Detectron2"
+          ],
+          "open_tools": [
+            "OpenCV",
+            "torchvision",
+            "Detectron2",
+            "MMDetection"
+          ],
+          "benchmarkable": "yes: ImageNet, COCO and similar leaderboards",
+          "notes": "Factory visual inspection products (NI Vision Builder) are applied in produce."
+        }
+      ]
+    },
+    {
+      "id": "science.optimization",
+      "name": "Mathematical optimization",
+      "definition": "Given decision variables, an objective and constraints, find optimal or near-optimal values with bounds on the gap.",
+      "crosswalk": [
+        {
+          "scheme": "NIST GAMS",
+          "code": "G",
+          "label": "Optimization",
+          "basis": "fetched",
+          "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/G"
+        },
+        {
+          "scheme": "MSC 2020",
+          "code": "90C",
+          "label": "Mathematical programming",
+          "basis": "fetched",
+          "url": "https://msc2020.org/MSC_2020.csv"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "10002950.10003714.10003716",
+          "label": "Mathematics of computing > Mathematical analysis > Mathematical optimization",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "CRAN Task Views",
+          "code": "Optimization",
+          "label": "Optimization and Mathematical Programming",
+          "basis": "fetched",
+          "url": "https://cran.r-project.org/web/views/Optimization.html"
+        },
+        {
+          "scheme": "Berkeley motifs",
+          "code": "",
+          "label": "Backtrack and branch-and-bound",
+          "basis": "fetched",
+          "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-183.pdf"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Financial analysis software"
+      ],
+      "see_also": [
+        "move.vehicle_routing",
+        "produce.production_scheduling"
+      ],
+      "notes": "Was seed 'Mathematical optimization and operations research'. Holds the solver half of existing function 'logistics'; applied routing, scheduling and supply-chain planning stay with move and produce. Tasks follow GAMS G and MSC 90C.",
+      "tasks": [
+        {
+          "id": "science.optimization.linear_programming",
+          "name": "Linear programming",
+          "definition": "Given a linear objective and linear constraints over continuous variables, compute an optimal basis or certify infeasibility.",
+          "inputs": "LP model (MPS or modeling-language form)",
+          "outputs": "optimal solution, duals, reduced costs, status",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "G2a",
+              "label": "Linear programming",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/G2"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "90C05",
+              "label": "Linear programming",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "IBM ILOG CPLEX Optimization Studio",
+            "ILOG CPLEX",
+            "LINDO Systems LINDO API",
+            "LINDO Systems optimization modeling software",
+            "Optimization software"
+          ],
+          "state_of_art": [
+            "Gurobi",
+            "CPLEX",
+            "FICO Xpress",
+            "COPT"
+          ],
+          "open_tools": [
+            "HiGHS",
+            "CLP",
+            "GLPK",
+            "PDLP"
+          ],
+          "benchmarkable": "yes: Mittelmann benchmarks and Netlib LP set",
+          "notes": ""
+        },
+        {
+          "id": "science.optimization.mixed_integer",
+          "name": "Mixed-integer programming",
+          "definition": "Given a linear or quadratic model with integer variables, find a proven-optimal or best-found solution and bound.",
+          "inputs": "MIP model with integrality restrictions",
+          "outputs": "incumbent solution, best bound, optimality gap",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "G2c",
+              "label": "Integer programming",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/G2"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "90C11",
+              "label": "Mixed integer programming",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "IBM ILOG CPLEX Optimization Studio",
+            "ILOG CPLEX",
+            "Mixed integer optimizer MINTO",
+            "LINDO Systems LINDO API",
+            "IBM ILOG"
+          ],
+          "state_of_art": [
+            "Gurobi",
+            "CPLEX",
+            "FICO Xpress"
+          ],
+          "open_tools": [
+            "SCIP",
+            "HiGHS",
+            "CBC"
+          ],
+          "benchmarkable": "yes: MIPLIB 2017 with time-to-optimal and gap scoring",
+          "notes": ""
+        },
+        {
+          "id": "science.optimization.nonlinear_programming",
+          "name": "Nonlinear programming",
+          "definition": "Given smooth nonlinear objectives and constraints, find local or global optima.",
+          "inputs": "objective and constraint functions, derivatives, bounds",
+          "outputs": "optimal point, multipliers, convergence status",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "G2h",
+              "label": "General nonlinear programming",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/G2"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "90C30",
+              "label": "Nonlinear programming",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Stanford Business Software MINOS",
+            "Stanford Business Software SNOPT",
+            "Windward Technologies GRG2",
+            "LINDO Systems LINGO",
+            "The MathWorks MATLAB"
+          ],
+          "state_of_art": [
+            "Knitro",
+            "SNOPT",
+            "BARON"
+          ],
+          "open_tools": [
+            "IPOPT",
+            "NLopt",
+            "Couenne",
+            "SciPy"
+          ],
+          "benchmarkable": "yes: CUTEst and MINLPLib problem sets",
+          "notes": ""
+        },
+        {
+          "id": "science.optimization.constraint_programming",
+          "name": "Constraint programming",
+          "definition": "Given discrete variables with logical and combinatorial constraints, find feasible or optimal assignments by propagation and search.",
+          "inputs": "variables, domains, global constraints, objective",
+          "outputs": "assignments, proof of infeasibility or optimality",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10003752.10003790.10003795",
+              "label": "Theory of computation > Logic > Constraint and logic programming",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "Berkeley motifs",
+              "code": "",
+              "label": "Backtrack and branch-and-bound",
+              "basis": "fetched",
+              "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-183.pdf"
+            }
+          ],
+          "onet_products": [
+            "ILOG OPL-CPLEX Development System",
+            "IBM ILOG"
+          ],
+          "state_of_art": [
+            "IBM CP Optimizer",
+            "OR-Tools CP-SAT"
+          ],
+          "open_tools": [
+            "OR-Tools",
+            "Gecode",
+            "Chuffed",
+            "MiniZinc"
+          ],
+          "benchmarkable": "yes: the annual MiniZinc Challenge and SAT competitions",
+          "notes": ""
+        },
+        {
+          "id": "science.optimization.metaheuristic",
+          "name": "Derivative-free and evolutionary search",
+          "definition": "Given a black-box objective, search for good solutions with genetic, evolutionary, swarm or surrogate methods.",
+          "inputs": "objective function, variable bounds, evaluation budget",
+          "outputs": "best solutions found, convergence history, Pareto fronts",
+          "crosswalk": [
+            {
+              "scheme": "MSC 2020",
+              "code": "90C59",
+              "label": "Approximation methods and heuristics in mathematical programming",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "90C56",
+              "label": "Derivative-free methods and methods using generalized derivatives",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Palisade Evolver",
+            "Ward Systems Group GeneHunter",
+            "Genetic algorithm software",
+            "Genetic algorithm optimization software"
+          ],
+          "state_of_art": [
+            "Optuna",
+            "modeFRONTIER"
+          ],
+          "open_tools": [
+            "pymoo",
+            "DEAP",
+            "CMA-ES (pycma)",
+            "Nevergrad",
+            "Optuna"
+          ],
+          "benchmarkable": "yes: BBOB/COCO benchmark functions with anytime performance scoring",
+          "notes": ""
+        },
+        {
+          "id": "science.optimization.modeling_languages",
+          "name": "Algebraic optimization modeling",
+          "definition": "Given an optimization model written in algebraic notation plus data, generate the solver instance, call a solver and report results.",
+          "inputs": "model file, data tables, solver choice",
+          "outputs": "solver instance, solution reports, sensitivity data",
+          "crosswalk": [],
+          "onet_products": [
+            "A mathematical programming language AMPL",
+            "AMPL",
+            "General algebraic modeling system GAMS",
+            "LINDO Systems LINGO",
+            "Maximal Software MPL Modeling System",
+            "ILOG OPL-CPLEX Development System"
+          ],
+          "state_of_art": [
+            "AMPL",
+            "GAMS",
+            "AIMMS"
+          ],
+          "open_tools": [
+            "Pyomo",
+            "JuMP",
+            "CVXPY",
+            "PuLP"
+          ],
+          "benchmarkable": "partly: model generation time on large instances is measurable; expressiveness is not",
+          "notes": ""
+        },
+        {
+          "id": "science.optimization.model_calibration",
+          "name": "Model calibration and parameter estimation",
+          "definition": "Given a forward model and observations, estimate the parameters that best fit, with uncertainty.",
+          "inputs": "forward model, observations, parameter bounds, weights",
+          "outputs": "calibrated parameters, residuals, parameter uncertainty",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "K1",
+              "label": "Least squares (L-2) approximation",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/K1"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "65K10",
+              "label": "Numerical optimization and variational techniques",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Parameter Estimation PEST",
+            "ModelKinetix ModelMaker",
+            "Polymath Software POLYMATH"
+          ],
+          "state_of_art": [
+            "PEST",
+            "MATLAB lsqnonlin"
+          ],
+          "open_tools": [
+            "PEST++",
+            "lmfit",
+            "SciPy least_squares",
+            "Dakota"
+          ],
+          "benchmarkable": "yes: synthetic problems with known parameters; NIST StRD nonlinear regression",
+          "notes": "Groundwater and watershed model calibration uses this method; the models themselves are earth."
+        }
+      ]
+    },
+    {
+      "id": "science.stochastic_simulation",
+      "name": "General-purpose stochastic simulation",
+      "definition": "Given a model with random inputs or discrete events, simulate many realizations and summarize the distribution of outcomes.",
+      "crosswalk": [
+        {
+          "scheme": "NIST GAMS",
+          "code": "M",
+          "label": "Simulation, stochastic modeling",
+          "basis": "fetched",
+          "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/M"
+        },
+        {
+          "scheme": "MSC 2020",
+          "code": "65C05",
+          "label": "Monte Carlo methods",
+          "basis": "fetched",
+          "url": "https://msc2020.org/MSC_2020.csv"
+        },
+        {
+          "scheme": "Berkeley motifs",
+          "code": "",
+          "label": "Monte Carlo",
+          "basis": "fetched",
+          "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-183.pdf"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Financial analysis software"
+      ],
+      "see_also": [
+        "produce.factory_design",
+        "simulate.system_dynamics",
+        "govern.risk_actuarial"
+      ],
+      "notes": "Was seed 'General-purpose simulation (Monte Carlo, discrete-event, agent-based)'. Factory-specific discrete-event models go to produce; block-diagram and stock-and-flow system dynamics go to simulate. Decision trees and Markov cohort models added: they are stochastic models evaluated by expectation or simulation.",
+      "tasks": [
+        {
+          "id": "science.stochastic_simulation.monte_carlo",
+          "name": "Monte Carlo uncertainty propagation",
+          "definition": "Given a model with uncertain inputs as distributions, sample them, propagate through the model and report output distributions and sensitivities.",
+          "inputs": "model (often a spreadsheet), input distributions, correlations",
+          "outputs": "output distributions, percentiles, sensitivity rankings",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "L6",
+              "label": "Random number generation",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L6"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "65C05",
+              "label": "Monte Carlo methods",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Decisioneering Crystal Ball",
+            "Palisade @Risk",
+            "Monte Carlo simulation software",
+            "Stochastic modeling software"
+          ],
+          "state_of_art": [
+            "@Risk",
+            "Crystal Ball",
+            "Analytica"
+          ],
+          "open_tools": [
+            "OpenTURNS",
+            "SALib",
+            "Chaospy",
+            "UQpy"
+          ],
+          "benchmarkable": "yes: analytic test functions (Ishigami, Sobol g) have known moments and sensitivity indices",
+          "notes": ""
+        },
+        {
+          "id": "science.stochastic_simulation.discrete_event",
+          "name": "Discrete-event simulation",
+          "definition": "Given entities, resources, queues and event logic, simulate system behavior over time and report throughput, waits and utilization.",
+          "inputs": "process logic, arrival and service distributions, resources",
+          "outputs": "time series of state, queue statistics, utilization, confidence intervals",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "M",
+              "label": "Simulation, stochastic modeling",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/M"
+            }
+          ],
+          "onet_products": [
+            "Rockwell Automation Arena",
+            "Imagine That Extend OR",
+            "Mesquite Software CSIM",
+            "Discrete event simulation software",
+            "Simulation software",
+            "Simulation and modeling software"
+          ],
+          "state_of_art": [
+            "Arena",
+            "AnyLogic",
+            "Simio",
+            "ExtendSim"
+          ],
+          "open_tools": [
+            "SimPy",
+            "JaamSim",
+            "OMNeT++",
+            "salabim"
+          ],
+          "benchmarkable": "yes: queueing models with analytic solutions (M/M/c, Jackson networks) check correctness",
+          "notes": ""
+        },
+        {
+          "id": "science.stochastic_simulation.agent_based",
+          "name": "Agent-based and cellular automaton simulation",
+          "definition": "Given agent or cell rules and an initial population or lattice, simulate the emergent collective dynamics.",
+          "inputs": "agent rules, interaction topology, initial state",
+          "outputs": "population trajectories, spatial patterns, summary statistics",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Computing methodologies > Modeling and simulation > Simulation types and techniques > Agent / discrete models",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Discrete Dynamics Lab DDLab",
+            "Computer modeling software"
+          ],
+          "state_of_art": [
+            "AnyLogic",
+            "NetLogo"
+          ],
+          "open_tools": [
+            "NetLogo",
+            "Mesa",
+            "Repast",
+            "MASON",
+            "Golly"
+          ],
+          "benchmarkable": "partly: reference models (e.g. Game of Life, Schelling) reproduce known behavior; validity is otherwise domain-specific",
+          "notes": ""
+        },
+        {
+          "id": "science.stochastic_simulation.decision_analysis",
+          "name": "Decision tree and Markov model analysis",
+          "definition": "Given decisions, chance nodes, probabilities and payoffs or a state-transition model, compute expected values and optimal policies.",
+          "inputs": "decision tree or Markov states, transition probabilities, costs and utilities",
+          "outputs": "expected values, optimal strategy, cost-effectiveness, sensitivity results",
+          "crosswalk": [
+            {
+              "scheme": "MSC 2020",
+              "code": "91B06",
+              "label": "Decision theory",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            },
+            {
+              "scheme": "MSC 2020",
+              "code": "60J10",
+              "label": "Markov chains (discrete-time Markov processes on discrete state spaces)",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "TreeAge Software TreeAge Pro",
+            "Decision support software"
+          ],
+          "state_of_art": [
+            "TreeAge Pro",
+            "Analytica"
+          ],
+          "open_tools": [
+            "R heemod",
+            "R dampack",
+            "pymdptoolbox"
+          ],
+          "benchmarkable": "yes: expected values are exactly computable for given trees and chains",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "science.visualization_imaging",
+      "name": "Scientific visualization and image analysis",
+      "definition": "Given numerical data or scientific images, render them as plots or 3D views, or extract quantitative measurements from them.",
+      "crosswalk": [
+        {
+          "scheme": "NIST GAMS",
+          "code": "Q",
+          "label": "Graphics",
+          "basis": "fetched",
+          "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/Q"
+        },
+        {
+          "scheme": "NIST GAMS",
+          "code": "L3",
+          "label": "Elementary statistical graphics",
+          "basis": "fetched",
+          "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L3"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "10003120.10003145.10003147.10010364",
+          "label": "Human-centered computing > Visualization > Visualization application domains > Scientific visualization",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "10010147.10010178.10010224.10010245.10010247",
+          "label": "Computing methodologies > Artificial intelligence > Computer vision > Computer vision problems > Image segmentation",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Graphics or photo imaging software",
+        "Object or component oriented development software"
+      ],
+      "see_also": [
+        "simulate.meshing_prepost",
+        "earth.remote_sensing",
+        "enterprise.reporting_bi",
+        "health.imaging"
+      ],
+      "notes": "Was seed 'Scientific visualization, plotting and image analysis'; kept as one capability, but tasks split rendering from image measurement. Business dashboards are enterprise; satellite imagery is earth; diagnostic imaging is health.",
+      "tasks": [
+        {
+          "id": "science.visualization_imaging.scientific_plotting",
+          "name": "Scientific charts and plots",
+          "definition": "Given numeric data, produce publication-quality 2D and 3D plots, histograms and fitted curves.",
+          "inputs": "data tables, plot specification",
+          "outputs": "figures (vector or raster), fitted curves",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "Q",
+              "label": "Graphics",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/Q"
+            }
+          ],
+          "onet_products": [
+            "Systat Software SigmaPlot",
+            "OriginLab Origin",
+            "Synergy Software KaleidaGraph",
+            "Gnuplot",
+            "GraphPad Software GraphPad Prism",
+            "Red Rock DeltaGraph",
+            "Hydesoft Computing DPlot",
+            "WaveMetrics IGOR Pro",
+            "SciGraphica",
+            "Data visualization software",
+            "CERN ROOT",
+            "CERN Physics Analysis Workstation PAW"
+          ],
+          "state_of_art": [
+            "Origin",
+            "Prism",
+            "MATLAB graphics"
+          ],
+          "open_tools": [
+            "matplotlib",
+            "ggplot2",
+            "gnuplot",
+            "ROOT",
+            "Veusz"
+          ],
+          "benchmarkable": "partly: plot-generation benchmarks (e.g. MatPlotBench) score code-to-figure tasks; visual quality is judged",
+          "notes": ""
+        },
+        {
+          "id": "science.visualization_imaging.field_visualization",
+          "name": "Volume and field visualization",
+          "definition": "Given gridded or meshed scalar and vector fields, render isosurfaces, slices, streamlines and volume renderings.",
+          "inputs": "structured or unstructured grids with field values",
+          "outputs": "interactive 3D views, images, animations",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Human-centered computing > Visualization > Visualization techniques",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Tecplot Focus",
+            "Tecplot software",
+            "Visualization Sciences Group VSG Avizo Fire",
+            "Advanced Visual Systems AVS/Express",
+            "RSI interactive data language IDL software",
+            "Visual Numerics PV-WAVE",
+            "Vis5d+",
+            "Cave5D",
+            "Graphics Programming Environment GRAPE"
+          ],
+          "state_of_art": [
+            "Tecplot 360",
+            "Avizo",
+            "EnSight"
+          ],
+          "open_tools": [
+            "ParaView",
+            "VisIt",
+            "VTK",
+            "PyVista"
+          ],
+          "benchmarkable": "partly: rendering throughput is measurable; insight is not",
+          "notes": ""
+        },
+        {
+          "id": "science.visualization_imaging.exploratory_graphics",
+          "name": "Interactive exploratory data graphics",
+          "definition": "Given a multivariate dataset, provide linked, brushable views for exploring structure before modeling.",
+          "inputs": "data table",
+          "outputs": "linked interactive plots, selections, saved views",
+          "crosswalk": [
+            {
+              "scheme": "NIST GAMS",
+              "code": "L3",
+              "label": "Elementary statistical graphics",
+              "basis": "fetched",
+              "url": "https://gams.nist.gov/cgi-bin/serve.cgi/Class/L3"
+            }
+          ],
+          "onet_products": [
+            "XGobi",
+            "SAS JMP",
+            "DataDescription DataDesk",
+            "Keypoint DataDesk",
+            "Shiny"
+          ],
+          "state_of_art": [
+            "JMP",
+            "Tableau"
+          ],
+          "open_tools": [
+            "GGobi",
+            "Shiny",
+            "Plotly Dash",
+            "Vega-Lite"
+          ],
+          "benchmarkable": "no: usefulness is a matter of user judgment",
+          "notes": ""
+        },
+        {
+          "id": "science.visualization_imaging.microscopy_analysis",
+          "name": "Microscopy image quantification",
+          "definition": "Given light, fluorescence or scanning-probe microscope images, segment objects and measure counts, sizes, intensities and tracks.",
+          "inputs": "2D or 3D image stacks, calibration",
+          "outputs": "segmentation masks, object measurements, tracks",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "",
+              "label": "Topic: Bioimaging; Operation: Image analysis",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "ImageJ",
+            "Molecular Devices Corporation MetaMorph",
+            "Molecular Devices Corporation MetaFluor",
+            "Meyer Instruments Optimas",
+            "Olympus Image Analysis",
+            "Image analysis software",
+            "Image capture and analysis software",
+            "Microscope imaging software",
+            "Microscopic image capturing software",
+            "Image analysis systems",
+            "SPMLab",
+            "VayTek VoxBlast"
+          ],
+          "state_of_art": [
+            "Imaris",
+            "NIS-Elements",
+            "ZEN",
+            "Aivia"
+          ],
+          "open_tools": [
+            "Fiji",
+            "CellProfiler",
+            "QuPath",
+            "napari",
+            "ilastik",
+            "Gwyddion"
+          ],
+          "benchmarkable": "yes: Cell Tracking Challenge and the Broad Bioimage Benchmark Collection",
+          "notes": ""
+        },
+        {
+          "id": "science.visualization_imaging.cytogenetic_imaging",
+          "name": "Chromosome and cytogenetic image analysis",
+          "definition": "Given metaphase or interphase cell images, locate, classify and pair chromosomes or score FISH, CGH and comet assay signals.",
+          "inputs": "stained or hybridized cell images",
+          "outputs": "karyograms, signal counts, DNA damage scores",
+          "crosswalk": [],
+          "onet_products": [
+            "Lucia Karyo",
+            "LUCIA MFISH",
+            "Lucia FISH",
+            "Lucia CGH",
+            "Lucia Comet Assay",
+            "Lucia Metaphase Finder",
+            "Genetix CytoVision",
+            "MetaSystems Isis Color Karyotyping",
+            "KARIO",
+            "Digital karyotyping software"
+          ],
+          "state_of_art": [
+            "MetaSystems Ikaros and Isis",
+            "Leica CytoVision"
+          ],
+          "open_tools": [
+            "OpenComet"
+          ],
+          "benchmarkable": "partly: annotated karyotype image sets exist for classification accuracy",
+          "notes": "No source taxonomy node; kept because it is a distinct image-measurement task. Diagnostic reporting on a patient belongs to health."
+        },
+        {
+          "id": "science.visualization_imaging.astronomical_imaging",
+          "name": "Astronomical image reduction",
+          "definition": "Given raw telescope frames or interferometer visibilities, calibrate, stack, image and extract sources and photometry.",
+          "inputs": "raw frames, calibration frames, visibilities",
+          "outputs": "calibrated images, source catalogs, photometry and astrometry",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Applied computing > Physical sciences and engineering > Astronomy",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Astronomical Image Processing System AIPS",
+            "Astronomical information processing system AIPS++",
+            "Astronomical Image Processing for Windows AIP4WIN",
+            "Diffraction Limited MaxIm DL",
+            "Software Bisque CCDSoft",
+            "European Southern Observatory Munich Image Data Analysis System ESO-MIDAS",
+            "MSB Software Astroart",
+            "Multipurpose Interactive Image Processing System MIIPS",
+            "Data reduction software"
+          ],
+          "state_of_art": [
+            "CASA",
+            "PixInsight",
+            "MaxIm DL"
+          ],
+          "open_tools": [
+            "Astropy",
+            "CASA",
+            "IRAF",
+            "SExtractor",
+            "DS9"
+          ],
+          "benchmarkable": "partly: simulated images with known sources score detection and photometry",
+          "notes": ""
+        },
+        {
+          "id": "science.visualization_imaging.motion_tracking",
+          "name": "Video motion tracking",
+          "definition": "Given video or marker data of moving subjects, track points, reconstruct 3D trajectories and compute kinematics.",
+          "inputs": "video or marker streams, camera calibration",
+          "outputs": "point trajectories, joint angles, velocities",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010178.10010224.10010245.10010253",
+              "label": "Computing methodologies > Artificial intelligence > Computer vision > Computer vision problems > Tracking",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Motion analysis software",
+            "3D motion analysis software",
+            "Three-dimensional motion capture software",
+            "Dartfish ProSuite",
+            "Video analysis software",
+            "Polhemus Fasttrack System"
+          ],
+          "state_of_art": [
+            "Vicon Nexus",
+            "Qualisys Track Manager",
+            "Dartfish"
+          ],
+          "open_tools": [
+            "DeepLabCut",
+            "Kinovea",
+            "OpenPose",
+            "Tracker (OSP)"
+          ],
+          "benchmarkable": "yes: pose-estimation datasets with ground truth (e.g. Human3.6M)",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "science.instrument_control",
+      "name": "Instrument control and data acquisition",
+      "definition": "Given laboratory instruments and sensors, configure them, run measurement sequences and record time-stamped data.",
+      "crosswalk": [
+        {
+          "scheme": "ASTM E1578",
+          "code": "",
+          "label": "Instrument integration (laboratory informatics functions)",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Physical sciences and engineering",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Development environment software",
+        "Industrial control software"
+      ],
+      "see_also": [
+        "produce.plc_programming",
+        "produce.metrology",
+        "operate.condition_monitoring"
+      ],
+      "notes": "Was seed 'Instrument control, data acquisition and test automation'. Plant-floor control (PLC, SCADA) and production metrology are produce.",
+      "tasks": [
+        {
+          "id": "science.instrument_control.data_acquisition",
+          "name": "Sensor data acquisition and logging",
+          "definition": "Given sensors on acquisition hardware, configure channels and sampling, acquire, scale and store the signals.",
+          "inputs": "channel configuration, sample rates, triggers, sensor calibrations",
+          "outputs": "time-stamped data files; live displays",
+          "crosswalk": [],
+          "onet_products": [
+            "National Instruments LabVIEW",
+            "National Instruments NI-DAQmx",
+            "National Instruments DAQ Assistant",
+            "Data acquisition software",
+            "Data acquisition systems",
+            "Data Translation quickDAQ",
+            "Somat eDAQ",
+            "Data logger software",
+            "Onset Computer Corporation HOBOware",
+            "LoggerPC software",
+            "The Mathworks Data Acquisition Toolbox",
+            "ADInstruments LabChart"
+          ],
+          "state_of_art": [
+            "LabVIEW with NI-DAQmx",
+            "DEWESoft",
+            "LabChart"
+          ],
+          "open_tools": [
+            "nidaqmx-python",
+            "sigrok",
+            "PyMeasure"
+          ],
+          "benchmarkable": "partly: throughput and timing jitter are measurable but tied to hardware",
+          "notes": "No source-taxonomy node at this grain."
+        },
+        {
+          "id": "science.instrument_control.instrument_automation",
+          "name": "Bench instrument control",
+          "definition": "Given programmable instruments (meters, sources, analyzers), script their settings and readings into an automated measurement.",
+          "inputs": "instrument drivers or command sets, measurement procedure",
+          "outputs": "measurement data, instrument state logs",
+          "crosswalk": [],
+          "onet_products": [
+            "National Instruments LabVIEW",
+            "Instrument control software",
+            "Virtual instrument software",
+            "National Instruments Compact FieldPoint System"
+          ],
+          "state_of_art": [
+            "LabVIEW",
+            "Keysight PathWave BenchVue"
+          ],
+          "open_tools": [
+            "PyVISA",
+            "PyMeasure",
+            "QCoDeS",
+            "Bluesky"
+          ],
+          "benchmarkable": "no: success depends on the hardware attached",
+          "notes": ""
+        },
+        {
+          "id": "science.instrument_control.test_sequencing",
+          "name": "Automated test sequencing",
+          "definition": "Given a test plan of measurement steps and limits, execute it against a device under test and report pass/fail results.",
+          "inputs": "test sequence, limits, device under test",
+          "outputs": "test reports, pass/fail logs, measurement records",
+          "crosswalk": [],
+          "onet_products": [
+            "National Instruments TestStand",
+            "Test automation software",
+            "A&D Technology iTest",
+            "Tektronix EZ-TEST"
+          ],
+          "state_of_art": [
+            "NI TestStand",
+            "Keysight PathWave Test Executive"
+          ],
+          "open_tools": [
+            "OpenHTF",
+            "pytest with PyVISA"
+          ],
+          "benchmarkable": "no: depends on hardware under test",
+          "notes": "Overlaps produce's end-of-line testing; kept here as the generic sequencer."
+        },
+        {
+          "id": "science.instrument_control.facility_control",
+          "name": "Large experiment control systems",
+          "definition": "Given the devices of an accelerator, telescope or beamline, provide distributed process variables, sequencing, archiving and alarms.",
+          "inputs": "device drivers, process variable database, sequences",
+          "outputs": "live process variables, archived data, alarms",
+          "crosswalk": [],
+          "onet_products": [
+            "Experimental Physics and Industrial Control System EPICS"
+          ],
+          "state_of_art": [
+            "EPICS",
+            "Tango Controls"
+          ],
+          "open_tools": [
+            "EPICS",
+            "Tango Controls",
+            "Bluesky"
+          ],
+          "benchmarkable": "no: facility-specific",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "science.analytical_data",
+      "name": "Analytical instrument data processing",
+      "definition": "Given raw output from analytical instruments, process it into identified and quantified components.",
+      "crosswalk": [
+        {
+          "scheme": "ASTM E1578",
+          "code": "",
+          "label": "Chromatography data systems; instrument data systems",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "EDAM",
+          "code": "",
+          "label": "Topic: Analytical chemistry",
+          "basis": "fetched",
+          "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "science.lab_informatics",
+        "health.laboratory"
+      ],
+      "notes": "Split from seed 'Laboratory informatics (LIMS, ELN, chromatography and spectroscopy data systems)': processing instrument signals is a computation with checkable answers, while LIMS and ELN manage records. One task per instrument family.",
+      "tasks": [
+        {
+          "id": "science.analytical_data.chromatography",
+          "name": "Chromatogram processing and quantitation",
+          "definition": "Given chromatograms, detect and integrate peaks, identify them against standards and compute concentrations.",
+          "inputs": "detector traces, method, calibration standards",
+          "outputs": "peak tables, concentrations, system-suitability results",
+          "crosswalk": [],
+          "onet_products": [
+            "Waters Empower Chromatography Data Software",
+            "Waters Millennium32",
+            "Agilent ChemStation",
+            "PerkinElmer Turbochrom",
+            "SciQuest PE TurboChrom",
+            "Gas chromatograph GS software"
+          ],
+          "state_of_art": [
+            "Waters Empower",
+            "Thermo Chromeleon",
+            "Agilent OpenLab"
+          ],
+          "open_tools": [
+            "OpenChrom",
+            "MZmine"
+          ],
+          "benchmarkable": "partly: simulated and reference chromatograms test integration accuracy",
+          "notes": ""
+        },
+        {
+          "id": "science.analytical_data.mass_spectrometry",
+          "name": "Mass spectrometry data analysis",
+          "definition": "Given mass spectra or LC-MS runs, detect features, identify compounds or peptides and quantify them.",
+          "inputs": "raw spectra, databases or libraries, search parameters",
+          "outputs": "feature tables, identifications with scores, quantities",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "",
+              "label": "Topic: Proteomics; Operation: Peptide identification (no fetched ID)",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Waters MassLynx",
+            "PerkinElmer TurboMass",
+            "ChemSW Mass Spec Tools",
+            "Genedata Expressionist"
+          ],
+          "state_of_art": [
+            "Thermo Proteome Discoverer",
+            "Spectronaut",
+            "Agilent MassHunter"
+          ],
+          "open_tools": [
+            "OpenMS",
+            "MZmine",
+            "XCMS",
+            "MaxQuant (free)",
+            "ProteoWizard"
+          ],
+          "benchmarkable": "yes: CASMI contest and proteomics benchmark datasets",
+          "notes": ""
+        },
+        {
+          "id": "science.analytical_data.optical_spectroscopy",
+          "name": "Optical and X-ray spectroscopy analysis",
+          "definition": "Given infrared, Raman, UV-visible or X-ray fluorescence spectra, correct baselines, identify materials and quantify components.",
+          "inputs": "spectra, reference libraries, calibration sets",
+          "outputs": "identified compounds, concentrations, chemometric models",
+          "crosswalk": [],
+          "onet_products": [
+            "Bruker Optics OPUS",
+            "Adept Scientific GRAMS",
+            "Fourier transform infrared FTIR software",
+            "Spectroscopy software",
+            "Network Science IR Mentor Pro",
+            "Spectrophotometer analysis software",
+            "Criss Software XRF11",
+            "Spectroscopy databases"
+          ],
+          "state_of_art": [
+            "Bruker OPUS",
+            "Thermo OMNIC",
+            "GRAMS"
+          ],
+          "open_tools": [
+            "Orange Spectroscopy (Quasar)",
+            "PyMca",
+            "ChemoSpec"
+          ],
+          "benchmarkable": "partly: library-search accuracy and chemometric prediction error on reference sets",
+          "notes": ""
+        },
+        {
+          "id": "science.analytical_data.nmr",
+          "name": "Nuclear magnetic resonance processing",
+          "definition": "Given free induction decays, transform, phase and assign spectra and derive structures or quantities.",
+          "inputs": "FIDs, acquisition parameters, molecule hypotheses",
+          "outputs": "processed spectra, peak lists, assignments, concentrations",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "",
+              "label": "Topic: NMR",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Bruker BioSpin TopSpin",
+            "Advanced Chemistry Development ACD/1D nuclear magnetic resonance NMR processor",
+            "Accelrys FELIX",
+            "Advanced Chemistry Development Analytical Laboratory"
+          ],
+          "state_of_art": [
+            "TopSpin",
+            "Mnova",
+            "ACD/NMR Workbook"
+          ],
+          "open_tools": [
+            "nmrglue",
+            "NMRPipe (free)",
+            "CcpNmr Analysis"
+          ],
+          "benchmarkable": "partly: chemical-shift prediction and assignment have reference datasets",
+          "notes": ""
+        },
+        {
+          "id": "science.analytical_data.powder_diffraction",
+          "name": "Powder diffraction phase analysis",
+          "definition": "Given X-ray powder patterns, identify phases, refine structures by the Rietveld method and quantify phase fractions.",
+          "inputs": "diffraction patterns, phase databases, instrument profile",
+          "outputs": "phase identifications, refined lattice parameters, phase fractions",
+          "crosswalk": [],
+          "onet_products": [
+            "Materials Data Incorporated Jade",
+            "Bruker AXS EVA",
+            "Bruker AXS TOPAS",
+            "Bruker AXS LEPTOS",
+            "RIETAN",
+            "General Structural Analysis System GSAS",
+            "PANalytical X'Pert Data Collector",
+            "PANalytical X'Pert Epitaxy"
+          ],
+          "state_of_art": [
+            "TOPAS",
+            "HighScore Plus",
+            "Jade"
+          ],
+          "open_tools": [
+            "GSAS-II",
+            "Profex/BGMN",
+            "FullProf (free)"
+          ],
+          "benchmarkable": "yes: IUCr round-robin samples have known compositions",
+          "notes": ""
+        },
+        {
+          "id": "science.analytical_data.flow_cytometry",
+          "name": "Flow cytometry analysis",
+          "definition": "Given per-cell fluorescence events, compensate, gate populations and report frequencies and cell-cycle fits.",
+          "inputs": "FCS event files, panel definitions, gating strategy",
+          "outputs": "gated populations, frequencies, DNA content models",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "topic_3934",
+              "label": "Cytometry",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "FlowJo",
+            "BD Biosciences CellQuest",
+            "Verity Software House ModFit LT"
+          ],
+          "state_of_art": [
+            "FlowJo",
+            "FCS Express",
+            "OMIQ"
+          ],
+          "open_tools": [
+            "flowCore",
+            "FlowKit",
+            "CytoExploreR"
+          ],
+          "benchmarkable": "yes: FlowCAP challenges score automated gating against expert gates",
+          "notes": ""
+        },
+        {
+          "id": "science.analytical_data.plate_assays",
+          "name": "Microplate assay and dose-response analysis",
+          "definition": "Given plate-reader readings and a plate layout, fit standard curves and dose-response models and report potencies.",
+          "inputs": "plate reads, layout, concentrations",
+          "outputs": "standard curves, EC50/IC50 values, toxicity endpoints",
+          "crosswalk": [],
+          "onet_products": [
+            "Molecular Devices Softmax Pro",
+            "BioKin PlateKi",
+            "Tidepool Scientific Software ToxCalc"
+          ],
+          "state_of_art": [
+            "SoftMax Pro",
+            "Prism",
+            "Genedata Screener"
+          ],
+          "open_tools": [
+            "R drc",
+            "R tcpl"
+          ],
+          "benchmarkable": "partly: dose-response fits are checkable against reference fits",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "science.lab_informatics",
+      "name": "Laboratory informatics",
+      "definition": "Given the samples, methods and observations of a research or testing laboratory, record, track and report them with an audit trail.",
+      "crosswalk": [
+        {
+          "scheme": "ASTM E1578",
+          "code": "",
+          "label": "Laboratory informatics: LIMS, ELN, SDMS, LES",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "health.laboratory",
+        "health.clinical_research",
+        "science.analytical_data"
+      ],
+      "notes": "From seed 'Laboratory informatics'; instrument-data processing moved to science.analytical_data. Clinical laboratory information systems (patient results) are health.",
+      "tasks": [
+        {
+          "id": "science.lab_informatics.lims",
+          "name": "Laboratory sample and test management",
+          "definition": "Given incoming samples and test requests, register, assign, track results through review and issue certificates of analysis.",
+          "inputs": "sample registrations, test methods, specifications, results",
+          "outputs": "sample status, approved results, certificates, audit trail",
+          "crosswalk": [
+            {
+              "scheme": "ASTM E1578",
+              "code": "",
+              "label": "Laboratory Information Management System (LIMS)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Laboratory information management system LIMS",
+            "LabWare LIMS",
+            "Abbott Informatics STARLIMS:LIMS",
+            "Thermo Fisher Scientific Laboratory Information Management Systems LIMS",
+            "Labvantage Solutions LIMS",
+            "Core Informatics Laboratory Information Management System LIMS",
+            "Illumina Laboratory Information Management System LIMS",
+            "Computing Solutions LabSoft LIMS",
+            "Promium Element DataSystem LIMS",
+            "Quality Systems International WinLIMS",
+            "Systat Software LISA.lims",
+            "Waters Q-DIS/QM LIMS"
+          ],
+          "state_of_art": [
+            "LabWare LIMS",
+            "LabVantage",
+            "STARLIMS",
+            "Thermo SampleManager"
+          ],
+          "open_tools": [
+            "SENAITE",
+            "Bika LIMS",
+            "openBIS"
+          ],
+          "benchmarkable": "no: a records workflow, judged by requirements coverage (the ASTM E1578 checklist), not a computed answer",
+          "notes": ""
+        },
+        {
+          "id": "science.lab_informatics.eln",
+          "name": "Electronic laboratory notebooks",
+          "definition": "Given experiments as they happen, capture protocols, observations, data files and sign-offs in a searchable, time-stamped record.",
+          "inputs": "protocols, observations, attached data, signatures",
+          "outputs": "notebook entries, witnessed records, searchable archive",
+          "crosswalk": [
+            {
+              "scheme": "ASTM E1578",
+              "code": "",
+              "label": "Electronic Laboratory Notebook (ELN)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Electronic lab notebook software",
+            "LabTrack Electronic Lab Notebook"
+          ],
+          "state_of_art": [
+            "Benchling",
+            "Revvity Signals Notebook",
+            "LabArchives"
+          ],
+          "open_tools": [
+            "eLabFTW",
+            "openBIS",
+            "Chemotion ELN"
+          ],
+          "benchmarkable": "no: a records tool",
+          "notes": ""
+        },
+        {
+          "id": "science.lab_informatics.research_data_capture",
+          "name": "Research data capture",
+          "definition": "Given a study instrument, build validated data-entry forms and collect, clean and export study records.",
+          "inputs": "form definitions, validation rules, participants or field sites",
+          "outputs": "validated datasets, audit logs, exports to statistics packages",
+          "crosswalk": [],
+          "onet_products": [
+            "REDCap Research Electronic Data Capture",
+            "Centers for Disease Control and Prevention Epi Info",
+            "EpiData Analysis"
+          ],
+          "state_of_art": [
+            "REDCap",
+            "Medidata Rave"
+          ],
+          "open_tools": [
+            "ODK",
+            "KoboToolbox",
+            "Epi Info (public domain)"
+          ],
+          "benchmarkable": "no: a data-collection workflow",
+          "notes": "Regulated clinical-trial EDC is health; this node is the generic research form builder."
+        }
+      ]
+    },
+    {
+      "id": "science.social_research",
+      "name": "Survey and behavioral research methods",
+      "definition": "Given research questions about people, collect responses, observations and experimental behavior and turn them into analyzable data.",
+      "crosswalk": [
+        {
+          "scheme": "MSC 2020",
+          "code": "62P25",
+          "label": "Applications of statistics to social sciences",
+          "basis": "fetched",
+          "url": "https://msc2020.org/MSC_2020.csv"
+        },
+        {
+          "scheme": "MSC 2020",
+          "code": "62P15",
+          "label": "Applications of statistics to psychology",
+          "basis": "fetched",
+          "url": "https://msc2020.org/MSC_2020.csv"
+        },
+        {
+          "scheme": "CRAN Task Views",
+          "code": "OfficialStatistics",
+          "label": "Official Statistics & Survey Statistics",
+          "basis": "fetched",
+          "url": "https://cran.r-project.org/web/views/OfficialStatistics.html"
+        },
+        {
+          "scheme": "CRAN Task Views",
+          "code": "Psychometrics",
+          "label": "Psychometric Models and Methods",
+          "basis": "fetched",
+          "url": "https://cran.r-project.org/web/views/Psychometrics.html"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Data base user interface and query software"
+      ],
+      "see_also": [
+        "commerce.marketing_analytics",
+        "learn.assessment",
+        "science.statistics"
+      ],
+      "notes": "Was seed 'Survey, social-science and qualitative analysis'; widened to behavioral experiments and observation coding, which share its users and data, and to item response calibration. Market-research conjoint and segmentation products are left to commerce.",
+      "tasks": [
+        {
+          "id": "science.social_research.questionnaire",
+          "name": "Questionnaire design and fielding",
+          "definition": "Given a questionnaire with routing logic, field it online or by interviewer and collect responses.",
+          "inputs": "questions, skip logic, sample lists, quotas",
+          "outputs": "response datasets, paradata, completion reports",
+          "crosswalk": [
+            {
+              "scheme": "MSC 2020",
+              "code": "62D05",
+              "label": "Sampling theory, sample surveys",
+              "basis": "fetched",
+              "url": "https://msc2020.org/MSC_2020.csv"
+            }
+          ],
+          "onet_products": [
+            "Qualtrics Research Suite",
+            "QuestionPro",
+            "Survey software",
+            "Future Information Research Management Confirmit",
+            "Voxco PRONTO",
+            "Computer assisted telephone interviewing CATI software",
+            "Research Spectrum Survent CATI",
+            "SaaS SurveyMonkey",
+            "Raosoft SURVEYWin",
+            "Question interchange profile QUIP software"
+          ],
+          "state_of_art": [
+            "Qualtrics",
+            "Forsta (Confirmit)",
+            "Voxco"
+          ],
+          "open_tools": [
+            "LimeSurvey",
+            "ODK",
+            "KoboToolbox"
+          ],
+          "benchmarkable": "no: a data-collection workflow",
+          "notes": ""
+        },
+        {
+          "id": "science.social_research.tabulation_weighting",
+          "name": "Survey tabulation and weighting",
+          "definition": "Given survey responses and a sample design, weight to population totals, produce cross-tabulations and design-based variances.",
+          "inputs": "response data, design variables, population margins",
+          "outputs": "weights, banner tables, estimates with design-based standard errors",
+          "crosswalk": [
+            {
+              "scheme": "CRAN Task Views",
+              "code": "OfficialStatistics",
+              "label": "Official Statistics & Survey Statistics",
+              "basis": "fetched",
+              "url": "https://cran.r-project.org/web/views/OfficialStatistics.html"
+            }
+          ],
+          "onet_products": [
+            "WinCross",
+            "RTI International SUDAAN",
+            "Merlinco MERLIN",
+            "Askiaanalyse",
+            "Pulsar software",
+            "SDA Survey",
+            "Memphis Survey Explorer",
+            "Voxco StatXP",
+            "StarData",
+            "Dataxiom Xpro",
+            "SumQuest",
+            "TURBO Spring-Stat"
+          ],
+          "state_of_art": [
+            "SUDAAN",
+            "WinCross",
+            "Stata svy"
+          ],
+          "open_tools": [
+            "R survey",
+            "samplics"
+          ],
+          "benchmarkable": "yes: design-based variance estimates can be checked against published reference computations",
+          "notes": ""
+        },
+        {
+          "id": "science.social_research.qualitative_coding",
+          "name": "Qualitative data coding",
+          "definition": "Given interview transcripts, field notes or media, apply and organize codes and retrieve coded segments for interpretation.",
+          "inputs": "transcripts, documents, media, code book",
+          "outputs": "coded segments, code co-occurrence, memos",
+          "crosswalk": [],
+          "onet_products": [
+            "QSR International NVivo",
+            "ATLAS.ti",
+            "VERBI MAXQDA",
+            "Qaulis Research The Ethonograph",
+            "Qualitative analysis software"
+          ],
+          "state_of_art": [
+            "NVivo",
+            "ATLAS.ti",
+            "MAXQDA"
+          ],
+          "open_tools": [
+            "QualCoder",
+            "Taguette"
+          ],
+          "benchmarkable": "partly: coder agreement against a gold-coded corpus is measurable",
+          "notes": ""
+        },
+        {
+          "id": "science.social_research.behavioral_experiments",
+          "name": "Behavioral experiment presentation",
+          "definition": "Given an experimental design, present stimuli or economic games to participants and record responses with precise timing.",
+          "inputs": "stimulus lists, trial structure, game rules",
+          "outputs": "trial-level response and reaction-time data",
+          "crosswalk": [],
+          "onet_products": [
+            "Psychology Software Tools E-Prime",
+            "Cedrus SuperLab Pro",
+            "Empirisoft DirectRT",
+            "Empirisoft MediaLab",
+            "Millisecond Software Inquisit",
+            "PsyScope",
+            "PsyScript",
+            "Psychophysics Toolbox",
+            "z-Tree",
+            "Python Experimental Economics Toolkit PEET",
+            "Zocalo",
+            "Econport"
+          ],
+          "state_of_art": [
+            "E-Prime",
+            "Inquisit",
+            "Gorilla"
+          ],
+          "open_tools": [
+            "PsychoPy",
+            "jsPsych",
+            "oTree",
+            "Psychtoolbox"
+          ],
+          "benchmarkable": "partly: stimulus-timing accuracy is measurable (published timing mega-studies)",
+          "notes": "No source-taxonomy node at this grain."
+        },
+        {
+          "id": "science.social_research.observation_coding",
+          "name": "Behavioral observation coding",
+          "definition": "Given live sessions or video, code behavioral events and states on a timeline and compute frequencies, durations and sequences.",
+          "inputs": "video or live session, ethogram or coding scheme",
+          "outputs": "event logs, durations, sequential statistics, inter-observer reliability",
+          "crosswalk": [],
+          "onet_products": [
+            "Noldus Information Technology The Observer XT",
+            "Mangold INTERACT",
+            "Mangold LogSquare",
+            "Noldus Information Technology uLog Pro",
+            "Triangle Research Collaborative Observational Coding System OCS Tools",
+            "Bit Debris Solutions Usability Activity Log",
+            "Ovo Studios Ovo Logger",
+            "Noldus Information Technology FaceReader"
+          ],
+          "state_of_art": [
+            "Noldus Observer XT",
+            "Mangold INTERACT"
+          ],
+          "open_tools": [
+            "BORIS",
+            "ELAN"
+          ],
+          "benchmarkable": "partly: automated coders can be scored against human-coded video",
+          "notes": ""
+        },
+        {
+          "id": "science.social_research.social_networks",
+          "name": "Social network analysis",
+          "definition": "Given relational data among actors, compute centrality, communities and network models.",
+          "inputs": "edge lists or adjacency matrices with attributes",
+          "outputs": "centrality scores, communities, fitted network models",
+          "crosswalk": [
+            {
+              "scheme": "Berkeley motifs",
+              "code": "",
+              "label": "Graph traversal",
+              "basis": "fetched",
+              "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-183.pdf"
+            }
+          ],
+          "onet_products": [
+            "Social network analysis software"
+          ],
+          "state_of_art": [
+            "UCINET",
+            "Gephi"
+          ],
+          "open_tools": [
+            "igraph",
+            "NetworkX",
+            "statnet",
+            "Gephi"
+          ],
+          "benchmarkable": "partly: algorithms are exact; model fit on reference networks is comparable",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "science.sequence_analysis",
+      "name": "Biological sequence analysis",
+      "definition": "Given DNA, RNA or protein sequences, compare, align, annotate, design and relate them.",
+      "crosswalk": [
+        {
+          "scheme": "EDAM",
+          "code": "",
+          "label": "Topic: Sequence analysis",
+          "basis": "fetched",
+          "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Life and medical sciences > Computational biology > Molecular sequence analysis",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Information retrieval or search software"
+      ],
+      "see_also": [
+        "science.genomics",
+        "science.molecular_modeling"
+      ],
+      "notes": "From seed 'Bioinformatics and genomics (alignment, assembly, phylogenetics, structure)', split by data scale: this node handles individual sequences and families; high-throughput sequencing data goes to science.genomics; structure goes to science.molecular_modeling. Tasks follow EDAM operations.",
+      "tasks": [
+        {
+          "id": "science.sequence_analysis.similarity_search",
+          "name": "Sequence similarity search",
+          "definition": "Given a query sequence and a database, find similar sequences with alignment scores and significance.",
+          "inputs": "query sequences, sequence databases",
+          "outputs": "ranked hits, local alignments, E-values",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_0346",
+              "label": "Sequence similarity search",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Basic Local Alignment Search Tool BLAST",
+            "BLAT",
+            "FASTA",
+            "Blast Output Browser BOB",
+            "GenBank",
+            "NCBI RefSeq",
+            "ENSEMBL",
+            "Public genomic databases",
+            "Protein databases",
+            "BioPerl"
+          ],
+          "state_of_art": [
+            "NCBI BLAST",
+            "DIAMOND",
+            "MMseqs2"
+          ],
+          "open_tools": [
+            "BLAST+",
+            "DIAMOND",
+            "MMseqs2",
+            "HMMER"
+          ],
+          "benchmarkable": "yes: SCOP- and Pfam-based homology benchmarks score sensitivity and speed",
+          "notes": ""
+        },
+        {
+          "id": "science.sequence_analysis.multiple_alignment",
+          "name": "Multiple sequence alignment",
+          "definition": "Given a set of related sequences, align them column by column for comparison.",
+          "inputs": "unaligned sequences",
+          "outputs": "multiple alignment, conservation scores",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_0492",
+              "label": "Multiple sequence alignment",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "ClustalW",
+            "BoxShade",
+            "Genetics computer group GSG software",
+            "EMBOSS"
+          ],
+          "state_of_art": [
+            "MAFFT",
+            "Clustal Omega"
+          ],
+          "open_tools": [
+            "MAFFT",
+            "Clustal Omega",
+            "MUSCLE",
+            "T-Coffee"
+          ],
+          "benchmarkable": "yes: BAliBASE and HomFam reference alignments",
+          "notes": ""
+        },
+        {
+          "id": "science.sequence_analysis.phylogenetics",
+          "name": "Phylogenetic inference",
+          "definition": "Given aligned sequences or characters, infer evolutionary trees with branch support and divergence times.",
+          "inputs": "alignment or character matrix, substitution model",
+          "outputs": "trees with branch lengths and support values",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_0323",
+              "label": "Phylogenetic inference",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            },
+            {
+              "scheme": "CRAN Task Views",
+              "code": "Phylogenetics",
+              "label": "Phylogenetics",
+              "basis": "fetched",
+              "url": "https://cran.r-project.org/web/views/Phylogenetics.html"
+            }
+          ],
+          "onet_products": [
+            "PHYLIP",
+            "TreeView",
+            "SequentiX TreeMe"
+          ],
+          "state_of_art": [
+            "IQ-TREE",
+            "RAxML-NG",
+            "BEAST"
+          ],
+          "open_tools": [
+            "IQ-TREE",
+            "RAxML-NG",
+            "MrBayes",
+            "BEAST 2",
+            "PHYLIP"
+          ],
+          "benchmarkable": "partly: simulated alignments on known trees score topology accuracy",
+          "notes": ""
+        },
+        {
+          "id": "science.sequence_analysis.gene_prediction",
+          "name": "Gene prediction and genome annotation",
+          "definition": "Given genomic sequence, locate genes, repeats, operons and regulatory elements and assign functions.",
+          "inputs": "assembled genome or contigs, evidence (transcripts, proteins)",
+          "outputs": "gene models, repeat masks, functional annotations",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_2454",
+              "label": "Gene prediction",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            },
+            {
+              "scheme": "EDAM",
+              "code": "operation_0361",
+              "label": "Sequence annotation",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "GENSCAN",
+            "Gene Recognition and Assembly Internet Link GRAIL",
+            "Gene Finder",
+            "Gene recognition software",
+            "RepeatMasker",
+            "Joint Prediction of Operons JPOP",
+            "FramePlot",
+            "Delila",
+            "Codon Usage Database"
+          ],
+          "state_of_art": [
+            "BRAKER",
+            "NCBI PGAP"
+          ],
+          "open_tools": [
+            "AUGUSTUS",
+            "BRAKER",
+            "Prokka",
+            "Bakta",
+            "RepeatMasker"
+          ],
+          "benchmarkable": "yes: reference annotations (e.g. GENCODE) and BUSCO completeness",
+          "notes": ""
+        },
+        {
+          "id": "science.sequence_analysis.sequence_design",
+          "name": "Sequence editing, cloning and primer design",
+          "definition": "Given DNA sequences and an experimental goal, design primers and probes, simulate digests and assemble cloning constructs.",
+          "inputs": "template sequences, design constraints, enzymes and vectors",
+          "outputs": "primers and probes, construct maps, digest predictions",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_0308",
+              "label": "PCR primer design",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            },
+            {
+              "scheme": "EDAM",
+              "code": "",
+              "label": "Topic: Synthetic biology",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Primer3",
+            "NetPrimer",
+            "ApE A Plasmid Editor",
+            "AcaClone pDRAW32",
+            "Life Technologies Vector NTI",
+            "MacVector",
+            "Gene Runner",
+            "Blue Tractor Software DNADynamo",
+            "Textco BioSoftware Gene Inspector",
+            "Biomatters Geneious",
+            "EnzymeX",
+            "PREMIER Biosoft Array Designer"
+          ],
+          "state_of_art": [
+            "Benchling",
+            "SnapGene",
+            "Geneious Prime"
+          ],
+          "open_tools": [
+            "Primer3",
+            "ApE",
+            "Biopython",
+            "pydna"
+          ],
+          "benchmarkable": "partly: in-silico checks (specificity, melting temperature) are computable; wet-lab success is not",
+          "notes": ""
+        },
+        {
+          "id": "science.sequence_analysis.protein_sequence",
+          "name": "Protein sequence property analysis",
+          "definition": "Given protein sequences, compute physicochemical properties and predict domains, secondary structure and localization.",
+          "inputs": "protein sequences",
+          "outputs": "property profiles, domain and motif annotations, secondary-structure predictions",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_0250",
+              "label": "Protein property calculation",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "ProtScale",
+            "PredictProtein",
+            "Expression DNA and protein sequence software",
+            "JaMBW",
+            "The Protein Investigator"
+          ],
+          "state_of_art": [
+            "InterProScan",
+            "PredictProtein"
+          ],
+          "open_tools": [
+            "InterProScan",
+            "EMBOSS",
+            "Biopython ProtParam"
+          ],
+          "benchmarkable": "yes: CAFA function prediction and secondary-structure test sets",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "science.genomics",
+      "name": "High-throughput genomic data analysis",
+      "definition": "Given sequencing reads or array data from many molecules, reconstruct genomes, find variants and measure expression.",
+      "crosswalk": [
+        {
+          "scheme": "EDAM",
+          "code": "",
+          "label": "Topic: Genomics; Topic: Transcriptomics",
+          "basis": "fetched",
+          "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Life and medical sciences > Genomics",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software"
+      ],
+      "see_also": [
+        "science.sequence_analysis",
+        "health.laboratory"
+      ],
+      "notes": "Split from seed 'Bioinformatics and genomics'. Tasks follow EDAM operations for NGS and array analysis. Workflow engines (Snakemake) are handed to computing.",
+      "tasks": [
+        {
+          "id": "science.genomics.read_mapping",
+          "name": "Sequence read mapping",
+          "definition": "Given short or long sequencing reads and a reference genome or transcriptome, place each read with an alignment and mapping quality.",
+          "inputs": "FASTQ reads, reference sequence and index",
+          "outputs": "BAM/SAM alignments, mapping statistics",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_3198",
+              "label": "Read mapping",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Bowtie",
+            "Burrows-Wheeler Aligner BWA",
+            "BWA",
+            "TopHat",
+            "sim4"
+          ],
+          "state_of_art": [
+            "DRAGEN",
+            "BWA-MEM2",
+            "minimap2"
+          ],
+          "open_tools": [
+            "BWA-MEM2",
+            "minimap2",
+            "Bowtie2",
+            "STAR",
+            "HISAT2"
+          ],
+          "benchmarkable": "yes: simulated reads and GIAB truth sets score accuracy and speed",
+          "notes": ""
+        },
+        {
+          "id": "science.genomics.genome_assembly",
+          "name": "Genome assembly and base calling",
+          "definition": "Given raw sequencing traces or reads, call bases and assemble them into contigs and scaffolds.",
+          "inputs": "raw traces or reads, optional long-range data",
+          "outputs": "base calls with qualities, contigs, scaffolds, assembly metrics",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_0525",
+              "label": "Genome assembly",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            },
+            {
+              "scheme": "EDAM",
+              "code": "",
+              "label": "Operation: Base-calling",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Velvet",
+            "Canu",
+            "Phrap",
+            "Phred",
+            "Gene Codes Sequencher",
+            "Roche 454 Life Sciences GS Data Analysis",
+            "Life Technologies SOLiD",
+            "DNA sequencing software",
+            "Deoxyribonucleic acid DNA sequence analysis software"
+          ],
+          "state_of_art": [
+            "hifiasm",
+            "Verkko",
+            "Dorado"
+          ],
+          "open_tools": [
+            "hifiasm",
+            "Flye",
+            "SPAdes",
+            "Canu",
+            "Velvet"
+          ],
+          "benchmarkable": "yes: Assemblathon, QUAST and reference genomes score contiguity and correctness",
+          "notes": ""
+        },
+        {
+          "id": "science.genomics.variant_calling",
+          "name": "Variant calling and genotyping",
+          "definition": "Given aligned reads or genotyping signals, identify sequence variants and assign genotypes with quality scores.",
+          "inputs": "alignments or intensity/fragment data, reference",
+          "outputs": "VCF variant calls, genotypes, quality metrics",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_3227",
+              "label": "Variant calling",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            },
+            {
+              "scheme": "EDAM",
+              "code": "",
+              "label": "Operation: Genotyping",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Genome Analysis Toolkit GATK",
+            "Genotyping software",
+            "Applied Biosystems GeneMapper",
+            "PolyBayes",
+            "dbSNP",
+            "Thermo Fisher Scientific Ion Reporter"
+          ],
+          "state_of_art": [
+            "DRAGEN",
+            "DeepVariant",
+            "GATK"
+          ],
+          "open_tools": [
+            "GATK",
+            "DeepVariant",
+            "bcftools",
+            "FreeBayes"
+          ],
+          "benchmarkable": "yes: Genome in a Bottle truth sets and precisionFDA challenges",
+          "notes": ""
+        },
+        {
+          "id": "science.genomics.expression_analysis",
+          "name": "Gene expression quantification",
+          "definition": "Given RNA-seq reads or microarray intensities, quantify expression per gene or transcript and test differential expression.",
+          "inputs": "reads or array images/intensities, annotation, sample design",
+          "outputs": "expression matrices, differential expression results, clusters",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_0314",
+              "label": "Gene expression profiling",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            },
+            {
+              "scheme": "EDAM",
+              "code": "operation_3800",
+              "label": "RNA-Seq quantification",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            },
+            {
+              "scheme": "EDAM",
+              "code": "topic_3518",
+              "label": "Microarray experiment",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Cufflinks",
+            "RNA sequencing software",
+            "Agilent Technologies GeneSpring GX",
+            "Partek Incorporated Partek Genomics Suite",
+            "Geospiza GeneSifter",
+            "GenePattern",
+            "Bioconductor",
+            "BioArray Software Environment BASE",
+            "MDS Analytical Technologies GenePix Pro",
+            "BioDiscovery ImaGene",
+            "Agilent CGH Analytics"
+          ],
+          "state_of_art": [
+            "Partek Flow",
+            "Qiagen CLC Genomics"
+          ],
+          "open_tools": [
+            "Salmon",
+            "DESeq2",
+            "edgeR",
+            "limma",
+            "Bioconductor"
+          ],
+          "benchmarkable": "yes: SEQC/MAQC consortium datasets with known ratios",
+          "notes": ""
+        },
+        {
+          "id": "science.genomics.genetic_mapping",
+          "name": "Linkage and association mapping",
+          "definition": "Given genotypes and phenotypes of related or unrelated individuals, locate loci linked to or associated with traits.",
+          "inputs": "genotype matrices, pedigrees, phenotypes, covariates",
+          "outputs": "LOD scores or association statistics, genetic maps, candidate loci",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_0282",
+              "label": "Genetic mapping",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            },
+            {
+              "scheme": "EDAM",
+              "code": "",
+              "label": "Topic: GWAS study",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Mendel",
+            "CRI-MAP",
+            "FASTLINK",
+            "Golden Helix HelixTree",
+            "SAS/Genetics"
+          ],
+          "state_of_art": [
+            "Golden Helix SVS",
+            "REGENIE"
+          ],
+          "open_tools": [
+            "PLINK",
+            "REGENIE",
+            "GEMMA",
+            "MERLIN"
+          ],
+          "benchmarkable": "partly: simulated traits with planted loci score power and false-positive rate",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "science.systems_biology",
+      "name": "Biochemical and physiological systems modeling",
+      "definition": "Given biological pathways or mechanisms, build quantitative models of their dynamics or test data against known networks.",
+      "crosswalk": [
+        {
+          "scheme": "EDAM",
+          "code": "topic_2259",
+          "label": "Systems biology",
+          "basis": "fetched",
+          "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+        },
+        {
+          "scheme": "MSC 2020",
+          "code": "92C42",
+          "label": "Systems biology, networks",
+          "basis": "fetched",
+          "url": "https://msc2020.org/MSC_2020.csv"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Life and medical sciences > Systems biology",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Information retrieval or search software"
+      ],
+      "see_also": [
+        "science.numerical_computing",
+        "simulate.process_flowsheet"
+      ],
+      "notes": "New capability, not a seed: EDAM and ACM CCS treat systems biology separately from sequence and structure work. Holds the 'bioprocess' strand of existing function 'molecular' only for cell-level kinetics; bioreactor and plant design is simulate.",
+      "tasks": [
+        {
+          "id": "science.systems_biology.pathway_analysis",
+          "name": "Pathway and network enrichment",
+          "definition": "Given a list of genes, proteins or metabolites with measurements, map them to known pathways and test for enrichment.",
+          "inputs": "gene or metabolite lists with statistics, pathway databases",
+          "outputs": "enriched pathways, network views, upstream regulators",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "",
+              "label": "Pathway or network analysis (no fetched operation; only data_2984 report)",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Ingenuity Systems Ingenuity Pathways Analysis",
+            "Molecular Networks GmbH Biochemical Pathways"
+          ],
+          "state_of_art": [
+            "QIAGEN IPA",
+            "MetaCore"
+          ],
+          "open_tools": [
+            "Cytoscape",
+            "g:Profiler",
+            "clusterProfiler",
+            "Reactome"
+          ],
+          "benchmarkable": "partly: benchmark gene sets with known perturbed pathways exist",
+          "notes": ""
+        },
+        {
+          "id": "science.systems_biology.kinetic_modeling",
+          "name": "Reaction network kinetics",
+          "definition": "Given reactions, rate laws and parameters, simulate concentrations over time, find steady states and estimate parameters.",
+          "inputs": "reaction network (often SBML), rate laws, initial conditions",
+          "outputs": "concentration time courses, steady states, sensitivities",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_2426",
+              "label": "Modelling and simulation",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "The Mathworks SimBiology",
+            "GEPASI",
+            "Chemical kinetics software",
+            "SoftZymics VisualEnzymics",
+            "Macroscopic diffusion software",
+            "Carrier-mediated transport software"
+          ],
+          "state_of_art": [
+            "SimBiology",
+            "COPASI"
+          ],
+          "open_tools": [
+            "COPASI",
+            "Tellurium",
+            "PySB",
+            "BioNetGen"
+          ],
+          "benchmarkable": "yes: SBML Test Suite and curated BioModels give reference trajectories",
+          "notes": ""
+        },
+        {
+          "id": "science.systems_biology.electrophysiology_models",
+          "name": "Neuron and membrane models",
+          "definition": "Given membrane channel kinetics and morphology, simulate membrane potentials and spiking of cells and networks.",
+          "inputs": "channel models, morphology, stimuli",
+          "outputs": "voltage traces, spike times, currents",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "topic_3300",
+              "label": "Physiology",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Hodgkin-Huxley Model software",
+            "Voltage-gated ion channels software"
+          ],
+          "state_of_art": [
+            "NEURON",
+            "Brian 2"
+          ],
+          "open_tools": [
+            "NEURON",
+            "Brian 2",
+            "NEST",
+            "Arbor"
+          ],
+          "benchmarkable": "partly: reference simulations and model-database reproductions",
+          "notes": ""
+        },
+        {
+          "id": "science.systems_biology.microbial_growth",
+          "name": "Predictive microbial growth",
+          "definition": "Given organism, temperature, pH, water activity and other factors, predict microbial growth or inactivation over time.",
+          "inputs": "organism, environmental conditions, initial load",
+          "outputs": "growth or decline curves, lag times, generation times",
+          "crosswalk": [],
+          "onet_products": [
+            "Pathogen Modeling Program PMP"
+          ],
+          "state_of_art": [
+            "ComBase Predictor",
+            "Pathogen Modeling Program"
+          ],
+          "open_tools": [
+            "R biogrowth",
+            "R nlsMicrobio"
+          ],
+          "benchmarkable": "partly: ComBase observations allow prediction-error scoring",
+          "notes": "No source-taxonomy node at this grain."
+        }
+      ]
+    },
+    {
+      "id": "science.molecular_modeling",
+      "name": "Molecular modeling and structural biology",
+      "definition": "Given atoms, molecules or experimental structure data, compute energies, motions, binding and three-dimensional structures.",
+      "crosswalk": [
+        {
+          "scheme": "EDAM",
+          "code": "topic_1317",
+          "label": "Structural biology",
+          "basis": "fetched",
+          "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+        },
+        {
+          "scheme": "EDAM",
+          "code": "",
+          "label": "Topic: Molecular modelling",
+          "basis": "fetched",
+          "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Physical sciences and engineering > Chemistry",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Life and medical sciences > Computational biology > Molecular structural biology",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "Berkeley motifs",
+          "code": "",
+          "label": "N-body methods",
+          "basis": "fetched",
+          "url": "https://www2.eecs.berkeley.edu/Pubs/TechRpts/2006/EECS-2006-183.pdf"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Graphics or photo imaging software"
+      ],
+      "see_also": [
+        "science.cheminformatics",
+        "simulate.material_behavior"
+      ],
+      "notes": "From seed 'Cheminformatics, molecular modeling and computational chemistry'; split so that physics-based structure work sits here and structure-as-data informatics sits in science.cheminformatics. Absorbs the structure part of seed 'Bioinformatics and genomics'.",
+      "tasks": [
+        {
+          "id": "science.molecular_modeling.electronic_structure",
+          "name": "Electronic structure calculation",
+          "definition": "Given atomic positions (molecules or periodic cells) and a level of theory, compute energies, geometries, spectra and properties from quantum mechanics.",
+          "inputs": "geometry, charge and spin, basis set or plane-wave cutoff, method",
+          "outputs": "energies, optimized geometries, orbitals, vibrational and electronic spectra",
+          "crosswalk": [],
+          "onet_products": [
+            "Gaussian software",
+            "General Atomic and Molecular Electronic Structure System GAMESS",
+            "NWChem",
+            "Q-Chem",
+            "Shrodinger Jaguar",
+            "Stewart Computational Chemistry MOPAC",
+            "Semichem AMPAC",
+            "Wavefunction Spartan",
+            "Density functional theory DFT software",
+            "Vienna Ab-Initio Simulation Package VASP",
+            "CP2K",
+            "QuantumWise Atomistix ToolKit"
+          ],
+          "state_of_art": [
+            "Gaussian",
+            "VASP",
+            "ORCA",
+            "Q-Chem"
+          ],
+          "open_tools": [
+            "Quantum ESPRESSO",
+            "CP2K",
+            "NWChem",
+            "Psi4",
+            "PySCF",
+            "GAMESS (free)"
+          ],
+          "benchmarkable": "yes: GMTKN55 and the solid-state Delta test give reference energies",
+          "notes": ""
+        },
+        {
+          "id": "science.molecular_modeling.molecular_dynamics",
+          "name": "Molecular dynamics and mechanics",
+          "definition": "Given a molecular system, force field and conditions, integrate atomic motion and compute ensembles, free energies and transport properties.",
+          "inputs": "coordinates, topology, force field, thermostat and barostat settings",
+          "outputs": "trajectories, energies, free energies, structural statistics",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_2476",
+              "label": "Molecular dynamics",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Assisted model building with energy refinement AMBER",
+            "Chemistry at Harvard Molecular Mechanics CHARMm",
+            "NAMD",
+            "LAMMPS Molecular Dynamics Simulator",
+            "DL_POLY",
+            "Molecular simulation software",
+            "Accelrys Materials Studio",
+            "Accelrys Cerius2",
+            "CPMD"
+          ],
+          "state_of_art": [
+            "AMBER",
+            "Desmond",
+            "GROMACS"
+          ],
+          "open_tools": [
+            "GROMACS",
+            "OpenMM",
+            "LAMMPS",
+            "NAMD (free)"
+          ],
+          "benchmarkable": "yes: free-energy benchmark sets (e.g. FreeSolv) and throughput benchmarks",
+          "notes": ""
+        },
+        {
+          "id": "science.molecular_modeling.docking",
+          "name": "Docking and virtual screening",
+          "definition": "Given a target structure and candidate ligands, predict binding poses and rank ligands by estimated affinity.",
+          "inputs": "receptor structure, binding site, ligand library",
+          "outputs": "poses, docking scores, ranked hit lists",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_0478",
+              "label": "Molecular docking",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Docking and ligand binding software",
+            "Tripos SYBYL"
+          ],
+          "state_of_art": [
+            "Schrödinger Glide",
+            "CCDC GOLD",
+            "OpenEye FRED"
+          ],
+          "open_tools": [
+            "AutoDock Vina",
+            "smina",
+            "DiffDock",
+            "rDock"
+          ],
+          "benchmarkable": "yes: PDBbind/CASF, DUD-E and PoseBusters",
+          "notes": ""
+        },
+        {
+          "id": "science.molecular_modeling.structure_prediction",
+          "name": "Protein structure prediction and design",
+          "definition": "Given an amino-acid sequence (or a target fold), predict its 3D structure, or design sequences and assess stability changes.",
+          "inputs": "sequences or target backbone, templates or alignments",
+          "outputs": "3D models with confidence, designed sequences, stability estimates",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "operation_0474",
+              "label": "Protein structure prediction",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Structure prediction software",
+            "FoldX",
+            "Michigan State University MSU ProFlex"
+          ],
+          "state_of_art": [
+            "AlphaFold 3",
+            "RoseTTAFold",
+            "ESMFold"
+          ],
+          "open_tools": [
+            "OpenFold",
+            "ColabFold",
+            "ProteinMPNN",
+            "Boltz"
+          ],
+          "benchmarkable": "yes: CASP and CAMEO blind assessments",
+          "notes": ""
+        },
+        {
+          "id": "science.molecular_modeling.structure_determination",
+          "name": "Experimental structure determination",
+          "definition": "Given X-ray diffraction images or electron micrographs, index, phase and reconstruct maps and refine an atomic model.",
+          "inputs": "diffraction images or micrographs, sequence, symmetry",
+          "outputs": "electron-density or cryo-EM maps, refined atomic models, validation reports",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "topic_1317",
+              "label": "Structural biology",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "CCP4",
+            "Mosflm",
+            "Siemens SHELXTL",
+            "Crystallography & NMR System (CNS)",
+            "Crystallography software",
+            "IHRSR++",
+            "Auto3DEM"
+          ],
+          "state_of_art": [
+            "Phenix",
+            "cryoSPARC",
+            "RELION"
+          ],
+          "open_tools": [
+            "DIALS",
+            "RELION",
+            "CCP4 (academic)",
+            "SHELX (free)"
+          ],
+          "benchmarkable": "partly: EMDB/PDB deposits with validation metrics allow map-model comparison",
+          "notes": ""
+        },
+        {
+          "id": "science.molecular_modeling.molecular_visualization",
+          "name": "Molecular visualization and building",
+          "definition": "Given molecular or crystal structures, render, inspect, edit and build them interactively.",
+          "inputs": "coordinate files, crystal data",
+          "outputs": "rendered views, measurements, edited or built structures",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "",
+              "label": "Operation: Structure visualisation",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Visual Molecular Dynamics VMD",
+            "RasMol",
+            "Yet another scientific artificial reality application YASARA software",
+            "Protein Explorer",
+            "Molecular visualization software",
+            "CrystalMaker",
+            "PerkinElmer ChemOffice Chem3D",
+            "Gaussian GaussView",
+            "Molecular Simulations WebLab ViewerPro",
+            "MSI Insight/Discover",
+            "Wavefunction Titan",
+            "Fujitsu BioMedCache"
+          ],
+          "state_of_art": [
+            "PyMOL",
+            "ChimeraX",
+            "Maestro"
+          ],
+          "open_tools": [
+            "PyMOL (open source)",
+            "Avogadro",
+            "Jmol",
+            "VESTA (free)"
+          ],
+          "benchmarkable": "no: interactive viewing; judged by users",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "science.cheminformatics",
+      "name": "Cheminformatics",
+      "definition": "Given chemical structures as data, draw, store, search and model them to predict properties and plan syntheses.",
+      "crosswalk": [
+        {
+          "scheme": "EDAM",
+          "code": "topic_2258",
+          "label": "Cheminformatics",
+          "basis": "fetched",
+          "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Physical sciences and engineering > Chemistry",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Analytical or scientific software",
+        "Data mining software"
+      ],
+      "see_also": [
+        "science.molecular_modeling",
+        "science.machine_learning"
+      ],
+      "notes": "Split from seed 'Cheminformatics, molecular modeling and computational chemistry'; these tasks use graph representations of molecules rather than physics.",
+      "tasks": [
+        {
+          "id": "science.cheminformatics.structure_drawing_search",
+          "name": "Chemical structure drawing and search",
+          "definition": "Given structures drawn or imported, store them and search collections by exact, substructure or similarity match.",
+          "inputs": "drawings, SMILES or molfiles, query structures",
+          "outputs": "canonical structures, names, search hits",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "topic_2258",
+              "label": "Cheminformatics",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "PerkinElmer ChemOffice ChemDraw",
+            "PerkinElmer ChemOffice Suite",
+            "Synthematix StructureSearch",
+            "Accelrys Pipeline Pilot",
+            "Conversion tools software"
+          ],
+          "state_of_art": [
+            "ChemDraw",
+            "BIOVIA Pipeline Pilot",
+            "ChemAxon Marvin"
+          ],
+          "open_tools": [
+            "RDKit",
+            "Open Babel",
+            "CDK",
+            "Ketcher",
+            "OPSIN"
+          ],
+          "benchmarkable": "partly: name-to-structure and image-to-structure sets score conversion; search is exact",
+          "notes": ""
+        },
+        {
+          "id": "science.cheminformatics.property_prediction",
+          "name": "Molecular property and toxicity prediction",
+          "definition": "Given molecular structures, predict physicochemical properties, activities or toxicity from structure-activity models.",
+          "inputs": "structures, training data with measured endpoints",
+          "outputs": "predicted properties with applicability domain",
+          "crosswalk": [
+            {
+              "scheme": "EDAM",
+              "code": "",
+              "label": "Topic: Toxicology",
+              "basis": "fetched",
+              "url": "https://www.ebi.ac.uk/ols4/api/ontologies/edam/terms"
+            }
+          ],
+          "onet_products": [
+            "Predictive toxicology software",
+            "Golden Helix ChemTree",
+            "Accelrys DeCipher"
+          ],
+          "state_of_art": [
+            "Simulations Plus ADMET Predictor",
+            "Derek Nexus",
+            "Chemprop"
+          ],
+          "open_tools": [
+            "RDKit",
+            "Chemprop",
+            "OPERA",
+            "DeepChem"
+          ],
+          "benchmarkable": "yes: MoleculeNet, Tox21 and TDC leaderboards",
+          "notes": ""
+        },
+        {
+          "id": "science.cheminformatics.synthesis_planning",
+          "name": "Synthesis route planning",
+          "definition": "Given a target molecule and available building blocks, propose retrosynthetic routes and reaction conditions.",
+          "inputs": "target structure, stock compounds, reaction templates or models",
+          "outputs": "ranked synthetic routes, predicted conditions",
+          "crosswalk": [],
+          "onet_products": [
+            "Organic synthesis planning software"
+          ],
+          "state_of_art": [
+            "Synthia",
+            "Reaxys Predictive Retrosynthesis",
+            "CAS SciFinder retrosynthesis"
+          ],
+          "open_tools": [
+            "AiZynthFinder",
+            "ASKCOS"
+          ],
+          "benchmarkable": "yes: USPTO-50k single-step accuracy and route-finding benchmarks",
+          "notes": "No EDAM operation at this grain."
+        }
+      ]
+    }
+  ],
+  "existing_function_map": [
+    {
+      "function": "molecular",
+      "nodes": [
+        "science.molecular_modeling",
+        "science.cheminformatics",
+        "science.sequence_analysis",
+        "science.genomics",
+        "science.systems_biology"
+      ],
+      "note": "Split by data type: structure/physics, chemical informatics, sequences, high-throughput genomics, kinetic models. Bioprocess and bioreactor design (SuperPro Designer, bioreactor design) go to simulate.process_flowsheeting."
+    },
+    {
+      "function": "logistics",
+      "nodes": [
+        "science.optimization"
+      ],
+      "note": "Only the solver half (CPLEX, LINDO, AMPL, GAMS, MINOS, SNOPT, MINTO). Routing, fleet, warehousing and supply-chain planning go to move; production scheduling to produce."
+    }
+  ],
+  "handoffs": [
+    {
+      "what": "Physics and engineering solvers in 'Analytical or scientific software' (ANSYS, Abaqus, Fluent, COMSOL, Nastran, Adams, LS-DYNA, fire and smoke models, nuclear transport and dose codes, building energy tools, Simulink, Dymola, AMESim, power system and process simulators)",
+      "to_domain": "simulate",
+      "why": "solving physics for a design"
+    },
+    {
+      "what": "Stock-and-flow and block-diagram dynamic modeling ('Dynamic modeling software', Simulink, VisSim, MapleSim)",
+      "to_domain": "simulate",
+      "why": "brief assigns system dynamics and control-law design to simulate"
+    },
+    {
+      "what": "SPICE, HDL simulation, logic synthesis, timing and DFT tools (PSpice, HSPICE, ModelSim, Design Compiler, PrimeTime, Calibre)",
+      "to_domain": "design",
+      "why": "EDA flow"
+    },
+    {
+      "what": "Hydrology, groundwater, watershed, air dispersion, erosion, petroleum geoscience, seismic, mining, geostatistics (GSLIB, Gstat, SGeMS, GS+), GIS, surveying, photogrammetry, remote sensing, LIDAR, weather display, forestry and range tools",
+      "to_domain": "earth",
+      "why": "natural systems, geospatial and subsurface work"
+    },
+    {
+      "what": "Reliability, FMEA, fault tree, RCM, root cause, Weibull, life cycle cost, maintainability tools; vehicle and engine diagnostics",
+      "to_domain": "operate",
+      "why": "maintenance and reliability engineering"
+    },
+    {
+      "what": "Life cycle assessment (SimaPro, GaBi, EIO-LCA, STAN substance flow)",
+      "to_domain": "operate",
+      "why": "environmental assessment of operations; editor may prefer design"
+    },
+    {
+      "what": "Calibration management, digital image correlation, GD&T and tolerance analysis, NI Vision Builder inspection, SPC (SQCpack), time and motion study, MODAPTS",
+      "to_domain": "produce",
+      "why": "metrology, inspection and industrial engineering on the plant floor"
+    },
+    {
+      "what": "Factory and workcell discrete-event simulation, robot simulation, KanbanSIM",
+      "to_domain": "produce",
+      "why": "factory simulation is produce; the generic DES engine stays in science.stochastic_simulation"
+    },
+    {
+      "what": "Business intelligence and dashboards (Tableau, Power BI, Cognos, QlikView, MicroStrategy, OBIEE, Spotfire, Looker, Alteryx, BIRT, Jaspersoft, SSAS, Hyperion)",
+      "to_domain": "enterprise",
+      "why": "BI is enterprise"
+    },
+    {
+      "what": "Web, search and advertising analytics (Google Analytics, Adobe Analytics, WebTrends, BrightEdge, Searchmetrics), conjoint and perceptual-mapping tools (Sawtooth, ACA, Argus Perceptual Mapper), PRIZM segmentation, loss-prevention analytics",
+      "to_domain": "commerce",
+      "why": "marketing and retail functions"
+    },
+    {
+      "what": "Python, C++, Java, Perl, C#, other languages; Jupyter, Julia, pandas, Apache Spark, MapReduce, EMR, Snowflake, Teradata, data warehouses; MLflow, Kubeflow, SageMaker, LangChain; Snakemake; Stat/Transfer; RabbitMQ; Ansible",
+      "to_domain": "computing",
+      "why": "programming, data platforms, ML operations and workflow engines"
+    },
+    {
+      "what": "Epidemiology tools (OpenEpi, SaTScan, ClusterSeer, EPICURE, Egret, HealthMapper, DMAP, SIGEpi, Vitalnet, NetEpi), clinical trial EDC, clinical LIS, nutrition analysis, pedigree drawing, orthoptic eye exercises, psychological test interpretation, speech-language assessment",
+      "to_domain": "health",
+      "why": "population and patient health functions; see open question on epidemiology"
+    },
+    {
+      "what": "Fraud detection, e-discovery, litigation support, claims expert systems, intelligence link analysis, financial charting and pattern forecasting",
+      "to_domain": "govern",
+      "why": "legal, insurance, markets and public safety"
+    },
+    {
+      "what": "Traffic and transportation planning tools, train control, aeronautical charts, air traffic automation, dispatch routing",
+      "to_domain": "move",
+      "why": "transportation operations"
+    },
+    {
+      "what": "Construction estimating, mass appraisal (CAMA) and real-estate appraisal tools",
+      "to_domain": "design",
+      "why": "estimating from drawings; appraisal may belong to govern or commerce"
+    },
+    {
+      "what": "GeoGebra and Desmos classroom use; career and aptitude assessment (ACT WorkKeys, Focus 2)",
+      "to_domain": "learn",
+      "why": "teaching and assessment"
+    },
+    {
+      "what": "Musical instrument tuners and loudspeaker design calculators",
+      "to_domain": "media",
+      "why": "audio"
+    }
+  ],
+  "unplaced_products": [
+    "JudgeIt II",
+    "SIL International The Linguist's Shoebox",
+    "Apple Shazam",
+    "Augmint",
+    "Multisensory data representation software",
+    "Medical Scientists HybridAI"
+  ],
+  "open_questions": [
+    "This domain has 18 capabilities, above the 6-14 aim, because it covers mathematics, statistics and three laboratory sciences. If the editor wants fewer, the cleanest merges are experimental_design into statistics, systems_biology into genomics, and cheminformatics back into molecular_modeling.",
+    "Epidemiological analysis (Epi Info, OpenEpi, SaTScan, ClusterSeer) is population statistics, not patient care. I handed it to health; if health does not take it, it should become a statistics task here (spatial and outbreak statistics).",
+    "Geostatistics (kriging, variograms: GSLIB, Gstat, SGeMS) is a general spatial-statistics method but its products are earth-science tools. I handed it to earth; confirm.",
+    "Boundary with computing for array libraries: I claimed NumPy, SciPy, R, MATLAB and Octave as numerical or statistical tools, and handed Jupyter, pandas and Julia to computing as programming tools. The editor should fix one rule for this.",
+    "Survey fielding (Qualtrics, CATI) is claimed here as research method; commerce may also claim it for market research.",
+    "Chromosome image analysis and psychometric calibration are kept here as methods; health (clinical cytogenetics) and learn (testing programs) may contest them."
+  ]
+}

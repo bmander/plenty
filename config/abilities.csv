@@ -1,0 +1,53 @@
+ability,name,machines,basis
+1.A.1.a.1,Oral Comprehension,partly,"Speech recognition and language models follow ordinary speech, less well amid noise, several speakers or unstated context"
+1.A.1.a.2,Written Comprehension,yes,Language models read ordinary documents as well as a working person
+1.A.1.a.3,Oral Expression,partly,"Speech synthesis and language models speak clearly, less well in live exchange with people at work"
+1.A.1.a.4,Written Expression,yes,Language models write ordinary documents as well as a working person
+1.A.1.b.1,Fluency of Ideas,yes,Language models produce many ideas on a topic at will
+1.A.1.b.2,Originality,partly,Language models vary what is known more readily than they find what is new and apt
+1.A.1.b.3,Problem Sensitivity,partly,"Anomaly detection works where the signals are instrumented, not where something merely looks wrong"
+1.A.1.b.4,Deductive Reasoning,partly,"Solvers and language models apply rules to stated problems, unreliably over long chains or loosely stated ones"
+1.A.1.b.5,Inductive Reasoning,partly,"Statistical learning finds rules in data it is given, less well from a few scattered observations"
+1.A.1.b.6,Information Ordering,yes,Following a given rule to arrange things is what computers do
+1.A.1.b.7,Category Flexibility,yes,Classifiers group things under any stated set of rules
+1.A.1.c.1,Mathematical Reasoning,partly,"Language models and solvers set up ordinary problems, with errors a checker must catch"
+1.A.1.c.2,Number Facility,yes,Arithmetic is what computers do
+1.A.1.d.1,Memorization,yes,Storage and retrieval are what computers do
+1.A.1.e.1,Speed of Closure,partly,Models make sense of cluttered inputs of kinds they were trained on
+1.A.1.e.2,Flexibility of Closure,partly,"Detection models find a known pattern in clutter, less well one described only once"
+1.A.1.e.3,Perceptual Speed,yes,"Comparing figures, characters and patterns is fast and exact by machine"
+1.A.1.f.1,Spatial Orientation,partly,"Positioning and mapping work outdoors and in mapped places, less well in new indoor ones"
+1.A.1.f.2,Visualization,partly,"Geometry and simulation software predict rearrangements that have been modelled, not ones merely seen"
+1.A.1.g.1,Selective Attention,yes,A machine is not distracted
+1.A.1.g.2,Time Sharing,yes,Machines run many tasks at once
+1.A.2.a.1,Arm-Hand Steadiness,yes,Robot arms hold steadier than a hand
+1.A.2.a.2,Manual Dexterity,no,"Robots grasp and assemble known parts in fixed cells, not varied objects in ordinary places"
+1.A.2.a.3,Finger Dexterity,no,"General-purpose robot hands do not yet handle small, varied objects as fingers do"
+1.A.2.b.1,Control Precision,yes,Servo control sets positions more exactly than a person
+1.A.2.b.2,Multilimb Coordination,partly,"Legged and two-armed robots coordinate limbs in demonstrations, not yet across ordinary work"
+1.A.2.b.3,Response Orientation,yes,Choosing among responses to a signal is fast by machine
+1.A.2.b.4,Rate Control,yes,Tracking a moving target is ordinary control engineering
+1.A.2.c.1,Reaction Time,yes,Machines react faster than people
+1.A.2.c.2,Wrist-Finger Speed,yes,Actuators repeat small movements faster than people
+1.A.2.c.3,Speed of Limb Movement,yes,Actuators move faster than limbs
+1.A.3.a.1,Static Strength,yes,Machines are stronger
+1.A.3.a.2,Explosive Strength,yes,Machines are stronger
+1.A.3.a.3,Dynamic Strength,yes,Machines do not tire
+1.A.3.a.4,Trunk Strength,yes,Machines do not tire
+1.A.3.b.1,Stamina,yes,Machines do not tire
+1.A.3.c.1,Extent Flexibility,partly,"Arms reach and bend within a designed workspace, less well into cluttered or cramped places"
+1.A.3.c.2,Dynamic Flexibility,partly,Arms repeat reaching movements within a designed workspace
+1.A.3.c.3,Gross Body Coordination,partly,"Legged robots move the whole body in demonstrations, not yet across ordinary work"
+1.A.3.c.4,Gross Body Equilibrium,partly,"Legged robots keep their balance on ordinary ground, less reliably on what is unstable or unseen"
+1.A.4.a.1,Near Vision,yes,Cameras resolve close detail
+1.A.4.a.2,Far Vision,yes,Cameras resolve distant detail
+1.A.4.a.3,Visual Color Discrimination,yes,Cameras and colorimeters tell colours apart
+1.A.4.a.4,Night Vision,yes,Low-light and infrared cameras see in the dark
+1.A.4.a.5,Peripheral Vision,yes,Cameras cover any field of view
+1.A.4.a.6,Depth Perception,yes,Stereo cameras and laser ranging measure distance
+1.A.4.a.7,Glare Sensitivity,partly,Cameras are still blinded by strong light more easily than eyes
+1.A.4.b.1,Hearing Sensitivity,yes,Microphones resolve pitch and loudness
+1.A.4.b.2,Auditory Attention,partly,Separating one voice or sound from many works in part
+1.A.4.b.3,Sound Localization,yes,Microphone arrays locate a sound
+1.A.4.b.4,Speech Recognition,yes,Speech recognition transcribes ordinary speech about as well as a listener
+1.A.4.b.5,Speech Clarity,yes,Speech synthesis is clear

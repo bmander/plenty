@@ -1,0 +1,22 @@
+item,need
+Food,food
+Apparel and services,clothing
+Owned dwellings,shelter
+Rented dwellings,shelter
+Household furnishings and equipment,shelter
+Natural gas,energy
+Electricity,energy
+Fuel oil and other fuels,energy
+Water and other public services,water_sanitation
+Laundry and cleaning supplies,water_sanitation
+Personal care products and services,water_sanitation
+Healthcare,health
+Education,education
+Personal services,education
+Transportation,mobility
+Telephone services,communication
+Postage and stationery,communication
+Fees and admissions,meaning
+Audio and visual equipment and services,meaning
+"Toys, hobbies, and playground equipment",meaning
+Reading,meaning

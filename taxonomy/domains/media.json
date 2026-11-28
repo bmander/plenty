@@ -1,0 +1,3618 @@
+{
+  "domain": "media",
+  "summary": "Media is broken down by the kind of content being made (still image, vector graphic, page, moving picture, 3D scene, sound, score, interactive work, web page, broadcast, language) and then by the transformation applied to it, following the ACM CCS 2012 split of Computer graphics (image manipulation, shape modeling, animation, rendering) and of Applied computing > Document preparation and Sound and music computing. Leaves were then checked against the media standards that define their inputs and outputs (ISO PDF/X and ICC for print, MPEG and SMPTE for video, EBU R 128 for loudness, W3C WCAG, EPUB, WebVTT and TTML for web and captions, MusicXML and MEI for notation, IPTC for photo and news metadata, XLIFF and TMX for translation). Seeds were kept except that 3D was split into modeling and animation versus rendering and effects, music notation was split from audio production, and social media was widened to public communication; all source codes are from memory.",
+  "capabilities": [
+    {
+      "id": "media.raster_imaging",
+      "name": "Raster image editing and photography",
+      "definition": "Given captured or scanned pixel images, produce corrected, retouched, merged, generated or catalogued raster images.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Computing methodologies > Computer graphics > Image manipulation",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "IPTC",
+          "code": "",
+          "label": "IPTC Photo Metadata Standard",
+          "basis": "fetched",
+          "url": "https://iptc.org/standards/photo-metadata/"
+        }
+      ],
+      "onet_categories": [
+        "Graphics or photo imaging software",
+        "Optical character reader OCR or scanning software"
+      ],
+      "see_also": [
+        "science.visualization_imaging",
+        "health.imaging",
+        "govern.law_enforcement",
+        "earth.remote_sensing"
+      ],
+      "notes": "Was seed 'Raster image editing and photography workflow'. Scientific, medical, forensic and remote-sensing image processing share algorithms but are owned by their domains; this node covers images made for viewing and publication. Text-to-image generation added because it is now a primary way raster images are made.",
+      "tasks": [
+        {
+          "id": "media.raster_imaging.raw_development",
+          "name": "Raw photo development",
+          "definition": "Given camera raw sensor data, produce a rendered image by demosaicing and adjusting exposure, white balance, tone and color.",
+          "inputs": "camera raw files, camera and lens profiles, adjustment parameters",
+          "outputs": "rendered RGB images, non-destructive edit settings",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010382.10010236",
+              "label": "Computing methodologies > Computer graphics > Image manipulation > Computational photography",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Adobe Photoshop Lightroom",
+            "Phase One Capture One",
+            "Apple iPhoto"
+          ],
+          "state_of_art": [
+            "Adobe Lightroom Classic",
+            "Capture One",
+            "DxO PhotoLab"
+          ],
+          "open_tools": [
+            "darktable",
+            "RawTherapee",
+            "LibRaw"
+          ],
+          "benchmarkable": "yes: demosaicing and denoising have reference datasets (Kodak, McMaster, SIDD) with PSNR and perceptual metrics",
+          "notes": ""
+        },
+        {
+          "id": "media.raster_imaging.retouching_compositing",
+          "name": "Photo retouching and layer compositing",
+          "definition": "Given one or more raster images and an editing intent, produce an edited image by selection, masking, cloning, layer blending and local adjustment.",
+          "inputs": "raster images, selections and masks, edit instructions",
+          "outputs": "edited and layered raster images",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010382.10010383",
+              "label": "Computing methodologies > Computer graphics > Image manipulation > Image processing",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Adobe Photoshop",
+            "Adobe Creative Cloud software",
+            "GNU Image Manipulation Program GIMP",
+            "Corel Paint Shop Pro",
+            "Corel Photo-Paint",
+            "Pixelmator",
+            "Ulead PhotoImpact",
+            "Microsoft Paint",
+            "Raster graphics editors",
+            "Image editing software",
+            "Photo editing software",
+            "Graphics software"
+          ],
+          "state_of_art": [
+            "Adobe Photoshop",
+            "Affinity Photo",
+            "Pixelmator Pro"
+          ],
+          "open_tools": [
+            "GIMP",
+            "Krita"
+          ],
+          "benchmarkable": "partly: instruction-guided editing benchmarks (MagicBrush, EditBench) exist, but most retouching quality is judged by people",
+          "notes": ""
+        },
+        {
+          "id": "media.raster_imaging.digital_painting",
+          "name": "Digital painting and drawing",
+          "definition": "Given pen or brush strokes from an input device, simulate natural media to produce a painted raster image.",
+          "inputs": "stylus strokes with pressure and tilt, brush definitions, canvas",
+          "outputs": "painted raster images, layered painting files",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Applied computing > Arts and humanities > Fine arts",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Computing methodologies > Computer graphics > Rendering > Non-photorealistic rendering",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Corel Painter",
+            "Ambient Design ArtRage",
+            "Autodesk SketchBook Pro",
+            "SmithMicro Manga Studio",
+            "Portalgraphics openCanvas",
+            "Pixarra TwistedBrush",
+            "Corel Painter Sketch Pad",
+            "Paintbrush"
+          ],
+          "state_of_art": [
+            "Procreate",
+            "Clip Studio Paint",
+            "Corel Painter"
+          ],
+          "open_tools": [
+            "Krita",
+            "MyPaint"
+          ],
+          "benchmarkable": "no: output is artwork judged by taste; stroke-simulation fidelity has no shared reference",
+          "notes": ""
+        },
+        {
+          "id": "media.raster_imaging.restoration_enhancement",
+          "name": "Image restoration and enhancement",
+          "definition": "Given a degraded image, produce an estimate of the clean image by denoising, deblurring, super-resolution, inpainting or colorization.",
+          "inputs": "noisy, blurred, low-resolution, damaged or grayscale images",
+          "outputs": "restored or upscaled images",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010382.10010383",
+              "label": "Computing methodologies > Computer graphics > Image manipulation > Image processing",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Image enhancement software",
+            "Photo enhancement software"
+          ],
+          "state_of_art": [
+            "Topaz Photo AI",
+            "Adobe Photoshop Neural Filters",
+            "DxO PureRAW"
+          ],
+          "open_tools": [
+            "Real-ESRGAN",
+            "OpenCV",
+            "GIMP"
+          ],
+          "benchmarkable": "yes: NTIRE challenges, DIV2K and SIDD give paired references scored by PSNR, SSIM and LPIPS",
+          "notes": "Forensic enhancement for evidence goes to govern."
+        },
+        {
+          "id": "media.raster_imaging.multi_image_merge",
+          "name": "Panorama, HDR and focus stacking",
+          "definition": "Given several overlapping or bracketed exposures, register and blend them into one panorama, high-dynamic-range or extended-depth-of-field image.",
+          "inputs": "overlapping or bracketed photographs, lens data",
+          "outputs": "stitched panoramas, HDR radiance maps or tone-mapped images, focus-stacked images",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010382.10010236",
+              "label": "Computing methodologies > Computer graphics > Image manipulation > Computational photography",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Microsoft Image Composite Editor",
+            "HeliconSoft Helicon Focus",
+            "Panoweaver Panorama",
+            "Iseemedia Photovista Panorama"
+          ],
+          "state_of_art": [
+            "PTGui",
+            "Helicon Focus",
+            "Adobe Lightroom photo merge"
+          ],
+          "open_tools": [
+            "Hugin",
+            "enblend and enfuse",
+            "Luminance HDR"
+          ],
+          "benchmarkable": "partly: registration error and HDR reconstruction have datasets (Kalantari HDR set), but stitching quality is mostly visual",
+          "notes": ""
+        },
+        {
+          "id": "media.raster_imaging.photo_library",
+          "name": "Photo ingest, metadata and cataloguing",
+          "definition": "Given a set of image files, ingest, cull, tag with descriptive and rights metadata, and organize them for search and reuse.",
+          "inputs": "image files with embedded camera metadata, keywords, captions, rights information",
+          "outputs": "searchable catalogue, IPTC and XMP metadata written to files",
+          "crosswalk": [
+            {
+              "scheme": "IPTC",
+              "code": "",
+              "label": "IPTC Photo Metadata Standard",
+              "basis": "fetched",
+              "url": "https://iptc.org/standards/photo-metadata/"
+            },
+            {
+              "scheme": "ISO",
+              "code": "ISO 16684-1",
+              "label": "Extensible Metadata Platform (XMP)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Camera Bits Photo Mechanic",
+            "Apple iPhoto",
+            "SmugMug Flickr",
+            "CodedColor",
+            "Online image and graphics database software"
+          ],
+          "state_of_art": [
+            "Photo Mechanic",
+            "Adobe Lightroom Classic",
+            "Adobe Bridge"
+          ],
+          "open_tools": [
+            "digiKam",
+            "ExifTool"
+          ],
+          "benchmarkable": "partly: automatic tagging and near-duplicate detection can be scored on labelled sets; cataloguing workflow cannot",
+          "notes": ""
+        },
+        {
+          "id": "media.raster_imaging.scanning",
+          "name": "Image and film scanning",
+          "definition": "Given a flatbed or film scanner and physical originals, drive the scan and produce color-correct digital images with dust and grain correction.",
+          "inputs": "prints, film or documents; scanner device; scan settings",
+          "outputs": "digitized raster images",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Applied computing > Document management and text processing > Document capture > Document scanning",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Image scanning software",
+            "Scanning software",
+            "Hamrick Software VueScan",
+            "LaserSoft Imaging SilverFast Ai Studio",
+            "Corel CorelScan",
+            "Optical scanning software"
+          ],
+          "state_of_art": [
+            "SilverFast",
+            "VueScan",
+            "Epson Scan"
+          ],
+          "open_tools": [
+            "SANE",
+            "NAPS2",
+            "gscan2pdf"
+          ],
+          "benchmarkable": "partly: color accuracy against IT8 targets is measurable; the rest is device control",
+          "notes": "Bulk document capture with indexing belongs to enterprise document management."
+        },
+        {
+          "id": "media.raster_imaging.text_to_image",
+          "name": "Image generation from text",
+          "definition": "Given a text description and optional reference images, synthesize a new raster image that matches the description.",
+          "inputs": "text prompt, optional reference or control images",
+          "outputs": "generated raster images",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Midjourney",
+            "OpenAI GPT Image",
+            "Google Imagen",
+            "Adobe Firefly"
+          ],
+          "open_tools": [
+            "Stable Diffusion",
+            "FLUX.1 schnell",
+            "ComfyUI"
+          ],
+          "benchmarkable": "yes: GenEval, T2I-CompBench and FID on COCO captions score prompt adherence and image quality",
+          "notes": "No source taxonomy has a node for generative imaging yet; added because it is now a main way images are produced."
+        }
+      ]
+    },
+    {
+      "id": "media.vector_graphics",
+      "name": "Vector illustration and graphic design",
+      "definition": "Given design intent, shapes and type, produce resolution-independent graphics, layouts for single pieces, diagrams and typefaces.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Computing methodologies > Computer graphics > Shape modeling > Parametric curve and surface models",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "W3C",
+          "code": "",
+          "label": "Scalable Vector Graphics (SVG)",
+          "basis": "fetched",
+          "url": "https://www.w3.org/TR/SVG2/"
+        }
+      ],
+      "onet_categories": [
+        "Graphics or photo imaging software",
+        "Pattern design software"
+      ],
+      "see_also": [
+        "enterprise.documents",
+        "design.product_definition",
+        "enterprise.process_workflow"
+      ],
+      "notes": "Was seed 'Vector illustration and graphic design'. Diagramming and mind mapping (Pattern design software) placed here as structured vector drawing; business process mapping stays with enterprise. Typeface design added: OpenType font creation is a vector-outline task with no other home.",
+      "tasks": [
+        {
+          "id": "media.vector_graphics.illustration",
+          "name": "Vector illustration",
+          "definition": "Given a design idea or sketch, construct Bezier paths, fills, strokes and gradients to produce a scalable illustration or logo.",
+          "inputs": "sketches, reference images, color palettes, type",
+          "outputs": "vector artwork (SVG, AI, EPS, PDF)",
+          "crosswalk": [
+            {
+              "scheme": "W3C",
+              "code": "",
+              "label": "Scalable Vector Graphics (SVG)",
+              "basis": "fetched",
+              "url": "https://www.w3.org/TR/SVG2/"
+            }
+          ],
+          "onet_products": [
+            "Adobe Illustrator",
+            "Corel CorelDraw Graphics Suite",
+            "Inkscape",
+            "Xara Designer Pro",
+            "Adobe FreeHand MX",
+            "Serif DrawPlus",
+            "Microsoft Expression Design",
+            "Skencil",
+            "sK1",
+            "Xfig",
+            "Vector drawing software",
+            "Corel WebDraw"
+          ],
+          "state_of_art": [
+            "Adobe Illustrator",
+            "Affinity Designer",
+            "CorelDRAW"
+          ],
+          "open_tools": [
+            "Inkscape",
+            "sK1",
+            "Xfig"
+          ],
+          "benchmarkable": "partly: text-to-SVG and SVG-editing benchmarks exist, but illustration quality is judged by people",
+          "notes": ""
+        },
+        {
+          "id": "media.vector_graphics.tracing",
+          "name": "Raster-to-vector tracing",
+          "definition": "Given a raster image, fit curves and regions to produce an equivalent vector drawing.",
+          "inputs": "raster image, tracing tolerance and color count",
+          "outputs": "vector paths and filled regions",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010405.10010497.10010504.10010507",
+              "label": "Applied computing > Document management and text processing > Document capture > Graphics recognition and interpretation",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "MagicTracer",
+            "Potrace",
+            "AlgoLab Raster to Vector Conversion Toolkit",
+            "Trix TracTrix",
+            "Corel OCR-Trace 8"
+          ],
+          "state_of_art": [
+            "Adobe Illustrator Image Trace",
+            "Vector Magic"
+          ],
+          "open_tools": [
+            "Potrace",
+            "AutoTrace",
+            "VTracer"
+          ],
+          "benchmarkable": "yes: reconstruction error against the source image versus path count is computable on any image set",
+          "notes": "Tracing of engineering drawings into CAD is design's."
+        },
+        {
+          "id": "media.vector_graphics.template_design",
+          "name": "Template-based graphic design",
+          "definition": "Given brand assets, copy and a format such as a poster or social post, arrange text, images and shapes into a finished single-page design.",
+          "inputs": "copy, images, logos, brand colors and fonts, target format",
+          "outputs": "finished graphic in image or PDF form",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Applied computing > Arts and humanities > Media arts",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Canva",
+            "Graphics creation software",
+            "Arts & Letters Express"
+          ],
+          "state_of_art": [
+            "Canva",
+            "Adobe Express",
+            "Microsoft Designer"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: layout generation is scored on Crello and PubLayNet with alignment and overlap metrics, but aesthetic quality needs human rating",
+          "notes": ""
+        },
+        {
+          "id": "media.vector_graphics.type_design",
+          "name": "Typeface design",
+          "definition": "Given glyph designs, draw outlines, set spacing and kerning, and hint and compile them into an installable font.",
+          "inputs": "glyph sketches or outlines, character set, metrics",
+          "outputs": "OpenType or variable font files",
+          "crosswalk": [
+            {
+              "scheme": "ISO",
+              "code": "ISO/IEC 14496-22",
+              "label": "Open Font Format",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Glyphs",
+            "FontLab",
+            "RoboFont"
+          ],
+          "open_tools": [
+            "FontForge",
+            "fontmake",
+            "Fontbakery"
+          ],
+          "benchmarkable": "partly: font validity and spacing checks are automatic (Fontbakery); glyph design quality is not",
+          "notes": "No O*NET product found; kept because font production is a distinct media function."
+        }
+      ]
+    },
+    {
+      "id": "media.page_layout",
+      "name": "Page layout and typesetting",
+      "definition": "Given text, images and a design, compose multi-page documents and deliver them as print-ready or digital publications.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Document management and text processing > Document preparation",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ISO",
+          "code": "ISO 15930",
+          "label": "PDF/X graphic content exchange",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Desktop publishing software",
+        "Web page creation and editing software"
+      ],
+      "see_also": [
+        "produce.process_specific_prep",
+        "enterprise.authoring",
+        "enterprise.documents"
+      ],
+      "notes": "Was seed 'Page layout, typesetting and desktop publishing'. Added editorial copy flow (from the newsroom seed area) and print-ready output and color management, because ISO PDF/X and ICC are listed sources. Imposition, RIP and platemaking go to produce as printing prepress.",
+      "tasks": [
+        {
+          "id": "media.page_layout.interactive_layout",
+          "name": "Interactive page layout",
+          "definition": "Given copy, images and a grid, place and style frames on master pages to produce a laid-out publication.",
+          "inputs": "text, images, styles, master pages, page size",
+          "outputs": "laid-out document, print or digital export",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010405.10010497.10010510.10010514",
+              "label": "Applied computing > Document management and text processing > Document preparation > Format and notation",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Adobe InDesign",
+            "QuarkXPress",
+            "Microsoft Publisher",
+            "Adobe PageMaker",
+            "Scribus",
+            "Corel Ventura",
+            "Serif PagePlus",
+            "GrassHopper PageStream"
+          ],
+          "state_of_art": [
+            "Adobe InDesign",
+            "QuarkXPress",
+            "Affinity Publisher"
+          ],
+          "open_tools": [
+            "Scribus"
+          ],
+          "benchmarkable": "partly: document layout generation is scored on PubLayNet and DocLayNet, but finished design quality needs human rating",
+          "notes": ""
+        },
+        {
+          "id": "media.page_layout.markup_typesetting",
+          "name": "Markup-driven typesetting",
+          "definition": "Given text marked up in a typesetting or formatting language, compute line and page breaks, mathematics and hyphenation to produce typeset pages.",
+          "inputs": "TeX, troff or XSL-FO source, fonts, style files",
+          "outputs": "typeset PDF or PostScript pages",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10002951.10003260.10003309.10010512",
+              "label": "Information systems > World Wide Web > Web data description languages > Markup languages",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "W3C",
+              "code": "",
+              "label": "Extensible Stylesheet Language (XSL) Version 1.1",
+              "basis": "fetched",
+              "url": "https://www.w3.org/TR/xsl11/"
+            }
+          ],
+          "onet_products": [
+            "LaTeX",
+            "AT&T Troff",
+            "MicroPress VTeX",
+            "Antenna House"
+          ],
+          "state_of_art": [
+            "TeX Live",
+            "Antenna House Formatter",
+            "Typst"
+          ],
+          "open_tools": [
+            "TeX Live",
+            "LuaTeX",
+            "groff",
+            "Apache FOP",
+            "Typst"
+          ],
+          "benchmarkable": "partly: rendering against reference outputs and line-breaking cost are measurable; typographic quality is judged",
+          "notes": ""
+        },
+        {
+          "id": "media.page_layout.structured_publishing",
+          "name": "Structured single-source publishing",
+          "definition": "Given topic-based structured content, resolve reuse and conditions and publish to multiple formats such as print manuals, help systems and web.",
+          "inputs": "DITA, DocBook or proprietary structured XML topics, maps, conditions",
+          "outputs": "PDF manuals, HTML help, web output",
+          "crosswalk": [
+            {
+              "scheme": "OASIS",
+              "code": "",
+              "label": "Darwin Information Typing Architecture (DITA)",
+              "basis": "fetched",
+              "url": "https://www.oasis-open.org/standards/"
+            },
+            {
+              "scheme": "OASIS",
+              "code": "",
+              "label": "DocBook",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Adobe FrameMaker",
+            "PTC Arbortext",
+            "MadCap Software MadCap Flare",
+            "JustSystems XMetaL",
+            "Quadralay WebWorks ePublisher",
+            "Actuate DocBook",
+            "Author-it",
+            "Adobe RoboHelp",
+            "Rocket/Folio NXT",
+            "Document publishing software"
+          ],
+          "state_of_art": [
+            "MadCap Flare",
+            "Adobe FrameMaker",
+            "Oxygen XML Editor"
+          ],
+          "open_tools": [
+            "DITA Open Toolkit",
+            "DocBook XSL",
+            "Sphinx",
+            "Asciidoctor"
+          ],
+          "benchmarkable": "partly: schema validity and link integrity are checkable; content quality is not",
+          "notes": ""
+        },
+        {
+          "id": "media.page_layout.variable_data_composition",
+          "name": "Variable-data document composition",
+          "definition": "Given a template and a data stream of records, compose one personalized document per record for print or electronic delivery.",
+          "inputs": "document template, record data, business rules",
+          "outputs": "composed print streams or PDFs per recipient",
+          "crosswalk": [],
+          "onet_products": [
+            "Objectif Lune PlanetPress Suite",
+            "Hewlett Packard Exstream Dialogue",
+            "Objectif Lune PrintShop Mail"
+          ],
+          "state_of_art": [
+            "OpenText Exstream",
+            "Quadient Inspire",
+            "XMPie"
+          ],
+          "open_tools": [
+            "Apache FOP"
+          ],
+          "benchmarkable": "partly: output can be checked record by record against expected documents; throughput is measurable",
+          "notes": "No source node; customer communications management is a recognized product category. Delivery to customers sits with enterprise billing and commerce."
+        },
+        {
+          "id": "media.page_layout.pdf_preflight",
+          "name": "PDF output and preflight",
+          "definition": "Given a laid-out document, produce a standard-conforming PDF and check or fix it against print or archive requirements.",
+          "inputs": "layout files or PostScript, output profile such as PDF/X or PDF/A",
+          "outputs": "conforming PDF, preflight report, automatic fixes",
+          "crosswalk": [
+            {
+              "scheme": "ISO",
+              "code": "ISO 15930",
+              "label": "PDF/X",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO",
+              "code": "ISO 19005",
+              "label": "PDF/A",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO",
+              "code": "ISO 32000",
+              "label": "Portable Document Format",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Adobe Distiller",
+            "Enfocus PitStop Pro",
+            "Portable document file creation software",
+            "Esko ArtPro"
+          ],
+          "state_of_art": [
+            "Enfocus PitStop Pro",
+            "callas pdfToolbox",
+            "Adobe Acrobat Pro Preflight"
+          ],
+          "open_tools": [
+            "Ghostscript",
+            "veraPDF",
+            "qpdf"
+          ],
+          "benchmarkable": "yes: conformance test suites (Isartor, veraPDF corpus) give pass or fail ground truth",
+          "notes": ""
+        },
+        {
+          "id": "media.page_layout.color_management",
+          "name": "Color management and proofing",
+          "definition": "Given device measurements and documents, build ICC profiles and convert or soft-proof color between devices.",
+          "inputs": "colorimeter or spectrophotometer readings, target charts, source documents",
+          "outputs": "ICC device profiles, color-converted files, soft proofs",
+          "crosswalk": [
+            {
+              "scheme": "ISO",
+              "code": "ISO 15076-1",
+              "label": "ICC profile format",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO",
+              "code": "ISO 12647",
+              "label": "Process control for halftone printing",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "PANTONE ColorVision ProfilerPlus",
+            "Color management software"
+          ],
+          "state_of_art": [
+            "X-Rite i1Profiler",
+            "Calibrite PROFILER",
+            "GMG ColorProof"
+          ],
+          "open_tools": [
+            "ArgyllCMS",
+            "LittleCMS",
+            "DisplayCAL"
+          ],
+          "benchmarkable": "yes: profile accuracy is measured as color difference (Delta E 2000) against measured test charts",
+          "notes": ""
+        },
+        {
+          "id": "media.page_layout.editorial_workflow",
+          "name": "Editorial copy flow",
+          "definition": "Given stories and page layouts, let writers and editors edit copy in place, fit it to the layout and track its status through to publication.",
+          "inputs": "story text, page layouts, assignments and status",
+          "outputs": "edited, fitted copy and a publication status record",
+          "crosswalk": [
+            {
+              "scheme": "IPTC",
+              "code": "",
+              "label": "NewsML-G2",
+              "basis": "fetched",
+              "url": "https://iptc.org/standards/newsml-g2/"
+            }
+          ],
+          "onet_products": [
+            "Adobe InCopy",
+            "WoodWing",
+            "Quark enterprise publishing software",
+            "CCI NewsGate"
+          ],
+          "state_of_art": [
+            "WoodWing Studio",
+            "Adobe InCopy",
+            "Naviga"
+          ],
+          "open_tools": [
+            "Superdesk"
+          ],
+          "benchmarkable": "no: workflow coordination with no defined correct output",
+          "notes": "Grammar and style checking was considered here but left with enterprise word processing, which owns the Spell checkers and Word processing categories."
+        },
+        {
+          "id": "media.page_layout.ebook_production",
+          "name": "E-book and digital edition production",
+          "definition": "Given manuscript or laid-out content, produce reflowable or fixed-layout digital editions that validate and meet accessibility rules.",
+          "inputs": "manuscript or layout files, metadata, cover, navigation",
+          "outputs": "EPUB or app-based digital editions",
+          "crosswalk": [
+            {
+              "scheme": "W3C",
+              "code": "",
+              "label": "EPUB 3",
+              "basis": "fetched",
+              "url": "https://www.w3.org/TR/epub-33/"
+            }
+          ],
+          "onet_products": [
+            "Mag+"
+          ],
+          "state_of_art": [
+            "Adobe InDesign EPUB export",
+            "Vellum",
+            "Kindle Create"
+          ],
+          "open_tools": [
+            "Sigil",
+            "Calibre",
+            "Pandoc",
+            "EPUBCheck",
+            "Ace by DAISY"
+          ],
+          "benchmarkable": "yes: EPUBCheck and Ace by DAISY give objective conformance and accessibility results",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "media.video_post",
+      "name": "Video editing, compositing and motion graphics",
+      "definition": "Given recorded footage, graphics and audio, assemble, correct, composite and animate them into finished moving pictures.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Arts and humanities > Media arts",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Video creation and editing software",
+        "Graphics or photo imaging software"
+      ],
+      "see_also": [
+        "media.broadcast_streaming",
+        "media.three_d_animation",
+        "science.visualization_imaging"
+      ],
+      "notes": "Was seed 'Video editing, compositing and color'. 2D animation placed here rather than with 3D because it shares the layer-and-timeline model of motion graphics. Screen recording added for the many O*NET products of that kind. Encoding moved to broadcast and streaming because it is a delivery step.",
+      "tasks": [
+        {
+          "id": "media.video_post.nonlinear_editing",
+          "name": "Nonlinear video editing",
+          "definition": "Given source clips and audio, cut, trim and arrange them on a timeline with transitions to produce an edited program.",
+          "inputs": "video and audio clips, timecode, edit decisions",
+          "outputs": "edited sequence, edit decision list, rendered program",
+          "crosswalk": [
+            {
+              "scheme": "SMPTE",
+              "code": "ST 12",
+              "label": "SMPTE Time and Control Code",
+              "basis": "fetched",
+              "url": "https://pub.smpte.org/doc/"
+            }
+          ],
+          "onet_products": [
+            "Adobe Premiere Pro",
+            "Apple Final Cut Pro",
+            "Avid Technology Media Composer",
+            "DaVinci Resolve",
+            "Apple iMovie",
+            "Grass Valley EDIUS",
+            "Sony Creative Software Vegas Movie Studio",
+            "Magix Vegas Pro",
+            "WeVideo",
+            "Kapwing",
+            "Avid Technology NewsCutter",
+            "Video editing software"
+          ],
+          "state_of_art": [
+            "Avid Media Composer",
+            "Adobe Premiere Pro",
+            "DaVinci Resolve",
+            "Final Cut Pro"
+          ],
+          "open_tools": [
+            "Kdenlive",
+            "Shotcut",
+            "OpenShot",
+            "Olive"
+          ],
+          "benchmarkable": "partly: automatic editing and highlight selection are scored on TVSum and SumMe; craft editing is judged",
+          "notes": ""
+        },
+        {
+          "id": "media.video_post.color_grading",
+          "name": "Color correction and grading",
+          "definition": "Given footage in camera color spaces, balance shots and apply a creative look to produce graded output in a delivery color space.",
+          "inputs": "camera footage and color-space metadata, reference images, look-up tables",
+          "outputs": "graded footage, LUTs, grading decision lists",
+          "crosswalk": [
+            {
+              "scheme": "SMPTE",
+              "code": "ST 2065",
+              "label": "Academy Color Encoding System (ACES)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "DaVinci Resolve",
+            "Apple Final Cut Studio"
+          ],
+          "state_of_art": [
+            "DaVinci Resolve",
+            "FilmLight Baselight",
+            "Autodesk Flame"
+          ],
+          "open_tools": [
+            "OpenColorIO",
+            "Natron"
+          ],
+          "benchmarkable": "partly: color transfer can be scored against reference grades, but grading intent is creative",
+          "notes": ""
+        },
+        {
+          "id": "media.video_post.compositing_keying",
+          "name": "Compositing, keying and rotoscoping",
+          "definition": "Given plates, mattes and computer-generated elements, extract foregrounds and combine layers into a seamless composite shot.",
+          "inputs": "image sequences, green-screen plates, rendered passes, masks",
+          "outputs": "composited image sequences, mattes",
+          "crosswalk": [],
+          "onet_products": [
+            "The Foundry Nuke",
+            "Adobe After Effects",
+            "Autodesk Smoke",
+            "Autodesk Combustion",
+            "Boris FX Continuum Complete"
+          ],
+          "state_of_art": [
+            "Foundry Nuke",
+            "Adobe After Effects",
+            "Blackmagic Fusion"
+          ],
+          "open_tools": [
+            "Natron",
+            "Blender compositor"
+          ],
+          "benchmarkable": "yes: matting (alphamatting.com, Composition-1k) and video object segmentation (DAVIS) have ground-truth mattes",
+          "notes": ""
+        },
+        {
+          "id": "media.video_post.camera_tracking",
+          "name": "Camera tracking and matchmoving",
+          "definition": "Given a filmed image sequence, track features and solve for camera motion and lens so that computer graphics can be placed in the shot.",
+          "inputs": "image sequence, lens data, survey points",
+          "outputs": "camera path, point cloud, lens distortion model",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010178.10010224.10010245.10010253",
+              "label": "Computing methodologies > Artificial intelligence > Computer vision > Computer vision problems > Tracking",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "The Pixel Farm PFTrack"
+          ],
+          "state_of_art": [
+            "3DEqualizer",
+            "SynthEyes",
+            "PFTrack",
+            "Boris FX Mocha Pro"
+          ],
+          "open_tools": [
+            "Blender motion tracking",
+            "COLMAP"
+          ],
+          "benchmarkable": "yes: camera pose accuracy is scored on structure-from-motion benchmarks such as ETH3D and Tanks and Temples",
+          "notes": ""
+        },
+        {
+          "id": "media.video_post.motion_graphics",
+          "name": "Motion graphics and titling",
+          "definition": "Given text, logos and design elements, animate them over time with particles and effects to produce titles and animated graphics.",
+          "inputs": "type, vector and raster artwork, animation keyframes, effect parameters",
+          "outputs": "rendered animated graphics with alpha, title sequences",
+          "crosswalk": [],
+          "onet_products": [
+            "Adobe After Effects",
+            "Motion graphics software",
+            "Red Giant Trapcode Particular",
+            "Trapcode Particular",
+            "Maxon Cinema 4D"
+          ],
+          "state_of_art": [
+            "Adobe After Effects",
+            "Maxon Cinema 4D",
+            "Apple Motion"
+          ],
+          "open_tools": [
+            "Blender",
+            "Natron",
+            "Glaxnimate"
+          ],
+          "benchmarkable": "no: creative output with no reference answer",
+          "notes": "Live on-air graphics go to media.broadcast_streaming.live_production."
+        },
+        {
+          "id": "media.video_post.animation_2d",
+          "name": "2D animation",
+          "definition": "Given drawings, cut-out rigs or vector assets, create frame-by-frame or interpolated two-dimensional animation.",
+          "inputs": "drawn frames or vector characters, timing, audio",
+          "outputs": "animated sequences",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Computing methodologies > Computer graphics > Animation",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "SmithMicro Anime Studio",
+            "Celsys RETAS",
+            "Adobe LiveMotion",
+            "Satori Paint"
+          ],
+          "state_of_art": [
+            "Toon Boom Harmony",
+            "Moho",
+            "TVPaint",
+            "Adobe Animate"
+          ],
+          "open_tools": [
+            "Synfig Studio",
+            "OpenToonz",
+            "Pencil2D",
+            "Krita"
+          ],
+          "benchmarkable": "partly: in-between frame generation is scored on ATD-12K; full animation is judged",
+          "notes": ""
+        },
+        {
+          "id": "media.video_post.screen_recording",
+          "name": "Screen recording and capture",
+          "definition": "Given a computer display and narration, capture, annotate and lightly edit a screen recording or screenshot.",
+          "inputs": "display output, microphone and webcam, annotations",
+          "outputs": "screencast video or annotated screenshots",
+          "crosswalk": [],
+          "onet_products": [
+            "TechSmith Camtasia",
+            "Loom",
+            "Screencastify",
+            "Screencast-O-Matic",
+            "TechSmith Snagit"
+          ],
+          "state_of_art": [
+            "TechSmith Camtasia",
+            "Loom",
+            "TechSmith Snagit"
+          ],
+          "open_tools": [
+            "OBS Studio",
+            "ShareX"
+          ],
+          "benchmarkable": "no: device capture and simple editing; nothing to score beyond performance",
+          "notes": "No source node."
+        },
+        {
+          "id": "media.video_post.text_to_video",
+          "name": "Video generation from text",
+          "definition": "Given a text description and optional images or clips, synthesize a new video clip that matches the description.",
+          "inputs": "text prompt, optional reference images or video",
+          "outputs": "generated video clips",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Google Veo",
+            "OpenAI Sora",
+            "Runway Gen-4",
+            "Kling"
+          ],
+          "open_tools": [
+            "Wan",
+            "HunyuanVideo",
+            "LTX-Video"
+          ],
+          "benchmarkable": "yes: VBench scores prompt adherence, temporal consistency and quality on a fixed prompt set",
+          "notes": "No source node; added because generation is now a main way footage is produced."
+        }
+      ]
+    },
+    {
+      "id": "media.three_d_animation",
+      "name": "3D modeling and character animation",
+      "definition": "Given concept art, references or captured motion, build 3D surface models, materials and rigs and animate them.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Computing methodologies > Computer graphics > Shape modeling",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Computing methodologies > Computer graphics > Animation",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Graphics or photo imaging software",
+        "Video creation and editing software"
+      ],
+      "see_also": [
+        "design.solid_modeling",
+        "media.rendering_effects"
+      ],
+      "notes": "Seed '3D modeling, animation, rendering and visual effects' split in two, following ACM CCS which keeps shape modeling and animation apart from rendering. This node is for entertainment and visualization assets (meshes, subdivision surfaces); engineering solid and NURBS modeling stays with design.",
+      "tasks": [
+        {
+          "id": "media.three_d_animation.polygon_modeling",
+          "name": "Polygon and subdivision modeling",
+          "definition": "Given references or a brief, build a polygon or subdivision-surface mesh of an object, character or set.",
+          "inputs": "concept art, reference images, scale",
+          "outputs": "polygon or subdivision meshes (FBX, OBJ, glTF, USD)",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010396.10010397",
+              "label": "Computing methodologies > Computer graphics > Shape modeling > Mesh models",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "Khronos",
+              "code": "",
+              "label": "glTF 2.0",
+              "basis": "fetched",
+              "url": "https://www.khronos.org/gltf/"
+            }
+          ],
+          "onet_products": [
+            "Autodesk Maya",
+            "Autodesk 3ds Max",
+            "Blender",
+            "Luxology Modo",
+            "NewTek Lightwave 3D",
+            "Maxon Cinema 4D",
+            "Autodesk SoftImage",
+            "Nevercenter Silo",
+            "Inivis AC3D",
+            "Cheetah3D",
+            "Caligari Corporation trueSpace",
+            "Three-dimensional graphics software"
+          ],
+          "state_of_art": [
+            "Autodesk Maya",
+            "Autodesk 3ds Max",
+            "Blender",
+            "Maxon Cinema 4D"
+          ],
+          "open_tools": [
+            "Blender",
+            "Wings 3D"
+          ],
+          "benchmarkable": "partly: text-to-3D and image-to-3D generation are scored on Objaverse-derived sets and GPTEval3D; hand modeling is judged",
+          "notes": ""
+        },
+        {
+          "id": "media.three_d_animation.sculpting",
+          "name": "Digital sculpting",
+          "definition": "Given a base mesh, sculpt high-resolution organic detail with brush tools and bake it to displacement or normal maps.",
+          "inputs": "base mesh, brush strokes, alphas",
+          "outputs": "high-resolution sculpted mesh, displacement and normal maps",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010396.10010397",
+              "label": "Computing methodologies > Computer graphics > Shape modeling > Mesh models",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Pixologic Zbrush",
+            "Autodesk Mudbox"
+          ],
+          "state_of_art": [
+            "Maxon ZBrush",
+            "Autodesk Mudbox",
+            "Nomad Sculpt"
+          ],
+          "open_tools": [
+            "Blender"
+          ],
+          "benchmarkable": "no: artistic output; only map baking accuracy is measurable",
+          "notes": ""
+        },
+        {
+          "id": "media.three_d_animation.texturing_lookdev",
+          "name": "UV mapping, texturing and look development",
+          "definition": "Given a mesh, unwrap UVs and paint or procedurally generate physically based material maps.",
+          "inputs": "mesh, reference photographs, material definitions",
+          "outputs": "UV layouts, PBR texture maps, shader networks",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010382.10010384",
+              "label": "Computing methodologies > Computer graphics > Image manipulation > Texturing",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "Academy Software Foundation",
+              "code": "",
+              "label": "MaterialX",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Maxon BodyPaint 3D"
+          ],
+          "state_of_art": [
+            "Adobe Substance 3D Painter",
+            "Adobe Substance 3D Designer",
+            "Foundry Mari"
+          ],
+          "open_tools": [
+            "Blender",
+            "ArmorPaint"
+          ],
+          "benchmarkable": "partly: UV distortion and material capture from photos (SVBRDF estimation) are measurable",
+          "notes": ""
+        },
+        {
+          "id": "media.three_d_animation.environment_generation",
+          "name": "Procedural terrain and environments",
+          "definition": "Given rules and parameters, generate natural landscapes, vegetation and skies for film or games.",
+          "inputs": "height or noise parameters, erosion settings, ecosystem rules",
+          "outputs": "terrain meshes or heightfields, scattered vegetation, atmosphere settings",
+          "crosswalk": [],
+          "onet_products": [
+            "e-on software Vue",
+            "DAZ Productions Bryce",
+            "Quad Software Grome",
+            "Landscape modeling software"
+          ],
+          "state_of_art": [
+            "World Machine",
+            "Gaea",
+            "Terragen",
+            "SpeedTree"
+          ],
+          "open_tools": [
+            "Blender"
+          ],
+          "benchmarkable": "no: visual plausibility is judged",
+          "notes": "Real terrain from survey data goes to earth."
+        },
+        {
+          "id": "media.three_d_animation.rigging",
+          "name": "Character rigging and skinning",
+          "definition": "Given a character mesh, build a skeleton, controls and deformation weights so it can be posed and animated.",
+          "inputs": "character mesh, joint placement, deformation requirements",
+          "outputs": "rigged character with skin weights and controls",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010352.10010380",
+              "label": "Computing methodologies > Computer graphics > Animation > Motion processing",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Character Studio",
+            "SmithMicro SoftwarePoser",
+            "HASH Animation:Master",
+            "Autodesk Maya"
+          ],
+          "state_of_art": [
+            "Autodesk Maya",
+            "AccuRIG",
+            "Mixamo auto-rigger"
+          ],
+          "open_tools": [
+            "Blender Rigify"
+          ],
+          "benchmarkable": "partly: automatic rigging is scored on joint and skin-weight error (RigNet dataset)",
+          "notes": ""
+        },
+        {
+          "id": "media.three_d_animation.keyframe_animation",
+          "name": "Keyframe character animation",
+          "definition": "Given a rigged character and performance direction, set and interpolate poses over time to produce an animated performance.",
+          "inputs": "rigged characters, timing, audio, choreography",
+          "outputs": "animation curves, animated scenes",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010352",
+              "label": "Computing methodologies > Computer graphics > Animation",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Autodesk Maya",
+            "Autodesk MotionBuilder",
+            "HASH Animation:Master",
+            "Credo Interactive DanceForms",
+            "Chorel Technology Dance Designer",
+            "Choreography software",
+            "Animation software"
+          ],
+          "state_of_art": [
+            "Autodesk Maya",
+            "Autodesk MotionBuilder",
+            "Cascadeur"
+          ],
+          "open_tools": [
+            "Blender"
+          ],
+          "benchmarkable": "partly: motion in-betweening and text-to-motion are scored on HumanML3D and LaFAN1; hand animation is judged",
+          "notes": "Choreography tools placed here because they author and play back body motion."
+        },
+        {
+          "id": "media.three_d_animation.motion_capture",
+          "name": "Motion capture processing and retargeting",
+          "definition": "Given marker, sensor or video recordings of a performer, solve a skeleton motion, clean it and retarget it to a character.",
+          "inputs": "optical marker data, inertial data or video; performer and target skeletons",
+          "outputs": "cleaned skeletal animation on the target rig",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010352.10010238",
+              "label": "Computing methodologies > Computer graphics > Animation > Motion capture",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Motion capture software",
+            "Autodesk MotionBuilder"
+          ],
+          "state_of_art": [
+            "Vicon Shogun",
+            "Autodesk MotionBuilder",
+            "Move AI"
+          ],
+          "open_tools": [
+            "FreeMoCap",
+            "Blender"
+          ],
+          "benchmarkable": "yes: 3D pose estimation error is scored on Human3.6M and AMASS",
+          "notes": "Biomechanical motion analysis goes to science and health."
+        }
+      ]
+    },
+    {
+      "id": "media.rendering_effects",
+      "name": "Rendering and effects simulation",
+      "definition": "Given 3D scenes, materials, lights and simulation setups, compute images and visually plausible physical effects.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Computing methodologies > Computer graphics > Rendering",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "10010147.10010371.10010352.10010379",
+          "label": "Computing methodologies > Computer graphics > Animation > Physical simulation",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Graphics or photo imaging software",
+        "Video creation and editing software"
+      ],
+      "see_also": [
+        "simulate.cfd",
+        "science.visualization_imaging",
+        "media.games_interactive"
+      ],
+      "notes": "Split from seed '3D modeling, animation, rendering and visual effects'. Effects simulation aims at visual plausibility, not engineering accuracy; engineering fluid and structural solvers stay with simulate. Real-time graphics interfaces (OpenGL, Vulkan, DirectX) placed here as their functional home.",
+      "tasks": [
+        {
+          "id": "media.rendering_effects.offline_rendering",
+          "name": "Offline physically based rendering",
+          "definition": "Given a scene description with geometry, materials, lights and camera, compute a photorealistic image by path tracing or similar light transport.",
+          "inputs": "scene geometry, materials, lights, camera, render settings (USD, RIB)",
+          "outputs": "rendered images and passes (OpenEXR)",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010372.10010374",
+              "label": "Computing methodologies > Computer graphics > Rendering > Ray tracing",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "Academy Software Foundation",
+              "code": "",
+              "label": "OpenEXR; Universal Scene Description",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Pixar RenderMan Studio",
+            "Chaos Group V-Ray",
+            "Mental Images Mental Ray",
+            "Next Limit Maxwell Render",
+            "Indigo Renderer",
+            "Luxrender",
+            "Sunflow Render System",
+            "Aqsis Renderer",
+            "SplutterFish Brazil",
+            "NVDIA Gelato",
+            "Bunkspeed HyperDrive"
+          ],
+          "state_of_art": [
+            "Pixar RenderMan",
+            "Chaos V-Ray",
+            "Autodesk Arnold",
+            "Redshift"
+          ],
+          "open_tools": [
+            "Blender Cycles",
+            "LuxCoreRender",
+            "Mitsuba",
+            "pbrt",
+            "appleseed"
+          ],
+          "benchmarkable": "yes: error against converged reference images versus render time on standard scenes",
+          "notes": ""
+        },
+        {
+          "id": "media.rendering_effects.real_time_rendering",
+          "name": "Real-time rasterized rendering",
+          "definition": "Given scene data and shaders, draw frames on a graphics processor at interactive rates.",
+          "inputs": "meshes, textures, shader programs, scene graph",
+          "outputs": "frames at interactive rates",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010372.10010373",
+              "label": "Computing methodologies > Computer graphics > Rendering > Rasterization",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "Khronos",
+              "code": "",
+              "label": "OpenGL; Vulkan",
+              "basis": "fetched",
+              "url": "https://www.khronos.org/"
+            }
+          ],
+          "onet_products": [
+            "Open Graphics Library OpenGL",
+            "OpenGL",
+            "Vulkan Graphics API",
+            "Microsoft DirectX",
+            "Microsoft High Level Shader Language HLSL",
+            "C for Graphics cg",
+            "Graphics pipelines",
+            "Visualization Sciences Group VSG Open Inventor"
+          ],
+          "state_of_art": [
+            "Unreal Engine renderer",
+            "Unity HDRP",
+            "NVIDIA RTX path"
+          ],
+          "open_tools": [
+            "Mesa",
+            "Filament",
+            "bgfx",
+            "Godot"
+          ],
+          "benchmarkable": "yes: frame time and image error against path-traced references on fixed scenes",
+          "notes": ""
+        },
+        {
+          "id": "media.rendering_effects.fx_simulation",
+          "name": "Fluid, particle and destruction effects",
+          "definition": "Given emitters, colliders and solver settings, simulate smoke, fire, liquids, particles and fracture for visual effects.",
+          "inputs": "scene geometry, emitters, forces, solver parameters",
+          "outputs": "cached simulations (VDB volumes, particle and mesh sequences)",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010352.10010379",
+              "label": "Computing methodologies > Computer graphics > Animation > Physical simulation",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "Academy Software Foundation",
+              "code": "",
+              "label": "OpenVDB",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "SideFX Houdini",
+            "Side Effects Software Houdini",
+            "Side Effects Houdini",
+            "RealFlow"
+          ],
+          "state_of_art": [
+            "SideFX Houdini",
+            "JangaFX EmberGen",
+            "Autodesk Bifrost"
+          ],
+          "open_tools": [
+            "Blender Mantaflow",
+            "OpenVDB"
+          ],
+          "benchmarkable": "partly: solver speed and stability are measurable; visual plausibility is judged",
+          "notes": ""
+        },
+        {
+          "id": "media.rendering_effects.crowd_simulation",
+          "name": "Crowd simulation",
+          "definition": "Given agent behaviors and an environment, simulate and animate large numbers of characters moving as a crowd.",
+          "inputs": "agent rules, motion clips, environment layout",
+          "outputs": "animated crowd caches",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010352.10010378",
+              "label": "Computing methodologies > Computer graphics > Animation > Procedural animation",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Massive Jet"
+          ],
+          "state_of_art": [
+            "Massive",
+            "Golaem",
+            "Houdini crowds"
+          ],
+          "open_tools": [
+            "Menge"
+          ],
+          "benchmarkable": "partly: collision counts and trajectory error against recorded crowds are measurable",
+          "notes": "Pedestrian evacuation modeling for safety goes to operate or simulate."
+        },
+        {
+          "id": "media.rendering_effects.view_synthesis",
+          "name": "Image-based novel view synthesis",
+          "definition": "Given photographs or video of a real scene, reconstruct a renderable representation and synthesize views from new camera positions.",
+          "inputs": "multi-view images, camera poses",
+          "outputs": "radiance field or Gaussian splat scene, rendered novel views",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010382.10010385",
+              "label": "Computing methodologies > Computer graphics > Image manipulation > Image-based rendering",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Luma AI",
+            "Polycam",
+            "Postshot"
+          ],
+          "open_tools": [
+            "nerfstudio",
+            "gsplat",
+            "COLMAP"
+          ],
+          "benchmarkable": "yes: PSNR, SSIM and LPIPS on held-out views of Mip-NeRF 360 and Tanks and Temples",
+          "notes": "Survey-grade photogrammetry goes to earth."
+        }
+      ]
+    },
+    {
+      "id": "media.audio_production",
+      "name": "Audio recording, editing and mixing",
+      "definition": "Given recorded or synthesized sound, edit, process, sequence, mix and master it into finished audio.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Arts and humanities > Sound and music computing",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Music or sound editing software"
+      ],
+      "see_also": [
+        "media.music_notation",
+        "simulate.acoustics_vibration",
+        "media.broadcast_streaming"
+      ],
+      "notes": "Was the audio half of seed 'Audio recording, editing and music production; music notation'. Notation split out because it works on symbolic scores, not sound. Source separation and text-to-music added as distinct benchmarked tasks.",
+      "tasks": [
+        {
+          "id": "media.audio_production.multitrack_mixing",
+          "name": "Multitrack recording and mixing",
+          "definition": "Given live inputs and audio tracks, record, arrange, apply effects and balance them to a stereo or surround mix.",
+          "inputs": "audio inputs and tracks, plug-in effects, automation",
+          "outputs": "multitrack session, mixed stems and master",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010405.10010469.10010475",
+              "label": "Applied computing > Arts and humanities > Sound and music computing",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Avid Technology Pro Tools",
+            "Avid Pro Tools",
+            "Apple Logic Pro",
+            "Steinberg Cubase Pro",
+            "Cakewalk SONAR",
+            "Image-Line FL Studio",
+            "Acoustica Mixcraft",
+            "Apple GarageBand",
+            "Propellerhead Software Reason",
+            "XT Software energyXT",
+            "MAGIX Music Maker",
+            "Sonic Studio audio software"
+          ],
+          "state_of_art": [
+            "Avid Pro Tools",
+            "Apple Logic Pro",
+            "Ableton Live",
+            "Steinberg Cubase"
+          ],
+          "open_tools": [
+            "Ardour",
+            "LMMS",
+            "Zrythm"
+          ],
+          "benchmarkable": "partly: automatic mixing can be compared with reference mixes on multitrack datasets, but mix quality is judged by listeners",
+          "notes": ""
+        },
+        {
+          "id": "media.audio_production.waveform_editing",
+          "name": "Waveform editing and audio restoration",
+          "definition": "Given a recording, cut, splice and remove noise, clicks, hum and clipping to produce a clean edited file.",
+          "inputs": "audio files, noise profiles, edit points",
+          "outputs": "edited and restored audio",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010405.10010469.10010475",
+              "label": "Applied computing > Arts and humanities > Sound and music computing",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Adobe Audition",
+            "Sony Sound Forge",
+            "MAGIX Software Sound Forge",
+            "Audacity",
+            "Audio editing software",
+            "Audion Laboratories VoxPro"
+          ],
+          "state_of_art": [
+            "iZotope RX",
+            "Adobe Audition",
+            "Steinberg SpectraLayers"
+          ],
+          "open_tools": [
+            "Audacity",
+            "Tenacity",
+            "SoX"
+          ],
+          "benchmarkable": "yes: speech and audio enhancement are scored on VoiceBank-DEMAND and the DNS Challenge with PESQ and DNSMOS",
+          "notes": ""
+        },
+        {
+          "id": "media.audio_production.mastering_loudness",
+          "name": "Mastering and loudness normalization",
+          "definition": "Given a final mix, apply equalization, dynamics and limiting and measure loudness to meet a delivery specification.",
+          "inputs": "stereo or multichannel mix, target loudness and true-peak limits",
+          "outputs": "mastered audio, loudness report",
+          "crosswalk": [
+            {
+              "scheme": "EBU",
+              "code": "R 128",
+              "label": "Loudness normalisation and permitted maximum level",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ITU-R",
+              "code": "BS.1770",
+              "label": "Algorithms to measure audio programme loudness and true-peak audio level",
+              "basis": "fetched",
+              "url": "https://www.itu.int/rec/R-REC-BS.1770"
+            }
+          ],
+          "onet_products": [
+            "iZotope Ozone"
+          ],
+          "state_of_art": [
+            "iZotope Ozone",
+            "LANDR",
+            "Steinberg WaveLab"
+          ],
+          "open_tools": [
+            "libebur128",
+            "FFmpeg loudnorm",
+            "Matchering"
+          ],
+          "benchmarkable": "yes: loudness meters are tested against EBU Tech 3341 signals; automatic mastering can be scored against reference masters",
+          "notes": ""
+        },
+        {
+          "id": "media.audio_production.synthesis_instruments",
+          "name": "Sound synthesis and virtual instruments",
+          "definition": "Given note events and a patch, generate instrument sound by synthesis or sample playback.",
+          "inputs": "MIDI or note events, synthesis patches, sample libraries",
+          "outputs": "audio signal, instrument presets",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010405.10010469.10010475",
+              "label": "Applied computing > Arts and humanities > Sound and music computing",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "ZynAddSubFX",
+            "Wusik Wusikstation VSTi",
+            "Komplete Kontrol",
+            "Virtual instrument software",
+            "Pure Data PD",
+            "Korg EM-1 Editor",
+            "Apple MainStage",
+            "Audio Chaos Soundscape Generator",
+            "Truepianos"
+          ],
+          "state_of_art": [
+            "Native Instruments Kontakt",
+            "Xfer Serum",
+            "Spectrasonics Omnisphere"
+          ],
+          "open_tools": [
+            "ZynAddSubFX",
+            "Surge XT",
+            "Pure Data",
+            "SuperCollider",
+            "Csound"
+          ],
+          "benchmarkable": "partly: synthesizer sound matching and neural timbre models have datasets (NSynth), but instrument quality is judged",
+          "notes": ""
+        },
+        {
+          "id": "media.audio_production.sequencing",
+          "name": "MIDI sequencing and pattern tracking",
+          "definition": "Given musical ideas, enter and edit note, drum and controller events on a piano roll, step grid or tracker and play them through instruments.",
+          "inputs": "note and controller events, tempo map, instrument assignments",
+          "outputs": "MIDI sequences or tracker modules",
+          "crosswalk": [
+            {
+              "scheme": "MIDI Manufacturers Association",
+              "code": "",
+              "label": "Standard MIDI File",
+              "basis": "fetched",
+              "url": "https://midi.org/file-formats"
+            }
+          ],
+          "onet_products": [
+            "Musical instrument digital interface MIDI software",
+            "Anvil Studio",
+            "MIDI Maestro",
+            "MadTracker",
+            "Renoise",
+            "SVArTracker",
+            "Jackbeat",
+            "Curto Drum",
+            "IK Multimedia GrooveMaker"
+          ],
+          "state_of_art": [
+            "Ableton Live",
+            "Image-Line FL Studio",
+            "Renoise"
+          ],
+          "open_tools": [
+            "Rosegarden",
+            "LMMS",
+            "MilkyTracker",
+            "Hydrogen"
+          ],
+          "benchmarkable": "no: editing environment with no defined correct output",
+          "notes": ""
+        },
+        {
+          "id": "media.audio_production.source_separation",
+          "name": "Music source separation",
+          "definition": "Given a mixed recording, estimate the separate stems such as vocals, drums and bass.",
+          "inputs": "mixed audio",
+          "outputs": "separated stem audio",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010405.10010469.10010475",
+              "label": "Applied computing > Arts and humanities > Sound and music computing",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "iZotope RX Music Rebalance",
+            "AudioShake",
+            "LALAL.AI"
+          ],
+          "open_tools": [
+            "Demucs",
+            "Spleeter",
+            "Open-Unmix"
+          ],
+          "benchmarkable": "yes: signal-to-distortion ratio on MUSDB18",
+          "notes": "No O*NET product; added because it is a well-defined, benchmarked step in remixing and restoration."
+        },
+        {
+          "id": "media.audio_production.text_to_audio",
+          "name": "Music and sound generation from text",
+          "definition": "Given a text description and optional melody or audio prompt, synthesize music or sound effects.",
+          "inputs": "text prompt, optional melody, audio or duration",
+          "outputs": "generated audio",
+          "crosswalk": [],
+          "onet_products": [],
+          "state_of_art": [
+            "Suno",
+            "Udio",
+            "ElevenLabs Sound Effects"
+          ],
+          "open_tools": [
+            "AudioCraft MusicGen",
+            "Stable Audio Open"
+          ],
+          "benchmarkable": "partly: Frechet Audio Distance and text-audio similarity on MusicCaps and AudioCaps, with listening tests",
+          "notes": "No source node."
+        }
+      ]
+    },
+    {
+      "id": "media.music_notation",
+      "name": "Music notation and composition",
+      "definition": "Given musical ideas, audio or printed scores, produce, recognize, analyze or generate symbolic music.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Arts and humanities > Sound and music computing",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "W3C Music Notation Community Group",
+          "code": "",
+          "label": "MusicXML",
+          "basis": "fetched",
+          "url": "https://www.w3.org/2021/06/musicxml40/"
+        },
+        {
+          "scheme": "Music Encoding Initiative",
+          "code": "",
+          "label": "MEI",
+          "basis": "fetched",
+          "url": "https://music-encoding.org/"
+        }
+      ],
+      "onet_categories": [
+        "Music or sound editing software"
+      ],
+      "see_also": [
+        "media.audio_production",
+        "learn.adaptive_practice"
+      ],
+      "notes": "Split from seed 'Audio recording, editing and music production; music notation': it holds about half the Music or sound editing products and works on symbolic music, not sound.",
+      "tasks": [
+        {
+          "id": "media.music_notation.score_engraving",
+          "name": "Score notation and engraving",
+          "definition": "Given musical content entered by hand, MIDI or import, lay out and engrave a printed score and parts.",
+          "inputs": "note entry, MIDI or MusicXML, instrumentation, layout settings",
+          "outputs": "engraved scores and parts (PDF, MusicXML)",
+          "crosswalk": [
+            {
+              "scheme": "W3C Music Notation Community Group",
+              "code": "",
+              "label": "MusicXML",
+              "basis": "fetched",
+              "url": "https://www.w3.org/2021/06/musicxml40/"
+            }
+          ],
+          "onet_products": [
+            "Avid Technology Sibelius",
+            "MakeMusic Finale",
+            "MuseScore",
+            "Denemo",
+            "Canorus",
+            "GenieSoft Overture",
+            "NoteWorthy Software NoteWorthy Composer",
+            "Notation Software Notation Composer",
+            "Maestro Music Software MagicScore",
+            "Arpege Music Pizzicato",
+            "Myriad Software Harmony Assistant",
+            "Lauriso Software Music Publisher"
+          ],
+          "state_of_art": [
+            "Avid Sibelius",
+            "Steinberg Dorico",
+            "MuseScore Studio"
+          ],
+          "open_tools": [
+            "MuseScore",
+            "LilyPond",
+            "Frescobaldi",
+            "Verovio"
+          ],
+          "benchmarkable": "partly: MIDI-to-score conversion is measurable against reference scores; engraving quality is judged",
+          "notes": ""
+        },
+        {
+          "id": "media.music_notation.tablature",
+          "name": "Fretted-instrument tablature editing",
+          "definition": "Given a melody or part for a fretted instrument, write and play back tablature with string and fret positions.",
+          "inputs": "notes or audio, instrument tuning",
+          "outputs": "tablature files and playback",
+          "crosswalk": [],
+          "onet_products": [
+            "Arobas Music Guitar Pro",
+            "TuxGuitar",
+            "Power Tab Editor",
+            "TablEdit",
+            "TabIt",
+            "Underware Design DTAB",
+            "Sonoma Wire Works RiffWorks"
+          ],
+          "state_of_art": [
+            "Guitar Pro",
+            "Songsterr"
+          ],
+          "open_tools": [
+            "TuxGuitar"
+          ],
+          "benchmarkable": "partly: automatic tablature transcription and fingering are scored on GuitarSet",
+          "notes": ""
+        },
+        {
+          "id": "media.music_notation.optical_music_recognition",
+          "name": "Optical music recognition",
+          "definition": "Given an image of printed or handwritten music, recognize the symbols and output an editable score.",
+          "inputs": "score images or PDFs",
+          "outputs": "MusicXML or MEI score",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010405.10010497.10010504.10010507",
+              "label": "Applied computing > Document management and text processing > Document capture > Graphics recognition and interpretation",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Audiveris",
+            "Visiv SharpEye"
+          ],
+          "state_of_art": [
+            "Neuratron PhotoScore",
+            "Newzik",
+            "ScanScore"
+          ],
+          "open_tools": [
+            "Audiveris",
+            "oemer"
+          ],
+          "benchmarkable": "yes: symbol detection and end-to-end recognition are scored on DeepScores and MUSCIMA++",
+          "notes": ""
+        },
+        {
+          "id": "media.music_notation.audio_transcription",
+          "name": "Automatic music transcription",
+          "definition": "Given audio of a performance, detect pitches, onsets and durations and output notes or a score.",
+          "inputs": "audio recordings",
+          "outputs": "MIDI notes or notated score",
+          "crosswalk": [
+            {
+              "scheme": "MIREX",
+              "code": "",
+              "label": "Multiple fundamental frequency estimation and tracking",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Widisoft WIDI Recognition System",
+            "Epinoisis Software Digital Ear",
+            "Xitona Software Voice Composer"
+          ],
+          "state_of_art": [
+            "Melodyne",
+            "AnthemScore",
+            "Klangio"
+          ],
+          "open_tools": [
+            "Basic Pitch",
+            "Omnizart"
+          ],
+          "benchmarkable": "yes: note-level F1 on MAESTRO and MAPS",
+          "notes": ""
+        },
+        {
+          "id": "media.music_notation.assisted_composition",
+          "name": "Accompaniment and algorithmic composition",
+          "definition": "Given a chord progression, style or seed melody, generate accompaniment parts or new symbolic music.",
+          "inputs": "chords, style, seed melody, rules",
+          "outputs": "generated MIDI or notation",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010405.10010469.10010475",
+              "label": "Applied computing > Arts and humanities > Sound and music computing",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Impro-Visor",
+            "MusicDevelopments RapidComposer",
+            "Tonality Systems Symoblic Composer",
+            "Hyperscore",
+            "Basic Music Composer",
+            "FlexiMusic Composer",
+            "ChordWizard Software Soundtrix Gold",
+            "MidiSwing"
+          ],
+          "state_of_art": [
+            "PG Music Band-in-a-Box",
+            "Orb Producer Suite",
+            "Scaler"
+          ],
+          "open_tools": [
+            "Impro-Visor",
+            "Magenta"
+          ],
+          "benchmarkable": "partly: symbolic generation is scored by likelihood and style metrics on Lakh MIDI, with listening tests",
+          "notes": ""
+        },
+        {
+          "id": "media.music_notation.theory_analysis",
+          "name": "Harmony and music theory analysis",
+          "definition": "Given a score or chord sequence, label keys, chords, functions, voice-leading errors or tone-row forms.",
+          "inputs": "symbolic score, chord sequence or tone row",
+          "outputs": "harmonic labels, error reports, row matrices",
+          "crosswalk": [
+            {
+              "scheme": "MIREX",
+              "code": "",
+              "label": "Audio chord estimation; key detection",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Musilogic HarmonyBuilder",
+            "Twelve Tone Matrix Calculator",
+            "Twelve Tone Row Analyzer",
+            "D'accord Music Software iChords"
+          ],
+          "state_of_art": [
+            "Hookpad",
+            "Chordify"
+          ],
+          "open_tools": [
+            "music21",
+            "Humdrum Toolkit"
+          ],
+          "benchmarkable": "yes: functional harmony and chord recognition are scored on BPS-FH and MIREX chord sets",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "media.games_interactive",
+      "name": "Game engines and interactive media",
+      "definition": "Given assets, rules and scripts, assemble and run interactive experiences such as games, interactive stories and virtual tours.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Computers in other domains > Personal computers and PC applications > Computer games",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "10003120.10003121.10003124.10010866",
+          "label": "Human-centered computing > Human computer interaction (HCI) > Interaction paradigms > Virtual reality",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Development environment software",
+        "Video creation and editing software",
+        "Graphics or photo imaging software"
+      ],
+      "see_also": [
+        "computing.languages",
+        "learn.simulation_training",
+        "health.rehabilitation"
+      ],
+      "notes": "Was seed 'Game engines and interactive media'. Therapeutic games in the Action games category go to health; serious-game training to learn. Game-playing agents are machine-learning methods (science).",
+      "tasks": [
+        {
+          "id": "media.games_interactive.engine_authoring",
+          "name": "Game engine scene and level authoring",
+          "definition": "Given models, textures, audio and scripts, assemble levels, behaviors and physics in an engine and build a runnable game or real-time experience.",
+          "inputs": "3D and 2D assets, scripts, level layouts, target platforms",
+          "outputs": "playable builds for target platforms",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010405.10010476.10011187.10011190",
+              "label": "Applied computing > Computers in other domains > Personal computers and PC applications > Computer games",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Unity Technologies Unity",
+            "Unreal Technology Unreal Engine",
+            "Crytek CryEngine",
+            "Act-3D Quest3D",
+            "DX Studio"
+          ],
+          "state_of_art": [
+            "Unreal Engine",
+            "Unity"
+          ],
+          "open_tools": [
+            "Godot",
+            "Open 3D Engine",
+            "Bevy"
+          ],
+          "benchmarkable": "partly: frame time and build size on fixed sample projects are measurable; game quality is not",
+          "notes": ""
+        },
+        {
+          "id": "media.games_interactive.multimedia_narrative",
+          "name": "Interactive narrative and multimedia authoring",
+          "definition": "Given text, media and branching logic, author a hypermedia piece or branching story without general-purpose programming.",
+          "inputs": "story text, media assets, branching rules, variables",
+          "outputs": "playable interactive story or multimedia title",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010405.10010497.10010510.10010920",
+              "label": "Applied computing > Document management and text processing > Document preparation > Hypertext / hypermedia creation",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Adobe Director",
+            "Quark Immedia",
+            "Autodesk Scaleform"
+          ],
+          "state_of_art": [
+            "articy:draft",
+            "Ren'Py",
+            "Yarn Spinner"
+          ],
+          "open_tools": [
+            "Twine",
+            "ink",
+            "Ren'Py"
+          ],
+          "benchmarkable": "partly: story-graph consistency checks are automatic; narrative quality is judged",
+          "notes": "Courseware authoring goes to learn."
+        },
+        {
+          "id": "media.games_interactive.game_audio",
+          "name": "Interactive game audio integration",
+          "definition": "Given sound assets and game events, define adaptive playback, mixing and spatialization rules that run inside the game.",
+          "inputs": "sound assets, game parameters and events",
+          "outputs": "runtime sound banks and event mappings",
+          "crosswalk": [],
+          "onet_products": [
+            "Sound development software"
+          ],
+          "state_of_art": [
+            "Audiokinetic Wwise",
+            "FMOD Studio"
+          ],
+          "open_tools": [
+            "OpenAL Soft"
+          ],
+          "benchmarkable": "no: integration tooling with no defined correct output",
+          "notes": "No source node."
+        },
+        {
+          "id": "media.games_interactive.virtual_tours",
+          "name": "Panoramic virtual tours",
+          "definition": "Given stitched panoramas and floor plans, link them with hotspots into a navigable 360-degree tour.",
+          "inputs": "panoramic images, floor plans, hotspot links",
+          "outputs": "web-viewable 360-degree tour",
+          "crosswalk": [],
+          "onet_products": [
+            "Easypano Tourweaver",
+            "The IPIX Real Estate Wizard hometour360 Wizard",
+            "Panorama Technologies ModelWeaver",
+            "MediaVue"
+          ],
+          "state_of_art": [
+            "Matterport",
+            "3DVista",
+            "Kuula"
+          ],
+          "open_tools": [
+            "Pannellum",
+            "Marzipano"
+          ],
+          "benchmarkable": "no: authoring and viewing; nothing to score",
+          "notes": "Listing presentation for property sales is commerce; the tour itself is media."
+        },
+        {
+          "id": "media.games_interactive.procedural_content",
+          "name": "Procedural game content generation",
+          "definition": "Given constraints and a style, generate playable levels, maps, items or quests.",
+          "inputs": "tile sets or grammars, constraints, playability requirements",
+          "outputs": "generated levels or content",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010405.10010476.10011187.10011190",
+              "label": "Applied computing > Computers in other domains > Personal computers and PC applications > Computer games",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Houdini Engine for games",
+            "Unity procedural toolkits"
+          ],
+          "open_tools": [
+            "WaveFunctionCollapse"
+          ],
+          "benchmarkable": "partly: playability, diversity and constraint satisfaction metrics exist, but no single standard suite",
+          "notes": "No O*NET product."
+        }
+      ]
+    },
+    {
+      "id": "media.web_publishing",
+      "name": "Web page creation and content management",
+      "definition": "Given content and a design, author web pages and sites and manage their content for publication.",
+      "crosswalk": [
+        {
+          "scheme": "W3C",
+          "code": "",
+          "label": "HTML and CSS",
+          "basis": "memory",
+          "url": ""
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Information systems > World Wide Web > Web interfaces",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Web page creation and editing software",
+        "Content workflow software",
+        "Web platform development software"
+      ],
+      "see_also": [
+        "computing.app_platforms",
+        "commerce.marketing_automation",
+        "enterprise.documents"
+      ],
+      "notes": "Was seed 'Web page creation and content management'. Web application frameworks (React, Vue) stay with computing; this node is page and site authoring. Accessibility evaluation added because W3C WCAG is a listed source. Search-engine optimization goes to commerce.",
+      "tasks": [
+        {
+          "id": "media.web_publishing.page_authoring",
+          "name": "HTML and CSS page authoring",
+          "definition": "Given content and a visual design, write or visually edit HTML and CSS to produce standards-conforming web pages.",
+          "inputs": "text, images, design mockups, style rules",
+          "outputs": "HTML, CSS and asset files",
+          "crosswalk": [
+            {
+              "scheme": "W3C",
+              "code": "",
+              "label": "HTML; Cascading Style Sheets",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Adobe Dreamweaver",
+            "Microsoft FrontPage",
+            "CoffeeCup The HTML Editor",
+            "Bare Bones Software BBEdit",
+            "Adobe Macromedia HomeSite",
+            "Nvu",
+            "SeaMonkey",
+            "Web page design and editing software",
+            "Web page design software",
+            "Web editing software"
+          ],
+          "state_of_art": [
+            "Adobe Dreamweaver",
+            "Webflow",
+            "Visual Studio Code"
+          ],
+          "open_tools": [
+            "SeaMonkey Composer",
+            "Brackets",
+            "BlueGriffon"
+          ],
+          "benchmarkable": "yes: screenshot-to-code benchmarks (Design2Code, WebSight) and W3C validator conformance",
+          "notes": ""
+        },
+        {
+          "id": "media.web_publishing.site_builder",
+          "name": "Template-based site building",
+          "definition": "Given a template and content, assemble a website through a visual builder without writing markup.",
+          "inputs": "site template, pages and content blocks, media",
+          "outputs": "hosted website",
+          "crosswalk": [],
+          "onet_products": [
+            "Google Sites",
+            "Website creation software",
+            "Website development software",
+            "Web design software",
+            "Adobe Contribute"
+          ],
+          "state_of_art": [
+            "Squarespace",
+            "Wix",
+            "Webflow",
+            "Google Sites"
+          ],
+          "open_tools": [
+            "GrapesJS"
+          ],
+          "benchmarkable": "partly: generated sites can be checked for validity, accessibility and fidelity to a brief",
+          "notes": ""
+        },
+        {
+          "id": "media.web_publishing.content_management",
+          "name": "Web content management",
+          "definition": "Given content items, users and workflows, store, edit, approve and publish content to a website through templates.",
+          "inputs": "content items, templates, roles, approval workflow",
+          "outputs": "published pages, content repository, revision history",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "",
+              "label": "Information systems > Information systems applications > Multimedia information systems > Multimedia content creation",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "WordPress",
+            "Drupal",
+            "Open Source Matters Joomla!",
+            "Adobe Experience Manager (AEM)",
+            "Sitecore CMS",
+            "Vignette Content Management",
+            "HP Autonomy TeamSite",
+            "Adxstudio, for Microsoft",
+            "Content management systems CMS",
+            "Web content management system CMS software",
+            "Website management software"
+          ],
+          "state_of_art": [
+            "Adobe Experience Manager",
+            "WordPress VIP",
+            "Contentful",
+            "Sitecore"
+          ],
+          "open_tools": [
+            "WordPress",
+            "Drupal",
+            "Joomla!",
+            "Wagtail",
+            "Strapi"
+          ],
+          "benchmarkable": "no: platform function; performance benchmarks exist but not task correctness",
+          "notes": "Enterprise content and records management (FileNet, Livelink) goes to enterprise."
+        },
+        {
+          "id": "media.web_publishing.static_site_generation",
+          "name": "Static site generation",
+          "definition": "Given content files in markup and templates, build a complete static website.",
+          "inputs": "Markdown or other content files, templates, configuration",
+          "outputs": "static HTML site",
+          "crosswalk": [],
+          "onet_products": [
+            "Jekyll"
+          ],
+          "state_of_art": [
+            "Hugo",
+            "Astro",
+            "Next.js static export"
+          ],
+          "open_tools": [
+            "Jekyll",
+            "Hugo",
+            "Eleventy"
+          ],
+          "benchmarkable": "partly: build correctness and speed on fixed content sets are measurable",
+          "notes": ""
+        },
+        {
+          "id": "media.web_publishing.accessibility_evaluation",
+          "name": "Web accessibility evaluation",
+          "definition": "Given a web page or site, test it against accessibility success criteria and report failures with fixes.",
+          "inputs": "rendered web pages, DOM, styles",
+          "outputs": "list of accessibility violations by criterion, suggested fixes",
+          "crosswalk": [
+            {
+              "scheme": "W3C",
+              "code": "WCAG 2.2",
+              "label": "Web Content Accessibility Guidelines",
+              "basis": "fetched",
+              "url": "https://www.w3.org/TR/WCAG22/"
+            },
+            {
+              "scheme": "W3C",
+              "code": "",
+              "label": "Accessibility Conformance Testing (ACT) Rules Format 1.1",
+              "basis": "fetched",
+              "url": "https://www.w3.org/TR/act-rules-format/"
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Deque axe DevTools",
+            "Siteimprove",
+            "WAVE"
+          ],
+          "open_tools": [
+            "axe-core",
+            "Pa11y",
+            "Lighthouse"
+          ],
+          "benchmarkable": "yes: W3C ACT Rules test cases give expected pass or fail outcomes for each rule",
+          "notes": "No O*NET product found."
+        }
+      ]
+    },
+    {
+      "id": "media.ux_prototyping",
+      "name": "User-interface and experience prototyping",
+      "definition": "Given product requirements and users, design, prototype and test the screens and flows of a digital interface.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Human-centered computing > Interaction design > Interaction design process and methods > User interface design",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "10003120.10003121.10003122.10010854",
+          "label": "Human-centered computing > Human computer interaction (HCI) > HCI design and evaluation methods > Usability testing",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Graphical user interface development software",
+        "Graphics or photo imaging software",
+        "Program testing software"
+      ],
+      "see_also": [
+        "computing.requirements_design",
+        "computing.app_platforms"
+      ],
+      "notes": "Was seed 'User-interface and experience prototyping'. Code-generating GUI builders stay with computing; this node ends at the design and prototype.",
+      "tasks": [
+        {
+          "id": "media.ux_prototyping.wireframing",
+          "name": "Wireframing",
+          "definition": "Given requirements and content, sketch low-fidelity screen layouts and navigation.",
+          "inputs": "requirements, content inventory, user flows",
+          "outputs": "wireframes and flow diagrams",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10003120.10003123.10010860",
+              "label": "Human-centered computing > Interaction design > Interaction design process and methods",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Balsamiq Studios Balsamiq Mockups",
+            "Axure RP"
+          ],
+          "state_of_art": [
+            "Balsamiq",
+            "Figma",
+            "Whimsical"
+          ],
+          "open_tools": [
+            "Pencil Project",
+            "Penpot"
+          ],
+          "benchmarkable": "partly: layout generation from requirements can be compared with reference screens (Rico, RICO-derived sets)",
+          "notes": ""
+        },
+        {
+          "id": "media.ux_prototyping.interface_design",
+          "name": "Visual interface design",
+          "definition": "Given wireframes and a design system, produce high-fidelity screen designs with components, styles and specifications for developers.",
+          "inputs": "wireframes, design system components, brand styles",
+          "outputs": "high-fidelity screens, component libraries, developer specs",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10003120.10003123.10010860.10010858",
+              "label": "Human-centered computing > Interaction design > Interaction design process and methods > User interface design",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Figma",
+            "Adobe XD",
+            "User interface design software",
+            "Graphical user interface GUI design software",
+            "Microsoft Expression Blend"
+          ],
+          "state_of_art": [
+            "Figma",
+            "Sketch",
+            "Framer"
+          ],
+          "open_tools": [
+            "Penpot"
+          ],
+          "benchmarkable": "partly: UI generation from text or screenshot is scored on Design2Code-style sets; visual quality is judged",
+          "notes": ""
+        },
+        {
+          "id": "media.ux_prototyping.interactive_prototyping",
+          "name": "Interactive prototyping",
+          "definition": "Given screen designs, link them with interactions and transitions into a clickable prototype for review and testing.",
+          "inputs": "screen designs, interaction rules, transitions",
+          "outputs": "clickable prototype",
+          "crosswalk": [],
+          "onet_products": [
+            "InVision software",
+            "Axure RP",
+            "Altia Design"
+          ],
+          "state_of_art": [
+            "Figma prototyping",
+            "ProtoPie",
+            "Axure RP"
+          ],
+          "open_tools": [
+            "Penpot"
+          ],
+          "benchmarkable": "no: authoring environment with no defined correct output",
+          "notes": "Altia also builds embedded instrument-cluster interfaces; that production use is computing's."
+        },
+        {
+          "id": "media.ux_prototyping.usability_testing",
+          "name": "Remote usability testing",
+          "definition": "Given a prototype or live product and test tasks, run sessions with participants and report task success, time and issues.",
+          "inputs": "prototype or product, tasks, participant pool",
+          "outputs": "recordings, task metrics, issue lists",
+          "crosswalk": [
+            {
+              "scheme": "ISO",
+              "code": "ISO 9241-11",
+              "label": "Usability: definitions and concepts",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "UserZoom"
+          ],
+          "state_of_art": [
+            "UserTesting",
+            "Maze",
+            "Lookback"
+          ],
+          "open_tools": [
+            "OpenReplay"
+          ],
+          "benchmarkable": "partly: automated usability issue detection can be scored against expert-labelled sessions; studies themselves are not benchmarks",
+          "notes": ""
+        }
+      ]
+    },
+    {
+      "id": "media.broadcast_streaming",
+      "name": "Broadcast, streaming and live production",
+      "definition": "Given finished and live media, encode, schedule, switch, play out and deliver it to audiences over air, cable or the internet.",
+      "crosswalk": [
+        {
+          "scheme": "EBU",
+          "code": "",
+          "label": "Media production; Media distribution",
+          "basis": "fetched",
+          "url": "https://tech.ebu.ch/"
+        },
+        {
+          "scheme": "SMPTE",
+          "code": "ST 2110",
+          "label": "Professional media over managed IP networks",
+          "basis": "fetched",
+          "url": "https://www.smpte.org/standards/st2110"
+        },
+        {
+          "scheme": "ISO/IEC",
+          "code": "ISO/IEC 23009-1",
+          "label": "Dynamic adaptive streaming over HTTP (MPEG-DASH)",
+          "basis": "memory",
+          "url": ""
+        }
+      ],
+      "onet_categories": [
+        "Video creation and editing software",
+        "Music or sound editing software",
+        "Calendar and scheduling software",
+        "Word processing software"
+      ],
+      "see_also": [
+        "operate.telecom_plant",
+        "media.video_post",
+        "commerce.advertising"
+      ],
+      "notes": "Was seed 'Broadcast, streaming and live-production automation'. Newsroom rundown systems placed here because they drive the on-air program. Transmitter and network plant operation is operate's. Show cue control for theatre added as the live-performance counterpart of playout.",
+      "tasks": [
+        {
+          "id": "media.broadcast_streaming.encoding",
+          "name": "Video and audio encoding",
+          "definition": "Given a master file, compress it to one or more delivery codecs and bitrates, or author it to disc.",
+          "inputs": "mezzanine video and audio, codec and bitrate ladder, packaging format",
+          "outputs": "encoded renditions, disc images",
+          "crosswalk": [
+            {
+              "scheme": "ISO/IEC",
+              "code": "ISO/IEC 14496-10",
+              "label": "Advanced Video Coding (H.264)",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO/IEC",
+              "code": "ISO/IEC 23008-2",
+              "label": "High Efficiency Video Coding (H.265)",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010371.10010395",
+              "label": "Computing methodologies > Computer graphics > Image compression",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Sorenson Media Sorenson Squeeze",
+            "Video encoder software",
+            "Video decoder software",
+            "Apple QuickTime",
+            "Apple DVD Studio Pro",
+            "Apple iDVD",
+            "Corel Ulead DVD Workshop"
+          ],
+          "state_of_art": [
+            "AWS Elemental MediaConvert",
+            "Harmonic",
+            "Telestream Vantage"
+          ],
+          "open_tools": [
+            "FFmpeg",
+            "HandBrake",
+            "x264",
+            "x265",
+            "SVT-AV1"
+          ],
+          "benchmarkable": "yes: rate-distortion (BD-rate with VMAF or PSNR) on standard test sequences",
+          "notes": ""
+        },
+        {
+          "id": "media.broadcast_streaming.streaming_delivery",
+          "name": "Live and on-demand streaming delivery",
+          "definition": "Given encoded media, package it into adaptive streaming formats, protect it and deliver it to players.",
+          "inputs": "encoded renditions or live feed, DRM keys, manifest settings",
+          "outputs": "HLS or DASH streams, hosted video players",
+          "crosswalk": [
+            {
+              "scheme": "ISO/IEC",
+              "code": "ISO/IEC 23009-1",
+              "label": "MPEG-DASH",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO/IEC",
+              "code": "ISO/IEC 23000-19",
+              "label": "Common Media Application Format (CMAF)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Live streaming software",
+            "Windows Media Services",
+            "Brightcove"
+          ],
+          "state_of_art": [
+            "Brightcove",
+            "Mux",
+            "AWS Elemental MediaPackage",
+            "Wowza"
+          ],
+          "open_tools": [
+            "Shaka Packager",
+            "GPAC",
+            "nginx-rtmp-module",
+            "MediaMTX"
+          ],
+          "benchmarkable": "partly: startup time, rebuffering and quality under emulated networks are measurable",
+          "notes": ""
+        },
+        {
+          "id": "media.broadcast_streaming.live_production",
+          "name": "Live switching and on-air graphics",
+          "definition": "Given live camera, replay and graphics sources, switch, mix and overlay them into a program feed in real time.",
+          "inputs": "live video sources, graphics templates, data feeds",
+          "outputs": "program output with character-generator graphics",
+          "crosswalk": [
+            {
+              "scheme": "SMPTE",
+              "code": "ST 2110",
+              "label": "Professional media over managed IP networks",
+              "basis": "fetched",
+              "url": "https://www.smpte.org/standards/st2110"
+            }
+          ],
+          "onet_products": [
+            "Character generator software",
+            "Ross Video Xpression",
+            "Chyron CAMIO"
+          ],
+          "state_of_art": [
+            "Ross Video XPression",
+            "Vizrt Viz Engine",
+            "NewTek TriCaster",
+            "vMix"
+          ],
+          "open_tools": [
+            "CasparCG",
+            "OBS Studio"
+          ],
+          "benchmarkable": "no: real-time operator tooling; only latency is measurable",
+          "notes": ""
+        },
+        {
+          "id": "media.broadcast_streaming.playout_automation",
+          "name": "Playout and radio automation",
+          "definition": "Given a schedule and media library, play out programs, commercials and music to air automatically with live overrides.",
+          "inputs": "daily log or playlist, media files, live events",
+          "outputs": "on-air output, as-run log",
+          "crosswalk": [
+            {
+              "scheme": "EBU",
+              "code": "",
+              "label": "Broadcast automation and playout",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Broadcast Electronics AudioVAULT FleX",
+            "RCS NexGen Digital",
+            "Dalet Digital Media Systems Dalet Media Life"
+          ],
+          "state_of_art": [
+            "Imagine Communications Versio",
+            "Grass Valley iTX",
+            "RCS Zetta",
+            "WideOrbit Automation for Radio"
+          ],
+          "open_tools": [
+            "Rivendell",
+            "LibreTime",
+            "CasparCG"
+          ],
+          "benchmarkable": "no: operational automation with no defined correct output beyond schedule adherence",
+          "notes": ""
+        },
+        {
+          "id": "media.broadcast_streaming.program_scheduling",
+          "name": "Program, music and commercial scheduling",
+          "definition": "Given a library, rotation rules and sold spots, build the daily program and music log and the commercial traffic log.",
+          "inputs": "music or program library with attributes, rotation and separation rules, ad orders",
+          "outputs": "scheduled music logs, traffic logs, program logs",
+          "crosswalk": [],
+          "onet_products": [
+            "Music scheduling software",
+            "RCS GSelector",
+            "WideOrbit",
+            "Program logging software"
+          ],
+          "state_of_art": [
+            "RCS GSelector",
+            "MusicMaster",
+            "WideOrbit Traffic"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: rule violations and fill rate of a generated log are countable, so a constraint-satisfaction benchmark could be built",
+          "notes": "No source node."
+        },
+        {
+          "id": "media.broadcast_streaming.newsroom_rundown",
+          "name": "Newsroom rundown and story management",
+          "definition": "Given wire copy, assignments and scripts, build and update the running order of a news program and drive prompters and playout from it.",
+          "inputs": "wire feeds, story scripts, media references, timing",
+          "outputs": "program rundown, prompter scripts, device control commands",
+          "crosswalk": [
+            {
+              "scheme": "MOS Group",
+              "code": "",
+              "label": "Media Object Server (MOS) protocol",
+              "basis": "fetched",
+              "url": "https://www.mosprotocol.com/"
+            },
+            {
+              "scheme": "IPTC",
+              "code": "",
+              "label": "NewsML-G2",
+              "basis": "fetched",
+              "url": "https://iptc.org/standards/newsml-g2/"
+            }
+          ],
+          "onet_products": [
+            "AP ENPS",
+            "The Associated Press ENPS",
+            "Avid Technology iNEWS",
+            "Burli Software Burli Newsroom System",
+            "Desktop Technologies NewsBoss"
+          ],
+          "state_of_art": [
+            "AP ENPS",
+            "Avid iNEWS",
+            "Dalet Galaxy"
+          ],
+          "open_tools": [
+            "Superdesk"
+          ],
+          "benchmarkable": "no: coordination tooling with no defined correct output",
+          "notes": ""
+        },
+        {
+          "id": "media.broadcast_streaming.media_asset_management",
+          "name": "Media asset management and archive",
+          "definition": "Given ingested media, index it with technical and descriptive metadata, manage proxies and versions, and retrieve or archive it.",
+          "inputs": "media files, metadata, rights, storage tiers",
+          "outputs": "searchable media catalogue, proxies, archived essence",
+          "crosswalk": [
+            {
+              "scheme": "EBU",
+              "code": "",
+              "label": "EBUCore metadata",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "SMPTE",
+              "code": "ST 2067",
+              "label": "Interoperable Master Format",
+              "basis": "fetched",
+              "url": "https://www.smpte.org/standards/st2067"
+            }
+          ],
+          "onet_products": [
+            "Dalet Digital Media Systems Dalet Media Life"
+          ],
+          "state_of_art": [
+            "Avid MediaCentral",
+            "Dalet Flex",
+            "Iconik"
+          ],
+          "open_tools": [
+            "ResourceSpace",
+            "Phraseanet"
+          ],
+          "benchmarkable": "partly: automatic tagging and shot retrieval are scored on video retrieval sets such as MSR-VTT",
+          "notes": "General backup and storage are computing's."
+        },
+        {
+          "id": "media.broadcast_streaming.show_control",
+          "name": "Live show cue control",
+          "definition": "Given a cue list for a performance, trigger sound, video and lighting cues in sequence during the show.",
+          "inputs": "cue list, media files, lighting fixtures and patches",
+          "outputs": "timed audio, video and lighting output",
+          "crosswalk": [
+            {
+              "scheme": "ESTA / ANSI",
+              "code": "ANSI E1.11",
+              "label": "DMX512-A",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Figure 53 QLab"
+          ],
+          "state_of_art": [
+            "Figure 53 QLab",
+            "ETC Eos",
+            "MA Lighting grandMA3"
+          ],
+          "open_tools": [
+            "QLC+",
+            "Linux Show Player"
+          ],
+          "benchmarkable": "no: real-time operator tooling",
+          "notes": "Lighting plot design (Vectorworks Spotlight) is design's."
+        }
+      ]
+    },
+    {
+      "id": "media.language",
+      "name": "Translation, captioning and speech",
+      "definition": "Given text or speech in one form or language, render it in another: translated text, localized software, captions, transcripts or synthesized speech.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Computing methodologies > Artificial intelligence > Natural language processing",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Applied computing > Arts and humanities > Language translation",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        }
+      ],
+      "onet_categories": [
+        "Foreign language software",
+        "Text to speech conversion software",
+        "Optical character reader OCR or scanning software",
+        "Word processing software",
+        "Voice recognition software"
+      ],
+      "see_also": [
+        "enterprise.documents",
+        "health.clinical_record",
+        "govern.legal_practice",
+        "learn.assistive_access",
+        "learn.scholarly_information",
+        "learn.adaptive_practice"
+      ],
+      "notes": "Was seed 'Translation, localization, captioning and speech synthesis'. Speech recognition and optical character recognition added because they are the recognition half of the same conversions and O*NET puts OCR partly in this domain; enterprise and health own dictation and capture workflows built on them. Language learning goes to learn.",
+      "tasks": [
+        {
+          "id": "media.language.machine_translation",
+          "name": "Machine translation",
+          "definition": "Given text in a source language, produce text with the same meaning in a target language.",
+          "inputs": "source text, language pair, optional glossary",
+          "outputs": "translated text",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010178.10010179.10010180",
+              "label": "Computing methodologies > Artificial intelligence > Natural language processing > Machine translation",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            },
+            {
+              "scheme": "ISO",
+              "code": "ISO 18587",
+              "label": "Post-editing of machine translation output",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "Google Translate Client",
+            "Babylon Online Translator",
+            "Smart Link Corporation ImTranslator",
+            "Language Engineering Corporation Translate Pro",
+            "AceTools.biz Ace Translator",
+            "jalada GmbH Just Translate",
+            "DocTranslate",
+            "HunterSoft Business Translator",
+            "AmoK Translator"
+          ],
+          "state_of_art": [
+            "DeepL",
+            "Google Translate",
+            "large language models"
+          ],
+          "open_tools": [
+            "OpenNMT",
+            "Marian NMT",
+            "Argos Translate",
+            "Apertium"
+          ],
+          "benchmarkable": "yes: WMT shared tasks and FLORES-200 with COMET, chrF and human evaluation",
+          "notes": ""
+        },
+        {
+          "id": "media.language.computer_assisted_translation",
+          "name": "Computer-assisted translation and localization",
+          "definition": "Given source documents or software strings, segment them and help a translator reuse translation memory and terminology to produce localized files.",
+          "inputs": "source files or resource strings, translation memories, term bases",
+          "outputs": "translated files in original format, updated translation memory",
+          "crosswalk": [
+            {
+              "scheme": "OASIS",
+              "code": "",
+              "label": "XLIFF",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "GALA / LISA",
+              "code": "",
+              "label": "Translation Memory eXchange (TMX)",
+              "basis": "memory",
+              "url": ""
+            },
+            {
+              "scheme": "ISO",
+              "code": "ISO 30042",
+              "label": "TermBase eXchange (TBX)",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [
+            "OmegaT",
+            "Adapt It",
+            "Stormdance CatsCradle",
+            "Ashkon Translation Pad",
+            "ExcelTrans Translator"
+          ],
+          "state_of_art": [
+            "RWS Trados Studio",
+            "memoQ",
+            "Phrase",
+            "Smartling"
+          ],
+          "open_tools": [
+            "OmegaT",
+            "Okapi Framework",
+            "Weblate"
+          ],
+          "benchmarkable": "partly: fuzzy-match retrieval and terminology consistency are measurable; overall translator productivity is not",
+          "notes": ""
+        },
+        {
+          "id": "media.language.speech_transcription",
+          "name": "Speech recognition and transcription",
+          "definition": "Given recorded or live speech, produce a written transcript with speaker turns and timing.",
+          "inputs": "audio of speech, language, optional vocabulary",
+          "outputs": "time-aligned transcript",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010147.10010178.10010179.10010183",
+              "label": "Computing methodologies > Artificial intelligence > Natural language processing > Speech recognition",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Nuance Dragon NaturallySpeaking",
+            "Speech recognition software",
+            "Transcription software",
+            "Voice dictation software",
+            "Dictation software",
+            "ScanSoft Naturally Speaking",
+            "Voice activated software",
+            "Crescendo Systems DigiScribe-XL",
+            "goQ WordQ"
+          ],
+          "state_of_art": [
+            "OpenAI Whisper large",
+            "Deepgram",
+            "Google Chirp",
+            "Nuance Dragon",
+            "Nuance Dragon Professional",
+            "Microsoft Dictate",
+            "Google Docs voice typing",
+            "Otter.ai"
+          ],
+          "open_tools": [
+            "Whisper",
+            "whisper.cpp",
+            "Kaldi",
+            "Vosk",
+            "NVIDIA NeMo"
+          ],
+          "benchmarkable": "yes: word error rate on LibriSpeech, Common Voice and the Open ASR Leaderboard",
+          "notes": "Clinical dictation workflow is health's; office dictation is enterprise's; the recognition function is here."
+        },
+        {
+          "id": "media.language.stenographic_transcription",
+          "name": "Stenographic realtime transcription",
+          "definition": "Given chorded keystrokes from a stenotype machine, translate them through a steno dictionary into English text in real time.",
+          "inputs": "steno keystroke stream, personal steno dictionary",
+          "outputs": "realtime text feed, edited transcript",
+          "crosswalk": [],
+          "onet_products": [
+            "Stenograph Case CATalyst",
+            "Advantage Software Total Eclipse",
+            "Gigatron StenoCAT",
+            "ProCAT Winner",
+            "Stenovations Digital CAT",
+            "Cheetah International SmartCAT"
+          ],
+          "state_of_art": [
+            "Stenograph Case CATalyst",
+            "Advantage Software Eclipse"
+          ],
+          "open_tools": [
+            "Plover"
+          ],
+          "benchmarkable": "partly: translation accuracy against reference transcripts given steno input is measurable, but public steno corpora are scarce",
+          "notes": "No source node. Court reporting practice is govern's; the steno-to-text function serves both court reporting and broadcast captioning."
+        },
+        {
+          "id": "media.language.caption_authoring",
+          "name": "Caption and subtitle authoring",
+          "definition": "Given video and a transcript or translation, segment, time and position caption text and export it in a delivery format.",
+          "inputs": "video, transcript or translation, style rules",
+          "outputs": "caption files (SCC, WebVTT, TTML, SRT) or burned-in subtitles",
+          "crosswalk": [
+            {
+              "scheme": "W3C",
+              "code": "",
+              "label": "Timed Text Markup Language (TTML); WebVTT",
+              "basis": "fetched",
+              "url": "https://www.w3.org/TR/ttml2/"
+            },
+            {
+              "scheme": "CTA",
+              "code": "CTA-608 / CTA-708",
+              "label": "Line 21 and digital television closed captioning",
+              "basis": "memory",
+              "url": ""
+            }
+          ],
+          "onet_products": [],
+          "state_of_art": [
+            "Ooona",
+            "EZTitles",
+            "Rev",
+            "Verbit"
+          ],
+          "open_tools": [
+            "Subtitle Edit",
+            "Aegisub",
+            "Gaupol"
+          ],
+          "benchmarkable": "yes: segmentation and timing can be scored against reference subtitles (SubER metric) on sets such as MuST-Cinema",
+          "notes": "No O*NET product found."
+        },
+        {
+          "id": "media.language.speech_synthesis",
+          "name": "Text-to-speech synthesis",
+          "definition": "Given text and a voice, produce natural-sounding speech audio.",
+          "inputs": "text or SSML, voice model, prosody controls",
+          "outputs": "speech audio",
+          "crosswalk": [
+            {
+              "scheme": "W3C",
+              "code": "",
+              "label": "Speech Synthesis Markup Language (SSML)",
+              "basis": "fetched",
+              "url": "https://www.w3.org/TR/speech-synthesis11/"
+            },
+            {
+              "scheme": "ITU-T",
+              "code": "P.800",
+              "label": "Methods for subjective determination of transmission quality",
+              "basis": "fetched",
+              "url": "https://www.itu.int/rec/T-REC-P.800"
+            }
+          ],
+          "onet_products": [
+            "Text to speech software"
+          ],
+          "state_of_art": [
+            "ElevenLabs",
+            "Microsoft Azure Neural TTS",
+            "Google Cloud Text-to-Speech"
+          ],
+          "open_tools": [
+            "Piper",
+            "Coqui TTS",
+            "eSpeak NG",
+            "Festival"
+          ],
+          "benchmarkable": "partly: MOS listening tests (Blizzard Challenge) plus automatic intelligibility via ASR word error rate and UTMOS",
+          "notes": "Screen readers and augmentative communication devices built on TTS go to learn and health."
+        },
+        {
+          "id": "media.language.ocr",
+          "name": "Optical character recognition",
+          "definition": "Given a scanned or photographed page, locate and recognize the text and output it with layout.",
+          "inputs": "page images or image-only PDFs, language",
+          "outputs": "text with coordinates, searchable PDF, structured layout",
+          "crosswalk": [
+            {
+              "scheme": "ACM CCS 2012",
+              "code": "10010405.10010497.10010504.10010508",
+              "label": "Applied computing > Document management and text processing > Document capture > Optical character recognition",
+              "basis": "fetched",
+              "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+            }
+          ],
+          "onet_products": [
+            "Optical character recognition OCR software",
+            "Nuance OmniPage Professional",
+            "Optical character reader OCR software",
+            "Text scanning software"
+          ],
+          "state_of_art": [
+            "ABBYY FineReader",
+            "Google Document AI",
+            "Azure AI Document Intelligence"
+          ],
+          "open_tools": [
+            "Tesseract",
+            "OCRmyPDF",
+            "Kraken",
+            "PaddleOCR"
+          ],
+          "benchmarkable": "yes: character and word error rate on ICDAR competition sets and OmniDocBench",
+          "notes": "Forms capture, check imaging and mail sorting built on OCR belong to enterprise, govern and move."
+        }
+      ]
+    },
+    {
+      "id": "media.public_communication",
+      "name": "Social media and public communication",
+      "definition": "Given content and an audience, publish it to social, video and syndication channels and monitor coverage and audience response.",
+      "crosswalk": [
+        {
+          "scheme": "ACM CCS 2012",
+          "code": "",
+          "label": "Information systems > World Wide Web > Web applications > Social networks",
+          "basis": "fetched",
+          "url": "https://dl.acm.org/pb-assets/dl_ccs/acm_ccs2012-1626988337597.xml"
+        },
+        {
+          "scheme": "IPTC",
+          "code": "",
+          "label": "IPTC Media Topics",
+          "basis": "fetched",
+          "url": "https://iptc.org/standards/media-topics/"
+        }
+      ],
+      "onet_categories": [
+        "Web page creation and editing software",
+        "Video creation and editing software",
+        "Instant messaging software",
+        "Enterprise application integration software"
+      ],
+      "see_also": [
+        "commerce.marketing_automation",
+        "commerce.customer_relationship"
+      ],
+      "notes": "Was seed 'Social media publishing and audience analytics'; widened to blogs, podcasts, online video channels and media relations. Paid advertising, email campaigns and web analytics for selling go to commerce.",
+      "tasks": [
+        {
+          "id": "media.public_communication.social_publishing",
+          "name": "Social network publishing and scheduling",
+          "definition": "Given posts and media, publish or schedule them across social networks and manage replies from one place.",
+          "inputs": "post text, images and video, channel accounts, schedule",
+          "outputs": "published posts, engagement queue",
+          "crosswalk": [
+            {
+              "scheme": "W3C",
+              "code": "",
+              "label": "ActivityPub",
+              "basis": "fetched",
+              "url": "https://www.w3.org/TR/activitypub/"
+            }
+          ],
+          "onet_products": [
+            "Hootsuite",
+            "Facebook",
+            "LinkedIn",
+            "Twitter",
+            "Instagram",
+            "Social media sites",
+            "Social media software",
+            "Social networking software",
+            "Pinterest",
+            "Snapchat",
+            "Myspace"
+          ],
+          "state_of_art": [
+            "Hootsuite",
+            "Sprout Social",
+            "Buffer"
+          ],
+          "open_tools": [
+            "Mixpost",
+            "Mastodon"
+          ],
+          "benchmarkable": "no: publishing tool; engagement outcomes depend on the audience, not the software",
+          "notes": ""
+        },
+        {
+          "id": "media.public_communication.video_channels",
+          "name": "Online video channel publishing",
+          "definition": "Given finished videos and metadata, upload, describe and organize them on a video-sharing channel for public viewing.",
+          "inputs": "video files, titles, descriptions, thumbnails, captions",
+          "outputs": "published videos and playlists",
+          "crosswalk": [],
+          "onet_products": [
+            "YouTube",
+            "Vimeo",
+            "TikTok",
+            "Google Video"
+          ],
+          "state_of_art": [
+            "YouTube Studio",
+            "Vimeo",
+            "TikTok"
+          ],
+          "open_tools": [
+            "PeerTube"
+          ],
+          "benchmarkable": "no: platform function",
+          "notes": "Classroom video tools (Flipgrid) go to learn."
+        },
+        {
+          "id": "media.public_communication.blog_podcast",
+          "name": "Blog and podcast syndication",
+          "definition": "Given posts or audio episodes, publish them with feeds so subscribers and directories receive new items.",
+          "inputs": "posts or episode audio, show metadata",
+          "outputs": "published entries and RSS or Atom feeds",
+          "crosswalk": [
+            {
+              "scheme": "IETF",
+              "code": "RFC 4287",
+              "label": "Atom Syndication Format",
+              "basis": "fetched",
+              "url": "https://www.rfc-editor.org/rfc/rfc4287"
+            }
+          ],
+          "onet_products": [
+            "Blogger",
+            "Blogging software",
+            "Tumblr",
+            "Red Sweater MarsEdit",
+            "Podcasting software",
+            "Really Simple Syndication RSS"
+          ],
+          "state_of_art": [
+            "Substack",
+            "WordPress.com",
+            "Spotify for Creators",
+            "Buzzsprout"
+          ],
+          "open_tools": [
+            "Ghost",
+            "WordPress",
+            "Castopod"
+          ],
+          "benchmarkable": "partly: feed validity is checkable; nothing else is",
+          "notes": ""
+        },
+        {
+          "id": "media.public_communication.media_monitoring",
+          "name": "Media monitoring and media relations",
+          "definition": "Given topics and outlets, track news and social coverage, classify its sentiment and reach, and manage journalist contacts and press releases.",
+          "inputs": "keywords and entities, news and social feeds, media contact lists",
+          "outputs": "coverage reports, sentiment and share-of-voice measures, distribution lists",
+          "crosswalk": [
+            {
+              "scheme": "IPTC",
+              "code": "",
+              "label": "IPTC Media Topics",
+              "basis": "fetched",
+              "url": "https://iptc.org/standards/media-topics/"
+            }
+          ],
+          "onet_products": [
+            "Cision CisionPoint"
+          ],
+          "state_of_art": [
+            "Cision",
+            "Meltwater",
+            "Muck Rack",
+            "Brandwatch"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: topic classification, stance and sentiment are scored on SemEval tasks; coverage completeness is not",
+          "notes": ""
+        },
+        {
+          "id": "media.public_communication.audience_measurement",
+          "name": "Audience measurement and analytics",
+          "definition": "Given ratings panels or platform data, estimate audience size, reach and engagement for programs and posts.",
+          "inputs": "panel or platform viewing and engagement data, schedules",
+          "outputs": "ratings, reach and engagement reports",
+          "crosswalk": [],
+          "onet_products": [
+            "Nielsen Arianna",
+            "Nielsen Marketbreaks"
+          ],
+          "state_of_art": [
+            "Nielsen",
+            "Comscore",
+            "YouTube Analytics"
+          ],
+          "open_tools": [],
+          "benchmarkable": "partly: audience estimates can be compared with census data where it exists",
+          "notes": "Web traffic analytics for selling (Google Analytics) goes to commerce."
+        }
+      ]
+    }
+  ],
+  "existing_function_map": [],
+  "handoffs": [
+    {
+      "what": "Forensic scene diagramming, facial composites and evidence imaging (SmartDraw Legal, The CAD Zone The Crime Zone, Trancite Logic Systems ScenePD, Visual Statement Vista FX3 CSI, Computer aided composite drawing software, DeChant Consulting Services iWitness, Midwest Information Systems PAX-it)",
+      "to_domain": "govern",
+      "why": "law-enforcement forensics"
+    },
+    {
+      "what": "Check and payment imaging (Fiserv PEP+ reACH, Mitek Systems ImageNet Payments, VECTORsgi Image Exchange Solution, Image replacement document IRD printing software, Check imaging software)",
+      "to_domain": "govern",
+      "why": "banking operations"
+    },
+    {
+      "what": "Dental and medical imaging (Sirona SIDEXIS XG, Planmeca Oy Dimaxis, Gendex Dental Systems VixWin PRO, Apteryx Imaging Suite, American Orthodontics Compu-Ceph, FYI Technologies Dr. Ceph, DentalEye, Digital image processing software)",
+      "to_domain": "health",
+      "why": "patient imaging"
+    },
+    {
+      "what": "Therapeutic and rehabilitation games (Video game software, Virtual reality game software, Biometrics video game software, BrainTrain SmartDriver) and VR therapy (Virtual reality software)",
+      "to_domain": "health",
+      "why": "rehabilitation and behavioral therapy for patients"
+    },
+    {
+      "what": "Scientific image analysis and plotting in the graphics category (ImageJ, Molecular Devices Corporation MetaMorph, Intelligent Imaging Innovations SlideBook, AutoQuant AutoDeblur, Visual Molecular Dynamics VMD, Amtec Engineering Tecplot, Golden Software Voxler, Ploticus, Avis Fits Viewer, Chempute Software ChemDraw)",
+      "to_domain": "science",
+      "why": "scientific visualization, image analysis and cheminformatics"
+    },
+    {
+      "what": "Sports and physics video measurement (Dartfish ProSuite, Lenox Softworks VideoPoint, Multimedia video analysis software)",
+      "to_domain": "science",
+      "why": "motion measurement from video, not media production"
+    },
+    {
+      "what": "Engineering CAD in the graphics category (Trimble SketchUp Pro, McNeel Rhinoceros 3D, AutoDesSys form Z, Bentley GeoPak Bridge, Micro-Press MicroStation PowerDraft, Non uniform rational b-splines NURBS software, 100 Plus Hatch Pattern Library)",
+      "to_domain": "design",
+      "why": "authoring of product and building geometry"
+    },
+    {
+      "what": "Textile print repeats, paving and makeup visualizers (Lectra Prima Vision Print Repeat, Decorative Software Online Visualizers, Depiction Software Deco-Con, DatInf DigiMakeup, SavingFace)",
+      "to_domain": "design",
+      "why": "craft and product design visualization"
+    },
+    {
+      "what": "Photogrammetry, drone imaging and stereo plotting (Photogrammetric software, Steroplotter software, Drone image capturing software, Eos Systems PhotoModeler, Intergraph Image Analyst)",
+      "to_domain": "earth",
+      "why": "remote sensing and photogrammetry"
+    },
+    {
+      "what": "Printing prepress, RIP and print production (Esko ArtPro, Global Graphics Software Harlequin, Xerox FreeFlow Print Server, ExpressDigital Labtricity)",
+      "to_domain": "produce",
+      "why": "process-specific production (printing prepress and photofinishing)"
+    },
+    {
+      "what": "Grammar, style and spelling checking (Grammarly Editor, Editor Software Stylewriter, WhiteSmoke, AutoCrit Editing Wizard)",
+      "to_domain": "enterprise",
+      "why": "owned by word processing and spell checker categories; a benchmarkable task (BEA-2019 grammatical error correction) that enterprise should model"
+    },
+    {
+      "what": "Enterprise content and document management in Content workflow software (IBM FileNet Content Manager, OpenText Livelink ECM, Thomson Reuters GoFileRoom, Atlassian JIRA, Workflow software)",
+      "to_domain": "enterprise",
+      "why": "document management and workflow"
+    },
+    {
+      "what": "Mind-map-based project planning (NovaMind Merlin Project Manager, MPI Micro Planner X-Pert)",
+      "to_domain": "enterprise",
+      "why": "project scheduling"
+    },
+    {
+      "what": "Email newsletters and marketing campaigns (Campaign Monitor, MailChimp, Salesforce Marketing Cloud) and search-engine optimization (Google Webmaster Tools)",
+      "to_domain": "commerce",
+      "why": "marketing automation and web analytics"
+    },
+    {
+      "what": "Restaurant menus and real-estate appraisal forms and photos (SoftCafe MenuPro, ACI Appraiser's Choice, Bradford ClickFORMS, Wilson's Computer Applications RealEasy Photos Plus)",
+      "to_domain": "commerce",
+      "why": "restaurant and real-estate operations"
+    },
+    {
+      "what": "Event ticket scanning (Ticket scanning software, Ticket Alternative Express Entry)",
+      "to_domain": "commerce",
+      "why": "hospitality and event management"
+    },
+    {
+      "what": "Legal document assembly and timelines (Digital contract software, ProForce Paralegal Pro-Pack, Sure Will Writer, Blumbeg Drafting Libraries, CaseSoft TimeMap, Thomson Reuters LiveNote Stream)",
+      "to_domain": "govern",
+      "why": "legal practice"
+    },
+    {
+      "what": "Credit application decisioning in Content workflow software (Equifax Application Engine, Experian Transact SM)",
+      "to_domain": "govern",
+      "why": "lending"
+    },
+    {
+      "what": "Video surveillance management (Exacq Technologies software)",
+      "to_domain": "govern",
+      "why": "public safety and physical security"
+    },
+    {
+      "what": "Language learning, classroom video and e-learning authoring (Computer assisted language learning CALL software, Flipgrid, eXe, IXL Learning Quia Web, Elucidat, Center for Computer-Assisted Legal Instruction CALI Classcaster)",
+      "to_domain": "learn",
+      "why": "teaching and courseware"
+    },
+    {
+      "what": "Assistive reading and tactile output (Duxbury Braille Translator, Tactile graphic production kits software, Computer reading software, Mayer-Johnson Boardmaker)",
+      "to_domain": "learn",
+      "why": "special education and assistive technology"
+    },
+    {
+      "what": "Test scoring and survey form scanning (Test scoring software, Scantron imaging software, Pulse Train Bellview Scan, Sawtooth SSI Web, SurveyWiz)",
+      "to_domain": "learn",
+      "why": "assessment; survey instruments may instead be science"
+    },
+    {
+      "what": "Postal multi-line OCR, RFID data and voice picking (Multi-line optical character reader OCR software, Enterprise Systems RFID Data Management, Voice picking software)",
+      "to_domain": "move",
+      "why": "mail sorting and warehouse operations"
+    },
+    {
+      "what": "Label inspection and 3D scanning for metrology (Label inspection systems, Three-dimensional scanning software)",
+      "to_domain": "produce",
+      "why": "inspection and metrology"
+    },
+    {
+      "what": "Disk imaging (Symantec Ghost Solution Suite) and web application servers (Adobe ColdFusion, Macromedia Cold Fusion)",
+      "to_domain": "computing",
+      "why": "system administration and web application platforms"
+    },
+    {
+      "what": "Telecom and broadcast transmission plant operations",
+      "to_domain": "operate",
+      "why": "plant operation, not content"
+    }
+  ],
+  "unplaced_products": [
+    "VLC Media Player",
+    "Windows Media Player",
+    "Music software",
+    "Finite Matters PatternStream",
+    "Performance Technology Associates DocuTools",
+    "Orbius",
+    "IMPACT software",
+    "Plug-in file software",
+    "Video development software",
+    "Digital imaging system software",
+    "iPhotoMEASURE",
+    "JamBoard"
+  ],
+  "open_questions": [
+    "Speech recognition and OCR are modeled here as language conversions, but O*NET puts Voice recognition software in enterprise and health and OCR partly in enterprise. The editor should confirm that those domains model the dictation and capture workflows and point at media.language for the recognition function, or move these two tasks.",
+    "Grammar and style checking is handed to enterprise because it sits in Word processing and Spell checkers, but it is a well-benchmarked language task; it would fit naturally as media.language.grammar_checking if enterprise does not want it.",
+    "Real-time graphics interfaces (OpenGL, Vulkan, DirectX, HLSL) are placed under media.rendering_effects.real_time_rendering. Computing may claim them as programming libraries; the brief's rule that general tools live in their general home suggests computer graphics is that home.",
+    "Diagramming and mind mapping (Visio, OmniGraffle) are placed here as structured vector drawing. Enterprise's process-mapping capability will want Visio too; a product can be an example of both, but the node should live once.",
+    "Generative tasks (text to image, video, music) are added inside each media type rather than as a separate generative capability. The editor may prefer one cross-cutting node.",
+    "Media asset management could be enterprise document management; it is kept here because its metadata (EBUCore, IMF) and proxies are media-specific.",
+    "Several see_also ids point at guessed node names in other domains (for example operate.telecom_broadcast_plant, learn.immersive_training); they need reconciling once those files exist."
+  ]
+}

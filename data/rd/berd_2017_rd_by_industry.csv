@@ -1,0 +1,73 @@
+industry,naics,rd_musd,pct_sales_performers_or_funders,pct_sales_performers
+All industries,"21–23, 31–33, 42–81",400100,4.1,4.3
+Manufacturing industries,31–33,257227,4.7,4.8
+Food,311,4697,0.7,0.7
+Beverage and tobacco products,312,1076,0.7,0.7
+"Textile, apparel, and leather products",313–16,920,1.1,1.2
+Wood products,321,175,0.6,0.6
+Paper,322,1322,0.8,0.8
+Printing and related support activities,323,229,0.6,0.6
+Petroleum and coal products,324,316,0.1,0.1
+Chemicals,325,74977,8.3,8.4
+Basic chemicals,3251,2574,1.6,1.6
+"Resin, synthetic rubber, and artificial synthetic fibers and filaments",3252,628,1.4,1.5
+"Pesticide, fertilizer, and other agricultural chemicals",3253,"1,376 - 1,475",D,D
+Pharmaceuticals and medicines,3254,66202,14.2,14.3
+"Soap, cleaning compound, and toilet preparation",3256,"2,605 - 2,701",D,D
+"Paint, coating, adhesive, and other chemicals","3255, 3259",1495,2.3,2.3
+Plastics and rubber products,326,3754,2,2
+Nonmetallic mineral products,327,1334,2.9,3.2
+Primary metals,331,749,0.8,0.9
+Fabricated metal products,332,2206,2,2
+Machinery,333,13197,4.1,4.1
+Agricultural implement,33311,1570,3.4,3.4
+Semiconductor machinery,333242,3694,18.4,18.4
+"Engine, turbine, and power transmission equipment",3336,2080,5.8,5.8
+Other machinery,other 333,5853,2.7,2.7
+Computer and electronic products,334,78575,11.3,11.3
+Communications equipment,3342,12687,14.3,14.4
+Semiconductor and other electronic components,3344,30148,17.5,17.6
+"Navigational, measuring, electromedical, and control instruments",3345,14509,8.6,8.7
+"Electromedical, electrotherapeutic, and irradiation apparatus","334510, 334517",2696,12,12.1
+"Search, detection, navigation, guidance, aeronautical, and nautical system and instrument",334511,7297,9.5,9.5
+Other measuring and controlling device,other 3345,4516,6.5,6.6
+Other computer and electronic products,other 334,21231,7.9,7.9
+"Electrical equipment, appliances, and components",335,4291,3.8,3.8
+Transportation equipment,336,53292,4.5,4.7
+"Automobiles, bodies, trailers, and parts",3361–63,23881,3.2,3.4
+Aerospace products and parts,3364,26383,7.5,7.5
+"Aircraft, aircraft engine, and aircraft parts",336411–13,24576,7.4,7.4
+"Guided missile, space vehicle, and related parts","336414–15, 336419",1807,9.6,9.6
+"Military armored vehicle, tank, and tank component",336992,9,2.9,3
+Other transportation,other 336,3018,4.6,4.6
+Furniture and related products,337,422,1,1
+Miscellaneous manufacturing,339,15695,4,4.1
+Medical equipment and supplies,3391,13589,4.4,4.4
+Other miscellaneous manufacturing,3399,2106,2.7,2.7
+Nonmanufacturing industries,"21–23, 42–81",142874,3.4,3.6
+"Mining, extraction, and support activities",21,3150,1.3,D
+Utilities,22,317,0.1,0.1
+Wholesale trade,42,534,0.3,0.3
+Electronic shopping and electronic auctions,454111–12,9318,6.8,6.8
+Transportation and warehousing,48–49,1147,0.6,D
+Information,51,80252,6.7,6.8
+Publishing,511,34338,14.8,14.8
+"Newspaper, periodical, book, and directory publishers",5111,74,3.4,4
+Software publishers,5112,34264,14.9,14.9
+Telecommunications,517,"3,682 - 3,806",D,D
+"Data processing, hosting, and related services",518,16155,5.3,5.3
+Other information,other 51,"25,954 - 26,077",D,D
+Finance and insurance,52,7616,1,1.1
+Real estate and rental and leasing,53,718,6.6,7.4
+Lessors of nonfinancial intangible assets (except copyrighted works),533,138,6.7,7.3
+Other real estate and rental and leasing,other 53,579,6.6,7.5
+"Professional, scientific, and technical services",54,36922,9.2,9.3
+"Architectural, engineering, and related services",5413,2708,2.9,2.9
+Computer systems design and related services,5415,13327,8.8,8.8
+Scientific research and development services,5417,17321,25.1,25.1
+Biotechnology research and development,541711,4449,16.6,16.6
+"Physical, engineering, and life sciences (except biotechnology) research and development",541712,11913,29,29.1
+Social sciences and humanities research and development,541720,959,77.1,77.1
+"Other professional, scientific, and technical services",other 54,3566,4.1,4.1
+Health care services,621–23,1101,1,1
+Other nonmanufacturing,"23, 44–45 (excluding 454111–12), 55–56, 624, 71–72, 81",1799,0.3,0.4
