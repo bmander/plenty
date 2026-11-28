@@ -914,11 +914,11 @@ def test_a_proposal_is_expected_to_give_back_what_its_hours_cost_with_the_jobs_k
     order = [section.index(f'<a href="{props[k].href}">') for k in scores.sort_values("kept", ascending=False).index]
     assert order == sorted(order)
     for key, x in props.items():
-        row = (f'<td class="num">{site._count(scores.hours_a_year[key])}</td><td class="num">{site._count(scores.jobs[key])}</td>'
+        row = (f'<td class="num">{site._count(scores.hours_a_year[key])}</td><td class="num">{site._wellbys(scores.jobs[key])}</td>'
                f'<td class="num">{x.chance:g}</td><td class="num">{site._wellbys(scores.kept[key])}</td><td class="num">{site._wellbys(scores.lost[key])}</td>')
         assert row in section, key
         page = (site.SITE / x.href).read_text()
-        assert f"{site._count(scores.jobs[key])} full-time jobs" in page and f"<dd>{x.chance:g}. " in page, key
+        assert f"{site._wellbys(scores.jobs[key])} full-time jobs" in page and f"<dd>{x.chance:g}. " in page, key
         assert f"{site._wellbys(scores.kept[key])} experienced WELLBYs a year if the jobs are kept, and {site._wellbys(scores.lost[key])} if" in page, key
         assert f"{site._few(scores.kept_back[key])} expected WELLBYs a year, the jobs kept" in page, key
     # every one of the new terms has its equation on its page, and none has prose under it

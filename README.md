@@ -390,7 +390,11 @@ Last come the proposals: things that could be built, one file each in
 [`proposals/`](proposals/), which says how to write one. A proposal states what it is, how a
 stranger would check it, the part of each work activity it would do and what it would cost to
 make, and the site says how many hours of work a year its claims come to, what those hours cost
-the people who work them in experienced WELLBYs, and how much of each there is for its cost. The shares and the costs are each proposer's own. It also says whether the paid
+the people who work them in experienced WELLBYs, and how much of each there is for its cost.
+A proposal can also name sectors it would replace, and is then given the hours behind them and
+behind all they bought, by solving the model again with it in place. Each states the chance that
+it works, and is scored on what it is expected to give back twice over: with the jobs in its
+paid hours kept, and with them lost. The shares and the costs are each proposer's own. It also says whether the paid
 work a proposal claims has been going anyway: the hours it took in 2016 for each hour in 1987, for
 the same output, in the sectors where it is done (`data/bea/production_account_1987_2016.csv`).
 

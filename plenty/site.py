@@ -667,13 +667,14 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     if key == "Z":        # the jobs of the surveyed industries that cover a sector, as shares of a row
         TE = f'{S("T")}{_TIMES}{S("E")}'
         return S("Z"), f'{_inv(_diag(TE + _TIMES + _ONES))}{_TIMES}{TE}'
-    kept = _paren(f"{_ONES}<mo>&minus;</mo>{_vec(REPLACED, here, sub='k')}")          # what proposal k leaves of each sector
+    leaves = f"{_ONES}<mo>&minus;</mo>{_vec(REPLACED, here, sub='k')}"                # what proposal k leaves of each sector
+    kept = _paren(leaves)
     if key == LABOUR:     # a sector's hours for a dollar of what it makes, and those of all it buys, all the way back
         return S(LABOUR, T=True), f'<msup>{_paren(S(CHI) + _HADAMARD + S("r"))}{_TR}</msup>{_TIMES}{S("L")}'
     if key == WITH:       # the same with proposal k in place: the sectors it replaces buy and work only the part it leaves them
         left_hours = _paren(S(CHI) + _HADAMARD + S("r") + _HADAMARD + kept)
         return (_vec(WITH, here, sub="k", T=True),
-                f'<msup>{left_hours}{_TR}</msup>{_TIMES}{_inv(_paren(_sym("I") + "<mo>&minus;</mo>" + S("A") + _TIMES + _diag(kept)))}')
+                f'<msup>{left_hours}{_TR}</msup>{_TIMES}{_inv(_paren(_sym("I") + "<mo>&minus;</mo>" + S("A") + _TIMES + _diag(leaves)))}')
     if key == BOUGHT:     # what the need dollar buys, for each dollar of value added behind it
         return S(BOUGHT), f'{_sum("n")}{weight}{_TIMES}<mfrac>{V("d")}<mrow>{S("r", T=True)}{_TIMES}{V("x")}</mrow></mfrac>'
     if key == BEHIND:     # the hours behind what is bought, as things are less the same with each proposal in place
@@ -2409,7 +2410,7 @@ def _few(x: float) -> str:
 
 
 def _wellbys(x: float) -> str:
-    """A count of WELLBYs, to three figures under a million, with a true minus for one below zero."""
+    """A count of WELLBYs, or of jobs, to three figures under a million, with a true minus for one below zero."""
     a = abs(x)
     said = _count(a) if a >= 1e6 else f"{float(f'{a:.3g}'):,.0f}"
     return ("&minus;" if x < 0 and said != "0" else "") + said
@@ -2629,7 +2630,7 @@ def proposals_section(d: Data) -> str:
     def cell(x, text):
         return f'<td class="num">{text if pd.notna(x) else "none given"}</td>'
     rows = [f'<tr><th scope="row"><a href="{d.proposals[k].href}">{e(d.proposals[k].name)}</a></th>'
-            f'<td class="num">{_count(r.hours_a_year)}</td><td class="num">{_count(r.jobs)}</td><td class="num">{r.chance:g}</td>'
+            f'<td class="num">{_count(r.hours_a_year)}</td><td class="num">{_wellbys(r.jobs)}</td><td class="num">{r.chance:g}</td>'
             f'<td class="num">{_wellbys(r.kept)}</td><td class="num">{_wellbys(r.lost)}</td>'
             + cell(r.cost, _count(r.cost)) + cell(r.kept_back, _few(r.kept_back)) + "</tr>"
             for k, r in scores.iterrows()]
@@ -2696,7 +2697,7 @@ def proposal_page(d: Data, key: str) -> str:
     if len(x.does):
         spec.append(("Of them unpleasant", f"{_count(score.unpleasant_a_year)} hours a year, at the rates people report for such work: "
                                            f"its claims' part of {_m(_sym(ZETA))}."))
-    spec.append(("Jobs in them", f"{_count(score.jobs)} full-time jobs: its row of {_m(_sym(JOBS))}."))
+    spec.append(("Jobs in them", f"{_wellbys(score.jobs)} full-time jobs: its row of {_m(_sym(JOBS))}."))
     spec.append(("Chance it works", f"{score.chance:g}. {e(x.chance_basis)}"))
     spec.append(("Expected", f"{_wellbys(score.kept)} experienced WELLBYs a year if the jobs are kept, and {_wellbys(score.lost)} if "
                              f"they are lost: its rows of {_m(_sym(EXPECTED))} and {_m(_sym(LOST))}."))
