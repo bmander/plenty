@@ -387,10 +387,12 @@ HOME = "index.html"                   # the account, which every term's page lea
 THETA, PHI, OMEGA = "Θ", "Φ", "ω"
 LAMBDA, GAMMA, ALPHA, MU, RHO = "Λ", "Γ", "α", "μ", "ρ"
 PI, TAU, ETA, CHI, PSI = "π", "τ", "η", "χ", "ψ"       # the account in hours: the Greek of p and of h, and tau for time
+KAPPA, SIGMA = "κ", "σ"                                 # and whether those hours have been going anyway
 # a Greek letter's name in a file, and its bold
 GREEK = {THETA: ("Theta", "&#x1D6AF;"), PHI: ("Phi", "&#x1D6BD;"), OMEGA: ("omega", "&#x1D6DA;"), LAMBDA: ("Lambda", "&#x1D6B2;"),
          GAMMA: ("Gamma", "&#x1D6AA;"), ALPHA: ("alpha", "&#x1D6C2;"), MU: ("mu", "&#x1D6CD;"), RHO: ("rho", "&#x1D6D2;"),
-         PI: ("pi", "&#x1D6D1;"), TAU: ("tau", "&#x1D6D5;"), ETA: ("eta", "&#x1D6C8;"), CHI: ("chi", "&#x1D6D8;"), PSI: ("psi", "&#x1D6D9;")}
+         PI: ("pi", "&#x1D6D1;"), TAU: ("tau", "&#x1D6D5;"), ETA: ("eta", "&#x1D6C8;"), CHI: ("chi", "&#x1D6D8;"), PSI: ("psi", "&#x1D6D9;"),
+         KAPPA: ("kappa", "&#x1D6CB;"), SIGMA: ("sigma", "&#x1D6D4;")}
 ABILITY_FAMILY = {"1.A.1": "Cognitive", "1.A.2": "Psychomotor", "1.A.3": "Physical", "1.A.4": "Sensory"}   # O*NET's four families of abilities, by the start of the ability's code
 HOURS_A_YEAR = 2080                   # a year of full-time work, which turns a yearly wage into an hourly one
 # the terms, in the order the account's table lists them
@@ -402,7 +404,7 @@ GROUPS = [
     ("Value added", ["v", "r", "y"]),
     ("Work", ["W", "P", "T", "E", "M"]),
     ("Work activities", [THETA, "G", "m", "e", "s", "b"]),
-    ("Hours", [ETA, TAU, PI, CHI, "Z", "l", "X"]),
+    ("Hours", [ETA, TAU, PI, CHI, "Z", "l", "X", KAPPA, SIGMA]),
     ("Proposals", [PSI, "C"]),
     ("Abilities", [RHO, ALPHA, MU, LAMBDA, GAMMA]),
     ("Software capabilities", ["k", "o", PHI, "J", "Q", "R", "u", "a", "c", "N", "t", "w"]),
@@ -412,7 +414,7 @@ DEFINED = {"yes": 1.0, "partly": 0.5, "no": 0.0}     # how far a task the taxono
 PER_NEED = "dxv"                      # the vectors there is one of for each need, written with a subscript n
 # what each computed term is made from; a term that is not here is data
 USES = {ETA: [TAU, "m", "e"], TAU: [PI, THETA, "X"], PI: [OMEGA, "v", CHI, "Z"], CHI: ["l", "g", "D", "r"], "Z": ["T", "E"], "X": ["Y"],
-        PSI: ["C", TAU, "e"],
+        PSI: ["C", TAU, "e"], KAPPA: [SIGMA, OMEGA, "v", CHI, "Z", THETA], SIGMA: ["l", "g", "V"],
         "x": ["L", "d"], "p": [OMEGA, "v", "W"], "k": ["p", THETA, "G", "s", PHI], "h": ["f", "m", "e"], RHO: [ALPHA, MU], ALPHA: ["p", THETA, "G", "m", "e", GAMMA, LAMBDA], "o": ["k", "a", "c"], PHI: ["J", "Q", "R", "u"], "u": ["Q", "R"], "a": ["N", "t", "w"], "c": ["N", "t"], "b": ["f", "s"],
         "f": ["p", THETA, "G"], "G": ["E", "M", "Y"], "d": ["Y"], "L": ["A"], "A": ["B", "D"], "B": ["U", "K", "g"],
         "D": ["V", "q"], "g": ["V"], "q": ["V"], "K": ["F", "H", "S"], "S": ["z", "H"], "z": ["g", "H"],
@@ -525,7 +527,8 @@ def _term(key: str, here: str = "") -> str:
     return _vec(key, here) if key in PER_NEED else _sym(key, here)
 
 
-_ITALIC = {"h": "&#x210E;", "α": "&#x1D6FC;", "γ": "&#x1D6FE;", "θ": "&#x1D703;", "λ": "&#x1D706;", "μ": "&#x1D707;", "ρ": "&#x1D70C;"}
+_ITALIC = {"h": "&#x210E;", "α": "&#x1D6FC;", "γ": "&#x1D6FE;", "θ": "&#x1D703;", "λ": "&#x1D706;", "μ": "&#x1D707;", "ρ": "&#x1D70C;",
+           "κ": "&#x1D705;", "σ": "&#x1D70E;", "χ": "&#x1D712;", "ω": "&#x1D714;"}
 
 
 def _elt(shown: str, sub: str, page: str = "", here: str = "") -> str:
@@ -597,6 +600,11 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     if key == "Z":        # the jobs of the surveyed industries that cover a sector, as shares of a row
         TE = f'{S("T")}{_TIMES}{S("E")}'
         return S("Z"), f'{_inv(_diag(TE + _TIMES + _ONES))}{_TIMES}{TE}'
+    if key == KAPPA:      # the mean of sigma over the sectors an activity is done in for pay, weighted by its paid hours in each
+        E = lambda letter, script, page: _elt(letter, script, page, here)
+        placed = _TIMES.join([E("ω", "n", OMEGA), E("v", "sn", "v"), E("χ", "s", CHI), E("z", "so", "Z"), E("θ", "oa", THETA)])
+        over = _sum("n") + _sum("s") + _sum("o")
+        return E("κ", "a", KAPPA), f'<mfrac><mrow>{over}{placed}{_TIMES}{E("σ", "s", SIGMA)}</mrow><mrow>{over}{placed}</mrow></mfrac>'
     if key == PSI:        # the hours in the parts of activities a proposal claims, less what is already open
         return S(PSI), f'{S("C", T=True)}{_TIMES}{_paren(f"{S(TAU)}{_HADAMARD}{less_open}")}'
     if key == "f":        # the same dollar by what the work is, with the unpaid work done at home
@@ -668,19 +676,21 @@ def equation(key: str, here: str = "") -> tuple[str, str]:
     raise KeyError(key)
 
 
-EQUATIONS = [ETA, TAU, PI, CHI, "Z", PSI, "x", "p", "f", "h", RHO, ALPHA, "k", "o", PHI, "u", "a", "c", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
+EQUATIONS = [ETA, TAU, PI, CHI, "Z", KAPPA, PSI, "x", "p", "f", "h", RHO, ALPHA, "k", "o", PHI, "u", "a", "c", "b", "d", "L", "A", "B", "D", "g", "q", "K", "S", "v", "r", "W", "P"]   # the terms equation() defines
 
 # What one entry of each term is measured in, in a few words. A unit that has a page is written
 # [as it reads here|the name its page is filed under], and is a link wherever this is set as HTML.
 _WORK = "[work dollars|work-dollar] per [need dollar|need-dollar]"
 _MILLIONS, _MARK = "[millions of dollars|million-dollars], in 2017", "[one or zero|one-or-zero]"
 _HOURS = "[hours|hour] of work per thousand [need dollars|need-dollar]"
+_STILL = f"hours in {HR.YEAR} for each hour in {HR.SINCE}, a [number|number] with no unit"
 MEASURED_IN = {
     ETA: _HOURS, TAU: _HOURS, PI: _HOURS, "X": _HOURS, PSI: _HOURS,
     CHI: "[hours|hour] of work per thousand [value-added dollars|value-added-dollar]",
     "Z": "the occupation's [share|share] of the sector's jobs",
     "l": "millions of [hours|hour] a year, in 2016",
     "C": "the part of the activity the proposal would do, a [share|share] of one",
+    KAPPA: _STILL, SIGMA: _STILL,
     "x": "[commodity dollars|commodity-dollar] produced per [need dollar|need-dollar]",
     "p": _WORK, "k": _WORK, "o": _WORK, "f": _WORK, "h": _WORK, "b": _WORK, "G": _WORK,
     ALPHA: _WORK, RHO: _WORK, GAMMA: _MARK,
@@ -881,6 +891,15 @@ def sheets(d: Data) -> dict[str, Sheet]:
     unpaid_hours = d.unpaid_hours                                                           # X
     hours_to_activity = frame(d.theta.values.T @ paid_hours.values, act.index).add(unpaid_hours.sum(), axis=0)      # tau
     hours_overhang = hours_to_activity.mul(defined * (1 - opened), axis=0)                 # eta
+    # whether those hours have been going anyway: each sector's hours for a unit of real value added, now against then,
+    # and for each activity the mean of that over the sectors it is done in for pay, weighted by its paid hours in each
+    still = HR.sector_still_needed(t)                                                       # sigma
+    def of_activities(sector_hours: np.ndarray) -> np.ndarray:
+        placed = (job_share.loc[com].values * sector_hours[:, None]) @ d.theta.values       # sector x activity: the activity's paid hours in the sector
+        total = placed.sum(axis=0)
+        return np.divide(still.loc[com].values @ placed, total, out=np.zeros(len(total)), where=total > 0)
+    activity_still = frame(np.column_stack([of_activities(by_sector_hours[:, j]) for j in range(weights.shape[1])]), act.index)      # kappa
+    span = f"{HR.YEAR} for each hour in {HR.SINCE}"
     # what each proposal claims of each activity, and the hours that comes to
     proposed = pd.Series({k: x.name for k, x in d.proposals.items()})
     claims = pd.DataFrame({k: x.does.share for k, x in d.proposals.items()}).reindex(act.index).fillna(0.0)      # C
@@ -1045,6 +1064,28 @@ def sheets(d: Data) -> dict[str, Sheet]:
               row_tip="Occupation", col_tip="Activity", axis="Work activities", code="plenty/site.py",
               row_groups=occ.major, col_groups=act.parent.map(d.act.name), short={g: SOC_SHORT[c[:2]] for c, g in occ.major.items()},
               sums="both", order=f"Occupations are in {occupation_order[len('occupations in '):]}. {activity_order}"),
+        Sheet(KAPPA, "the hours each activity's paid work still takes", "number", activity_still, **by_activity, **by_weighing,
+              rows="O*NET's intermediate work activities",
+              entries=f"For the same output, the hours taken in {span}, in the sectors where the activity is done for pay: "
+                      f"the mean of {_m(_sym(SIGMA))} over those sectors, each weighted by the activity's paid hours in it.",
+              source=f"The sums run over needs {_m('<mi>n</mi>')}, sectors {_m('<mi>s</mi>')} and occupations "
+                     f"{_m('<mi>o</mi>')}. What is summed below the line is the paid hours of the activity that one occupation "
+                     "works in one sector.",
+              note="Under a half, paid work of this kind has been going anyway. Near one or over, it is stuck. It is a measure "
+                   "of the sectors an activity is done in and not of the activity itself, and it says nothing of work done "
+                   "unpaid. Zero means the activity has no paid hours.",
+              row_tip="Activity", code="plenty/site.py", order=activity_order),
+        Sheet(SIGMA, f"the hours each sector still takes, {HR.YEAR} against {HR.SINCE}", "number",
+              **lone(still.loc[com], SIGMA, f"Hours in {span}", "ratio"), row_names=t.names,
+              rows="sectors, each a commodity",
+              entries=f"The hours it took in {HR.YEAR} to make a unit of the sector's own real value added, for each hour it took "
+                      f"in {HR.SINCE}. Under one, hours have been going. At one or over, none have.",
+              source=f"{production_account} Its yearly series is in {_file('data/bea/production_account_1987_2016.csv')}. Real "
+                     "value added is output less intermediate inputs, each at its own prices, chained year by year. A commodity "
+                     "takes the mean of the industries that make it, weighted by the hours each puts into it.",
+              note="The output of health care, education and government is measured largely by what goes into them, so their "
+                   "figures say less than the others'.",
+              row_tip="Sector", code="plenty/hours.py"),
         # --- proposals
         Sheet(PSI, "the hours each proposal would do", "hours", would_do, proposed, **by_weighing,
               rows="scored proposals", row_groups=of_proposals,
@@ -1801,8 +1842,8 @@ drops the rest: {T("s")} keeps the work that is information work, and {T("H")} k
 investor.</p>"""),
         Unit("number", "number", "numbers", False,
              "A number with no unit.",
-             f"""<p>A number with no unit: a count, a ratio of two counts, or the logarithm of one. {T("u")} is the only term
-measured so. It weights other terms, and what it weights keeps its own unit.</p>"""),
+             f"""<p>A number with no unit: a count, a rating, a ratio of two amounts of the same kind, or the logarithm of
+one. {T("u")} is a logarithm, {T(LAMBDA)} a rating, and {T(SIGMA)} a ratio of hours to hours.</p>"""),
         Unit("job", "job", "jobs", False,
              "One wage or salary job, as the survey of occupations counted them in May 2021.",
              f"""<p>One wage or salary job at a nonfarm employer, as the Occupational Employment and Wage Statistics of the U.S.
@@ -2054,7 +2095,7 @@ def hours_section(d: Data) -> str:
             f'<td class="num">{h.equal[a] * 100:.2f}</td><td class="num">{place[a]}</td></tr>'
             for a, v in eta.equal.nlargest(HOURS_ROWS).items()]
     first = table([th("Work activity"), th("Hours per $1,000", "num"), th("Of them unpaid", "num"), th("In dollars, ¢", "num"),
-                   th("Place by dollars", "num")], rows,
+                   th("Place by dollars", "num")], rows, attrs=" data-scores",
                   caption=f"The first {HOURS_ROWS} rows of the gap in hours, with the needs counted equally, beside the same rows "
                           "counted in dollars.")
     a_year = tau.spending.sum() * d.spent / 1000
@@ -2076,14 +2117,17 @@ behind them took {_count(a_year)} hours in the year.</p>
 def proposal_scores(d: Data) -> pd.DataFrame:
     """What each proposal comes to: the activities it claims, the work in them that is not already open, in cents
     per need dollar and hours per thousand need dollars (needs counted equally), in hours a year (as the needs
-    were paid for) and the unpaid part of those, its cost in hours, and the hours a year for each hour of cost."""
+    were paid for) and the unpaid part of those, its cost in hours, the hours a year for each hour of cost, and
+    the hours the paid work it claims still takes, now against then: the mean of kappa over its paid hours."""
     f, tau, C = d.sheets["f"].values, d.sheets[TAU].values, d.sheets["C"].values
     left = 1 - d.sheets["e"].values.iloc[:, 0]
     a_year = d.spent / 1000              # an hour per thousand need dollars, in hours a year
     out = pd.DataFrame({"activities": (C > 0).sum(), "cents": C.T @ (f.equal * left) * 100, "hours": C.T @ (tau.equal * left),
                         "a_year": C.T @ (tau.spending * left) * a_year, "unpaid_a_year": C.T @ (d.unpaid_hours.sum() * left) * a_year,
                         "cost": pd.Series({k: x.cost for k, x in d.proposals.items()}, dtype=float)})
-    return out.assign(back=out.a_year / out.cost)
+    paid = C.mul((tau.equal - d.unpaid_hours.sum()) * left, axis=0)                   # the paid hours each claims, by activity
+    still = paid.mul(d.sheets[KAPPA].values.equal, axis=0).sum() / paid.sum()
+    return out.assign(back=out.a_year / out.cost, still=still)
 
 
 def proposals_section(d: Data) -> str:
@@ -2095,10 +2139,12 @@ def proposals_section(d: Data) -> str:
         return f'<td class="num">{text if pd.notna(x) else "none given"}</td>'
     rows = [f'<tr><th scope="row"><a href="{d.proposals[k].href}">{e(d.proposals[k].name)}</a></th><td class="num">{r.activities:.0f}</td>'
             f'<td class="num">{r.hours:.{1 if r.hours >= 1 else 2}f}</td><td class="num">{_count(r.a_year)}</td><td class="num">{_count(r.unpaid_a_year)}</td>'
-            + cell(r.cost, _count(r.cost)) + cell(r.back, f"{r.back:,.0f}" if r.back >= 10 else f"{r.back:.1f}") + "</tr>"
+            + cell(r.cost, _count(r.cost)) + cell(r.back, f"{r.back:,.0f}" if r.back >= 10 else f"{r.back:.1f}")
+            + f'<td class="num">{r.still:.2f}</td></tr>'
             for k, r in scores.iterrows()]
     listed = table([th("Proposal"), th("Activities claimed", "num"), th("Hours per $1,000", "num"), th("Hours a year", "num"),
-                    th("Of them unpaid", "num"), th("Cost to make, hours", "num"), th("Hours a year for each hour of cost", "num")], rows,
+                    th("Of them unpaid", "num"), th("Cost to make, hours", "num"), th("Hours a year for each hour of cost", "num"),
+                    th(f"Its paid work: hours in {HR.YEAR} for each in {HR.SINCE}", "num")], rows, attrs=" data-scores",
                    caption="Hours per $1,000 are with the needs counted equally. Hours a year are as the needs were in fact paid for.")
     together = (tau.equal * left * C.max(axis=1)).sum()
     unclaimed = eta.equal[C.max(axis=1) == 0].nlargest(3)
@@ -2109,7 +2155,12 @@ would cost to make. The account then says how many hours the claims come to, les
 {_eqs([equation(PSI)])}
 {listed}
 <p>A proposal's hours are a ceiling: the work its claims cover, if it did all of it. The shares and the costs are each
-proposer's own, and the costs here are guesses at an order of magnitude, so the last column is no firmer than that.
+proposer's own, and the costs here are guesses at an order of magnitude, so the hours for each hour of cost are no
+firmer than that. The last column says whether the paid work a proposal claims has been going anyway: the hours it took
+in {HR.YEAR} for each hour it took in {HR.SINCE}, for the same output, in the sectors where it is done,
+{_m(_sym(KAPPA))}. Well under one, such work is already being done away with and a proposal adds less. Near one, it is
+stuck. It is a measure of the sectors the work is done in, so it says little of an activity that is spread over many,
+and health care's output is measured too poorly for its figure to be trusted.
 Proposals overlap, and where two claim the same activity the larger claim is counted once: together these claim
 {together:.0f} of the {tau.equal.sum():.0f} hours behind a thousand need dollars. The largest rows of {_m(_sym(ETA))}
 that none of them claims are {", ".join(e(names[a].rstrip(".")).lower() for a in unclaimed.index[:-1])} and
@@ -2128,7 +2179,7 @@ def proposal_page(d: Data, key: str) -> str:
             for a, r in does.iterrows()]
     foot = f'<tr><td>All it claims</td><td></td><td></td><td></td><td></td><td class="num">{psi.equal:.2f}</td></tr>'
     claims = table([th("Work activity"), th("Part claimed", "num"), th("Why"), th("Hours in the activity", "num"),
-                    th("Part already open", "num"), th("Hours it would do", "num")], rows, foot=foot,
+                    th("Part already open", "num"), th("Hours it would do", "num")], rows, foot=foot, attrs=" data-scores",
                    caption="Hours of work for every thousand need dollars, paid and unpaid, with the needs counted equally. "
                            "The hours it would do are the hours in the activity, times the part claimed, times the part not already open.")
     spec = [("What it is", e(x.what)), ("How it is checked", e(x.check))]
@@ -2143,6 +2194,9 @@ def proposal_page(d: Data, key: str) -> str:
     if x.cost:
         spec.append(("Cost to make", f"{_count(x.cost)} hours of people's work, by the proposer's estimate. {e(x.cost_basis)}"))
         spec.append(("For each hour of cost", f"{score.back:,.0f} hours a year, if it did all it claims."))
+    spec.append(("Has it been moving", f"The paid work it claims took {score.still:.2f} hours in {HR.YEAR} for each hour in {HR.SINCE}, "
+                                       f"for the same output, in the sectors where it is done: the mean of {_m(_sym(KAPPA))} over "
+                                       "its paid hours. Well under one, such work is going anyway. Near one, it is stuck."))
     spec.append(("File", _file(x.file)))
     body = f"""
 <p class="crumbs"><a href="{HOME}">The account</a> &rsaquo; <a href="{HOME}#proposals">Proposals</a></p>

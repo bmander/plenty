@@ -296,7 +296,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert (at[0] >= 0).all() and (at[1] >= 0).all() and len(csv) == (x != 0).sum(), key
             got[at] = csv.value
             assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI)
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI + site.KAPPA + site.SIGMA)
     assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == [site.LAMBDA, "R"]
     assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
@@ -548,6 +548,26 @@ def test_the_account_is_kept_in_hours_beside_dollars(built):
     hourly = G[at] / X.values[at] * 1000
     assert 7 < hourly.min() and hourly.max() < 60
     assert np.isclose(X.values.sum() * built.spent / 1000, built.unpaid[1].hours.sum())
+    # sigma: the hours a sector takes now for a unit of its own real value added, for each hour it took then
+    series = pd.read_csv(site.HR.SERIES)
+    assert series.year.min() == site.HR.SINCE and series.year.max() == site.HR.YEAR and series.industry.nunique() == 63
+    of_account = site.HR.still_needed()
+    assert of_account[13] < 0.05 and of_account[7] > 1 and 0.3 < of_account.median() < 1      # computers; construction
+    farms_then, farms_now = (series[(series.industry == 1) & (series.year == y)].iloc[0] for y in (site.HR.SINCE, site.HR.YEAR))
+    assert of_account[1] < farms_now.hours_millions / farms_then.hours_millions < 1          # farm hours fell, and farm output rose
+    sigma = col(site.SIGMA)[com]
+    into = (l / col("g")[ind]).values[:, None] * v["V"].loc[ind, com].values
+    made_with = into.sum(axis=0) > 0
+    assert np.allclose(sigma[made_with], (of_account[under.values].values @ into)[made_with] / into.sum(axis=0)[made_with])
+    assert not sigma[~made_with].any() and made_with.sum() > 390
+    # kappa: the mean of sigma over the sectors an activity is done in for pay, weighted by its paid hours in each
+    theta = v[site.THETA].loc[occ, acts].values
+    for j, way in enumerate(omega.columns):
+        placed = (Z * by_sector[:, [j]]) @ theta
+        total = placed.sum(axis=0)
+        assert np.allclose(v[site.KAPPA].loc[acts, way][total > 0], (sigma.values @ placed)[total > 0] / total[total > 0])
+        assert not v[site.KAPPA].loc[acts, way][total == 0].any()
+    assert 0.2 < v[site.KAPPA].values[v[site.KAPPA].values > 0].min() and v[site.KAPPA].values.max() < 2
     # the paid hours behind the needs are most of the hours worked, and less than all of them
     behind = pi.spending.sum() * built.spent / 1000 / 1e6
     assert 0.5 * l.sum() < behind < l.sum()
@@ -587,6 +607,8 @@ def test_proposals_are_read_from_their_files_scored_and_given_pages(built, tmp_p
     assert np.allclose(scores.cents, C.values.T @ (v["f"].loc[acts].equal.values * left) * 100)
     assert (scores.unpaid_a_year <= scores.a_year + 1).all() and np.allclose(scores.back, scores.a_year / scores.cost)
     assert (scores.activities == (C > 0).sum()).all()
+    paid = C.mul((tau.equal - v["X"][acts].sum()).values * left, axis=0)
+    assert np.allclose(scores.still, paid.mul(v[site.KAPPA].loc[acts].equal, axis=0).sum() / paid.sum()) and scores.still.between(0.3, 1.3).all()
     # one proposal can lie inside another, and then it comes to less
     assert (C["code-assignment"] <= C["who-owes-whom"]).all() and psi.equal["code-assignment"] < psi.equal["who-owes-whom"]
     home = (site.SITE / site.HOME).read_text()
@@ -599,6 +621,7 @@ def test_proposals_are_read_from_their_files_scored_and_given_pages(built, tmp_p
         assert f'<h1 class="long">{markup.escape(x.name)}</h1>' in page and markup.escape(x.what) in page and markup.escape(x.check) in page, key
         assert f'<td class="num">{psi.equal[key]:.2f}</td></tr>' in page and markup.escape(x.cost_basis) in page, key
         assert f"{scores.back[key]:,.0f} hours a year" in page and f"proposals/{key}.toml" in page, key
+        assert f"took {scores.still[key]:.2f} hours in {site.HR.YEAR}" in page and f'<td class="num">{scores.still[key]:.2f}</td></tr>' in section, key
         names = built.sheets[site.TAU].row_names
         for a, row in x.does.iterrows():
             assert markup.escape(names[a]) in page and markup.escape(row.basis) in page, (key, a)

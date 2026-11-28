@@ -1,12 +1,14 @@
 """Hours of work by industry, from the BEA-BLS production account (data/bea/hours_2016.csv)."""
 from __future__ import annotations
 
+import numpy as np
 import pandas as pd
 
 from . import model as M
 
 HOURS = M.ROOT / "data" / "bea" / "hours_2016.csv"
-YEAR = 2016
+SERIES = M.ROOT / "data" / "bea" / "production_account_1987_2016.csv"
+YEAR, SINCE = 2016, 1987
 PAY = "V00100"        # the Use table's row for compensation of employees
 # The production account's industry for each of the benchmark's, by how the benchmark's code starts. The longest start wins.
 STARTS = {
@@ -45,3 +47,30 @@ def industry_hours(t) -> pd.Series:
     paid = t.VA.loc[PAY, t.industries].clip(lower=0)
     share = paid / paid.groupby(under).transform("sum")
     return (published().hours_millions.reindex(under.values).values * share).rename("hours")
+
+
+def still_needed() -> pd.Series:
+    """For each of the production account's industries: the hours it took in YEAR for a unit of its own
+    real value added, for each hour it took in SINCE. Under one, hours have been going; at one or over,
+    none have. Real value added is output less intermediate inputs, each at its own prices and chained
+    year by year (double deflation, with Tornqvist weights)."""
+    x = pd.read_csv(SERIES).sort_values(["industry", "year"])
+    by = x.groupby("industry")
+    bought = (x.intermediate_musd / x.gross_output_musd).clip(0, 0.95)       # the part of output that is bought in
+    mean_bought = (bought + bought.groupby(x.industry).shift()) / 2
+    growth = (np.log(x.gross_output_quantity).groupby(x.industry).diff()
+              - mean_bought * np.log(x.intermediate_quantity).groupby(x.industry).diff()) / (1 - mean_bought)
+    real = np.exp(growth.groupby(x.industry).sum())                          # real value added in YEAR, over SINCE
+    hours = by.hours_millions.last() / by.hours_millions.first()
+    assert by.year.first().eq(SINCE).all() and by.year.last().eq(YEAR).all()
+    return (hours / real).rename("still_needed")
+
+
+def sector_still_needed(t) -> pd.Series:
+    """The same for each commodity: the mean over the industries that make it, each weighted by the hours
+    it puts into the commodity. Zero where no hours go into it."""
+    hours = industry_hours(t)
+    into = (hours / t.g).values[:, None] * t.V.values                        # industry x commodity: hours put into the commodity
+    of_industry = still_needed().reindex(account_industry(t.industries).values).values
+    total = into.sum(axis=0)
+    return pd.Series(np.divide(of_industry @ into, total, out=np.zeros(len(total)), where=total > 0), index=t.commodities)

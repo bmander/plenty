@@ -18,3 +18,8 @@ production account, 1947-2016 (`KLEMS-Research-Tables-Underlying-Data_0.xlsx`, a
 https://www.bea.gov/products/integrated-industry-level-production-account-klems), downloaded
 2026-11-27. Only the last year was kept and no values were changed. The Bureau calls these data
 experimental. They are a U.S. government work in the public domain.
+
+`production_account_1987_2016.csv` is from the same workbook and the same script: for each of the 63
+industries and each year from 1987 to 2016, the hours worked, gross output and intermediate inputs
+(millions of dollars), and the quantity index of each. `plenty/hours.py` works out from it how the
+hours behind a unit of each industry's real value added have moved.

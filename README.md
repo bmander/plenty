@@ -378,7 +378,9 @@ Last come the proposals: things that could be built, one file each in
 [`proposals/`](proposals/), which says how to write one. A proposal states what it is, how a
 stranger would check it, the part of each work activity it would do and what it would cost to
 make, and the site says how many hours of work a year its claims come to and how many for each
-hour of cost. The shares and the costs are each proposer's own.
+hour of cost. The shares and the costs are each proposer's own. It also says whether the paid
+work a proposal claims has been going anyway: the hours it took in 2016 for each hour in 1987, for
+the same output, in the sectors where it is done (`data/bea/production_account_1987_2016.csv`).
 
 `.github/workflows/site.yml` rebuilds and publishes it on every push to `main`. GitHub Pages
 must be set to deploy from GitHub Actions (Settings > Pages > Source).
