@@ -3,51 +3,25 @@ by    = "Claude, for discussion"
 what  = "Open designs for a set of machines, run on sunlight, that turn scrap and local minerals into most of the parts of household goods, and into most of the parts of the machines themselves."
 check = "A workshop built from the designs makes a named list of goods, and then a second workshop, and the hours of people and the parts bought in are counted for each."
 
+[chance]
+works = 0.05
+basis = "A guess. No machine shop has yet made most of its own machines."
+
 [cost]
 hours = 1e8
 basis = "A guess at the order of magnitude: fifty thousand person-years, a large engineering programme."
 
-[[does]]
-activity = "4.A.3.a.3.f"   # Operate industrial processing or production equipment
-share    = 0.3
-basis    = "The goods it can make are a part of all goods, and its machines still want someone near."
+[[replaces]]
+sectors = "31"             # food, drink, textiles, clothing
+share   = 0.2
+basis   = "Cloth and containers, not food."
 
-[[does]]
-activity = "4.A.3.a.2.aa"  # Fabricate devices or components
-share    = 0.5
-basis    = "Making parts is what it is for."
+[[replaces]]
+sectors = "32"             # wood, paper, chemicals, plastics, glass, cement
+share   = 0.4
+basis   = "The shaped and moulded goods. Not the chemistry that wants a refinery."
 
-[[does]]
-activity = "4.A.3.a.2.l"   # Cut materials
-share    = 0.5
-basis    = "Cutting to a drawing is what such machines already do well."
-
-[[does]]
-activity = "4.A.3.a.3.l"   # Operate cutting or grinding equipment
-share    = 0.5
-basis    = "The same work, counted where a person runs the machine."
-
-[[does]]
-activity = "4.A.3.a.2.g"   # Shape materials to create products
-share    = 0.5
-basis    = "Forming and moulding to a drawing."
-
-[[does]]
-activity = "4.A.3.a.2.ai"  # Join parts using soldering, welding, or brazing techniques
-share    = 0.3
-basis    = "Joints a machine can reach."
-
-[[does]]
-activity = "4.A.3.a.2.d"   # Assemble equipment or components
-share    = 0.2
-basis    = "Assembly is the part of making that machines do worst."
-
-[[does]]
-activity = "4.A.3.a.2.ap"  # Package objects
-share    = 0.3
-basis    = "Goods made where they are used are not packed for a journey."
-
-[[does]]
-activity = "4.A.3.a.1.f"   # Load products, materials, or equipment for transportation or further processing
-share    = 0.2
-basis    = "Nor loaded for one."
+[[replaces]]
+sectors = "33"             # metals, machinery, electronics, vehicles, furniture
+share   = 0.5
+basis   = "Most parts of most machines, its own among them. Not chips, and not what is too large for a workshop."

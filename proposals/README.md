@@ -12,6 +12,10 @@ by    = "who proposes it"
 what  = "What it is, in a sentence or two: what goes in and what comes out."
 check = "How someone else could measure that it works, against a need and not against sales."
 
+[chance]
+works = 0.2               # the chance that it passes its own check, above zero and at most one
+basis = "Why that chance."
+
 [cost]                    # optional; without it the proposal has no return
 hours = 1e9               # hours of people's work to make it
 basis = "Where that number comes from."
@@ -20,7 +24,16 @@ basis = "Where that number comes from."
 activity = "4.A.3.a.1.c"  # an intermediate work activity of O*NET, as in config/activities.csv
 share    = 1.0            # the part of that activity it would do, above zero and at most one
 basis    = "Why that much of it."
+
+[[replaces]]              # one for each set of sectors it would make the goods of
+sectors = "33"            # the start of the sectors' codes in the Bureau's accounts: every sector whose code begins so
+share   = 0.5             # the part of what they make that it would make, buying nothing and with nobody's hours
+basis   = "Why that much of it."
 ```
+
+A proposal claims activities, replaces sectors, or both. The work of a sector it replaces is counted
+there, with the work behind everything the sector bought, so the same work is not also claimed by
+activity.
 
 The rules:
 

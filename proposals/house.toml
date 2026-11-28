@@ -3,46 +3,20 @@ by    = "Claude, for discussion"
 what  = "Machines that put up the shell of a house on an ordinary lot from its plan, and fit its pipes, wires and heating."
 check = "Houses it builds are inspected against the building code, and the hours of people on site are counted beside those of an ordinary crew."
 
+[chance]
+works = 0.2
+basis = "A guess. Printed and factory-built shells exist; fitting out a house by machine does not."
+
 [cost]
 hours = 1e8
 basis = "A guess at the order of magnitude: fifty thousand person-years."
 
-[[does]]
-activity = "4.A.3.a.2.a"   # Build structures
-share    = 0.5
-basis    = "The shell of a new house. Repair and alteration of old ones is not this."
+[[replaces]]
+sectors = "233411"         # single-family residential structures
+share   = 0.5
+basis   = "The shell and the fitting of a new house. Not the land, the design or the finishing by hand."
 
-[[does]]
-activity = "4.A.3.a.1.g"   # Perform general construction or extraction activities
-share    = 0.3
-basis    = "The part done on new houses."
-
-[[does]]
-activity = "4.A.3.a.3.c"   # Operate construction or excavation equipment
-share    = 0.5
-basis    = "Digging and lifting to a plan."
-
-[[does]]
-activity = "4.A.3.a.2.aq"  # Install plumbing or piping equipment or systems
-share    = 0.3
-basis    = "In a new house, where the walls are open."
-
-[[does]]
-activity = "4.A.3.a.2.p"   # Install energy or heating equipment
-share    = 0.3
-basis    = "In a new house, where the walls are open."
-
-[[does]]
-activity = "4.A.3.a.2.am"  # Apply materials to fill gaps or imperfections
-share    = 0.3
-basis    = "Sealing and filling on new work."
-
-[[does]]
-activity = "4.A.3.a.2.as"  # Apply decorative finishes
-share    = 0.3
-basis    = "Painting new walls."
-
-[[does]]
-activity = "4.A.4.b.4.i"   # Direct construction or extraction activities
-share    = 0.2
-basis    = "Fewer people on site need less directing."
+[[replaces]]
+sectors = "233412"         # multifamily residential structures
+share   = 0.3
+basis   = "Low buildings of the same kind. Not towers."

@@ -62,6 +62,10 @@
       say: function (v) { return micro(v) + " microWELLBYs per $1,000"; }, cell: micro,
       sum: function (v) { return micro(v) + " microWELLBYs per $1,000"; }, brief: micro
     },
+    jobs: {
+      say: function (v) { return hours(v) + " full-time jobs per $1 million"; }, cell: hours,
+      sum: function (v) { return hours(v) + " full-time jobs per $1 million"; }, brief: hours
+    },
     hours_worked: {
       say: function (v) { return Math.round(v).toLocaleString("en-US") + " million hours"; }, cell: thousands,
       sum: function (v) { return v >= 999.5 ? (v / 1e3).toFixed(1) + " billion hours" : Math.round(v) + " million hours"; },
