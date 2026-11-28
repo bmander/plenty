@@ -1,0 +1,23 @@
+name  = "Driving a road vehicle"
+by    = "Claude, as a first example"
+what  = "A system that drives a car, van or truck on public roads from one address to another with nobody at the wheel."
+check = "Miles driven with nobody at the wheel, and injuries for every million of them beside those of human drivers on the same roads."
+
+[cost]
+hours = 1e9
+basis = "A guess at the order of magnitude: about as much again as has been spent so far, which is on the order of half a million person-years."
+
+[[does]]
+activity = "4.A.3.a.4.a"   # Operate transportation equipment or vehicles
+share    = 1.0
+basis    = "Most of it is driving on roads. Flying and piloting ships are counted in, which overstates it."
+
+[[does]]
+activity = "4.A.1.a.2.d"   # Monitor traffic conditions
+share    = 1.0
+basis    = "It is part of driving."
+
+[[does]]
+activity = "4.A.3.a.1.m"   # Transport patients or clients
+share    = 0.5
+basis    = "The driving, not helping the passenger."

@@ -1,0 +1,18 @@
+name  = "Diagnosis and procedure code assignment"
+by    = "Claude, as a first example"
+what  = "Software that reads the record of a medical visit and assigns the diagnosis and procedure codes it is billed under."
+check = "Its codes are compared with those of certified coders on records it has not seen, and with what payers accepted."
+
+[cost]
+hours = 1e6
+basis = "A guess at the order of magnitude: five hundred person-years."
+
+[[does]]
+activity = "4.A.3.b.6.f"   # Prepare health or medical documents
+share    = 0.5
+basis    = "Coding is part of preparing the documents; writing the clinical record is not."
+
+[[does]]
+activity = "4.A.3.b.6.k"   # Maintain health or medical records
+share    = 0.5
+basis    = "The part of the record kept for billing."

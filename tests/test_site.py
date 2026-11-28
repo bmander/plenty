@@ -1,5 +1,6 @@
 import html as markup
 import json
+import tomllib
 import re
 import numpy as np
 import pandas as pd
@@ -16,7 +17,8 @@ def built():
 def test_site_builds_and_links_resolve(built):
     pages = sorted(p.name for p in site.SITE.glob("*.html"))
     units = [u.href for u in built.units.values()]
-    assert pages == sorted(["index.html"] + list(site.SYMBOL_PAGES.values()) + units)      # the account, and a page for each term and unit
+    proposed = [x.href for x in built.proposals.values()]
+    assert pages == sorted(["index.html"] + list(site.SYMBOL_PAGES.values()) + units + proposed)      # the account, and a page for each term, unit and proposal
     for name in pages:
         text = (site.SITE / name).read_text()
         assert ">nan<" not in text and "nan%" not in text, name
@@ -99,7 +101,10 @@ def test_every_unit_has_a_page_and_every_term_links_to_its_units(built):
             for term in terms:
                 assert f'<a href="{built.sheets[term].href}"' in page.split(f"<dt>{how}</dt>")[1].split("</dd>")[0], (key, how, term)
     x = site.unit_users(built, units["need-dollar"])
-    assert x["Entries of"] == list("xpfhdGb") + [site.RHO, site.ALPHA, "k", "o"] and not x["Rows of"] and not x["Columns of"]
+    in_hours = [site.ETA, site.TAU, site.PI, "X", site.PSI]
+    assert x["Entries of"] == list("xpfhdGb") + in_hours + [site.RHO, site.ALPHA, "k", "o"] and not x["Rows of"] and not x["Columns of"]
+    assert site.unit_users(built, units["hour"])["Entries of"] == [site.ETA, site.TAU, site.PI, site.CHI, "l", "X", site.PSI]
+    assert site.unit_users(built, units["proposal"]) == {"Rows of": [site.PSI], "Columns of": ["C"], "Entries of": []}
     assert site.unit_users(built, units["need"]) == {"Rows of": [site.OMEGA], "Columns of": ["x", "d", "Y", "v"], "Entries of": []}
 
 
@@ -291,7 +296,7 @@ def test_every_term_has_a_page_with_its_picture_and_its_data(built):
             assert (at[0] >= 0).all() and (at[1] >= 0).all() and len(csv) == (x != 0).sum(), key
             got[at] = csv.value
             assert np.allclose(got, x, rtol=1e-5, atol=1e-9) and "Every entry that is not zero as CSV</a>" in html, key
-    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhme" + site.ALPHA + site.MU + site.RHO + site.LAMBDA)
+    assert sorted(k for k, s in built.sheets.items() if s.thin) == sorted("xpkofdYgqFHzvrycasbtwRuhmelC" + site.ALPHA + site.MU + site.RHO + site.LAMBDA + site.ETA + site.TAU + site.PI + site.CHI)
     assert [k for k, s in built.sheets.items() if s.thin and not s.lock] == [site.LAMBDA, "R"]
     assert sorted(k for k, s in built.sheets.items() if s.values.size > site.SPARSE_CSV) == ["Q", "R"]
     # the matrices are the model's own
@@ -357,8 +362,9 @@ def test_the_order_to_work_in_is_shown_and_a_row_of_it_can_be_taken_apart(built)
     opening = {"sort": 0, "rows": site.ORDER_ROWS}
     assert data["start"] == opening and data["why"] == "activity" and data["lock"]
     assert _data(built.sheets["o"])["start"] == opening and _data(built.sheets["o"])["why"] == "tasks"
-    assert _data(built.sheets[site.RHO])["start"] == opening and "why" not in _data(built.sheets[site.RHO])
-    assert not any("start" in _data(s) or "why" in _data(s) for key, s in built.sheets.items() if key not in ("h", "o", site.RHO))
+    for key in (site.RHO, site.ETA):
+        assert _data(built.sheets[key])["start"] == opening and "why" not in _data(built.sheets[key])
+    assert not any("start" in _data(s) or "why" in _data(s) for key, s in built.sheets.items() if key not in ("h", "o", site.RHO, site.ETA))
     # it is on the home page, under the equations and over the table of terms, and on its own page, with the words for a row's parts
     home = (site.SITE / site.HOME).read_text()
     assert home.index("</math>") < home.index('id="order"') < home.index('id="mx-canvas"') < home.index('id="terms"')
@@ -499,3 +505,119 @@ def test_ai_use_is_filed_by_the_same_activities(built):
     parent = d.act.parent.reindex(I.index)
     assert np.allclose(I.pooled.groupby(parent).sum().reindex(G.index), G.pooled, atol=1e-6)
     assert np.allclose(I.flow_share.groupby(parent).sum().reindex(G.index), G.flow_share, atol=1e-6)
+
+
+def test_the_account_is_kept_in_hours_beside_dollars(built):
+    v = {k: s.values for k, s in built.sheets.items()}
+    def col(key):
+        return v[key].iloc[:, 0]
+    com, ind = v["A"].index, v["U"].columns
+    occ, acts = list(v["p"].index), list(v[site.THETA].columns)
+    # hours worked are the production account's, each of its industries divided among the benchmark's by what they paid
+    published, under, l = site.HR.published(), site.HR.account_industry(ind), col("l")[ind]
+    assert len(published) == 63 and set(under) == set(published.index) and (l >= 0).all()
+    assert np.allclose(l.groupby(under.values).sum().reindex(published.index), published.hours_millions)
+    paid = built.io.t.VA.loc[site.HR.PAY, ind]
+    farms = under.index[under == 1]
+    assert len(farms) > 1 and np.allclose(l[farms] / l[farms].sum(), paid[farms] / paid[farms].sum())
+    assert l["531HSO"] == 0 and paid["531HSO"] == 0             # nobody is paid to live in a house they own
+    # chi: an industry's hours for a dollar of output, mixed into commodities, over the commodity's value added per dollar
+    chi, r = col(site.CHI)[com], col("r")[com]
+    per_dollar = (l / col("g")[ind]).values @ v["D"].loc[ind, com].values
+    made = (r > 1e-9).values
+    assert np.allclose(chi[made], per_dollar[made] / r[made] * 1000) and not chi[~made].any() and 5 < chi[made].median() < 30
+    # Z: the jobs of the surveyed industries that cover a sector, as shares of a row
+    jobs = v["T"].loc[com, v["E"].index].values @ v["E"][occ].values
+    has = jobs.sum(axis=1) > 0
+    Z = v["Z"].loc[com, occ].values
+    assert np.allclose(Z[has], jobs[has] / jobs[has].sum(axis=1, keepdims=True)) and not Z[~has].any() and has.sum() > 380
+    # pi, tau and eta: the account's second, third and fourth lines again, in hours
+    omega = v[site.OMEGA]
+    by_sector = (v["v"].loc[com, omega.index].values * chi.values[:, None]) @ omega.values
+    pi = v[site.PI].loc[occ]
+    assert list(pi.columns) == list(omega.columns) and np.allclose(pi.values, Z.T @ by_sector)
+    X, tau = v["X"].loc[occ, acts], v[site.TAU].loc[acts]
+    assert np.allclose(tau.values, v[site.THETA].loc[occ, acts].values.T @ pi.values + X.values.sum(axis=0)[:, None])
+    kept = (col("m")[acts] * (1 - col("e")[acts])).values
+    eta = v[site.ETA].loc[acts]
+    assert np.allclose(eta.values, tau.values * kept[:, None]) and (eta.sum() < tau.sum()).all()
+    # unpaid hours are G before a wage: the same cells, each cell's dollars over its hours an occupation's hourly wage
+    G = v["G"].loc[occ, acts].values
+    at = X.values > 0
+    assert (at == (G > 0)).all() and at.sum() == len(built.unpaid[1].groupby(["occupation", "work_activity"]))
+    hourly = G[at] / X.values[at] * 1000
+    assert 7 < hourly.min() and hourly.max() < 60
+    assert np.isclose(X.values.sum() * built.spent / 1000, built.unpaid[1].hours.sum())
+    # the paid hours behind the needs are most of the hours worked, and less than all of them
+    behind = pi.spending.sum() * built.spent / 1000 / 1e6
+    assert 0.5 * l.sum() < behind < l.sum()
+    # an hour counts unpaid work for more than a dollar does
+    f = v["f"].loc[acts]
+    assert X.values.sum() / tau.equal.sum() > G.sum() / f.equal.sum()
+    home = (site.SITE / site.HOME).read_text()
+    section = home[home.index('id="hours"'):home.index('id="proposals"')]
+    assert section.count("<mtr>") == 3
+    assert f"{tau.equal.sum():.0f} hours of work behind them" in section and f"{X.values.sum():.0f} unpaid" in section
+    assert f"is {eta.equal.sum():.0f} of the {tau.equal.sum():.0f} hours" in section
+    names = built.sheets[site.ETA].row_names
+    first = eta.equal.nlargest(site.HOURS_ROWS)
+    place = v["h"].equal.rank(ascending=False).astype(int)
+    for a, hours in first.items():
+        assert f'{markup.escape(names[a])}</th><td class="num">{hours:.1f}</td>' in section and f'<td class="num">{place[a]}</td></tr>' in section, a
+    assert section.count("<tr><th scope=\"row\"") == site.HOURS_ROWS
+
+
+def test_proposals_are_read_from_their_files_scored_and_given_pages(built, tmp_path):
+    v = {k: s.values for k, s in built.sheets.items()}
+    acts = list(v[site.THETA].columns)
+    props, C, psi, tau = built.proposals, v["C"].loc[acts], v[site.PSI], v[site.TAU].loc[acts]
+    files = sorted(site.PROPOSALS.glob("*.toml"))
+    assert list(props) == [p.stem for p in files] == list(C.columns) == list(psi.index) and len(props) >= 4
+    for key, x in props.items():
+        raw = tomllib.loads((site.PROPOSALS / f"{key}.toml").read_text())
+        claimed = pd.Series({r["activity"]: r["share"] for r in raw["does"]})
+        assert (x.name, x.what, x.check) == (raw["name"], raw["what"], raw["check"]) and x.cost == raw.get("cost", {}).get("hours")
+        assert (C[key][claimed.index] == claimed).all() and np.isclose(C[key].sum(), claimed.sum()) and ((claimed > 0) & (claimed <= 1)).all()
+        assert all(r["basis"].strip() for r in raw["does"])
+    # psi: the hours in what each claims, less what is already open
+    left = (1 - v["e"].iloc[:, 0][acts]).values
+    assert np.allclose(psi.values, C.values.T @ (tau.values * left[:, None]))
+    scores = site.proposal_scores(built)
+    assert np.allclose(scores.hours, psi.equal) and np.allclose(scores.a_year, psi.spending * built.spent / 1000)
+    assert np.allclose(scores.cents, C.values.T @ (v["f"].loc[acts].equal.values * left) * 100)
+    assert (scores.unpaid_a_year <= scores.a_year + 1).all() and np.allclose(scores.back, scores.a_year / scores.cost)
+    assert (scores.activities == (C > 0).sum()).all()
+    # one proposal can lie inside another, and then it comes to less
+    assert (C["code-assignment"] <= C["who-owes-whom"]).all() and psi.equal["code-assignment"] < psi.equal["who-owes-whom"]
+    home = (site.SITE / site.HOME).read_text()
+    section = home[home.index('id="proposals"'):home.index('id="terms"')]
+    together = (tau.equal.values * left * C.max(axis=1).values).sum()
+    assert f"together these claim\n{together:.0f} of the {tau.equal.sum():.0f} hours" in section and together < psi.equal.sum()
+    for key, x in props.items():
+        assert f'<a href="{x.href}">{markup.escape(x.name)}</a>' in section, key
+        page = (site.SITE / x.href).read_text()
+        assert f'<h1 class="long">{markup.escape(x.name)}</h1>' in page and markup.escape(x.what) in page and markup.escape(x.check) in page, key
+        assert f'<td class="num">{psi.equal[key]:.2f}</td></tr>' in page and markup.escape(x.cost_basis) in page, key
+        assert f"{scores.back[key]:,.0f} hours a year" in page and f"proposals/{key}.toml" in page, key
+        names = built.sheets[site.TAU].row_names
+        for a, row in x.does.iterrows():
+            assert markup.escape(names[a]) in page and markup.escape(row.basis) in page, (key, a)
+    # a file that is not whole is refused, and the refusal says why
+    whole = 'name = "N"\nwhat = "W"\ncheck = "K"\n[[does]]\nactivity = "{a}"\nshare = {share}\nbasis = "{basis}"\n'
+    a = acts[0]
+    cases = {"share of 1.5": whole.format(a=a, share=1.5, basis="b"), "has no reason": whole.format(a=a, share=0.5, basis=" "),
+             "is not a work activity": whole.format(a="9.Z", share=0.5, basis="b"),
+             "no check": whole.format(a=a, share=0.5, basis="b").replace('check = "K"', 'check = ""'),
+             "claimed twice": whole.format(a=a, share=0.5, basis="b") + whole.format(a=a, share=0.5, basis="b").split("\n", 3)[3],
+             "claims no activity": 'name = "N"\nwhat = "W"\ncheck = "K"\n',
+             "cost needs hours": whole.format(a=a, share=0.5, basis="b") + "[cost]\nhours = 5\n"}
+    for why, text in cases.items():
+        folder = tmp_path / why.replace(" ", "-")
+        folder.mkdir()
+        (folder / "x.toml").write_text(text)
+        with pytest.raises(ValueError, match=why):
+            site.proposals(acts, folder)
+    (tmp_path / "ok").mkdir()
+    (tmp_path / "ok" / "fine.toml").write_text(whole.format(a=a, share=1, basis="b"))
+    fine = site.proposals(acts, tmp_path / "ok")["fine"]
+    assert fine.cost is None and fine.does.share[a] == 1 and fine.href == "proposal-fine.html"

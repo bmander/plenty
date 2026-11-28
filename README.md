@@ -368,6 +368,18 @@ Under the order, the gap is divided among the 52 abilities O*NET rates occupatio
 say what the work demands of a person, and a judgment of how far machines already match a
 person in each (`config/abilities.csv`) leaves what machines still lack.
 
+The account is kept in hours as well as dollars. A dollar counts work by what it is paid, and
+an hour by the time of someone's life it takes. Paid hours are the hours worked in each
+industry in 2016 (`data/bea/hours_2016.csv`, read by `plenty/hours.py`), divided among
+occupations by their jobs; unpaid hours are the time-use survey's. Unpaid work at home is
+about a quarter of the work behind the needs in dollars and about three fifths of it in hours.
+
+Last come the proposals: things that could be built, one file each in
+[`proposals/`](proposals/), which says how to write one. A proposal states what it is, how a
+stranger would check it, the part of each work activity it would do and what it would cost to
+make, and the site says how many hours of work a year its claims come to and how many for each
+hour of cost. The shares and the costs are each proposer's own.
+
 `.github/workflows/site.yml` rebuilds and publishes it on every push to `main`. GitHub Pages
 must be set to deploy from GitHub Actions (Settings > Pages > Source).
 

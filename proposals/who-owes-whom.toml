@@ -1,0 +1,118 @@
+name  = "Who owes whom what"
+by    = "Claude, as a first example"
+what  = "A formal system that takes the records of what happened and the rules that apply (prices, contracts, tax law, benefit rules, billing codes) and works out what each party owes, with the document that says so."
+check = "Its answers are compared with settled cases: audited accounts, adjudicated claims and assessed returns."
+
+[cost]
+hours = 1e7
+basis = "A guess at the order of magnitude: five thousand person-years, the size of a large body of rules written out formally."
+
+[[does]]
+activity = "4.A.1.b.3.c"   # Calculate financial data
+share    = 1.0
+basis    = "It is the calculation."
+
+[[does]]
+activity = "4.A.2.a.2.d"   # Reconcile financial data
+share    = 1.0
+basis    = "Two records of the same obligation either agree or do not."
+
+[[does]]
+activity = "4.A.3.b.6.j"   # Maintain sales or financial records
+share    = 1.0
+basis    = "The records are its input and its output."
+
+[[does]]
+activity = "4.A.4.c.1.c"   # Execute financial transactions
+share    = 1.0
+basis    = "Once the amount and the parties are settled, carrying it out is mechanical."
+
+[[does]]
+activity = "4.A.3.b.6.a"   # Prepare financial documents, reports, or budgets
+share    = 1.0
+basis    = "The documents state what the system has worked out."
+
+[[does]]
+activity = "4.A.1.a.2.c"   # Monitor financial data or activities
+share    = 1.0
+basis    = "Watching for what is owed and not paid."
+
+[[does]]
+activity = "4.A.4.c.3.d"   # Collect fares or payments
+share    = 0.5
+basis    = "Working out and recording the payment, not taking it in person."
+
+[[does]]
+activity = "4.A.2.a.3.c"   # Examine financial activities, operations, or systems
+share    = 0.5
+basis    = "Checking against the rules, not judging whether the rules are good."
+
+[[does]]
+activity = "4.A.2.a.3.a"   # Examine materials or documentation for accuracy or compliance
+share    = 0.5
+basis    = "Where the documents are about money or entitlement."
+
+[[does]]
+activity = "4.A.3.b.6.m"   # Prepare documentation for contracts, applications, or permits
+share    = 0.5
+basis    = "The part that follows from the rules and the facts."
+
+[[does]]
+activity = "4.A.4.a.5.h"   # Assist individuals with paperwork
+share    = 0.5
+basis    = "Much of that paperwork is claims, returns and applications."
+
+[[does]]
+activity = "4.A.2.a.2.e"   # Verify personal information
+share    = 0.5
+basis    = "Eligibility turns on it."
+
+[[does]]
+activity = "4.A.2.b.1.c"   # Authorize business activities or transactions
+share    = 0.5
+basis    = "Where authorizing is checking against a rule."
+
+[[does]]
+activity = "4.A.4.c.1.d"   # Issue documentation
+share    = 0.5
+basis    = "Invoices, receipts, statements and notices."
+
+[[does]]
+activity = "4.A.2.b.1.a"   # Determine values or prices of goods or services
+share    = 0.5
+basis    = "Where the price follows from a schedule or a contract, not from a market."
+
+[[does]]
+activity = "4.A.3.b.6.f"   # Prepare health or medical documents
+share    = 0.5
+basis    = "Coding and billing."
+
+[[does]]
+activity = "4.A.3.b.6.k"   # Maintain health or medical records
+share    = 0.5
+basis    = "The part kept for billing and claims."
+
+[[does]]
+activity = "4.A.4.c.1.a"   # Perform administrative or clerical activities
+share    = 0.5
+basis    = "Much clerical work is keeping track of what is owed."
+
+[[does]]
+activity = "4.A.4.a.1.d"   # Explain financial information
+share    = 0.5
+basis    = "Saying how an amount was arrived at."
+
+[[does]]
+activity = "4.A.3.b.6.n"   # Prepare legal or regulatory documents
+share    = 0.5
+basis    = "Filings that state amounts and entitlements."
+
+[[does]]
+activity = "4.A.2.a.2.c"   # Compile records, documentation, or other data
+share    = 0.5
+basis    = "Gathering the records an obligation rests on."
+
+[[does]]
+activity = "4.A.3.b.6.h"   # Maintain operational records
+share    = 0.5
+basis    = "Hours, deliveries and usage, which are what is billed."

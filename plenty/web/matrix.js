@@ -22,6 +22,8 @@
   // For each kind of matrix: a value said in full, and a size (never negative) printed short on a cell.
   function hundredths(x) { x *= 100; return x.toFixed(x >= 99.95 ? 0 : x >= 9.995 ? 1 : 2); }
   function thousands(x) { return x >= 99500 ? Math.round(x / 1000) + "k" : x >= 999.5 ? (x / 1000).toFixed(1) + "k" : String(Math.round(x)); }
+  // hours: to three figures or so, never more than three places
+  function hours(x) { return x >= 99.5 ? x.toFixed(0) : x >= 9.95 ? x.toFixed(1) : x >= 0.0995 ? x.toFixed(2) : x.toFixed(3); }
   var KINDS = {
     per_dollar: {
       say: function (v) { return cents(v) + " per dollar"; }, cell: hundredths,
@@ -50,6 +52,15 @@
     wage: {
       say: function (v) { return "$" + Math.round(v).toLocaleString("en-US") + " a year"; },
       cell: function (x) { return Math.round(x / 1000) + "k"; }
+    },
+    hours: {
+      say: function (v) { return hours(v) + " hours per $1,000"; }, cell: hours,
+      sum: function (v) { return hours(v) + " hours per $1,000"; }, brief: hours
+    },
+    hours_worked: {
+      say: function (v) { return Math.round(v).toLocaleString("en-US") + " million hours"; }, cell: thousands,
+      sum: function (v) { return v >= 999.5 ? (v / 1e3).toFixed(1) + " billion hours" : Math.round(v) + " million hours"; },
+      brief: function (v) { return v >= 999.5 ? (v / 1e3).toFixed(v >= 9995 ? 0 : 1) + "B" : Math.round(v) + "M"; }
     },
     number: { say: function (v) { return v.toFixed(3); }, cell: function (x) { return x.toFixed(2); } },
     rating: { say: function (v) { return v.toFixed(1) + " of 35"; }, cell: function (x) { return x.toFixed(0); } },
