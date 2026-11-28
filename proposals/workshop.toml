@@ -3,10 +3,6 @@ by    = "Claude, for discussion"
 what  = "Open designs for a set of machines, run on sunlight, that turn scrap and local minerals into most of the parts of household goods, and into most of the parts of the machines themselves."
 check = "A workshop built from the designs makes a named list of goods, and then a second workshop, and the hours of people and the parts bought in are counted for each."
 
-[chance]
-works = 0.05
-basis = "A guess. No machine shop has yet made most of its own machines."
-
 [cost]
 hours = 1e8
 basis = "A guess at the order of magnitude: fifty thousand person-years, a large engineering programme."

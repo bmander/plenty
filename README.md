@@ -392,8 +392,8 @@ stranger would check it, the part of each work activity it would do and what it 
 make, and the site says how many hours of work a year its claims come to, what those hours cost
 the people who work them in experienced WELLBYs, and how much of each there is for its cost.
 A proposal can also name sectors it would replace, and is then given the hours behind them and
-behind all they bought, by solving the model again with it in place. Each states the chance that
-it works, and is scored on what it is expected to give back twice over: with the jobs in its
+behind all they bought, by solving the model again with it in place. Each is scored as if
+it works, on what it would give back, twice over: with the jobs in its
 paid hours kept, and with them lost. A proposal can also name causes of ill health it would take
 something off, and is then given the years of healthy life that comes to, from the World Health
 Organization's estimates for the United States (`data/health/burden_2019.csv`). The shares and the costs are each proposer's own. It also says whether the paid

@@ -3,10 +3,6 @@ by    = "Claude, for discussion"
 what  = "An open geometry kernel for solid models that does not fail: unions, cuts, fillets, offsets and shells that return a valid solid, or say exactly why not, on the parts that commercial kernels handle."
 check = "It is run on a public set of real parts with the operations recorded in their histories, and each result is compared with a commercial kernel's: valid or not, and how far apart in volume and surface."
 
-[chance]
-works = 0.5
-basis = "A guess. Nothing about it is unknown, and no open project has yet had the years it takes."
-
 [cost]
 hours = 5e6
 basis = "A guess at the order of magnitude: 2,500 person-years, about what a commercial kernel has taken over its decades."

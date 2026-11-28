@@ -3,10 +3,6 @@ by    = "Claude, as a first example"
 what  = "Software that reads the record of a medical visit and assigns the diagnosis and procedure codes it is billed under."
 check = "Its codes are compared with those of certified coders on records it has not seen, and with what payers accepted."
 
-[chance]
-works = 0.6
-basis = "A guess. Systems close to this are in use, with people checking them."
-
 [cost]
 hours = 1e6
 basis = "A guess at the order of magnitude: five hundred person-years."

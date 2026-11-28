@@ -12,10 +12,6 @@ by    = "who proposes it"
 what  = "What it is, in a sentence or two: what goes in and what comes out."
 check = "How someone else could measure that it works, against a need and not against sales."
 
-[chance]
-works = 0.2               # the chance that it passes its own check, above zero and at most one
-basis = "Why that chance."
-
 [cost]                    # optional; without it the proposal has no return
 hours = 1e9               # hours of people's work to make it
 basis = "Where that number comes from."

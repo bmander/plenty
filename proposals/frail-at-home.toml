@@ -3,10 +3,6 @@ by    = "Claude, for discussion"
 what  = "A helper in the home that lifts, steadies, fetches, reminds and keeps watch for a frail adult, so that they can stay there and whoever cares for them can rest."
 check = "Frail adults who have it are compared with ones who do not: their falls, their moves into nursing homes, and the hours and the strain their carers report."
 
-[chance]
-works = 0.15
-basis = "A guess. It wants the same hands as household handwork, near a frail person."
-
 [cost]
 hours = 1e9
 basis = "A guess at the order of magnitude: it wants a machine as able with its hands as household handwork does."

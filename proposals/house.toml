@@ -3,10 +3,6 @@ by    = "Claude, for discussion"
 what  = "Machines that put up the shell of a house on an ordinary lot from its plan, and fit its pipes, wires and heating."
 check = "Houses it builds are inspected against the building code, and the hours of people on site are counted beside those of an ordinary crew."
 
-[chance]
-works = 0.2
-basis = "A guess. Printed and factory-built shells exist; fitting out a house by machine does not."
-
 [cost]
 hours = 1e8
 basis = "A guess at the order of magnitude: fifty thousand person-years."

@@ -3,10 +3,6 @@ by    = "Claude, for discussion"
 what  = "A service that keeps a household in what it regularly uses: it knows what is running out, orders it at a good price and has it brought."
 check = "Households that use it record the hours they spend shopping and going to shop, and what they pay for the same goods, before and after."
 
-[chance]
-works = 0.7
-basis = "A guess. Each of its parts is in use somewhere."
-
 [cost]
 hours = 1e7
 basis = "A guess at the order of magnitude: five thousand person-years. Most of its parts exist."

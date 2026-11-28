@@ -3,10 +3,6 @@ by    = "Claude, as a first example"
 what  = "A machine that does the handwork of a home or a small kitchen: cleans rooms and surfaces, washes up, does the laundry, puts things away, and does the routine steps of preparing food."
 check = "Rooms, dishes and clothes are judged clean or not by people who do not know whether a machine did the work, and the hours the household spends on these chores are counted before and after."
 
-[chance]
-works = 0.15
-basis = "A guess. Hands that can do any household job are the oldest unsolved problem in robotics."
-
 [cost]
 hours = 1e9
 basis = "A guess at the order of magnitude. Driving has taken on the order of half a million person-years so far and is not finished, and handling whatever is in a home is at least as hard."

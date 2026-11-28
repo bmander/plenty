@@ -3,10 +3,6 @@ by    = "Claude, as a first example"
 what  = "A formal system that takes the records of what happened and the rules that apply (prices, contracts, tax law, benefit rules, billing codes) and works out what each party owes, with the document that says so."
 check = "Its answers are compared with settled cases: audited accounts, adjudicated claims and assessed returns."
 
-[chance]
-works = 0.3
-basis = "A guess. The rules can be written down; getting them agreed and kept current is the hard part."
-
 [cost]
 hours = 1e7
 basis = "A guess at the order of magnitude: five thousand person-years, the size of a large body of rules written out formally."

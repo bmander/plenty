@@ -3,10 +3,6 @@ by    = "Claude, for discussion"
 what  = "Software that takes a person's account of what is wrong, with their records and whatever they can measure, and says what it probably is, what to do next and how soon."
 check = "Its opinions on recorded cases are compared with what the cases turned out to be, beside those of clinicians given the same information."
 
-[chance]
-works = 0.5
-basis = "A guess. Software already matches clinicians on written cases; trials on patients are few."
-
 [cost]
 hours = 1e7
 basis = "A guess at the order of magnitude: five thousand person-years, most of it trials."
