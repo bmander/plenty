@@ -2260,13 +2260,17 @@ def _count(x: float) -> str:
 
 
 def _few(x: float) -> str:
-    """A number to two or three figures: 4,300, 45, 4.7, 0.31."""
-    return f"{x:,.0f}" if x >= 9.95 else f"{x:.1f}" if x >= 0.995 else f"{x:.2f}"
+    """A number to two or three figures: 4,300, 45, 4.7, 0.31, with a true minus for one below zero."""
+    a = abs(x)
+    said = f"{a:,.0f}" if a >= 9.95 else f"{a:.1f}" if a >= 0.995 else f"{a:.2f}"
+    return ("&minus;" if x < 0 and said.strip("0.") else "") + said
 
 
 def _wellbys(x: float) -> str:
-    """A count of WELLBYs, to three figures under a million."""
-    return _count(x) if x >= 1e6 else f"{float(f'{x:.3g}'):,.0f}"
+    """A count of WELLBYs, to three figures under a million, with a true minus for one below zero."""
+    a = abs(x)
+    said = _count(a) if a >= 1e6 else f"{float(f'{a:.3g}'):,.0f}"
+    return ("&minus;" if x < 0 and said != "0" else "") + said
 
 
 GUIDE = "guide"                      # where the guide to the sizes of WELLBYs is, on the page of the unit
@@ -2497,7 +2501,9 @@ would cost to make. The account then says how many hours the claims come to, les
 <p>A proposal's hours are a ceiling: the work its claims cover, if it did all of it. Hours are not alike to those who
 work them, so each is also weighed by the points people rate such work below the rest of their day, {_m(_sym(XI))}, which
 gives what the hours cost them in experienced WELLBYs a year. That moves paid work up: a job is rated further below the
-rest of the day than most work at home is. The shares and the costs are each
+rest of the day than most work at home is. A figure below zero is work people rate above the rest of their day, and
+the account cannot tell the kinds of work within an activity apart: the care of children, which people like, is filed
+with the care of frail adults, which they do not. The shares and the costs are each
 proposer's own, and the costs here are guesses at an order of magnitude, so the hours and the WELLBYs for each hour of
 cost are no firmer than that. The last column says whether the paid work a proposal claims has been going anyway: the hours it took
 in {HR.YEAR} for each hour it took in {HR.SINCE}, for the same output, in the sectors where it is done,
@@ -2528,9 +2534,10 @@ def proposal_page(d: Data, key: str) -> str:
     spec = [("What it is", e(x.what)), ("How it is checked", e(x.check))]
     if x.by:
         spec.append(("Proposed by", e(x.by)))
-    spec.append(("Would do", f"{psi.equal:.1f} hours of work for every thousand need dollars with the needs counted equally, "
-                             f"{psi.spending:.1f} weighing them by what is spent on each, and {psi.poorest:.1f} by the poorest "
-                             f"fifth's budget: its row of {_m(_sym(PSI))}. In dollars that is {score.cents:.1f} cents of work "
+    small = lambda x: f"{x:.1f}" if x >= 0.95 else f"{x:.2g}"         # a small proposal keeps two figures
+    spec.append(("Would do", f"{small(psi.equal)} hours of work for every thousand need dollars with the needs counted equally, "
+                             f"{small(psi.spending)} weighing them by what is spent on each, and {small(psi.poorest)} by the poorest "
+                             f"fifth's budget: its row of {_m(_sym(PSI))}. In dollars that is {small(score.cents)} cents of work "
                              "per need dollar."))
     spec.append(("In a year", f"{_count(score.a_year)} hours, as the needs were in fact paid for. {_count(score.unpaid_a_year)} of them "
                               "are unpaid work at home, which no job goes with."))

@@ -770,7 +770,8 @@ def test_work_is_weighed_by_what_it_costs_those_who_do_it(built):
     assert np.allclose(scores.wellbys_a_year, C.values.T @ (xi.spending.values * left) * built.spent / 1000 / 1e6)
     assert np.allclose(scores.wellbys_back, scores.wellbys_a_year / scores.cost * 1000)
     points = scores.wellbys_a_year * 1e6 / site.POINT_HOUR / scores.a_year
-    assert points.between(0, job + 0.2).all() and points["who-owes-whom"] > points["household-handwork"] > points["driving"]
+    assert points.between(-0.5, job + 0.2).all() and points["who-owes-whom"] > points["household-handwork"] > points["driving"]
+    assert site._wellbys(-90_012) == "&minus;90,000" and site._few(-0.09) == "&minus;0.09" and site._few(-0.001) == "0.00"
     proposals = html[html.index('id="proposals"'):html.index('id="terms"')]
     for key, x in built.proposals.items():
         page = (site.SITE / x.href).read_text()
